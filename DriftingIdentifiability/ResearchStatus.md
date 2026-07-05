@@ -31,7 +31,14 @@
 - [~] Quantitative coefficient stability proved (`FiniteStability.lean`): `ℓ¹`
       coefficient distance ≤ total minor mass, hence `minor mass → 0 ⟹
       coefficients → 0`. The remaining gap is bounding the minor mass by the
-      drift norm (the linear-independence lower bound).
+      drift norm (the linear-independence lower bound). Concrete plan:
+      (1) prove the general anti-symmetric grouping identity
+      `∑ᵢ∑ⱼ aᵢbⱼ • Uᵢⱼ = ∑_{i<j} (aᵢbⱼ - aⱼbᵢ) • Uᵢⱼ` (axiom-free algebra;
+      currently only the zero case is exposed as `equation_32_grouped_zero_drift`);
+      (2) package `c ↦ ∑ c_p • U_p` as a `LinearMap` whose kernel is `⊥` from
+      nondegeneracy, and apply `LinearMap.exists_antilipschitzWith` (finite
+      dimension) to get `‖minor‖ ≤ K ‖drift‖`. Chaining with the stability bound
+      yields Lipschitz stability `ℓ¹ coeff distance ≤ C ‖drift‖`.
 - [ ] Formulate and prove a genuinely asymptotic result with named norms and
       measure topology (`AsymptoticallyIdentifies`).
 
