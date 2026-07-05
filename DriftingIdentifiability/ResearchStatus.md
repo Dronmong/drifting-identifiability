@@ -28,8 +28,13 @@
       densities via the reviewed paper axioms
       (`driftProbeZeroIdentifiesDensities`,
       `meanShiftInteractionIdentifiesDensities`).
-- [ ] Discharge the nondegeneracy and integrability hypotheses for the paper's
-      concrete kernel/probe system rather than assuming them.
+- [x] Nondegeneracy discharged for a concrete Gaussian-kernel interaction system
+      (`GaussianNondegeneracy.lean`, `gaussianInteractionIdentifiesCoefficients`):
+      reduced to Micchelli's strict positive definiteness of the Gaussian
+      (`gaussian_gram_linearIndependent`) via an axiom-free anti-symmetric
+      extension, so the finite identifiability holds with nondegeneracy derived
+      rather than assumed. Remaining: match the paper's exact integral-induced
+      interaction vectors (analytic), and the integrability side conditions.
 - [x] Measure-level `IdentifiesAtZero` reached for a concrete paper field
       (`CharacteristicIdentifiability.lean`): for a characteristic kernel — the
       Gaussian being the witnessed instance — zero MMD drift (equation 41)

@@ -45,6 +45,10 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
   *actual* density-interaction drift (Appendix C.1) to the finite algebra:
   probe-wise zero drift plus nondegeneracy identifies the basis densities, with
   a specialization to the paper's mean-shift interaction kernel.
+- `DriftingIdentifiability/GaussianNondegeneracy.lean` — discharges the
+  interaction-nondegeneracy hypothesis for a concrete Gaussian-kernel system:
+  reduces it to Micchelli's strict positive definiteness of the Gaussian, so the
+  finite identifiability holds with nondegeneracy *derived* rather than assumed.
 - `DriftingIdentifiability/FiniteStability.lean` — axiom-free quantitative
   stability: the `ℓ¹` coefficient distance is bounded by the total minor mass,
   giving the convergence statement `minor mass → 0 ⟹ coefficients → 0` (the

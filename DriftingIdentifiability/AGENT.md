@@ -198,9 +198,14 @@ complete and audited:
   mean-shift kernel in `meanShiftInteractionIdentifiesDensities`.
 
 This finite, probe-wise result does not by itself settle general or asymptotic
-identifiability. The open obligations are: (a) discharge the nondegeneracy and
-integrability hypotheses for a concrete kernel/probe system rather than assuming
-them; (b) bridge from the density-valued `Density E` statement to a measure-level
+identifiability. Progress on obligation (a): the nondegeneracy hypothesis is now
+*discharged* for a concrete Gaussian-kernel interaction system in
+`GaussianNondegeneracy.lean` (`gaussianInteractionIdentifiesCoefficients`),
+reducing it to Micchelli's strict positive definiteness of the Gaussian via an
+axiom-free anti-symmetric extension — nondegeneracy is derived, not assumed. The
+remaining obligations are: (a′) match the paper's exact integral-induced
+interaction vectors and the integrability side conditions; (b) bridge from the
+density-valued `Density E` statement to a measure-level
 `IdentifiesAtZero` claim; (c) pass from probe-wise zero drift to genuinely global
 zero drift; and (d) the asymptotic target `AsymptoticallyIdentifies`.
 

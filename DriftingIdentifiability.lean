@@ -1,5 +1,6 @@
 import DriftingIdentifiability.FiniteGrouping
 import DriftingIdentifiability.PaperFiniteIdentifiability
+import DriftingIdentifiability.GaussianNondegeneracy
 import DriftingIdentifiability.FiniteLegitimacy
 import DriftingIdentifiability.PaperDriftIdentifiability
 import DriftingIdentifiability.FiniteStability

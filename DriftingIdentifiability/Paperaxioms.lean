@@ -963,5 +963,16 @@ axiom gaussian_mmd_metrizes_weakConvergence
     Filter.Tendsto (fun n => (levyProkhorovEDist p (qn n)).toReal)
       Filter.atTop (nhds 0)
 
+/-- Well-known theorem (Micchelli, 1986): the Gaussian kernel is strictly
+positive definite.  Hence for distinct points its Gram matrix is nonsingular and
+its rows are linearly independent.  Stated over an arbitrary finite index type so
+it can be applied with the strict-pair index set.  This is a property of the
+kernel, not an identifiability statement. -/
+axiom gaussian_gram_linearIndependent
+    {E : Type u} [NormedAddCommGroup E]
+    {ι : Type v} [Fintype ι] (σ : ℝ) (hσ : ValidBandwidth σ)
+    (x : ι → E) (hx : Function.Injective x) :
+    LinearIndependent ℝ (fun p : ι => (fun q : ι => gaussianKernel σ (x p) (x q)))
+
 end Paper
 end DriftingIdentifiability
