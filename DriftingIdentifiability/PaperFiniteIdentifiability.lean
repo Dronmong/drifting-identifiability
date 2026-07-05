@@ -3,9 +3,9 @@ import DriftingIdentifiability.FiniteGrouping
 /-!
 # Finite-basis route suggested by Appendix C.1
 
-This module packages the paper's finite-dimensional argument as a future proof
-target.  It intentionally stops before asserting coefficient or distribution
-equality.
+This module packages and proves the paper's finite-dimensional coefficient
+argument. It establishes coefficient and represented-density equality from the
+grouped bilinear hypothesis.
 -/
 
 open scoped BigOperators
@@ -33,7 +33,7 @@ structure FiniteCoefficientSetup
 /-- Every coefficient minor vanishes.  This is not the forbidden conclusion
 `a = b` or `p = q`.  It is proved from scratch in `FiniteGrouping.lean` (anti-
 symmetry + Mathlib linear independence), so it no longer relies on the paper
-axiom `zero_drift_coefficient_minors`. -/
+paper's coefficient-minor conclusion, now proved in `FiniteGrouping.lean`. -/
 theorem coefficientMinorsVanish
     {E : Type u} [AddCommGroup E] [Module ℝ E]
     {m N : ℕ} (setup : FiniteCoefficientSetup E m N) :

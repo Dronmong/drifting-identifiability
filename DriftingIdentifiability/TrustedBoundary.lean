@@ -25,6 +25,45 @@ def IdentifiesAtZero
     (V : DriftingField E) : Prop :=
   ∀ p q, condition p q → ZeroDrift V p q → p = q
 
+/-- Vanishing only almost everywhere under the current model law.  This is
+strictly weaker than `ZeroDrift` without support and continuity hypotheses. -/
+def ZeroDriftAE
+    {E : Type u} [MeasurableSpace E] [Zero E]
+    (V : DriftingField E) (p q : Distribution E) : Prop :=
+  ∀ᵐ x ∂q, V p q x = 0
+
+/-- Ideal population training energy.  This definition deliberately does not
+represent the paper's finite-batch estimator. -/
+noncomputable def driftEnergy
+    {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+    (V : DriftingField E) (p q : Distribution E) : ℝ :=
+  ∫ x, ‖V p q x‖ ^ 2 ∂q
+
+/-- Zero integrable population energy implies almost-everywhere zero drift. -/
+theorem zeroDriftAE_of_driftEnergy_eq_zero
+    {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+    (V : DriftingField E) (p q : Distribution E)
+    (hintegrable : Integrable (fun x => ‖V p q x‖ ^ 2) q)
+    (henergy : driftEnergy V p q = 0) : ZeroDriftAE V p q := by
+  have hsq : (fun x => ‖V p q x‖ ^ 2) =ᵐ[q] 0 :=
+    (integral_eq_zero_iff_of_nonneg_ae
+      (Filter.Eventually.of_forall fun _ => sq_nonneg _) hintegrable).mp henergy
+  filter_upwards [hsq] with x hx
+  simpa using (sq_eq_zero_iff.mp hx)
+
+/-- With full topological support, continuity upgrades a.e. zero drift to
+pointwise zero drift. -/
+theorem zeroDrift_of_ae_of_continuous_fullSupport
+    {E : Type u} [MeasurableSpace E] [TopologicalSpace E] [T2Space E]
+    [NormedAddCommGroup E]
+    (V : DriftingField E) (p q : Distribution E) [q.IsOpenPosMeasure]
+    (hcontinuous : Continuous (V p q)) (hae : ZeroDriftAE V p q) :
+    ZeroDrift V p q := by
+  have hfun : V p q = (fun _ => 0) :=
+    Measure.eq_of_ae_eq hae hcontinuous continuous_const
+  intro x
+  exact congrFun hfun x
+
 /-- An exact counterexample to a proposed condition. -/
 def IsExactCounterexample
     {E : Type u} [MeasurableSpace E] [Zero E]

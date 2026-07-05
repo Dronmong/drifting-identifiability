@@ -13,8 +13,8 @@ This module supplies the axiom-free, finite-dimensional half of that estimate:
 the identity `aᵢ - bᵢ = ∑ⱼ (aᵢbⱼ - aⱼbᵢ)` for normalized vectors, its `ℓ¹`
 consequence, and the resulting convergence statement `minor mass → 0 ⟹
 coefficient distance → 0`.  Nothing here uses a paper axiom; it depends only on
-probability normalization.  Bounding the minor mass itself by the drift norm
-(the linear-independence lower bound) remains the outstanding analytic step.
+probability normalization.  The second half packages a checkable positive
+frame bound and uses it to control coefficient error by drift error.
 -/
 
 open scoped BigOperators
@@ -24,6 +24,86 @@ namespace DriftingIdentifiability
 namespace PaperFiniteIdentifiability
 
 open Paper
+
+universe u
+
+variable {V : Type u} [NormedAddCommGroup V] [NormedSpace ℝ V]
+  {m : ℕ}
+
+/-- Coefficient minors restricted to the independent strict-pair index set. -/
+def strictMinorVector (a b : Fin m → ℝ) (p : StrictPair m) : ℝ :=
+  coefficientMinor a b p.1.1 p.1.2
+
+/-- Linear synthesis by the strict-pair interaction vectors. -/
+def interactionSynthesis (U : Fin m → Fin m → V) :
+    (StrictPair m → ℝ) →ₗ[ℝ] V where
+  toFun z := ∑ p, z p • U p.1.1 p.1.2
+  map_add' z w := by
+    simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib]
+  map_smul' r z := by
+    simp only [Pi.smul_apply, RingHom.id_apply, smul_smul, Finset.smul_sum,
+      smul_eq_mul]
+
+@[simp]
+theorem interactionSynthesis_apply (U : Fin m → Fin m → V)
+    (z : StrictPair m → ℝ) :
+    interactionSynthesis U z = ∑ p, z p • U p.1.1 p.1.2 := rfl
+
+/-- A quantitative and numerically testable replacement for bare linear
+independence. `c` is a lower frame bound in the coefficient `ℓ¹` norm. -/
+def InteractionFrameBound (U : Fin m → Fin m → V) (c : ℝ) : Prop :=
+  0 < c ∧ ∀ z : StrictPair m → ℝ,
+    c * (∑ p, |z p|) ≤ ‖interactionSynthesis U z‖
+
+/-- A positive frame bound implies qualitative linear independence. -/
+theorem interactionFrameBound_linearIndependent
+    (U : Fin m → Fin m → V) {c : ℝ} (hframe : InteractionFrameBound U c) :
+    LinearIndependent ℝ (fun p : StrictPair m => U p.1.1 p.1.2) := by
+  rw [Fintype.linearIndependent_iff]
+  intro z hz p
+  have hbound := hframe.2 z
+  rw [interactionSynthesis_apply, hz, norm_zero] at hbound
+  have hmass : (∑ q, |z q|) = 0 := by
+    have hnonneg : 0 ≤ ∑ q, |z q| := Finset.sum_nonneg fun _ _ => abs_nonneg _
+    nlinarith [hframe.1]
+  have hp : |z p| = 0 := by
+    exact (Finset.sum_eq_zero_iff_of_nonneg (fun q _ => abs_nonneg (z q))).mp hmass p
+      (Finset.mem_univ p)
+  exact abs_eq_zero.mp hp
+
+/-- Specialization of the preceding result to the paper's probe-vector
+interaction family. -/
+theorem interactionFrameBound_basisNondegenerate
+    {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W] {N : ℕ}
+    (U : Fin m → Fin m → Fin N → W) {c : ℝ}
+    (hframe : InteractionFrameBound U c) : BasisInteractionNondegenerate U :=
+  interactionFrameBound_linearIndependent U hframe
+
+/-- Necessary dimension budget: the number of strict interaction pairs cannot
+exceed the dimension available across all probes. -/
+theorem nondegenerate_pairCount_le_probeDimension
+    {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
+    [FiniteDimensional ℝ W] {N : ℕ}
+    (U : Fin m → Fin m → Fin N → W) (h : BasisInteractionNondegenerate U) :
+    Fintype.card (StrictPair m) ≤ N * Module.finrank ℝ W := by
+  have hdim := h.fintype_card_le_finrank
+  simpa [Module.finrank_pi_fintype] using hdim
+
+/-- The full ordered minor mass is twice the strict-pair minor mass. -/
+theorem minorMass_eq_two_strictMinorMass (a b : Fin m → ℝ) :
+    (∑ i, ∑ j, |coefficientMinor a b i j|) =
+      2 * ∑ p : StrictPair m, |strictMinorVector a b p| := by
+  have hsym : ∀ i j : Fin m,
+      |coefficientMinor a b i j| = |coefficientMinor a b j i| := by
+    intro i j
+    unfold coefficientMinor
+    rw [show a j * b i - a i * b j = -(a i * b j - a j * b i) by ring, abs_neg]
+  have hdiag : ∀ i : Fin m, |coefficientMinor a b i i| = 0 := by
+    intro i
+    simp [coefficientMinor]
+  rw [sum_symm_eq_two_upper (fun i j => |coefficientMinor a b i j|) hsym hdiag]
+  rw [sum_if_lt_eq_strictPair]
+  simp only [strictMinorVector, two_mul]
 
 /-- For normalized coefficient vectors, each coordinate difference is exactly the
 row sum of the coefficient minors.  This is the quantitative form of the
@@ -62,6 +142,83 @@ theorem coeffL1_tendsto_zero_of_minorMass_tendsto_zero
     (fun _ => Finset.sum_nonneg fun _ _ => abs_nonneg _)
     (fun n => coeff_l1_le_minor_mass m a (b n))
     h
+
+/-- A frame lower bound turns drift control into coefficient control without
+dividing by the conditioning constant. -/
+theorem frame_mul_coeffL1_le_two_mul_driftNorm
+    (U : Fin m → Fin m → V) (hanti : ∀ i j, U i j = -U j i)
+    {c : ℝ} (hframe : InteractionFrameBound U c)
+    (a b : FiniteProbabilityVector m) :
+    c * (∑ i, |a.weight i - b.weight i|) ≤
+      2 * ‖∑ i, ∑ j, (a.weight i * b.weight j) • U i j‖ := by
+  have hcoeff := coeff_l1_le_minor_mass m a b
+  rw [minorMass_eq_two_strictMinorMass a.weight b.weight] at hcoeff
+  have hbound := hframe.2 (strictMinorVector a.weight b.weight)
+  rw [interactionSynthesis_apply] at hbound
+  simp only [strictMinorVector, coefficientMinor] at hbound
+  rw [← bilinear_eq_sum_strictMinor U hanti] at hbound
+  have hc := mul_le_mul_of_nonneg_left hcoeff hframe.1.le
+  simp only [strictMinorVector, coefficientMinor] at hc
+  nlinarith
+
+/-- Division form of the practical stability estimate. -/
+theorem coeffL1_le_two_div_frame_mul_driftNorm
+    (U : Fin m → Fin m → V) (hanti : ∀ i j, U i j = -U j i)
+    {c : ℝ} (hframe : InteractionFrameBound U c)
+    (a b : FiniteProbabilityVector m) :
+    (∑ i, |a.weight i - b.weight i|) ≤
+      (2 / c) * ‖∑ i, ∑ j, (a.weight i * b.weight j) • U i j‖ := by
+  have h := frame_mul_coeffL1_le_two_mul_driftNorm U hanti hframe a b
+  rw [div_mul_eq_mul_div]
+  apply (le_div_iff₀ hframe.1).2
+  nlinarith
+
+/-- Stability after a bounded pointwise rescaling, the form needed for the
+normalizers in the paper's mean-shift field. -/
+theorem coeffL1_le_of_frame_scaledDrift
+    {N : ℕ} (U : Fin m → Fin m → Fin N → V)
+    (hanti : ∀ i j, U i j = -U j i)
+    {c B : ℝ} (hframe : InteractionFrameBound U c) (hB0 : 0 ≤ B)
+    (a b : FiniteProbabilityVector m) (scale : Fin N → ℝ) (v : Fin N → V)
+    (hscale : ∀ n, |scale n| ≤ B)
+    (hbilinear : (∑ i, ∑ j, (a.weight i * b.weight j) • U i j) =
+      fun n => scale n • v n) :
+    (∑ i, |a.weight i - b.weight i|) ≤ (2 * B / c) * ‖v‖ := by
+  have hcoeff := coeffL1_le_two_div_frame_mul_driftNorm U hanti hframe a b
+  rw [hbilinear] at hcoeff
+  have hnorm : ‖fun n => scale n • v n‖ ≤ B * ‖v‖ := by
+    apply (pi_norm_le_iff_of_nonneg (mul_nonneg hB0 (norm_nonneg v))).2
+    intro n
+    rw [norm_smul]
+    exact mul_le_mul (hscale n) (norm_le_pi_norm v n) (norm_nonneg _) hB0
+  calc
+    (∑ i, |a.weight i - b.weight i|)
+        ≤ (2 / c) * ‖fun n => scale n • v n‖ := hcoeff
+    _ ≤ (2 / c) * (B * ‖v‖) :=
+      mul_le_mul_of_nonneg_left hnorm (div_nonneg (by norm_num) hframe.1.le)
+    _ = (2 * B / c) * ‖v‖ := by ring
+
+/-- Uniform frame and scaling bounds turn vanishing probe drift into
+coefficient convergence. -/
+theorem coeffL1_tendsto_zero_of_frame_scaledDrift
+    {N : ℕ} (U : Fin m → Fin m → Fin N → V)
+    (hanti : ∀ i j, U i j = -U j i)
+    {c B : ℝ} (hframe : InteractionFrameBound U c) (hB0 : 0 ≤ B)
+    (a : FiniteProbabilityVector m) (b : ℕ → FiniteProbabilityVector m)
+    (scale : ℕ → Fin N → ℝ) (v : ℕ → Fin N → V)
+    (hscale : ∀ n i, |scale n i| ≤ B)
+    (hbilinear : ∀ n,
+      (∑ i, ∑ j, (a.weight i * (b n).weight j) • U i j) =
+        fun i => scale n i • v n i)
+    (hv : Tendsto (fun n => ‖v n‖) atTop (𝓝 0)) :
+    Tendsto (fun n => ∑ i, |a.weight i - (b n).weight i|) atTop (𝓝 0) := by
+  have hupper : Tendsto (fun n => (2 * B / c) * ‖v n‖) atTop (𝓝 0) := by
+    simpa using tendsto_const_nhds.mul hv
+  exact squeeze_zero
+    (fun _ => Finset.sum_nonneg fun _ _ => abs_nonneg _)
+    (fun n => coeffL1_le_of_frame_scaledDrift U hanti hframe hB0 a (b n)
+      (scale n) (v n) (hscale n) (hbilinear n))
+    hupper
 
 end PaperFiniteIdentifiability
 end DriftingIdentifiability

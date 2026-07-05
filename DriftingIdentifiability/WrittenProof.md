@@ -1,195 +1,111 @@
-# Written proof workspace
+# Written proof: finite population mean-shift identifiability
 
-## Candidate and status
+## Theorem and scope
 
-- **Candidate name:** finite-basis interaction separation.
-- **Status:** stress-tested; finite algebraic proof complete; formalized in
-  Lean including the legitimacy witnesses (`FiniteLegitimacy.lean`).
-- **Claim:** exact finite-model identifiability. No asymptotic claim is made
-  here.
-
-## Formal theorem statement
-
-Let `a,b ∈ ℝᵐ` be nonnegative coefficient vectors with
+Let `μ` be a reference probability measure and let `φ₁,…,φₘ` be measurable,
+nonnegative, integrable densities satisfying `∫φᵢ dμ = 1`. For simplex
+coefficients `a,b`, define the genuine probability measures
 
 ```text
-∑ᵢ aᵢ = ∑ᵢ bᵢ = 1.
+p = (∑ᵢ aᵢφᵢ) · μ,     q = (∑ᵢ bᵢφᵢ) · μ.
 ```
 
-Let `Uᵢⱼ ∈ Eᴺ` satisfy `Uᵢⱼ = -Uⱼᵢ`, and suppose the family
-`{Uᵢⱼ : i<j}` is linearly independent over `ℝ`. If
+Fix a mean-shift kernel and finitely many probes. Assume all integrals in
+equations (11) and (31) are valid, both normalizers are nonzero at every probe,
+and the strict-pair interaction vectors have a positive frame lower bound.
+Then pointwise zero of the normalized population mean-shift field implies
+`p=q`.
+
+This statement is about the ideal population field in data space. It excludes
+CFG/signed targets and does not identify the finite-batch estimator with the
+population field.
+
+## Proof
+
+1. Each mixture density is measurable, nonnegative, integrable, and has
+   integral one. Therefore `Measure.withDensity` produces probability measures
+   `p` and `q`.
+2. Applying the standard `withDensity` integration identity twice proves that
+   the measure-level interaction integral against `p.prod q` equals the
+   density-weighted iterated integral against `μ`.
+3. Equation (11) writes normalized mean-shift drift as the inverse product of
+   its two nonzero normalizers times the interaction numerator. Hence zero
+   normalized drift forces the numerator to vanish at every probe.
+4. Equation (31) expands the stacked numerator as
+   `∑ᵢ∑ⱼ aᵢbⱼ Uᵢⱼ`.
+5. Anti-symmetry groups this ordered sum into
+   `∑_{i<j}(aᵢbⱼ-aⱼbᵢ)Uᵢⱼ`. This grouping is proved in Lean rather than
+   axiomatized.
+6. A positive frame bound implies linear independence, so every minor
+   `aᵢbⱼ-aⱼbᵢ` is zero.
+7. Probability normalization gives
+   `aᵢ-bᵢ = ∑ⱼ(aᵢbⱼ-aⱼbᵢ)=0`; therefore `a=b`.
+8. Equal coefficients give definitionally equal mixture measures, hence
+   `p=q`.
+
+No step assumes uniqueness of a zero-drift equilibrium or injectivity of the
+drift-to-distribution map.
+
+## Population-loss bridge
+
+For the nonnegative function `x ↦ ‖Vₚ,q(x)‖²`, an integrable zero population
+integral implies `Vₚ,q=0` almost everywhere under `q`. If the field is
+continuous and `q` assigns positive measure to every nonempty open set,
+continuous functions equal almost everywhere are equal everywhere. The main
+theorem then applies.
+
+Without full support this upgrade is false; `FailureCases.lean` gives the
+continuous identity field under `dirac 0` as a counterexample.
+
+## Stability
+
+Let `c>0` satisfy
 
 ```text
-∑ᵢ ∑ⱼ aᵢ bⱼ Uᵢⱼ = 0,
+c ∑_{i<j}|zᵢⱼ| ≤ ‖∑_{i<j} zᵢⱼ Uᵢⱼ‖.
 ```
 
-then `a=b`. Consequently, for any common finite basis `φ₁,…,φₘ`, the densities
-`p=∑aᵢφᵢ` and `q=∑bᵢφᵢ` are equal.
-
-For the paper’s drifting field, equation (31), anti-symmetry, and the stated
-linear-independence condition supply the displayed bilinear hypotheses.
-
-## Legitimacy witness
-
-The condition does not imply `p=q` before zero drift is imposed. For `m≥2`,
-the distinct simplex vertices `a=e₀` and `b=e₁` are both normalized,
-nonnegative coefficient vectors. The model-class and interaction-separation
-conditions constrain the basis/kernel/probes, not the equality of these two
-coefficient vectors.
-
-This is now machine-checked in `FiniteLegitimacy.lean`, not merely argued:
-
-- `stdBasisProbVector m k` builds the simplex vertex `eₖ` as a
-  `FiniteProbabilityVector`; `exists_distinct_probVectors (hm : 2 ≤ m)`
-  produces the distinct pair `e₀ ≠ e₁`.
-- `basisDensity_injective_of_basisIndependent` shows the distinct coefficients
-  lift to distinct densities under `DensityBasisIndependent φ`, so the witness
-  is not an artifact of the coefficient encoding.
-  `finiteConditionAllowsDistinctDensities` packages the two into a
-  density-level `ConditionAllowsDistinctPair`.
-- `exists_separation_with_distinct_pair` exhibits a concrete interaction system
-  `witnessU i j = i - j` on `m=2, N=1` that is *simultaneously* anti-symmetric
-  (`witnessU_anti`) and nondegenerate (`witnessU_nondegenerate`), yet still
-  admits `a ≠ b`. Only adding `zeroBilinear` forces equality, so the separation
-  premises encode no hidden `a=b`.
-
-`#print axioms` on `finiteConditionAllowsDistinctDensities` and
-`exists_separation_with_distinct_pair` reports only
-`propext, Classical.choice, Quot.sound` — in particular **not**
-`zero_drift_coefficient_minors`. The legitimacy results are therefore
-provably independent of the paper's zero-drift axiom, as legitimacy requires.
-
-The witness is exact only for `2 ≤ m`; the `m ≤ 1` collapse is logged in
-`LoggedFailures.md`.
-
-## Stress tests completed
-
-- **One/two point:** `m=1` is necessarily trivial; for `m=2`, a single nonzero
-  `U₀₁` suffices and the coefficient calculation is exact.
-- **Missing normalization:** fails for proportional vectors, e.g.
-  `(1,0)` and `(2,0)`; logged in `LoggedFailures.md`.
-- **Degenerate interaction/probes:** fails when every `Uᵢⱼ=0`; logged.
-- **Flat kernel:** reduces to mean matching and fails even for distinct smooth
-  full-support laws with the same mean; logged.
-- **Collapsed/disjoint supports:** do not affect the algebra once the finite
-  representation and observable-vector independence are assumed; validating
-  those analytic assumptions remains a separate obligation.
-- **Dimension count:** full independence requires enough ambient probe
-  dimensions to host `m(m-1)/2` vectors. The paper’s heuristic `dN ≫ m²` is a
-  plausible way to make this possible, not by itself a proof of independence.
-- **Asymptotic sequences:** not claimed in this theorem. A quantitative lower
-  singular-value bound will be needed for stability estimates.
-
-## Definitions and assumptions
-
-1. **Anti-symmetry of `U`:** groups the ordered bilinear sum into minors.
-2. **Linear independence of `{Uᵢⱼ : i<j}`:** forces every minor
-   `aᵢbⱼ-aⱼbᵢ` to vanish.
-3. **Equal unit mass:** removes the scale ambiguity left by vanishing minors.
-4. **Nonnegativity:** is needed for the probability interpretation, but the
-   final algebraic equality uses only equal nonzero total mass.
-5. **Finite basis representation:** turns coefficient equality into density
-   equality. Basis independence is needed to make coefficients an identifiable
-   parametrization, though the forward implication `a=b → p=q` is immediate.
-
-## Lemmas
-
-### Lemma 1 — zero drift gives zero minors
-
-Under anti-symmetry and linear independence of the interaction vectors, the
-bilinear zero equation implies
+The ordered minor mass is twice the strict-pair mass, while normalized
+coefficients satisfy
 
 ```text
-aᵢbⱼ-aⱼbᵢ = 0   for all i,j.
+‖a-b‖₁ ≤ ∑ᵢ∑ⱼ |aᵢbⱼ-aⱼbᵢ|.
 ```
 
-This is now **proved from scratch** in `FiniteGrouping.lean`
-(`coefficientMinorsVanish_of_antisymm`): the anti-symmetric bilinear sum,
-doubled, equals the minor-weighted sum over strict pairs (a `sum_comm`/trichotomy
-grouping identity), and linear independence of `{Uᵢⱼ : i<j}` forces every minor
-to vanish (`Fintype.linearIndependent_iff`).  It no longer uses the paper axiom
-`zero_drift_coefficient_minors`.
-
-### Lemma 2 — normalized vectors with zero minors are equal
-
-Fix `i` and sum the minor identity over `j`:
+If the absolute normalizer product is at most `B` at every probe, then
 
 ```text
-0 = ∑ⱼ(aᵢbⱼ-aⱼbᵢ)
-  = aᵢ(∑ⱼbⱼ) - (∑ⱼaⱼ)bᵢ
-  = aᵢ-bᵢ.
+‖a-b‖₁ ≤ (2B/c) ‖normalized probe drift‖.
 ```
 
-Thus `aᵢ=bᵢ` for every `i`, hence `a=b`. This proof avoids selecting a positive
-coordinate and remains valid for every finite `m`; when `m=0`, normalized
-coefficient vectors have no inhabitants.
+The same uniform estimate proves coefficient convergence from probe-drift
+convergence. Nondegeneracy also requires
+`card(StrictPair m) ≤ N · dim(E)`, which is now machine checked.
 
-### Lemma 3 — equal coefficients give equal basis densities
+## Legitimacy and failure audit
 
-Substitute `a=b` into `p(y)=∑aᵢφᵢ(y)` and
-`q(y)=∑bᵢφᵢ(y)`.
+The registered `finiteBasisCandidate` admits distinct laws whenever two
+basis-induced mixtures are unequal; the first two simplex vertices give a
+convenient witness for `m≥2`. This is established before imposing zero drift.
 
-## Main proof
+Formal regressions cover zero normalizers, collapsed bases, duplicated
+interaction vectors, insufficient probe dimension, missing full support, and
+non-injective feature maps. A measurable embedding is sufficient to lift
+feature-law equality back to source-law equality.
 
-Apply Lemma 1 to the zero bilinear drift. Apply Lemma 2 using probability
-normalization to obtain `a=b`. Lemma 3 yields equality of the represented
-density functions. No uniqueness or identifiability statement is assumed.
+## Lean map and dependencies
 
-## Anti-circularity audit
+- Probability measures and normalized bridge:
+  `PopulationIdentifiability.lean`.
+- Algebraic grouping and exact coefficient proof: `FiniteGrouping.lean` and
+  `PaperFiniteIdentifiability.lean`.
+- Quantitative frame estimates: `FiniteStability.lean`.
+- Candidate legitimacy and regressions: `PopulationCandidate.lean` and
+  `FailureCases.lean`.
 
-- No step assumes `V=0 → p=q` or its contrapositive.
-- Interaction-vector independence is a concrete finite linear-algebra
-  condition, not equality of distributions. Its validation for a particular
-  kernel/probe system remains explicit work.
-- The model assumptions admit distinct coefficient vectors independently of
-  zero drift.
-- Exact equality and convergence are not conflated.
-- Analytic issues (Fubini, normalizers, support, and passage from sampled to
-  pointwise zero drift) are supplied by the paper interface or left as named
-  future obligations; they are not silently assumed in this algebraic result.
-
-## Lean implementation map
-
-| Written lemma | Lean declaration | File | Status |
-|---|---|---|---|
-| Zero drift gives zero minors | `coefficientMinorsVanish` | `PaperFiniteIdentifiability.lean` | proved |
-| Normalized zero-minor vectors agree | `normalizedParallelCoefficientsAreEqual` | `PaperFiniteIdentifiability.lean` | proved |
-| Finite coefficient identifiability | `finiteCoefficientIdentifiable` | `PaperFiniteIdentifiability.lean` | proved |
-| Equal coefficients give equal basis densities | `finiteBasisDensitiesEqual` | `PaperFiniteIdentifiability.lean` | proved |
-| Simplex-vertex probability vectors | `stdBasisProbVector` | `FiniteLegitimacy.lean` | proved |
-| Distinct pair exists for `2 ≤ m` | `exists_distinct_probVectors` | `FiniteLegitimacy.lean` | proved |
-| Distinct coefficients give distinct densities | `basisDensity_injective_of_basisIndependent` | `FiniteLegitimacy.lean` | proved |
-| Density-level legitimacy (distinct pair) | `finiteConditionAllowsDistinctDensities` | `FiniteLegitimacy.lean` | proved |
-| Separation hypothesis is satisfiable | `exists_separation_with_distinct_pair` | `FiniteLegitimacy.lean` | proved |
-| Actual drift-zero ⇒ grouped bilinear zero | `DriftFiniteSetup.zeroBilinear` | `PaperDriftIdentifiability.lean` | proved |
-| Probe-wise drift-zero identifies densities | `driftProbeZeroIdentifiesDensities` | `PaperDriftIdentifiability.lean` | proved |
-| Mean-shift kernel specialization | `meanShiftInteractionIdentifiesDensities` | `PaperDriftIdentifiability.lean` | proved |
-
-## Drift-level connection (Appendix C.1, equations 30–32)
-
-The table's first four rows start from the *grouped* hypothesis
-`∑ᵢ∑ⱼ aᵢbⱼ • Uᵢⱼ = 0`. `PaperDriftIdentifiability.lean` closes the gap to the
-*actual* field: `DriftFiniteSetup` bundles an anti-symmetric interaction kernel
-`K`, basis `φ`, probes, probability vectors, nondegeneracy, and the hypothesis
-that the density-interaction drift (equations 28/30) vanishes at every probe.
-`equation_31_bilinear_expansion` rewrites that drift as the grouped bilinear
-sum, and `antisymmetric_kernel_induces_basis_antisymmetry` supplies the
-anti-symmetry of the induced `U`; together they reduce the drift-level setup to
-`FiniteCoefficientSetup`, after which the finite algebra applies unchanged.
-
-`#print axioms driftProbeZeroIdentifiesDensities` reports only the standard
-Mathlib axioms plus the reviewed paper axioms `equation_31_bilinear_expansion`,
-`antisymmetric_kernel_induces_basis_antisymmetry`, and
-`zero_drift_coefficient_minors` — all on the `Paperaxioms.lean` allowlist. The
-zero-drift hypothesis is probe-wise (finite `N` probes), matching Appendix C.1;
-passing to global zero drift and to a measure-level statement remain open.
-
-## Expected `#print axioms` output
-
-The pure finite theorem `finiteBasisDensitiesEqual` now depends on **only**
-Mathlib’s standard foundational axioms (`propext`, `Classical.choice`,
-`Quot.sound`) — no paper axiom at all, since `coefficientMinorsVanish` was
-rederived in `FiniteGrouping.lean`. The drift-level wrapper in
-`PaperDriftIdentifiability.lean` additionally uses the reviewed analytic-expansion
-axioms `equation_31_bilinear_expansion` and
-`antisymmetric_kernel_induces_basis_antisymmetry`, both on the allowlist.
+The promoted theorem uses only the reviewed paper facts
+`equation_11_bilinear_mean_shift`,
+`equation_31_bilinear_expansion`, and
+`antisymmetric_kernel_induces_basis_antisymmetry`, besides foundational
+Mathlib axioms. It has no dependency on characteristic-kernel, Gaussian
+metrization, or Gaussian Gram axioms; this is enforced by `AxiomAudit.ps1`.

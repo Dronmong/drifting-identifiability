@@ -3,13 +3,10 @@ import DriftingIdentifiability.CandidateConditions
 /-!
 # Deriving the coefficient-minor vanishing without the paper axiom
 
-`PaperFiniteIdentifiability.coefficientMinorsVanish` currently uses the reviewed
-paper axiom `zero_drift_coefficient_minors`.  That axiom is *permitted*, but its
-content is elementary linear algebra, so we can — and here do — prove it from
-scratch: only anti-symmetry of the interaction family and a standard Mathlib
-linear-independence fact are used.  This removes two paper axioms
-(`equation_32_grouped_zero_drift`, `zero_drift_coefficient_minors`) from the
-finite route's dependency graph.
+The coefficient-minor conclusion is elementary linear algebra, so it is proved
+here from scratch: only anti-symmetry of the interaction family and a standard
+Mathlib linear-independence fact are used. The former equation-(32) and
+zero-minor axioms have been removed from the trusted boundary.
 
 The key step is the grouping identity: an anti-symmetric bilinear sum over all
 ordered pairs equals the minor-weighted sum over strict pairs.
@@ -71,7 +68,7 @@ private theorem two_smul_bilinear_eq_sum_minorTerm
 omit [Module ℝ V] in
 /-- Trichotomy collapse: the full ordered sum of a symmetric, zero-diagonal
 family equals twice the strict-upper sum. -/
-private theorem sum_symm_eq_two_upper
+theorem sum_symm_eq_two_upper
     (F : Fin m → Fin m → V) (hsym : ∀ i j, F i j = F j i)
     (hdiag : ∀ i, F i i = 0) :
     (∑ i, ∑ j, F i j)
@@ -110,7 +107,7 @@ private theorem sum_symm_eq_two_upper
 
 omit [Module ℝ V] in
 /-- The strict-upper double sum is the sum over the strict-pair index type. -/
-private theorem sum_if_lt_eq_strictPair (F : Fin m → Fin m → V) :
+theorem sum_if_lt_eq_strictPair (F : Fin m → Fin m → V) :
     (∑ i, ∑ j, if i < j then F i j else 0)
       = ∑ p : StrictPair m, F p.1.1 p.1.2 := by
   have key : (∑ p : StrictPair m, F p.1.1 p.1.2)
@@ -121,8 +118,30 @@ private theorem sum_if_lt_eq_strictPair (F : Fin m → Fin m → V) :
   rw [key, Finset.sum_filter, Fintype.sum_prod_type]
   rfl
 
+/-- The ordered anti-symmetric bilinear sum is exactly the strict-pair
+minor synthesis. -/
+theorem bilinear_eq_sum_strictMinor
+    (U : Fin m → Fin m → V) (hanti : ∀ i j, U i j = -U j i)
+    (a b : Fin m → ℝ) :
+    (∑ i, ∑ j, (a i * b j) • U i j) =
+      ∑ p : StrictPair m,
+        (a p.1.1 * b p.1.2 - a p.1.2 * b p.1.1) • U p.1.1 p.1.2 := by
+  let B : V := ∑ i, ∑ j, (a i * b j) • U i j
+  let S : V := ∑ p : StrictPair m,
+    (a p.1.1 * b p.1.2 - a p.1.2 * b p.1.1) • U p.1.1 p.1.2
+  have hfull : (∑ i, ∑ j, minorTerm U a b i j) = B + B := by
+    exact two_smul_bilinear_eq_sum_minorTerm U hanti a b
+  have hstrict : (∑ i, ∑ j, minorTerm U a b i j) = S + S := by
+    rw [sum_symm_eq_two_upper (minorTerm U a b) (minorTerm_symm U hanti a b)
+      (minorTerm_diag U a b)]
+    simp only [sum_if_lt_eq_strictPair, minorTerm, S]
+  have htwo : B + B = S + S := hfull.symm.trans hstrict
+  have hscaled := congrArg (fun v : V => (2 : ℝ)⁻¹ • v) htwo
+  simpa only [← two_smul ℝ, smul_smul, inv_mul_cancel₀ (by norm_num : (2 : ℝ) ≠ 0),
+    one_smul, B, S] using hscaled
+
 /-- **Coefficient minors vanish — proved, not assumed.**  This reproduces the
-content of the paper axiom `zero_drift_coefficient_minors` using only
+content of the paper's zero-minor conclusion using only
 anti-symmetry of the interaction family and Mathlib's linear-independence
 characterization.  No paper axiom is used. -/
 theorem coefficientMinorsVanish_of_antisymm

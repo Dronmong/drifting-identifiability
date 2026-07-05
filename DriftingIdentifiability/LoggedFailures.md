@@ -144,3 +144,88 @@ so future agents do not repeat equivalent mistakes.
 - **Relevant Lean declarations/files:** `mmdDrift`, `mmdSquared`,
   `gaussian_mmd_metrizes_weakConvergence`, `gaussianMmd_asymptoticallyIdentifies`,
   `CharacteristicIdentifiability.lean`.
+
+---
+
+### 2026-07-05 — characteristic embedding axiom as a claimed solution
+
+- **Exact condition:** Assume `characteristic_gradientEmbedding_injective` for
+  the gradient embedding defining `mmdDrift`.
+- **Intended mechanism:** Zero drift is equality of those embeddings, followed
+  immediately by the assumed injectivity.
+- **Counterexample or obstruction:** For this field the assumption contains
+  the substantive target implication; renaming it “characteristic” does not
+  independently solve the research problem.
+- **Fatal or repairable:** Fatal as a promoted proof; useful as a conditional
+  reduction.
+- **Possible repair:** Prove the analytic injectivity theorem from lower-level
+  Euclidean Fourier/RKHS facts, or keep the result explicitly conditional.
+- **Relevant Lean declarations/files:** `CharacteristicIdentifiability.lean`,
+  `DriftingIdentifiability.Conditional`.
+
+---
+
+### 2026-07-05 — synthetic Gaussian interactions mistaken for paper interactions
+
+- **Exact condition:** Use an anti-symmetric extension of Gaussian Gram rows as
+  the interaction vectors.
+- **Counterexample or obstruction:** No theorem identifies these synthetic
+  vectors with the paper's integral-induced `basisInteraction` vectors.
+- **Fatal or repairable:** Repairable only by proving that analytic bridge.
+- **Possible repair:** Treat the construction as a consistency example and
+  estimate a frame bound for the actual integral system.
+- **Relevant Lean declarations/files:** `GaussianNondegeneracy.lean`.
+
+---
+
+### 2026-07-05 — zero normalized drift with invalid normalizers
+
+- **Exact condition:** Manipulate equation (11) without assuming both kernel
+  normalizers are nonzero.
+- **Counterexample or obstruction:** Multiplication by an inverse cannot be
+  cancelled at a zero normalizer; the normalized field is not regular there.
+- **Fatal or repairable:** Repairable with `MeanShiftRegularAt` at every probe.
+- **Relevant Lean declarations/files:** `zero_target_normalizer_not_regular`,
+  `PopulationMeanShiftFiniteSetup`.
+
+---
+
+### 2026-07-05 — sampled/a.e. zero silently promoted to global zero
+
+- **Exact condition:** Infer pointwise `ZeroDrift` directly from zero expected
+  squared drift under `q`.
+- **Counterexample or obstruction:** Under `q=dirac 0`, the continuous identity
+  field is zero almost everywhere but not globally.
+- **Fatal or repairable:** Repairable with continuity and positive mass on
+  every nonempty open set.
+- **Relevant Lean declarations/files:** `identityDrift_zeroAE_at_diracZero`,
+  `zeroDrift_of_ae_of_continuous_fullSupport`.
+
+---
+
+### 2026-07-05 — feature matching treated as source-law matching
+
+- **Exact condition:** Conclude `p=q` from equality of `φ♯p` and `φ♯q` for an
+  arbitrary feature map.
+- **Counterexample or obstruction:** A non-injective feature collapses two
+  distinct Dirac measures.
+- **Fatal or repairable:** Repairable when `φ` is a measurable embedding; in
+  general only pushforward equality may be claimed.
+- **Relevant Lean declarations/files:** `noninjectiveFeature_collapses_dirac`,
+  `sourceMeasure_eq_of_featureLaw_eq`.
+
+---
+
+### 2026-07-05 — population theorem applied to CFG or minibatches
+
+- **Exact condition:** Treat Algorithm 2's finite bi-softmax estimator or an
+  affine CFG target as the same object as the normalized population field.
+- **Counterexample or obstruction:** The estimator has sampling and batch
+  normalization error, while CFG can leave the probability simplex and require
+  signed measures.
+- **Fatal or repairable:** Separate research problems, not consequences of the
+  current theorem.
+- **Possible repair:** Prove finite-sample approximation bounds and formalize a
+  signed-measure CFG extension.
+- **Relevant Lean declarations/files:** `algorithm2Drift`, `cfgNegativeDensity`,
+  `PopulationIdentifiability.lean`.

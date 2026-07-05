@@ -1,70 +1,109 @@
 # Research status
 
-## Infrastructure
+## Verified paper-native result
 
-- [x] Paper definitions and results formalized behind a reviewed boundary.
-- [x] Exact and asymptotic theorem targets distinguished.
-- [x] Candidate nonvacuity/anti-circularity predicates available.
-- [x] Counterexample and finite-coefficient harness available.
-- [x] Trust audit rejects new axioms and incomplete proofs.
-- [x] Warning-free whole-library build configured.
+- [x] The Appendix C.1 grouping and coefficient-minor argument is proved
+  without project axioms.
+- [x] A finite basis is now required to consist of measurable, nonnegative,
+  integrable unit-mass densities.
+- [x] Finite mixtures are genuine `Measure`s constructed with `withDensity`,
+  and Lean proves they are probability measures.
+- [x] The measure interaction integral is proved equal to the paper's
+  density-weighted interaction integral.
+- [x] Nonzero normalizers and equation (11) connect zero normalized population
+  mean-shift drift to zero interaction numerator at the probes.
+- [x] `finitePopulationMeanShift_identifies` proves equality of the represented
+  probability measures.
+- [x] Zero ideal population energy also suffices under integrability,
+  continuity, and full topological support.
+- [x] `InteractionFrameBound` supplies a quantitative, independently testable
+  conditioning constant and implies the paper's qualitative nondegeneracy.
+- [x] Coefficient error is bounded by normalized probe-drift error with the
+  explicit factor `2B/c`; vanishing probe drift therefore gives coefficient
+  convergence under uniform bounds.
+- [x] A necessary probe-dimension bound is formalized.
+- [x] The finite family is registered as a `CandidateSpec` with a formal
+  distinct-pair legitimacy proof.
 
-## Mathematical baseline
+## Honest scope
 
-- [x] Anti-symmetry proves `p = q → V = 0`.
-- [x] Appendix C.1 finite expansion and zero-minor conclusion exposed.
-- [x] Coefficient-minor vanishing **proved from scratch** (`FiniteGrouping.lean`,
-      `coefficientMinorsVanish_of_antisymm`): the finite exact route
-      (`finiteBasisDensitiesEqual`) is now axiom-free, no longer using the paper
-      axiom `zero_drift_coefficient_minors`.
-- [x] Normalized probability coefficient vectors with all minors zero are equal
-      (`normalizedParallelCoefficientsAreEqual`).
-- [x] Coefficient equality lifts to density equality using basis independence
-      (`finiteBasisDensitiesEqual`); the distinctness direction is also proved
-      (`basisDensity_injective_of_basisIndependent`).
-- [x] Finite condition is legitimate: a distinct pair exists before zero drift
-      and the separation premises are satisfiable (`FiniteLegitimacy.lean`).
-- [x] Actual density-interaction drift-zero (probe-wise) identifies the basis
-      densities via the reviewed paper axioms
-      (`driftProbeZeroIdentifiesDensities`,
-      `meanShiftInteractionIdentifiesDensities`).
-- [x] Nondegeneracy discharged for a concrete Gaussian-kernel interaction system
-      (`GaussianNondegeneracy.lean`, `gaussianInteractionIdentifiesCoefficients`):
-      reduced to Micchelli's strict positive definiteness of the Gaussian
-      (`gaussian_gram_linearIndependent`) via an axiom-free anti-symmetric
-      extension, so the finite identifiability holds with nondegeneracy derived
-      rather than assumed. Remaining: match the paper's exact integral-induced
-      interaction vectors (analytic), and the integrability side conditions.
-- [x] Measure-level `IdentifiesAtZero` reached for a concrete paper field
-      (`CharacteristicIdentifiability.lean`): for a characteristic kernel — the
-      Gaussian being the witnessed instance — zero MMD drift (equation 41)
-      between probability measures forces `p = q`. Identifiability is reduced to
-      the reviewed RKHS embedding-injectivity axioms; the drift→embedding step is
-      definitional for the MMD field (see the transparency note in
-      `Paperaxioms.lean`).
-- [ ] Bridge the *finite-basis* density statement to the measure level, and
-      probe-wise zero drift to global zero drift.
-- [~] Quantitative coefficient stability proved (`FiniteStability.lean`): `ℓ¹`
-      coefficient distance ≤ total minor mass, hence `minor mass → 0 ⟹
-      coefficients → 0`. The remaining gap is bounding the minor mass by the
-      drift norm (the linear-independence lower bound). Concrete plan:
-      (1) prove the general anti-symmetric grouping identity
-      `∑ᵢ∑ⱼ aᵢbⱼ • Uᵢⱼ = ∑_{i<j} (aᵢbⱼ - aⱼbᵢ) • Uᵢⱼ` (axiom-free algebra;
-      currently only the zero case is exposed as `equation_32_grouped_zero_drift`);
-      (2) package `c ↦ ∑ c_p • U_p` as a `LinearMap` whose kernel is `⊥` from
-      nondegeneracy, and apply `LinearMap.exists_antilipschitzWith` (finite
-      dimension) to get `‖minor‖ ≤ K ‖drift‖`. Chaining with the stability bound
-      yields Lipschitz stability `ℓ¹ coeff distance ≤ C ‖drift‖`.
-- [x] Asymptotic result with named discrepancy and topology
-      (`gaussianMmd_asymptoticallyIdentifies`): an `AsymptoticallyIdentifies`
-      instance for the Gaussian, using the MMD discrepancy (equation 37) as the
-      drift size and the Lévy–Prokhorov metric as the distribution distance, via
-      the reviewed metrization axiom `gaussian_mmd_metrizes_weakConvergence`.
-      Caveat: the drift size is the MMD discrepancy, not the raw drift-field
-      norm — that connection is subtle and is logged, not claimed.
+The promoted theorem concerns the ideal normalized population mean-shift field
+in data space, without CFG. It does not claim that a finite minibatch
+bi-softmax estimator is equal to the population field. Feature-space matching
+proves only pushforward equality unless the feature is a measurable embedding.
 
-## Active candidate
+## Conditional research modules
 
-Finite-basis interaction separation — complete and audited through the
-drift-level statement. No open candidate at the finite/exact level; the next
-work items are the four unchecked analytic/asymptotic obligations above.
+`CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are
+available only through `DriftingIdentifiability.Conditional`. They depend on
+external Gaussian/RKHS axioms or a synthetic interaction construction and are
+not accepted project solutions. Their assumptions are restricted to suitable
+inner-product/Borel/finite-dimensional settings.
+
+## Exact remaining gap
+
+The finite population theorem itself is complete. Its one unresolved
+mathematical hypothesis is the positive interaction frame bound for the
+paper's **actual integral-induced interaction vectors**:
+
+```text
+c · ∑_{i<j} |zᵢⱼ| ≤ ‖∑_{i<j} zᵢⱼ Uᵢⱼ‖    for some c > 0,
+```
+
+where
+
+```text
+Uᵢⱼ(n) = ∬ φᵢ(y⁺) φⱼ(y⁻)
+              K(xₙ,y⁺,y⁻) dμ(y⁻) dμ(y⁺).
+```
+
+The project proves everything that follows from this bound: qualitative
+nondegeneracy, exact measure identifiability, the stability estimate
+`‖a-b‖₁ ≤ (2B/c)‖V_probes‖`, and coefficient convergence. What is not yet
+proved is that a practical choice of the paper's kernel, probability-density
+basis, and probes produces such a `c`, or that the resulting `c` is not so
+small that the guarantee becomes numerically useless.
+
+The synthetic Gaussian Gram construction does not close this gap: it proves
+nondegeneracy for an artificially constructed anti-symmetric interaction
+family, but that family has not been shown equal to the integral-induced
+vectors above. The characteristic-kernel route also does not close it because
+its embedding-injectivity premise is conditional and substantively equivalent
+to the desired conclusion for that field.
+
+### Closed for `m = 2` with the actual vectors (`EmpiricalFrameBound.lean`)
+
+For a **two-point empirical reference** `μ = ½(δ_{z₀}+δ_{z₁})` and the mean-shift
+interaction kernel, the *actual* double integral above is computed in closed form
+(`basisInteraction_empirical2`):
+
+```text
+Uᵢⱼ(n) = ¼ (φᵢ(z₀)φⱼ(z₁) − φᵢ(z₁)φⱼ(z₀)) · k(xₙ,z₀) k(xₙ,z₁) · (z₀ − z₁).
+```
+
+With a Gaussian kernel (`k > 0` by `Real.exp_pos`), distinct points, and a basis
+with nonzero value minor, the single strict-pair vector `U₀₁` is nonzero, so
+`empiricalInteractionFrameBound` establishes a **positive frame bound with an
+explicit constant** `c = ‖U₀₁‖` for the actual induced vectors — no synthetic
+substitute and no external axiom (`#print axioms` = Mathlib foundations only).
+This carries out steps 1–3 below for `m = 2`.
+
+### What remains
+
+1. ✅/`m=2`: choose an implementable density basis, kernel, and probe scheme —
+   done (two-point empirical reference, Gaussian kernel).
+2. ✅/`m=2`: compute the integral-induced interaction matrix — done in closed
+   form.
+3. ✅/`m=2`: prove the smallest frame value is positive — done, `c = ‖U₀₁‖`.
+4. **Open:** general `m ≥ 3` (where `StrictPair` has more than one element and
+   genuine linear independence of the `Uᵢⱼ` is required, not just one nonzero
+   vector), and whether `c` remains acceptably bounded as model size and
+   dimension grow.
+
+The `m = 2` closure uses the actual `basisInteraction`; extending to general `m`
+requires independence of the closed-form vectors
+`{k(xₙ,zᵢ)k(xₙ,zⱼ)(zᵢ−zⱼ)}_{i<j}`, a product-kernel strict-positive-definiteness
+statement. Separate later extensions—not gaps in the present population
+theorem—are finite-sample bounds for Algorithm 2, learned-feature/source-law
+identifiability, CFG via signed measures, and generalization beyond finite
+density families.

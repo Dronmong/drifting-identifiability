@@ -1,13 +1,12 @@
 import DriftingIdentifiability.PaperFiniteIdentifiability
 
 /-!
-# Discharging the nondegeneracy hypothesis for the Gaussian kernel
+# A conditional synthetic Gaussian interaction system
 
-The finite route assumes `BasisInteractionNondegenerate` — linear independence of
-the interaction vectors `{Uᵢⱼ : i<j}`.  Here we *derive* that hypothesis for a
-concrete Gaussian-kernel interaction system, reducing it to the well-known fact
-that the Gaussian kernel is strictly positive definite (Micchelli, 1986): for
-distinct points the Gram matrix is nonsingular, so its rows are independent.
+The finite route assumes `BasisInteractionNondegenerate` for the paper's
+integral-induced interaction vectors. Here we derive that property only for a
+synthetic anti-symmetric extension of Gaussian Gram rows, conditional on the
+external strict-positive-definiteness axiom.
 
 Two axiom-free pieces do the reduction:
 
@@ -15,9 +14,9 @@ Two axiom-free pieces do the reduction:
   indexed by the strict pairs, and `antisymmExtend_nondegenerate` shows its
   strict-pair restriction is exactly that family — so independence transfers.
 
-The only imported fact is the Gaussian Gram nonsingularity, and the resulting
-identifiability theorem `gaussianInteractionIdentifiesCoefficients` therefore has
-its nondegeneracy *discharged*, not assumed.
+This construction is not proved equal to the paper's integral-induced vectors.
+Consequently it is an opt-in consistency example, not a discharge of the
+paper-native nondegeneracy obligation.
 -/
 
 open scoped BigOperators
@@ -69,7 +68,7 @@ theorem antisymmExtend_nondegenerate (W : StrictPair m → V)
 /-! ## The Gaussian instantiation -/
 
 section Gaussian
-variable {E : Type u} [NormedAddCommGroup E]
+variable {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 /-- The interaction directions built from Gaussian kernel values at points `x`
 indexed by the strict pairs: `Wₚ(q) = k_σ(xₚ, x_q)`.  These are the rows of the

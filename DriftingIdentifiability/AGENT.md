@@ -171,70 +171,40 @@ Before claiming completion:
 5. verify the candidate condition still admits a distinct pair independently
    of zero drift.
 
-## Current promising route
+## Current verified route
 
-Appendix C.1 reduces the finite-basis problem to vanishing coefficient minors
-under linear independence of the interaction vectors. This finite route is now
-complete and audited:
+The promoted result is the paper-native finite population theorem
+`finitePopulationMeanShift_identifies` in `PopulationIdentifiability.lean`.
+Its basis elements are measurable, nonnegative, unit-mass densities; their
+mixtures are genuine probability measures. The proof connects the normalized
+population mean-shift field to the density interaction numerator using nonzero
+normalizers and equation (11), then applies the axiom-free minor algebra.
 
-- `PaperFiniteIdentifiability.lean` proves coefficient equality
-  (`finiteCoefficientIdentifiable`) and density equality
-  (`finiteBasisDensitiesEqual`) from the grouped zero-drift hypothesis. These are
-  now **axiom-free** (`#print axioms` shows only Mathlib foundations): the
-  coefficient-minor step was rederived from scratch in `FiniteGrouping.lean`
-  (`coefficientMinorsVanish_of_antisymm`), removing the paper axiom
-  `zero_drift_coefficient_minors`.
-- `FiniteLegitimacy.lean` machine-checks legitimacy: a distinct pair exists
-  before zero drift (`exists_distinct_probVectors`, `2 ≤ m`), it lifts to
-  distinct densities under basis independence
-  (`basisDensity_injective_of_basisIndependent`), and the anti-symmetric +
-  nondegenerate separation premises are themselves satisfiable
-  (`exists_separation_with_distinct_pair`). These carry no project axiom.
-- `PaperDriftIdentifiability.lean` connects the *actual* density-interaction
-  drift to the algebra using the reviewed paper axioms `equation_31…` and
-  `antisymmetric_kernel_induces_basis_antisymmetry`:
-  `driftProbeZeroIdentifiesDensities` proves probe-wise zero drift plus
-  nondegeneracy identifies the basis densities, specialized to the paper's
-  mean-shift kernel in `meanShiftInteractionIdentifiesDensities`.
+Practical versions must supply a positive `InteractionFrameBound`, not merely
+assert unnamed injectivity. This bound implies nondegeneracy and yields the
+explicit stability estimate `‖a-b‖₁ ≤ (2B/c)‖V_probes‖`. A necessary probe
+dimension bound is also formalized. `finiteBasisCandidate` records the model
+family and proves legitimacy from an independently unequal pair.
 
-This finite, probe-wise result does not by itself settle general or asymptotic
-identifiability. Progress on obligation (a): the nondegeneracy hypothesis is now
-*discharged* for a concrete Gaussian-kernel interaction system in
-`GaussianNondegeneracy.lean` (`gaussianInteractionIdentifiesCoefficients`),
-reducing it to Micchelli's strict positive definiteness of the Gaussian via an
-axiom-free anti-symmetric extension — nondegeneracy is derived, not assumed. The
-remaining obligations are: (a′) match the paper's exact integral-induced
-interaction vectors and the integrability side conditions; (b) bridge from the
-density-valued `Density E` statement to a measure-level
-`IdentifiesAtZero` claim; (c) pass from probe-wise zero drift to genuinely global
-zero drift; and (d) the asymptotic target `AsymptoticallyIdentifies`.
+The result is deliberately scoped to the ideal population field, data-space
+matching, and no CFG. Zero population energy reaches the pointwise hypothesis
+only with integrability, continuity, and full topological support. A finite
+minibatch estimator and a signed CFG target require separate theorems.
 
-## Distribution-level route (characteristic kernels)
+## Conditional modules
 
-A second, independent route reaches the measure-level target directly.
-`CharacteristicIdentifiability.lean` proves `IdentifiesAtZero BothProbability
-(radialMmdDrift (gaussianRadialDeriv σ))`: for the Gaussian MMD drift (equation
-41) between probability measures, zero drift forces `p = q`.  The identification
-is the reviewed RKHS fact that a characteristic kernel's mean embedding is
-injective (`characteristic_gradientEmbedding_injective`), with the Gaussian as a
-concrete characteristic witness (`gaussian_gradient_isCharacteristic`).  Per the
-project policy these well-known theorems are axiomatized, not reproved.
+`CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are
+opt-in through `DriftingIdentifiability.Conditional`. They may guide research,
+but cannot support a promoted success claim:
 
-Transparency: because `mmdDrift kg p q = Φₚ − Φ_q` by construction, zero MMD
-drift is *definitionally* embedding matching, so this route reduces the paper's
-identifiability question to the standard RKHS theorem rather than proving it from
-lower-level analysis.  The honest content is the identification of the precise
-external fact the paper relies on, plus the concrete, legitimate condition
-(characteristic kernel, admitting distinct Dirac pairs before zero drift).  See
-the note in `Paperaxioms.lean`.
+- characteristic-gradient embedding injectivity is substantively equivalent
+  to the desired implication for the MMD drift;
+- the Gaussian anti-symmetric extension is synthetic and is not proved equal
+  to the paper's integral-induced interaction vectors;
+- all Gaussian/RKHS declarations remain explicitly classified external axioms.
 
-The asymptotic counterpart is `gaussianMmd_asymptoticallyIdentifies`: an
-`AsymptoticallyIdentifies` instance with the MMD discrepancy (equation 37) as the
-drift size and the Lévy–Prokhorov metric as the distribution distance, via the
-reviewed metrization axiom `gaussian_mmd_metrizes_weakConvergence`.  Note the
-honesty boundary: the *raw drift-field norm* does not obviously control weak
-convergence (`V = -½∇MMD²`, so `V=0` is a critical-point condition, not `MMD=0`),
-so that stronger claim is deliberately not made — see `LoggedFailures.md`.
+`scripts/AxiomAudit.ps1` rejects any promoted theorem that acquires one of
+these conditional dependencies.
 
 ## Definition of success
 

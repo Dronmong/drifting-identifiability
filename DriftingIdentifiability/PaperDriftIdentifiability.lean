@@ -111,8 +111,8 @@ theorem driftProbeZeroIdentifiesDensities
   rw [driftProbeZeroIdentifiesCoefficients setup]
 
 /-- Specialization to the paper's actual mean-shift interaction kernel
-(equation (33)), whose anti-symmetry is the reviewed axiom
-`meanShiftInteractionKernel_antisymmetric`.  Probe-wise vanishing of the induced
+(equation (33)), whose anti-symmetry is proved algebraically in
+`meanShiftInteractionKernel_antisymmetric`. Probe-wise vanishing of the induced
 drift, together with nondegeneracy, identifies the basis densities. -/
 theorem meanShiftInteractionIdentifiesDensities
     {m N : ℕ} (k : E → E → ℝ) (reference : Distribution E)

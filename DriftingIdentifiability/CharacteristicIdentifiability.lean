@@ -1,18 +1,15 @@
-import DriftingIdentifiability.FiniteStability
+import DriftingIdentifiability.TrustedBoundary
 
 /-!
-# Distribution-level identifiability from a characteristic kernel
+# Conditional distribution-level reduction to a characteristic kernel
 
-This module reaches the project's actual target — `Vₚ,q = 0 → p = q` for a
-concrete drifting field on genuine probability measures — through the paper's
-MMD drift (equation 41) and the reviewed RKHS facts in `Paperaxioms.lean`.
+This opt-in module reduces `Vₚ,q = 0 → p = q` for the paper's MMD drift to
+external RKHS assumptions recorded in `Paperaxioms.lean`.
 
-The condition is that the kernel gradient is **characteristic** (`IsCharacteristic`),
-a concrete, checkable property of the kernel that is independent of any target
-identity and is witnessed by the Gaussian kernel.  The zero-drift hypothesis is
-used *only* to match the two mean embeddings; the identification itself is the
-external, well-known injectivity of a characteristic embedding.  No step assumes
-`p = q`, injectivity of the target map, or uniqueness of the equilibrium.
+The condition is that the kernel gradient is **characteristic**
+(`IsCharacteristic`) and is conditionally witnessed by the Gaussian kernel.
+For this field, embedding injectivity is equivalent in substance to the target
+implication; these theorems are reductions, not accepted project solutions.
 -/
 
 open MeasureTheory
@@ -32,6 +29,7 @@ def BothProbability {E : Type u} [MeasurableSpace E] (p q : Distribution E) : Pr
 section Generic
 variable {E : Type u} [MeasurableSpace E]
   [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+  [BorelSpace E] [SecondCountableTopology E]
 
 /-- **Distribution-level identifiability from a characteristic kernel.**  If the
 kernel gradient is characteristic, then zero MMD drift (equation 41) between two
@@ -53,6 +51,7 @@ end Generic
 section Gaussian
 variable {E : Type u} [MeasurableSpace E]
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+  [FiniteDimensional ℝ E] [BorelSpace E] [SecondCountableTopology E]
 
 /-- **Identifiability for the paper's Gaussian MMD drift.**  Specializing the
 characteristic-kernel result to the Gaussian kernel (equations 43–45), which is
@@ -67,6 +66,8 @@ end Gaussian
 
 section Asymptotic
 variable {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+  [InnerProductSpace ℝ E] [CompleteSpace E] [FiniteDimensional ℝ E]
+  [BorelSpace E] [SecondCountableTopology E]
 
 /-- **Asymptotic identifiability for the Gaussian MMD discrepancy.**  An instance
 of `AsymptoticallyIdentifies` with the MMD discrepancy of equation (37) as the

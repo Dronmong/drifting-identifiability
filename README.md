@@ -53,6 +53,11 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
   stability: the `ℓ¹` coefficient distance is bounded by the total minor mass,
   giving the convergence statement `minor mass → 0 ⟹ coefficients → 0` (the
   finite-coefficient shadow of the asymptotic target).
+- `DriftingIdentifiability/EmpiricalFrameBound.lean` — closes the frame-bound
+  gap for `m = 2` with the *actual* integral-induced vectors: computes the
+  mean-shift `basisInteraction` in closed form against a two-point empirical
+  reference and proves a positive `InteractionFrameBound` for the Gaussian
+  kernel, axiom-free (no synthetic substitute).
 - `DriftingIdentifiability/CharacteristicIdentifiability.lean` — the
   distribution-level target: for a characteristic kernel (witnessed by the
   Gaussian), zero MMD drift (equation 41) between probability measures forces

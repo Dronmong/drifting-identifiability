@@ -22,19 +22,13 @@ Appendix C.1's ingredients are exposed separately, through the vanishing of
 the coefficient minors `aᵢ bⱼ - aⱼ bᵢ`.  Turning those ingredients into an
 identifiability theorem is deliberately left to downstream files.
 
-The characteristic-kernel axioms at the end of this file (`IsCharacteristic`,
-`characteristic_gradientEmbedding_injective`, `gaussian_gradient_isCharacteristic`)
-are external reproducing-kernel facts about *mean embeddings*, imported rather
-than reproved (per the project's policy of axiomatizing well-known theorems).  A
-transparency note is owed here: for the MMD drift of equation (41) the embedding
-gap **is** the field by construction (`mmdDrift kg p q = Φₚ − Φ_q`), so the
-embedding-injectivity axiom is, for that specific field, equivalent to the
-identifiability statement itself.  This is a deliberate *reduction* of the
-paper's identifiability question to a standard RKHS theorem, not an independent
-proof of it; the drifting-field framework and its admissible conditions remain
-the object of study.  These axioms are still not of the forbidden forms above:
-they are stated about embeddings and probability measures, and the Gaussian
-witness names a concrete, checkable kernel.
+The characteristic-kernel and Gaussian axioms at the end are a separately
+audited class of **conditional external assumptions**. For the MMD drift of
+equation (41), embedding injectivity is substantively equivalent to the desired
+identifiability implication. Consequently no theorem depending on these axioms
+may be presented as a project solution; they are exposed only through the
+opt-in `DriftingIdentifiability.Conditional` module. The promoted paper-native
+theorems are automatically checked to exclude these dependencies.
 -/
 
 open scoped BigOperators ENNReal NNReal
@@ -244,11 +238,13 @@ axiom equation_11_bilinear_mean_shift
           (k x y.1 * k x y.2) • (y.1 - y.2) ∂(p.prod q)
 
 /-- The field (10) is anti-symmetric, as stated after equation (11). -/
-axiom meanShiftDrift_antiSymmetric
+theorem meanShiftDrift_antiSymmetric
     {E : Type u} [MeasurableSpace E]
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (k : E → E → ℝ) :
-    AntiSymmetric (meanShiftDrift k)
+    AntiSymmetric (meanShiftDrift k) := by
+  intro p q x
+  simp only [meanShiftDrift, neg_sub]
 
 /-- Equation (12): the Laplace kernel used in the paper. -/
 noncomputable def laplaceKernel
@@ -649,28 +645,8 @@ def BasisInteractionNondegenerate
     (U : Fin m → Fin m → Fin N → E) : Prop :=
   LinearIndependent ℝ (fun ij : StrictPair m => U ij.1.1 ij.1.2)
 
-/-- Equation (32): after grouping an anti-symmetric bilinear expansion, the
-coefficient of `Uᵢⱼ` is `aᵢbⱼ-aⱼbᵢ`. -/
-axiom equation_32_grouped_zero_drift
-    {E : Type u} [AddCommGroup E] [Module ℝ E] {m N : ℕ}
-    (U : Fin m → Fin m → Fin N → E)
-    (hanti : AntiSymmetricBasisInteractions U)
-    (a b : Fin m → ℝ)
-    (hzero : (∑ i, ∑ j, (a i * b j) • U i j) = 0) :
-    (∑ ij : StrictPair m,
-      (a ij.1.1 * b ij.1.2 - a ij.1.2 * b ij.1.1) •
-        U ij.1.1 ij.1.2) = 0
-
-/-- The coefficient conclusion following equation (32).  This is an
-intermediate linear-algebra fact, not the forbidden conclusion `p = q`. -/
-axiom zero_drift_coefficient_minors
-    {E : Type u} [AddCommGroup E] [Module ℝ E] {m N : ℕ}
-    (U : Fin m → Fin m → Fin N → E)
-    (hanti : AntiSymmetricBasisInteractions U)
-    (hnondegenerate : BasisInteractionNondegenerate U)
-    (a b : Fin m → ℝ)
-    (hzero : (∑ i, ∑ j, (a i * b j) • U i j) = 0) :
-    ∀ i j, a i * b j - a j * b i = 0
+/- Equation (32) and its coefficient-minor consequence are proved without
+axioms in `FiniteGrouping.lean`. -/
 
 /-- Equation (33): the unnormalized mean-shift interaction kernel. -/
 def meanShiftInteractionKernel
@@ -679,10 +655,13 @@ def meanShiftInteractionKernel
   (k x yplus * k x yminus) • (yplus - yminus)
 
 /-- The kernel in equation (33) is anti-symmetric in its two sample slots. -/
-axiom meanShiftInteractionKernel_antisymmetric
+theorem meanShiftInteractionKernel_antisymmetric
     {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (k : E → E → ℝ) :
-    AntiSymmetricInteractionKernel (meanShiftInteractionKernel k)
+    AntiSymmetricInteractionKernel (meanShiftInteractionKernel k) := by
+  intro x yplus yminus
+  simp only [meanShiftInteractionKernel]
+  rw [mul_comm (k x yminus), ← smul_neg, neg_sub]
 
 /-! ## Stop-gradient calculus and MMD correspondence (Appendix C.2) -/
 
@@ -821,11 +800,13 @@ axiom radial_mmd_attraction_repulsion
         ∫ y, (-2 * ξ' (‖x - y‖ ^ 2)) • (y - x) ∂q
 
 /-- The MMD drift is zero for matched distributions, as stated in C.2. -/
-axiom mmdDrift_matched_zero
+theorem mmdDrift_matched_zero
     {E : Type u} [MeasurableSpace E]
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (kernelGradient : E → E → E) (p : Distribution E) :
-    ZeroDrift (mmdDrift kernelGradient) p p
+    ZeroDrift (mmdDrift kernelGradient) p p := by
+  intro x
+  simp only [mmdDrift, sub_self]
 
 /-- Equation (44): the attraction-minus-repulsion form, written explicitly. -/
 noncomputable def normalizedAttractionRepulsionDrift
@@ -918,6 +899,7 @@ below, so it behaves as an externally supplied, checkable property of the kernel
 axiom IsCharacteristic
     {E : Type u} [MeasurableSpace E]
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [BorelSpace E] [SecondCountableTopology E]
     (kg : E → E → E) : Prop
 
 /-- Well-known RKHS theorem: a characteristic kernel's mean embedding is
@@ -926,6 +908,7 @@ does not mention a drifting field or its zeros. -/
 axiom characteristic_gradientEmbedding_injective
     {E : Type u} [MeasurableSpace E]
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [BorelSpace E] [SecondCountableTopology E]
     (kg : E → E → E) (hkg : IsCharacteristic kg)
     (p q : Distribution E) [IsProbabilityMeasure p] [IsProbabilityMeasure q]
     (h : ∀ x, kernelGradientEmbedding kg p x = kernelGradientEmbedding kg q x) :
@@ -943,18 +926,19 @@ a property of the kernel, not the identifiability conclusion. -/
 axiom gaussian_gradient_isCharacteristic
     {E : Type u} [MeasurableSpace E]
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    [FiniteDimensional ℝ E] [BorelSpace E] [SecondCountableTopology E]
     (σ : ℝ) (hσ : ValidBandwidth σ) :
     IsCharacteristic (E := E) (radialKernelGradient (gaussianRadialDeriv σ))
 
 /-- Well-known RKHS theorem (Sriperumbudur et al., 2010; Simon-Gabriel–Schölkopf,
 2018): the Gaussian-kernel MMD metrizes weak convergence, so a vanishing MMD
-discrepancy (equation 37) forces convergence in distribution, here recorded via
-the Lévy–Prokhorov metric.  This is an external fact about the MMD *metric*, not
-about a drifting field; standard separability/regularity side conditions are
-folded in, consistent with this file's policy.  It is an asymptotic (limit)
-statement, not the exact conclusion. -/
+discrepancy forces convergence in the Lévy–Prokhorov metric. This conditional
+external fact is restricted explicitly to finite-dimensional second-countable
+Borel inner-product spaces. -/
 axiom gaussian_mmd_metrizes_weakConvergence
     {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] [CompleteSpace E] [FiniteDimensional ℝ E]
+    [BorelSpace E] [SecondCountableTopology E]
     (σ : ℝ) (hσ : ValidBandwidth σ)
     (p : Distribution E) (qn : ℕ → Distribution E)
     (hp : IsProbabilityMeasure p) (hqn : ∀ n, IsProbabilityMeasure (qn n))
@@ -969,7 +953,7 @@ its rows are linearly independent.  Stated over an arbitrary finite index type s
 it can be applied with the strict-pair index set.  This is a property of the
 kernel, not an identifiability statement. -/
 axiom gaussian_gram_linearIndependent
-    {E : Type u} [NormedAddCommGroup E]
+    {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {ι : Type v} [Fintype ι] (σ : ℝ) (hσ : ValidBandwidth σ)
     (x : ι → E) (hx : Function.Injective x) :
     LinearIndependent ℝ (fun p : ι => (fun q : ι => gaussianKernel σ (x p) (x q)))
