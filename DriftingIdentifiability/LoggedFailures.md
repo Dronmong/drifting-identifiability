@@ -266,6 +266,19 @@ so future agents do not repeat equivalent mistakes.
   are different claims.
 - **Fatal or repairable:** Repairable with explicit separation and
   singular-value/Vandermonde bounds.
+- **Update (2026-07-05):** An explicit computable *ceiling* is now proved:
+  `c ≤ min_{i<j} |zᵢ-zⱼ| e^{-(zᵢ-zⱼ)²/4} ≤ √(2/e)`
+  (`interactionFrameBound_le_interactionNorm`,
+  `gaussianEmpiricalPoint_frameConstant_le`). This *confirms* the concern
+  rather than resolving it: the integer-probe Gaussian construction cannot be
+  well-conditioned — the constant is capped below `0.858` and forced small
+  whenever any support pair is close or far apart. A useful *lower* bound is
+  still missing; it reduces to a weighted-Vandermonde smallest-singular-value
+  estimate (a Lagrange-interpolation certificate is written out in
+  `WrittenProof.md`) or to a better probe design (Objective 3).
 - **Relevant Lean declarations/files:**
   `interactionFrameBound_of_linearIndependent`,
-  `gaussianEmpiricalPointFrameConstant`, `FiniteStability.lean`.
+  `interactionFrameBound_le_interactionNorm`,
+  `gaussianEmpiricalPoint_frameConstant_le`,
+  `gaussianEmpiricalPointFrameConstant`, `FiniteStability.lean`,
+  `EmpiricalFrameBound.lean`.

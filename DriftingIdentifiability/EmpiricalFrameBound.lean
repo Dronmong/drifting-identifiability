@@ -489,6 +489,107 @@ theorem gaussianEmpiricalPointFrameBound
   (Classical.choose_spec
     (gaussianEmpiricalPoint_exists_frameBound hm z hz hsums)).2
 
+/-! ## An explicit computable ceiling on the frame constant (Objective 1)
+
+The frame constant produced by `interactionFrameBound_of_linearIndependent` is
+selected noncomputably.  Testing the frame inequality on a single coordinate
+indicator (`interactionFrameBound_le_interactionNorm`) shows that *any* valid
+frame constant is bounded above by the norm of every individual interaction
+vector.  For the structured Gaussian family this norm has the clean closed form
+ceiling `|Δ| e^{-Δ²/4}`, `Δ = zᵢ − zⱼ`, maximized at `|Δ| = √2` and decaying to
+`0` both as support points collide *and* as they separate.  This is a rigorous,
+computable description of when the exact theorem is numerically useless, and an
+absolute `m`-independent ceiling `√(2/e) ≈ 0.858` on the achievable constant. -/
+
+/-- The actual structured-Gaussian induced interaction vector in closed form. -/
+theorem inducedInteractionVector_structuredGaussian
+    {m : ℕ} (hm : 0 < m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (p : StrictPair m) :
+    inducedInteractionVector (empiricalFin z)
+      (meanShiftInteractionKernel (gaussianKernel 1))
+      (empiricalPointDensity z) (structuredGaussianProbes m) p.1.1 p.1.2 =
+      fun n => gaussianProbeRow n *
+        (gaussianPairColumn z p * gaussianPairBase z p ^ (n : ℕ)) := by
+  funext n
+  change basisInteraction (empiricalFin z)
+    (meanShiftInteractionKernel (gaussianKernel 1))
+    (empiricalPointDensity z p.1.1) (empiricalPointDensity z p.1.2)
+    (structuredGaussianProbes m n) = _
+  rw [basisInteraction_empiricalPoint hm z hz]
+  exact gaussianInteraction_eq_weightedGeometric z p n
+
+/-- Closed-form ceiling `|zᵢ - zⱼ| · exp(-(zᵢ-zⱼ)²/4)` for the norm of a
+structured Gaussian interaction vector. -/
+noncomputable def gaussianInteractionNormCeiling {m : ℕ} (z : Fin m → ℝ)
+    (p : StrictPair m) : ℝ :=
+  |z p.1.1 - z p.1.2| * Real.exp (-((z p.1.1 - z p.1.2) ^ 2) / 4)
+
+/-- Pointwise ceiling: at every integer probe the interaction magnitude is at
+most `|Δ| e^{-Δ²/4}`, with equality only at the (generally non-integer) probe
+`n = (zᵢ+zⱼ)/2`. -/
+theorem abs_structuredGaussianInteraction_le {m : ℕ} (z : Fin m → ℝ)
+    (p : StrictPair m) (n : Fin (Fintype.card (StrictPair m))) :
+    |gaussianProbeRow n *
+        (gaussianPairColumn z p * gaussianPairBase z p ^ (n : ℕ))|
+      ≤ gaussianInteractionNormCeiling z p := by
+  have hbase : gaussianPairBase z p ^ (n : ℕ)
+      = Real.exp ((n : ℝ) * (z p.1.1 + z p.1.2)) := by
+    rw [gaussianPairBase, ← Real.exp_nat_mul]
+  rw [gaussianProbeRow, gaussianPairColumn, hbase, gaussianInteractionNormCeiling,
+    show Real.exp (-((n : ℝ) ^ 2)) *
+        (Real.exp (-(1 / 2 : ℝ) * (z p.1.1 ^ 2 + z p.1.2 ^ 2)) *
+            (z p.1.1 - z p.1.2) *
+          Real.exp ((n : ℝ) * (z p.1.1 + z p.1.2)))
+      = (z p.1.1 - z p.1.2) *
+          Real.exp (-((n : ℝ) ^ 2) + -(1 / 2 : ℝ) * (z p.1.1 ^ 2 + z p.1.2 ^ 2)
+            + (n : ℝ) * (z p.1.1 + z p.1.2)) from by
+        rw [Real.exp_add, Real.exp_add]; ring]
+  rw [abs_mul, abs_of_nonneg (Real.exp_pos _).le]
+  refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
+  rw [Real.exp_le_exp]
+  nlinarith [sq_nonneg (2 * (n : ℝ) - (z p.1.1 + z p.1.2))]
+
+/-- The structured Gaussian interaction vector has norm at most the closed-form
+ceiling. -/
+theorem norm_inducedInteractionVector_structuredGaussian_le
+    {m : ℕ} (hm : 0 < m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (p : StrictPair m) :
+    ‖inducedInteractionVector (empiricalFin z)
+      (meanShiftInteractionKernel (gaussianKernel 1))
+      (empiricalPointDensity z) (structuredGaussianProbes m) p.1.1 p.1.2‖ ≤
+      gaussianInteractionNormCeiling z p := by
+  rw [inducedInteractionVector_structuredGaussian hm z hz]
+  have hnn : 0 ≤ gaussianInteractionNormCeiling z p := by
+    rw [gaussianInteractionNormCeiling]; positivity
+  refine (pi_norm_le_iff_of_nonneg hnn).2 (fun n => ?_)
+  rw [Real.norm_eq_abs]
+  exact abs_structuredGaussianInteraction_le z p n
+
+/-- **Explicit ceiling on any frame constant (Objective 1).**  Every frame
+constant valid for the structured Gaussian construction is bounded above by
+`|zᵢ - zⱼ| · exp(-(zᵢ-zⱼ)²/4)` for *each* strict pair, hence by the minimum over
+pairs.  The bound is computable from the support geometry alone. -/
+theorem gaussianEmpiricalPoint_frameConstant_le
+    {m : ℕ} (hm : 0 < m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    {c : ℝ} (hframe : InteractionFrameBound
+      (inducedInteractionVector (empiricalFin z)
+        (meanShiftInteractionKernel (gaussianKernel 1))
+        (empiricalPointDensity z) (structuredGaussianProbes m)) c)
+    (p : StrictPair m) :
+    c ≤ gaussianInteractionNormCeiling z p :=
+  le_trans (interactionFrameBound_le_interactionNorm _ hframe p)
+    (norm_inducedInteractionVector_structuredGaussian_le hm z hz p)
+
+/-- The canonically selected general-`m` frame constant obeys the same explicit
+ceiling. -/
+theorem gaussianEmpiricalPointFrameConstant_le
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) (p : StrictPair m) :
+    gaussianEmpiricalPointFrameConstant hm z hz hsums ≤
+      gaussianInteractionNormCeiling z p :=
+  gaussianEmpiricalPoint_frameConstant_le (by omega) z hz
+    (gaussianEmpiricalPointFrameBound hm z hz hsums) p
+
 /-- All mean-shift regularity obligations are automatic for the general
 finite empirical Gaussian model. -/
 theorem gaussianEmpiricalPoint_meanShiftRegular
@@ -587,6 +688,22 @@ theorem gaussianEmpiricalPoint_identifies
     (empiricalPointBasis (by omega) z hz).basisMeasure a =
       (empiricalPointBasis (by omega) z hz).basisMeasure b := by
   exact finitePopulationMeanShift_identifies
+    (gaussianEmpiricalPointSetup hm z hz hsums a b) hzero
+
+/-- **Probe-local general concrete theorem (Objective 2).**  Only the finite
+drift values at the structured probes need to vanish — not the drift at every
+point of `ℝ`.  This is the exact hypothesis the proof uses and the finite
+quantity an empirical loss can observe. -/
+theorem gaussianEmpiricalPoint_identifies_of_probeZero
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) (a b : FiniteProbabilityVector m)
+    (hzero : ∀ n, meanShiftDrift (gaussianKernel 1)
+      ((empiricalPointBasis (by omega) z hz).basisMeasure a)
+      ((empiricalPointBasis (by omega) z hz).basisMeasure b)
+      (structuredGaussianProbes m n) = 0) :
+    (empiricalPointBasis (by omega) z hz).basisMeasure a =
+      (empiricalPointBasis (by omega) z hz).basisMeasure b :=
+  finitePopulationMeanShift_identifies_of_probeZero
     (gaussianEmpiricalPointSetup hm z hz hsums a b) hzero
 
 /-- General concrete coefficient stability.  The remaining practical input is
@@ -917,6 +1034,20 @@ theorem empirical01Gaussian_identifies
       (empirical01Basis.basisMeasure b)) :
     empirical01Basis.basisMeasure a = empirical01Basis.basisMeasure b := by
   exact finitePopulationMeanShift_identifies
+    (empirical01GaussianSetup σ hσ a b probes n0) hzero
+
+/-- **Probe-local two-atom concrete theorem (Objective 2).**  Zero of the actual
+normalized Gaussian mean-shift field at the finitely many supplied probes is
+enough to identify the target and model measures. -/
+theorem empirical01Gaussian_identifies_of_probeZero
+    {N : ℕ} (σ : ℝ) (hσ : ValidBandwidth σ)
+    (a b : FiniteProbabilityVector 2)
+    (probes : Fin N → ℝ) (n0 : Fin N)
+    (hzero : ∀ n, meanShiftDrift (gaussianKernel σ)
+      (empirical01Basis.basisMeasure a)
+      (empirical01Basis.basisMeasure b) (probes n) = 0) :
+    empirical01Basis.basisMeasure a = empirical01Basis.basisMeasure b :=
+  finitePopulationMeanShift_identifies_of_probeZero
     (empirical01GaussianSetup σ hσ a b probes n0) hzero
 
 /-- Concrete coefficient stability for the same two-atom population model. -/

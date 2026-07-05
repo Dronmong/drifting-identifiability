@@ -82,6 +82,53 @@ The same uniform estimate proves coefficient convergence from probe-drift
 convergence. Nondegeneracy also requires
 `card(StrictPair m) ≤ N · dim(E)`, which is now machine checked.
 
+## Probe-local hypothesis (Objective 2)
+
+The proof of the main theorem consumes the drift hypothesis only through step 3,
+and only at the `N` probes: it uses `Vₚ,q(probe n) = 0`, never any other point.
+The promoted theorem is therefore stated directly from the finite hypothesis
+
+```text
+∀ n, normalizedProbeDrift n = 0,     normalizedProbeDrift n := Vₚ,q(probe n),
+```
+
+as `finitePopulationMeanShift_identifies_of_probeZero`. The pointwise `ZeroDrift`
+statement is recovered as the corollary obtained by instantiating this at the
+probes, `fun n ↦ hzero (probe n)`. Because the finite hypothesis is exactly the
+vanishing of the `N`-vector whose norm controls `‖a-b‖₁` in the stability
+estimate, the hypothesis, the observable, and the stability bound all refer to
+the same object. Full topological support is not used by this route; it is only
+needed by the separate zero-energy corollary.
+
+## Explicit ceiling on the frame constant (Objective 1)
+
+Instantiating the frame inequality at the coordinate indicator `Pi.single p 1`
+(mass one, synthesis equal to `U_p`) gives, with no axiom,
+
+```text
+InteractionFrameBound U c  →  ∀ p, c ≤ ‖U_p‖,     hence  c ≤ min_p ‖U_p‖.
+```
+
+For the structured Gaussian family, `U_p(n) = e^{-n²}·column_p·base_pⁿ` with
+`column_p = e^{-(zᵢ²+zⱼ²)/2}(zᵢ-zⱼ)` and `base_p = e^{zᵢ+zⱼ}`, so writing
+`Δ = zᵢ-zⱼ` and completing the square in the exponent,
+
+```text
+|U_p(n)| = |Δ|·exp(-(n-(zᵢ+zⱼ)/2)²)·exp(-Δ²/4) ≤ |Δ| e^{-Δ²/4},
+```
+
+with equality only at the generally non-integer probe `n=(zᵢ+zⱼ)/2`. Hence
+
+```text
+c ≤ min_{i<j} |zᵢ-zⱼ| e^{-(zᵢ-zⱼ)²/4} ≤ √(2/e) ≈ 0.858.
+```
+
+This is a computable ceiling from the support geometry alone. It is proved as
+`interactionFrameBound_le_interactionNorm` (general) and
+`gaussianEmpiricalPoint_frameConstant_le` (Gaussian). It certifies numerical
+uselessness whenever some pair of support points is close or far, but it is only
+an upper bound; a matching useful lower bound remains open (Objective 1).
+
 ## Concrete general finite family
 
 Let `m≥2`, let `z₀,…,zₘ₋₁∈ℝ` be distinct, and let the reference law be the

@@ -144,6 +144,55 @@ The remaining unknown is the size of `c`, not the normalizer factor.
 - The trust audit, warning-as-error build, conditional-module build, and
   promoted-theorem axiom audit pass.
 
+### 8. An explicit computable ceiling on the frame constant
+
+Testing the frame inequality on a single coordinate indicator proves, with no
+axiom, that *every* valid frame constant is bounded above by the norm of each
+individual interaction vector:
+
+```text
+InteractionFrameBound U c  →  ∀ p, c ≤ ‖U_p‖.
+```
+
+For the structured Gaussian family this norm has a closed-form ceiling. With
+`Δ = zᵢ − zⱼ`, each probe value factors as
+`|U_p(n)| = |Δ| · exp(-(n-(zᵢ+zⱼ)/2)²) · exp(-Δ²/4) ≤ |Δ| exp(-Δ²/4)`, so
+
+```text
+c ≤ min_{i<j} |zᵢ - zⱼ| · exp(-(zᵢ - zⱼ)² / 4).
+```
+
+The scalar function `|Δ| e^{-Δ²/4}` is maximized at `|Δ| = √2` with value
+`√(2/e) ≈ 0.858`, and decays to `0` both as two support points collide
+(`Δ → 0`) and — because the unit Gaussian suppresses distant interaction — as
+they separate (`Δ → ∞`). This is a rigorous, computable description of when the
+exact theorem is numerically useless, and an absolute `m`-independent ceiling on
+any achievable constant. It does *not* yet supply the matching useful lower
+bound; see Objective 1. The promoted declarations are
+`interactionFrameBound_le_interactionNorm` and
+`gaussianEmpiricalPoint_frameConstant_le`.
+
+### 9. The exact theorem is driven by the finite probe-drift vector
+
+The promoted population theorem is now stated and proved directly from vanishing
+of the *finite observable* drift vector, not pointwise zero drift everywhere:
+
+```text
+(∀ n, normalizedProbeDrift n = 0)  →  p = q.
+```
+
+`finitePopulationMeanShift_identifies_of_probeZero` is the probe-local core; the
+pointwise-`ZeroDrift` theorem `finitePopulationMeanShift_identifies` is now a
+one-line corollary of it. The concrete end-to-end theorems
+`gaussianEmpiricalPoint_identifies_of_probeZero` and
+`empirical01Gaussian_identifies_of_probeZero` expose the same weaker hypothesis.
+The drift vector whose vanishing is assumed is exactly the finite quantity whose
+norm appears in the `‖a-b‖₁ ≤ (2B/c)‖V_probes‖` stability estimate, so the
+hypothesis, the observable, and the stability control now all refer to the same
+`N`-dimensional probe-drift vector. This removes the full-topological-support
+requirement from the exact route (that hypothesis was only needed by the
+zero-energy corollary).
+
 ## Strongest result and its exact scope
 
 The strongest completely instantiated result currently says:
@@ -167,9 +216,11 @@ This is an exact population theorem in data space. It does not presently claim:
 
 The concrete atomic measures do not have full topological support. Therefore
 the generic zero-energy-to-pointwise-zero corollary cannot be applied directly
-to this concrete family. The exact theorem is currently driven by pointwise
-`ZeroDrift`, even though its proof only consumes drift values at the selected
-probes.
+to this concrete family. This no longer weakens the exact route: the exact
+theorem is now stated directly from zero drift at the selected probes
+(`finitePopulationMeanShift_identifies_of_probeZero`), so full support is not
+required for exact identifiability. Full support is still needed only for the
+separate zero-*energy* corollary.
 
 ## Remaining objectives, in priority order
 
@@ -179,28 +230,53 @@ This is the single remaining quantitative gap inside the concrete exact route.
 Finite-dimensional compactness proves `c>0`, but the selected value is
 noncomputable and may be extremely small.
 
-Desired result:
+Progress (done):
 
-- bound `c` using minimum support separation, minimum pair-sum separation,
-  model size, bandwidth, and probe placement;
-- determine how `c` scales as `m` grows;
-- identify configurations where the theorem is exact but numerically useless;
+- An explicit computable **upper** bound (ceiling) is now proved:
+  `c ≤ min_{i<j} |zᵢ - zⱼ| e^{-(zᵢ-zⱼ)²/4}` (accomplishment 8). This settles two
+  of the desired sub-results — it identifies configurations where the theorem is
+  exact but numerically useless (any pair close *or* far), and it bounds `c` in
+  terms of the support separation and bandwidth. It also shows no construction of
+  this kind can exceed `√(2/e) ≈ 0.858`.
+
+Still open (the useful **lower** bound):
+
+- bound `c` from below using minimum support separation, minimum pair-sum
+  separation, model size, bandwidth, and probe placement;
+- determine how `c` scales as `m` grows (the integer-probe row factor
+  `e^{-n²}` at the largest probe `n=N-1=m(m-1)/2-1` is already astronomically
+  small, so this construction is expected to be exponentially ill-conditioned in
+  `m`; a rigorous lower bound would confirm this);
 - replace the existential constant with a computable singular-value or
-  certified Vandermonde bound.
+  certified Vandermonde bound. The obligation reduces to a smallest-singular-value
+  bound for the weighted Vandermonde matrix `M[n,p] = column_p · base_pⁿ`; a
+  Lagrange-interpolation certificate gives
+  `c ≥ 1 / (∑_q Λ_q / |column_q|)` with `Λ_q = ∑_n |λ_n^{(q)}| / row_n` the
+  scaled Lagrange coefficients, but formalizing it is a substantial analytic
+  effort and its value degrades with the `row_n = e^{-n²}` factors.
 
 ### Objective 2: align the hypothesis with the observable training loss
 
-The current final theorem assumes pointwise zero drift, while the proof uses
-only finitely many probes and practical training observes minibatch samples.
+The proof uses only finitely many probes, while practical training observes
+minibatch samples.
 
-Desired results:
+Progress (done):
 
-- state and prove the exact theorem directly from zero drift at the required
-  probes;
+- The exact theorem is now stated and proved directly from zero drift at the
+  required probes: `finitePopulationMeanShift_identifies_of_probeZero` and the
+  concrete `gaussianEmpiricalPoint_identifies_of_probeZero`,
+  `empirical01Gaussian_identifies_of_probeZero` (accomplishment 9). The
+  pointwise-`ZeroDrift` statement is now a corollary.
+- This also handles the missing-full-support point: the exact route no longer
+  needs full topological support (only the separate zero-energy corollary does).
+
+Still open:
+
 - determine when sampled or expected drift loss controls those probe values;
-- handle the fact that the atomic concrete law lacks full support;
 - distinguish exact probe zero, almost-everywhere zero, small expected loss,
-  and high-probability minibatch error.
+  and high-probability minibatch error (the finite stability estimate already
+  bridges *small probe drift* to *close coefficients*; the missing step is
+  controlling the probe-drift vector from a sampled/expected loss).
 
 ### Objective 3: move from a proof-of-concept family to practical model classes
 

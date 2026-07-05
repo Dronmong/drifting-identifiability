@@ -125,6 +125,36 @@ theorem interactionFrameBound_of_linearIndependent
     _ = ‖interactionSynthesis U z‖ := by
       rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hprod), one_mul]
 
+/-- **Ceiling on the frame constant.**  Testing the frame inequality on the
+`p`-th coordinate indicator `Pi.single p 1` shows every valid frame constant is
+at most the norm of the corresponding interaction vector.  Consequently
+`c ≤ min_p ‖U_p‖`: a large frame constant *requires* every interaction vector to
+be large, and closeness of any interaction vector to zero caps the achievable
+conditioning.  This is the exact, computable upper bound complementing the
+existential lower bound of `interactionFrameBound_of_linearIndependent`. -/
+theorem interactionFrameBound_le_interactionNorm
+    (U : Fin m → Fin m → V) {c : ℝ} (hframe : InteractionFrameBound U c)
+    (p : StrictPair m) : c ≤ ‖U p.1.1 p.1.2‖ := by
+  have hb := hframe.2 (Pi.single p 1 : StrictPair m → ℝ)
+  rw [interactionSynthesis_apply] at hb
+  have hsum : (∑ q, (Pi.single p 1 : StrictPair m → ℝ) q • U q.1.1 q.1.2)
+      = U p.1.1 p.1.2 := by
+    rw [Finset.sum_eq_single p
+      (fun q _ hqp => by rw [Pi.single_eq_of_ne hqp, zero_smul])
+      (fun h => absurd (Finset.mem_univ p) h), Pi.single_eq_same, one_smul]
+  have habs : (∑ q, |(Pi.single p 1 : StrictPair m → ℝ) q|) = 1 := by
+    have hpt : ∀ q, |(Pi.single p 1 : StrictPair m → ℝ) q|
+        = (Pi.single p 1 : StrictPair m → ℝ) q := by
+      intro q
+      rcases eq_or_ne q p with h | h
+      · subst h; rw [Pi.single_eq_same]; exact abs_one
+      · rw [Pi.single_eq_of_ne h]; exact abs_zero
+    simp_rw [hpt]
+    rw [Finset.sum_pi_single']
+    simp
+  rw [hsum, habs, mul_one] at hb
+  exact hb
+
 /-- A finite family of nonzero row/column scalings of distinct geometric
 profiles is linearly independent.  This is the axiom-free Vandermonde engine
 used by the structured Gaussian probe construction. -/

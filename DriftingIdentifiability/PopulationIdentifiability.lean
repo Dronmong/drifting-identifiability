@@ -206,12 +206,13 @@ noncomputable def normalizedProbeDrift
   fun n => meanShiftDrift setup.kernel setup.targetMeasure setup.modelMeasure
     (setup.probes n)
 
-/-- At each probe, zero normalized mean-shift drift forces the unnormalized
-density interaction numerator to vanish. -/
-theorem densityInteraction_zero_at_probe
+/-- **Probe-local core.**  Only the finite drift values at the probes are used:
+if the normalized mean-shift drift vanishes at each probe, the unnormalized
+density interaction numerator vanishes there.  The full pointwise `ZeroDrift`
+hypothesis is never needed. -/
+theorem densityInteraction_zero_at_probe_of_probeZero
     (setup : PopulationMeanShiftFiniteSetup E m N)
-    (hzero : ZeroDrift (meanShiftDrift setup.kernel)
-      setup.targetMeasure setup.modelMeasure) (n : Fin N) :
+    (hzero : ∀ n, setup.normalizedProbeDrift n = 0) (n : Fin N) :
     densityInteractionDrift setup.reference
       (meanShiftInteractionKernel setup.kernel)
       (setup.basis.mixtureDensity setup.a)
@@ -220,7 +221,9 @@ theorem densityInteraction_zero_at_probe
   letI := setup.modelMeasure_isProbability
   have h11 := equation_11_bilinear_mean_shift setup.kernel
     setup.targetMeasure setup.modelMeasure (setup.probes n) (setup.meanShiftRegular n)
-  rw [hzero (setup.probes n)] at h11
+  have hn : meanShiftDrift setup.kernel setup.targetMeasure setup.modelMeasure
+      (setup.probes n) = 0 := hzero n
+  rw [hn] at h11
   have hscale :
       (kernelNormalizer setup.kernel setup.targetMeasure (setup.probes n) *
         kernelNormalizer setup.kernel setup.modelMeasure (setup.probes n))⁻¹ ≠ 0 :=
@@ -233,6 +236,20 @@ theorem densityInteraction_zero_at_probe
     (meanShiftInteractionKernel setup.kernel) setup.a setup.b (setup.probes n)
     (setup.interactionIntegrable n)]
   simpa only [targetMeasure, modelMeasure] using hnumerator
+
+/-- At each probe, zero normalized mean-shift drift forces the unnormalized
+density interaction numerator to vanish.  A corollary of the probe-local core
+specialized to the full pointwise `ZeroDrift` hypothesis. -/
+theorem densityInteraction_zero_at_probe
+    (setup : PopulationMeanShiftFiniteSetup E m N)
+    (hzero : ZeroDrift (meanShiftDrift setup.kernel)
+      setup.targetMeasure setup.modelMeasure) (n : Fin N) :
+    densityInteractionDrift setup.reference
+      (meanShiftInteractionKernel setup.kernel)
+      (setup.basis.mixtureDensity setup.a)
+      (setup.basis.mixtureDensity setup.b) (setup.probes n) = 0 :=
+  setup.densityInteraction_zero_at_probe_of_probeZero
+    (fun k => hzero (setup.probes k)) n
 
 /-- The finite bilinear interaction vector is the normalized probe drift
 rescaled by the product of the two kernel normalizers. -/
@@ -285,10 +302,11 @@ theorem coefficientStability
     setup.a setup.b setup.normalizerProduct setup.normalizedProbeDrift
     hnormalizer setup.bilinear_eq_normalizer_smul_probeDrift
 
-noncomputable def toDriftFiniteSetup
+/-- Probe-local reduction to the axiom-free finite drift setup: consumes only
+the finite probe-drift vanishing hypothesis. -/
+noncomputable def toDriftFiniteSetup_of_probeZero
     (setup : PopulationMeanShiftFiniteSetup E m N)
-    (hzero : ZeroDrift (meanShiftDrift setup.kernel)
-      setup.targetMeasure setup.modelMeasure) : DriftFiniteSetup E m N where
+    (hzero : ∀ n, setup.normalizedProbeDrift n = 0) : DriftFiniteSetup E m N where
   reference := setup.reference
   refProb := setup.refProb
   K := meanShiftInteractionKernel setup.kernel
@@ -299,23 +317,43 @@ noncomputable def toDriftFiniteSetup
   a := setup.a
   b := setup.b
   nondegenerate := interactionFrameBound_basisNondegenerate _ setup.frameBound
-  driftZero := setup.densityInteraction_zero_at_probe hzero
+  driftZero := setup.densityInteraction_zero_at_probe_of_probeZero hzero
+
+/-- Pointwise-`ZeroDrift` specialization of the probe-local reduction. -/
+noncomputable def toDriftFiniteSetup
+    (setup : PopulationMeanShiftFiniteSetup E m N)
+    (hzero : ZeroDrift (meanShiftDrift setup.kernel)
+      setup.targetMeasure setup.modelMeasure) : DriftFiniteSetup E m N :=
+  setup.toDriftFiniteSetup_of_probeZero (fun n => hzero (setup.probes n))
 
 end PopulationMeanShiftFiniteSetup
+
+/-- **Promoted probe-local result (Objective 2).**  Identifiability needs only
+the *finite* observable drift vector to vanish: if the normalized population
+mean-shift drift is zero at each of the `N` probes, the represented probability
+measures coincide.  This is strictly weaker than pointwise `ZeroDrift` and does
+not require full topological support; it is the exact hypothesis the proof
+consumes and matches the finite quantity a training loss can observe. -/
+theorem finitePopulationMeanShift_identifies_of_probeZero
+    {m N : ℕ} (setup : PopulationMeanShiftFiniteSetup E m N)
+    (hzero : ∀ n, setup.normalizedProbeDrift n = 0) :
+    setup.targetMeasure = setup.modelMeasure := by
+  have hweights := driftProbeZeroIdentifiesCoefficients
+    (setup.toDriftFiniteSetup_of_probeZero hzero)
+  exact setup.basis.basisMeasure_eq_of_weight_eq hweights
 
 /-- **Promoted paper-native result.** For finite mixtures of genuine probability
 densities, pointwise zero of the paper's normalized population mean-shift field
 forces equality of the represented probability measures, provided the paper's
 finite interaction family is nondegenerate and all displayed integrals and
-normalizers are valid. -/
+normalizers are valid.  A corollary of the probe-local theorem. -/
 theorem finitePopulationMeanShift_identifies
     {m N : ℕ} (setup : PopulationMeanShiftFiniteSetup E m N)
     (hzero : ZeroDrift (meanShiftDrift setup.kernel)
       setup.targetMeasure setup.modelMeasure) :
-    setup.targetMeasure = setup.modelMeasure := by
-  have hweights := driftProbeZeroIdentifiesCoefficients
-    (setup.toDriftFiniteSetup hzero)
-  exact setup.basis.basisMeasure_eq_of_weight_eq hweights
+    setup.targetMeasure = setup.modelMeasure :=
+  finitePopulationMeanShift_identifies_of_probeZero setup
+    (fun n => hzero (setup.probes n))
 
 /-- Population-loss corollary.  If the model law has full topological support
 and the mean-shift field is continuous, zero ideal squared-drift energy implies
