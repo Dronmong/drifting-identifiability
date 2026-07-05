@@ -21,6 +21,20 @@ Crucially, this file contains **no axiom** of either of the following forms:
 Appendix C.1's ingredients are exposed separately, through the vanishing of
 the coefficient minors `aᵢ bⱼ - aⱼ bᵢ`.  Turning those ingredients into an
 identifiability theorem is deliberately left to downstream files.
+
+The characteristic-kernel axioms at the end of this file (`IsCharacteristic`,
+`characteristic_gradientEmbedding_injective`, `gaussian_gradient_isCharacteristic`)
+are external reproducing-kernel facts about *mean embeddings*, imported rather
+than reproved (per the project's policy of axiomatizing well-known theorems).  A
+transparency note is owed here: for the MMD drift of equation (41) the embedding
+gap **is** the field by construction (`mmdDrift kg p q = Φₚ − Φ_q`), so the
+embedding-injectivity axiom is, for that specific field, equivalent to the
+identifiability statement itself.  This is a deliberate *reduction* of the
+paper's identifiability question to a standard RKHS theorem, not an independent
+proof of it; the drifting-field framework and its admissible conditions remain
+the object of study.  These axioms are still not of the forbidden forms above:
+they are stated about embeddings and probability measures, and the Gaussian
+witness names a concrete, checkable kernel.
 -/
 
 open scoped BigOperators ENNReal NNReal
@@ -878,6 +892,59 @@ axiom equation_47_matched_zero
         (normalizedKernel k p x y.1 * normalizedKernel k p x y.2) •
           (y.1 - y.2)) (p.prod p)) :
     ZeroDrift (equation47Drift k) p p
+
+/-! ## Characteristic kernels and mean-embedding identifiability
+
+This interface records the standard reproducing-kernel notion of a
+*characteristic* kernel and the well-known theorem that its mean embedding is
+injective on probability measures (Sriperumbudur–Gretton–Fukumizu–Schölkopf–
+Lanckriet, *JMLR* 2010).  These are external facts about the kernel embedding;
+none of them is the identifiability conclusion `Vₚ,q = 0 → p = q` for a drifting
+field.  The bridge from a vanishing drift to a matched embedding is proved
+separately in `CharacteristicIdentifiability.lean` and uses only these facts. -/
+
+/-- The gradient kernel mean embedding `Φₚ(x) = ∫ kg(x,y) dp` that underlies the
+MMD drift of equation (41). -/
+noncomputable def kernelGradientEmbedding
+    {E : Type u} [MeasurableSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (kg : E → E → E) (p : Distribution E) (x : E) : E :=
+  ∫ y, kg x y ∂p
+
+/-- Abstract marker for a characteristic kernel gradient.  Its spectral
+characterization is not formalized here; it is used only through the two axioms
+below, so it behaves as an externally supplied, checkable property of the kernel
+(not of any pair `p, q`). -/
+axiom IsCharacteristic
+    {E : Type u} [MeasurableSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (kg : E → E → E) : Prop
+
+/-- Well-known RKHS theorem: a characteristic kernel's mean embedding is
+injective on probability measures.  This constrains the embedding map only; it
+does not mention a drifting field or its zeros. -/
+axiom characteristic_gradientEmbedding_injective
+    {E : Type u} [MeasurableSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (kg : E → E → E) (hkg : IsCharacteristic kg)
+    (p q : Distribution E) [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : ∀ x, kernelGradientEmbedding kg p x = kernelGradientEmbedding kg q x) :
+    p = q
+
+/-- The Gaussian derivative profile `ξ'(r) = -(2σ²)⁻¹ exp(-(2σ²)⁻¹ r)` appearing
+in equations (43)–(45). -/
+noncomputable def gaussianRadialDeriv (σ : ℝ) : ℝ → ℝ :=
+  fun r => -(1 / (2 * σ ^ 2)) * Real.exp (-(1 / (2 * σ ^ 2)) * r)
+
+/-- Well-known RKHS theorem (Sriperumbudur et al., 2010): the Gaussian kernel is
+characteristic.  Stated for the gradient feature map of the radial MMD drift;
+Gaussian decay removes the additive constant left by matching gradients.  This is
+a property of the kernel, not the identifiability conclusion. -/
+axiom gaussian_gradient_isCharacteristic
+    {E : Type u} [MeasurableSpace E]
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    (σ : ℝ) (hσ : ValidBandwidth σ) :
+    IsCharacteristic (E := E) (radialKernelGradient (gaussianRadialDeriv σ))
 
 end Paper
 end DriftingIdentifiability

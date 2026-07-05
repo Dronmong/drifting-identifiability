@@ -46,6 +46,11 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
   stability: the `ℓ¹` coefficient distance is bounded by the total minor mass,
   giving the convergence statement `minor mass → 0 ⟹ coefficients → 0` (the
   finite-coefficient shadow of the asymptotic target).
+- `DriftingIdentifiability/CharacteristicIdentifiability.lean` — the
+  distribution-level target: for a characteristic kernel (witnessed by the
+  Gaussian), zero MMD drift (equation 41) between probability measures forces
+  `p = q`. Reduces identifiability to the reviewed RKHS embedding-injectivity
+  axiom; see the transparency note in `Paperaxioms.lean`.
 - `DriftingIdentifiability/AGENT.md` — mandatory agent workflow and anti-cheating
   rules.
 - `DriftingIdentifiability/WrittenProof.md` — proof-development template.

@@ -26,8 +26,15 @@
       `meanShiftInteractionIdentifiesDensities`).
 - [ ] Discharge the nondegeneracy and integrability hypotheses for the paper's
       concrete kernel/probe system rather than assuming them.
-- [ ] Bridge the density-valued statement to a measure-level `IdentifiesAtZero`
-      claim, and probe-wise zero drift to global zero drift.
+- [x] Measure-level `IdentifiesAtZero` reached for a concrete paper field
+      (`CharacteristicIdentifiability.lean`): for a characteristic kernel — the
+      Gaussian being the witnessed instance — zero MMD drift (equation 41)
+      between probability measures forces `p = q`. Identifiability is reduced to
+      the reviewed RKHS embedding-injectivity axioms; the drift→embedding step is
+      definitional for the MMD field (see the transparency note in
+      `Paperaxioms.lean`).
+- [ ] Bridge the *finite-basis* density statement to the measure level, and
+      probe-wise zero drift to global zero drift.
 - [~] Quantitative coefficient stability proved (`FiniteStability.lean`): `ℓ¹`
       coefficient distance ≤ total minor mass, hence `minor mass → 0 ⟹
       coefficients → 0`. The remaining gap is bounding the minor mass by the

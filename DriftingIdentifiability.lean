@@ -2,3 +2,4 @@ import DriftingIdentifiability.PaperFiniteIdentifiability
 import DriftingIdentifiability.FiniteLegitimacy
 import DriftingIdentifiability.PaperDriftIdentifiability
 import DriftingIdentifiability.FiniteStability
+import DriftingIdentifiability.CharacteristicIdentifiability

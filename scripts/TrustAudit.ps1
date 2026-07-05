@@ -27,7 +27,10 @@ $allowedPaperAxioms = @(
   'mmdDrift_matched_zero',
   'equation_44_eq_meanShiftDrift',
   'gaussian_mmd_meanShiftKernel',
-  'equation_47_matched_zero'
+  'equation_47_matched_zero',
+  'IsCharacteristic',
+  'characteristic_gradientEmbedding_injective',
+  'gaussian_gradient_isCharacteristic'
 ) | Sort-Object
 
 if (-not (Test-Path -LiteralPath $hashManifest)) {

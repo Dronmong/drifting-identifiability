@@ -200,6 +200,25 @@ them; (b) bridge from the density-valued `Density E` statement to a measure-leve
 `IdentifiesAtZero` claim; (c) pass from probe-wise zero drift to genuinely global
 zero drift; and (d) the asymptotic target `AsymptoticallyIdentifies`.
 
+## Distribution-level route (characteristic kernels)
+
+A second, independent route reaches the measure-level target directly.
+`CharacteristicIdentifiability.lean` proves `IdentifiesAtZero BothProbability
+(radialMmdDrift (gaussianRadialDeriv σ))`: for the Gaussian MMD drift (equation
+41) between probability measures, zero drift forces `p = q`.  The identification
+is the reviewed RKHS fact that a characteristic kernel's mean embedding is
+injective (`characteristic_gradientEmbedding_injective`), with the Gaussian as a
+concrete characteristic witness (`gaussian_gradient_isCharacteristic`).  Per the
+project policy these well-known theorems are axiomatized, not reproved.
+
+Transparency: because `mmdDrift kg p q = Φₚ − Φ_q` by construction, zero MMD
+drift is *definitionally* embedding matching, so this route reduces the paper's
+identifiability question to the standard RKHS theorem rather than proving it from
+lower-level analysis.  The honest content is the identification of the precise
+external fact the paper relies on, plus the concrete, legitimate condition
+(characteristic kernel, admitting distinct Dirac pairs before zero drift).  See
+the note in `Paperaxioms.lean`.
+
 ## Definition of success
 
 Success requires all of the following:
