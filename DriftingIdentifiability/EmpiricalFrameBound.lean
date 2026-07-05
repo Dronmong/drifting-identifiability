@@ -76,6 +76,53 @@ theorem interactionFrameBound_two {N : ℕ} (U : Fin 2 → Fin 2 → Fin N → E
   change ‖U 0 1‖ * |z default| ≤ |z default| * ‖U 0 1‖
   rw [mul_comm]
 
+/-- **Nondegeneracy gives a positive frame bound (general `m`).**  For any
+linearly independent interaction family over a nonempty strict-pair index set,
+some positive `InteractionFrameBound` holds.  With the reverse implication
+(`interactionFrameBound_linearIndependent`), the frame-bound hypothesis is thus
+*equivalent* to qualitative nondegeneracy: the general-`m` frame gap reduces to
+pure linear independence of the induced vectors. -/
+theorem interactionFrameBound_of_linearIndependent
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] {m : ℕ}
+    [Nonempty (StrictPair m)] (U : Fin m → Fin m → V)
+    (hindep : LinearIndependent ℝ (fun p : StrictPair m => U p.1.1 p.1.2)) :
+    ∃ c > 0, InteractionFrameBound U c := by
+  have hker : LinearMap.ker (interactionSynthesis U) = ⊥ := by
+    rw [LinearMap.ker_eq_bot']
+    intro z hz
+    rw [interactionSynthesis_apply] at hz
+    funext p
+    exact (Fintype.linearIndependent_iff.mp hindep) z hz p
+  obtain ⟨K, hKpos, hanti⟩ :=
+    LinearMap.exists_antilipschitzWith (interactionSynthesis U) hker
+  have hbound : ∀ z : StrictPair m → ℝ, ‖z‖ ≤ (K : ℝ) * ‖interactionSynthesis U z‖ := by
+    intro z
+    have h := hanti.le_mul_dist z 0
+    rwa [dist_zero_right, map_zero, dist_zero_right] at h
+  have hNpos : (0 : ℝ) < (Fintype.card (StrictPair m) : ℝ) := by
+    exact_mod_cast Fintype.card_pos
+  have hKR : (0 : ℝ) < (K : ℝ) := hKpos
+  have hprod : (0 : ℝ) < (K : ℝ) * Fintype.card (StrictPair m) := mul_pos hKR hNpos
+  refine ⟨((K : ℝ) * Fintype.card (StrictPair m))⁻¹, by positivity, by positivity, fun z => ?_⟩
+  have hsum : (∑ p, |z p|) ≤ (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := by
+    calc (∑ p : StrictPair m, |z p|) ≤ ∑ _p : StrictPair m, ‖z‖ := by
+          refine Finset.sum_le_sum fun p _ => ?_
+          rw [← Real.norm_eq_abs]; exact norm_le_pi_norm z p
+      _ = (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := by
+          rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  have hchain : (∑ p, |z p|)
+      ≤ (K : ℝ) * Fintype.card (StrictPair m) * ‖interactionSynthesis U z‖ :=
+    calc (∑ p, |z p|) ≤ (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := hsum
+      _ ≤ (Fintype.card (StrictPair m) : ℝ) * ((K : ℝ) * ‖interactionSynthesis U z‖) :=
+          mul_le_mul_of_nonneg_left (hbound z) hNpos.le
+      _ = (K : ℝ) * Fintype.card (StrictPair m) * ‖interactionSynthesis U z‖ := by ring
+  calc ((K : ℝ) * Fintype.card (StrictPair m))⁻¹ * (∑ p, |z p|)
+      ≤ ((K : ℝ) * Fintype.card (StrictPair m))⁻¹ *
+          ((K : ℝ) * Fintype.card (StrictPair m) * ‖interactionSynthesis U z‖) :=
+        mul_le_mul_of_nonneg_left hchain (by positivity)
+    _ = ‖interactionSynthesis U z‖ := by
+        rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hprod), one_mul]
+
 /-! ## Positive frame bound for the actual induced vectors -/
 
 variable {N : ℕ}

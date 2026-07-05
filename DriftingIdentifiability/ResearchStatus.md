@@ -100,10 +100,26 @@ This carries out steps 1–3 below for `m = 2`.
    vector), and whether `c` remains acceptably bounded as model size and
    dimension grow.
 
-The `m = 2` closure uses the actual `basisInteraction`; extending to general `m`
-requires independence of the closed-form vectors
-`{k(xₙ,zᵢ)k(xₙ,zⱼ)(zᵢ−zⱼ)}_{i<j}`, a product-kernel strict-positive-definiteness
-statement. Separate later extensions—not gaps in the present population
-theorem—are finite-sample bounds for Algorithm 2, learned-feature/source-law
-identifiability, CFG via signed measures, and generalization beyond finite
-density families.
+### The general-`m` gap is now exactly *linear independence*
+
+`interactionFrameBound_of_linearIndependent` (axiom-free, general `m`) proves the
+converse of `interactionFrameBound_linearIndependent`: a linearly independent
+induced family always admits *some* positive frame bound (via
+`LinearMap.exists_antilipschitzWith` on the synthesis map). Hence for the actual
+induced vectors the **frame-bound hypothesis is equivalent to plain qualitative
+nondegeneracy**, and the remaining general-`m` obligation is precisely:
+
+```text
+LinearIndependent ℝ (fun (i<j) ↦ Uᵢⱼ),   Uᵢⱼ(n) = k(xₙ,zᵢ)k(xₙ,zⱼ)(zᵢ−zⱼ).
+```
+
+For `E = ℝ` this reduces (the `zᵢ−zⱼ` are nonzero scalars) to independence of the
+product-kernel probe profiles `{(k(xₙ,zᵢ)k(xₙ,zⱼ))ₙ}_{i<j}` — a product-kernel
+strict-positive-definiteness / distinct-pairwise-sum statement. Proving it stays
+axiom-free/promoted requires genuine analysis (Gaussian product independence);
+importing it would place the general-`m` result in the conditional layer.
+
+The `m = 2` closure uses the actual `basisInteraction`. Separate later
+extensions—not gaps in the present population theorem—are finite-sample bounds
+for Algorithm 2, learned-feature/source-law identifiability, CFG via signed
+measures, and generalization beyond finite density families.
