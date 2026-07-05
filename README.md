@@ -33,8 +33,11 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
   counterexample definitions.
 - `DriftingIdentifiability/CandidateConditions.lean` — proposed conditions and
   research-stage metadata.
+- `DriftingIdentifiability/FiniteGrouping.lean` — axiom-free proof of the
+  coefficient-minor vanishing (anti-symmetric grouping identity + Mathlib linear
+  independence), replacing the paper axiom `zero_drift_coefficient_minors`.
 - `DriftingIdentifiability/PaperFiniteIdentifiability.lean` — finite-basis route
-  from Appendix C.1.
+  from Appendix C.1; now proves density equality with no paper axiom.
 - `DriftingIdentifiability/FiniteLegitimacy.lean` — machine-checked legitimacy
   witnesses for the finite route: a distinct pair before zero drift, the lift to
   distinct densities, and satisfiability of the interaction-separation premises.

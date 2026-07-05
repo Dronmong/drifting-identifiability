@@ -179,7 +179,11 @@ complete and audited:
 
 - `PaperFiniteIdentifiability.lean` proves coefficient equality
   (`finiteCoefficientIdentifiable`) and density equality
-  (`finiteBasisDensitiesEqual`) from the grouped zero-drift hypothesis.
+  (`finiteBasisDensitiesEqual`) from the grouped zero-drift hypothesis. These are
+  now **axiom-free** (`#print axioms` shows only Mathlib foundations): the
+  coefficient-minor step was rederived from scratch in `FiniteGrouping.lean`
+  (`coefficientMinorsVanish_of_antisymm`), removing the paper axiom
+  `zero_drift_coefficient_minors`.
 - `FiniteLegitimacy.lean` machine-checks legitimacy: a distinct pair exists
   before zero drift (`exists_distinct_probVectors`, `2 ≤ m`), it lifts to
   distinct densities under basis independence

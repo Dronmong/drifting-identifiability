@@ -1,4 +1,4 @@
-import DriftingIdentifiability.CandidateConditions
+import DriftingIdentifiability.FiniteGrouping
 
 /-!
 # Finite-basis route suggested by Appendix C.1
@@ -30,14 +30,16 @@ structure FiniteCoefficientSetup
   b : FiniteProbabilityVector m
   zeroBilinear : (∑ i, ∑ j, (a.weight i * b.weight j) • U i j) = 0
 
-/-- The paper-backed intermediate conclusion: every coefficient minor
-vanishes.  This is not the forbidden conclusion `a = b` or `p = q`. -/
+/-- Every coefficient minor vanishes.  This is not the forbidden conclusion
+`a = b` or `p = q`.  It is proved from scratch in `FiniteGrouping.lean` (anti-
+symmetry + Mathlib linear independence), so it no longer relies on the paper
+axiom `zero_drift_coefficient_minors`. -/
 theorem coefficientMinorsVanish
     {E : Type u} [AddCommGroup E] [Module ℝ E]
     {m N : ℕ} (setup : FiniteCoefficientSetup E m N) :
     AllCoefficientMinorsZero setup.a.weight setup.b.weight := by
   intro i j
-  exact zero_drift_coefficient_minors setup.U setup.anti setup.nondegenerate
+  exact coefficientMinorsVanish_of_antisymm setup.U setup.anti setup.nondegenerate
     setup.a.weight setup.b.weight setup.zeroBilinear i j
 
 /-- Probability normalization removes the scale ambiguity left by vanishing

@@ -13,6 +13,10 @@
 
 - [x] Anti-symmetry proves `p = q → V = 0`.
 - [x] Appendix C.1 finite expansion and zero-minor conclusion exposed.
+- [x] Coefficient-minor vanishing **proved from scratch** (`FiniteGrouping.lean`,
+      `coefficientMinorsVanish_of_antisymm`): the finite exact route
+      (`finiteBasisDensitiesEqual`) is now axiom-free, no longer using the paper
+      axiom `zero_drift_coefficient_minors`.
 - [x] Normalized probability coefficient vectors with all minors zero are equal
       (`normalizedParallelCoefficientsAreEqual`).
 - [x] Coefficient equality lifts to density equality using basis independence

@@ -103,8 +103,12 @@ bilinear zero equation implies
 aᵢbⱼ-aⱼbᵢ = 0   for all i,j.
 ```
 
-This is exactly the reviewed paper result
-`Paper.zero_drift_coefficient_minors`.
+This is now **proved from scratch** in `FiniteGrouping.lean`
+(`coefficientMinorsVanish_of_antisymm`): the anti-symmetric bilinear sum,
+doubled, equals the minor-weighted sum over strict pairs (a `sum_comm`/trichotomy
+grouping identity), and linear independence of `{Uᵢⱼ : i<j}` forces every minor
+to vanish (`Fintype.linearIndependent_iff`).  It no longer uses the paper axiom
+`zero_drift_coefficient_minors`.
 
 ### Lemma 2 — normalized vectors with zero minors are equal
 
@@ -182,6 +186,10 @@ passing to global zero drift and to a measure-level statement remain open.
 
 ## Expected `#print axioms` output
 
-The final finite theorem may depend on Mathlib’s standard foundational axioms
-and the reviewed paper axiom `Paper.zero_drift_coefficient_minors`. It must not
-depend on any new project axiom.
+The pure finite theorem `finiteBasisDensitiesEqual` now depends on **only**
+Mathlib’s standard foundational axioms (`propext`, `Classical.choice`,
+`Quot.sound`) — no paper axiom at all, since `coefficientMinorsVanish` was
+rederived in `FiniteGrouping.lean`. The drift-level wrapper in
+`PaperDriftIdentifiability.lean` additionally uses the reviewed analytic-expansion
+axioms `equation_31_bilinear_expansion` and
+`antisymmetric_kernel_induces_basis_antisymmetry`, both on the allowlist.
