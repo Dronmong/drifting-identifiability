@@ -42,6 +42,10 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
   *actual* density-interaction drift (Appendix C.1) to the finite algebra:
   probe-wise zero drift plus nondegeneracy identifies the basis densities, with
   a specialization to the paper's mean-shift interaction kernel.
+- `DriftingIdentifiability/FiniteStability.lean` — axiom-free quantitative
+  stability: the `ℓ¹` coefficient distance is bounded by the total minor mass,
+  giving the convergence statement `minor mass → 0 ⟹ coefficients → 0` (the
+  finite-coefficient shadow of the asymptotic target).
 - `DriftingIdentifiability/AGENT.md` — mandatory agent workflow and anti-cheating
   rules.
 - `DriftingIdentifiability/WrittenProof.md` — proof-development template.

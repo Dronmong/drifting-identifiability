@@ -13,14 +13,30 @@
 
 - [x] Anti-symmetry proves `p = q → V = 0`.
 - [x] Appendix C.1 finite expansion and zero-minor conclusion exposed.
-- [ ] Prove normalized probability coefficient vectors with all minors zero are
-      equal.
-- [ ] Lift coefficient equality to density equality using basis independence.
-- [ ] Validate the finite-basis hypotheses for the paper’s concrete kernel.
+- [x] Normalized probability coefficient vectors with all minors zero are equal
+      (`normalizedParallelCoefficientsAreEqual`).
+- [x] Coefficient equality lifts to density equality using basis independence
+      (`finiteBasisDensitiesEqual`); the distinctness direction is also proved
+      (`basisDensity_injective_of_basisIndependent`).
+- [x] Finite condition is legitimate: a distinct pair exists before zero drift
+      and the separation premises are satisfiable (`FiniteLegitimacy.lean`).
+- [x] Actual density-interaction drift-zero (probe-wise) identifies the basis
+      densities via the reviewed paper axioms
+      (`driftProbeZeroIdentifiesDensities`,
+      `meanShiftInteractionIdentifiesDensities`).
+- [ ] Discharge the nondegeneracy and integrability hypotheses for the paper's
+      concrete kernel/probe system rather than assuming them.
+- [ ] Bridge the density-valued statement to a measure-level `IdentifiesAtZero`
+      claim, and probe-wise zero drift to global zero drift.
+- [~] Quantitative coefficient stability proved (`FiniteStability.lean`): `ℓ¹`
+      coefficient distance ≤ total minor mass, hence `minor mass → 0 ⟹
+      coefficients → 0`. The remaining gap is bounding the minor mass by the
+      drift norm (the linear-independence lower bound).
 - [ ] Formulate and prove a genuinely asymptotic result with named norms and
-      measure topology.
+      measure topology (`AsymptoticallyIdentifies`).
 
 ## Active candidate
 
-None. The next work item is the finite coefficient lemma in
-`PaperFiniteIdentifiability.lean`.
+Finite-basis interaction separation — complete and audited through the
+drift-level statement. No open candidate at the finite/exact level; the next
+work items are the four unchecked analytic/asymptotic obligations above.
