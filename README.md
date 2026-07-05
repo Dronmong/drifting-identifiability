@@ -49,8 +49,10 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
 - `DriftingIdentifiability/CharacteristicIdentifiability.lean` — the
   distribution-level target: for a characteristic kernel (witnessed by the
   Gaussian), zero MMD drift (equation 41) between probability measures forces
-  `p = q`. Reduces identifiability to the reviewed RKHS embedding-injectivity
-  axiom; see the transparency note in `Paperaxioms.lean`.
+  `p = q` (exact), and the MMD discrepancy tending to zero forces convergence in
+  distribution (asymptotic, Lévy–Prokhorov). Reduces identifiability to reviewed
+  RKHS axioms; see the transparency notes in `Paperaxioms.lean` and
+  `LoggedFailures.md`.
 - `DriftingIdentifiability/AGENT.md` — mandatory agent workflow and anti-cheating
   rules.
 - `DriftingIdentifiability/WrittenProof.md` — proof-development template.

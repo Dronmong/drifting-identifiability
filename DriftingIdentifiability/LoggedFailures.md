@@ -113,3 +113,34 @@ so future agents do not repeat equivalent mistakes.
 - **Relevant Lean declarations/files:** `stdBasisProbVector`,
   `exists_distinct_probVectors`, `basisDensity_injective_of_basisIndependent`,
   `finiteConditionAllowsDistinctDensities`, `FiniteLegitimacy.lean`.
+
+---
+
+### 2026-07-04 — raw drift-field norm does not obviously control weak convergence
+
+- **Exact condition:** Try to state the asymptotic target directly on the drift
+  field: `‖Vₚ,qₙ‖ → 0` (some norm of the MMD drift field, equation 41) ⟹
+  `qₙ → p` in distribution, for a characteristic kernel.
+- **Intended mechanism:** Import a metrization theorem to convert vanishing drift
+  into convergence, mirroring the exact route.
+- **Stress test/model:** Consider that `Vₚ,q(x) = Φₚ(x) − Φ_q(x)` is the
+  difference of *gradient* mean embeddings, whereas the MMD (which metrizes weak
+  convergence) is the norm of the *value* embedding difference.
+- **Counterexample or obstruction:** A small drift gradient does not imply a
+  small MMD. `V = -½∇(MMD²)` (Appendix C.2), so `V → 0` is a *critical-point*
+  condition, satisfied at maxima/saddles of the MMD, not only at its zero. Sup-
+  norm convergence of embeddings is also strictly weaker than RKHS-norm (MMD)
+  convergence. So `‖V‖ → 0 ⟹ MMD → 0` is not a clean, known truth.
+- **Why the argument fails:** The would-be axiom would assert something we are
+  *not* confident is true, which violates the project's honesty policy — only
+  genuinely-known theorems may be assumed.
+- **Fatal or repairable:** Repairable by changing the driving quantity. The MMD
+  discrepancy itself (equation 37) *is* the training objective the drift
+  minimizes, and `MMD → 0 ⟹ weak convergence` is a solid, well-known theorem.
+- **Possible repair (taken):** State the asymptotic result with the MMD
+  discrepancy as the drift size — `gaussianMmd_asymptoticallyIdentifies` via
+  `gaussian_mmd_metrizes_weakConvergence` — and explicitly flag that the raw
+  field-norm version is not claimed.
+- **Relevant Lean declarations/files:** `mmdDrift`, `mmdSquared`,
+  `gaussian_mmd_metrizes_weakConvergence`, `gaussianMmd_asymptoticallyIdentifies`,
+  `CharacteristicIdentifiability.lean`.

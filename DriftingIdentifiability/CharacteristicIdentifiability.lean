@@ -65,6 +65,31 @@ theorem gaussianMmd_identifiesAtZero (σ : ℝ) (hσ : ValidBandwidth σ) :
 
 end Gaussian
 
+section Asymptotic
+variable {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+
+/-- **Asymptotic identifiability for the Gaussian MMD discrepancy.**  An instance
+of `AsymptoticallyIdentifies` with the MMD discrepancy of equation (37) as the
+drift size and the Lévy–Prokhorov metric as the distribution distance: if the
+Gaussian MMD between `p` and a sequence `qₙ` tends to zero, then `qₙ → p` in
+distribution.  Rests on the reviewed metrization axiom
+`gaussian_mmd_metrizes_weakConvergence`.
+
+Honesty note: the "drift size" named here is the **MMD training discrepancy**
+(equation 37) — one of the discrepancy measures `AGENT.md` explicitly permits —
+*not* the raw sup-norm of the drift field.  Tying the field norm itself to weak
+convergence is genuinely subtle (a small drift *gradient* need not mean a small
+MMD; see `LoggedFailures.md`) and is deliberately not claimed here. -/
+theorem gaussianMmd_asymptoticallyIdentifies (σ : ℝ) (hσ : ValidBandwidth σ) :
+    AsymptoticallyIdentifies (BothProbability (E := E))
+      (fun p q => mmdSquared (gaussianKernel σ) p q)
+      (fun p q => (levyProkhorovEDist p q).toReal) := by
+  intro p qn hcond hdrift
+  exact gaussian_mmd_metrizes_weakConvergence σ hσ p qn (hcond 0).1
+    (fun n => (hcond n).2) hdrift
+
+end Asymptotic
+
 section Legitimacy
 variable {E : Type u} [MeasurableSpace E]
 

@@ -946,5 +946,22 @@ axiom gaussian_gradient_isCharacteristic
     (σ : ℝ) (hσ : ValidBandwidth σ) :
     IsCharacteristic (E := E) (radialKernelGradient (gaussianRadialDeriv σ))
 
+/-- Well-known RKHS theorem (Sriperumbudur et al., 2010; Simon-Gabriel–Schölkopf,
+2018): the Gaussian-kernel MMD metrizes weak convergence, so a vanishing MMD
+discrepancy (equation 37) forces convergence in distribution, here recorded via
+the Lévy–Prokhorov metric.  This is an external fact about the MMD *metric*, not
+about a drifting field; standard separability/regularity side conditions are
+folded in, consistent with this file's policy.  It is an asymptotic (limit)
+statement, not the exact conclusion. -/
+axiom gaussian_mmd_metrizes_weakConvergence
+    {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+    (σ : ℝ) (hσ : ValidBandwidth σ)
+    (p : Distribution E) (qn : ℕ → Distribution E)
+    (hp : IsProbabilityMeasure p) (hqn : ∀ n, IsProbabilityMeasure (qn n))
+    (h : Filter.Tendsto (fun n => mmdSquared (gaussianKernel σ) p (qn n))
+      Filter.atTop (nhds 0)) :
+    Filter.Tendsto (fun n => (levyProkhorovEDist p (qn n)).toReal)
+      Filter.atTop (nhds 0)
+
 end Paper
 end DriftingIdentifiability

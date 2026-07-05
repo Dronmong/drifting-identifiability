@@ -30,7 +30,8 @@ $allowedPaperAxioms = @(
   'equation_47_matched_zero',
   'IsCharacteristic',
   'characteristic_gradientEmbedding_injective',
-  'gaussian_gradient_isCharacteristic'
+  'gaussian_gradient_isCharacteristic',
+  'gaussian_mmd_metrizes_weakConvergence'
 ) | Sort-Object
 
 if (-not (Test-Path -LiteralPath $hashManifest)) {

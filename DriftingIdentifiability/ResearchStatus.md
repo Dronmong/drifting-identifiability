@@ -46,8 +46,13 @@
       nondegeneracy, and apply `LinearMap.exists_antilipschitzWith` (finite
       dimension) to get `‖minor‖ ≤ K ‖drift‖`. Chaining with the stability bound
       yields Lipschitz stability `ℓ¹ coeff distance ≤ C ‖drift‖`.
-- [ ] Formulate and prove a genuinely asymptotic result with named norms and
-      measure topology (`AsymptoticallyIdentifies`).
+- [x] Asymptotic result with named discrepancy and topology
+      (`gaussianMmd_asymptoticallyIdentifies`): an `AsymptoticallyIdentifies`
+      instance for the Gaussian, using the MMD discrepancy (equation 37) as the
+      drift size and the Lévy–Prokhorov metric as the distribution distance, via
+      the reviewed metrization axiom `gaussian_mmd_metrizes_weakConvergence`.
+      Caveat: the drift size is the MMD discrepancy, not the raw drift-field
+      norm — that connection is subtle and is logged, not claimed.
 
 ## Active candidate
 

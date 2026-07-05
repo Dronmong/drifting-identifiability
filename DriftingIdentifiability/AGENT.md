@@ -219,6 +219,14 @@ external fact the paper relies on, plus the concrete, legitimate condition
 (characteristic kernel, admitting distinct Dirac pairs before zero drift).  See
 the note in `Paperaxioms.lean`.
 
+The asymptotic counterpart is `gaussianMmd_asymptoticallyIdentifies`: an
+`AsymptoticallyIdentifies` instance with the MMD discrepancy (equation 37) as the
+drift size and the Lévy–Prokhorov metric as the distribution distance, via the
+reviewed metrization axiom `gaussian_mmd_metrizes_weakConvergence`.  Note the
+honesty boundary: the *raw drift-field norm* does not obviously control weak
+convergence (`V = -½∇MMD²`, so `V=0` is a critical-point condition, not `MMD=0`),
+so that stronger claim is deliberately not made — see `LoggedFailures.md`.
+
 ## Definition of success
 
 Success requires all of the following:
