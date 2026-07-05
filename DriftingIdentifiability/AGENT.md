@@ -186,6 +186,14 @@ explicit stability estimate `‖a-b‖₁ ≤ (2B/c)‖V_probes‖`. A necessary
 dimension bound is also formalized. `finiteBasisCandidate` records the model
 family and proves legitimacy from an independently unequal pair.
 
+`EmpiricalFrameBound.lean` now supplies an axiom-free concrete general-`m`
+instance on `ℝ`: a uniform empirical point-density basis, unit Gaussian kernel,
+integer probes, distinct support points, and distinct strict-pair sums. A
+Vandermonde proof establishes nondegeneracy for the actual integral-induced
+vectors and `gaussianEmpiricalPoint_identifies` packages the full population
+theorem. Do not describe its existential frame constant as numerically useful;
+an explicit conditioning bound remains open.
+
 The result is deliberately scoped to the ideal population field, data-space
 matching, and no CFG. Zero population energy reaches the pointwise hypothesis
 only with integrability, continuity, and full topological support. A finite

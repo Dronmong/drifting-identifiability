@@ -71,6 +71,103 @@ theorem interactionFrameBound_linearIndependent
       (Finset.mem_univ p)
   exact abs_eq_zero.mp hp
 
+/-- In finite dimension, qualitative nondegeneracy also yields some positive
+frame constant.  This is an existence theorem; practical stability still
+requires estimating a useful value of the constant. -/
+theorem interactionFrameBound_of_linearIndependent
+    [Nonempty (StrictPair m)] (U : Fin m → Fin m → V)
+    (hindep : LinearIndependent ℝ (fun p : StrictPair m => U p.1.1 p.1.2)) :
+    ∃ c > 0, InteractionFrameBound U c := by
+  have hker : LinearMap.ker (interactionSynthesis U) = ⊥ := by
+    rw [LinearMap.ker_eq_bot']
+    intro z hz
+    rw [interactionSynthesis_apply] at hz
+    funext p
+    exact (Fintype.linearIndependent_iff.mp hindep) z hz p
+  obtain ⟨K, hKpos, hanti⟩ :=
+    LinearMap.exists_antilipschitzWith (interactionSynthesis U) hker
+  have hbound : ∀ z : StrictPair m → ℝ,
+      ‖z‖ ≤ (K : ℝ) * ‖interactionSynthesis U z‖ := by
+    intro z
+    have h := hanti.le_mul_dist z 0
+    rwa [dist_zero_right, map_zero, dist_zero_right] at h
+  have hNpos : (0 : ℝ) < (Fintype.card (StrictPair m) : ℝ) := by
+    exact_mod_cast Fintype.card_pos
+  have hKR : (0 : ℝ) < (K : ℝ) := hKpos
+  have hprod : (0 : ℝ) < (K : ℝ) * Fintype.card (StrictPair m) :=
+    mul_pos hKR hNpos
+  refine ⟨((K : ℝ) * Fintype.card (StrictPair m))⁻¹,
+    by positivity, by positivity, fun z => ?_⟩
+  have hsum : (∑ p, |z p|) ≤
+      (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := by
+    calc
+      (∑ p : StrictPair m, |z p|) ≤ ∑ _p : StrictPair m, ‖z‖ := by
+        refine Finset.sum_le_sum fun p _ => ?_
+        rw [← Real.norm_eq_abs]
+        exact norm_le_pi_norm z p
+      _ = (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := by
+        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  have hchain : (∑ p, |z p|) ≤
+      (K : ℝ) * Fintype.card (StrictPair m) * ‖interactionSynthesis U z‖ :=
+    calc
+      (∑ p, |z p|) ≤ (Fintype.card (StrictPair m) : ℝ) * ‖z‖ := hsum
+      _ ≤ (Fintype.card (StrictPair m) : ℝ) *
+          ((K : ℝ) * ‖interactionSynthesis U z‖) :=
+        mul_le_mul_of_nonneg_left (hbound z) hNpos.le
+      _ = (K : ℝ) * Fintype.card (StrictPair m) *
+          ‖interactionSynthesis U z‖ := by ring
+  calc
+    ((K : ℝ) * Fintype.card (StrictPair m))⁻¹ * (∑ p, |z p|)
+        ≤ ((K : ℝ) * Fintype.card (StrictPair m))⁻¹ *
+            ((K : ℝ) * Fintype.card (StrictPair m) *
+              ‖interactionSynthesis U z‖) :=
+          mul_le_mul_of_nonneg_left hchain (by positivity)
+    _ = ‖interactionSynthesis U z‖ := by
+      rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hprod), one_mul]
+
+/-- A finite family of nonzero row/column scalings of distinct geometric
+profiles is linearly independent.  This is the axiom-free Vandermonde engine
+used by the structured Gaussian probe construction. -/
+theorem linearIndependent_weightedGeometricProfiles
+    {ι : Type*} [Fintype ι] (r column : ι → ℝ)
+    (hr : Function.Injective r) (hcolumn : ∀ i, column i ≠ 0)
+    (row : Fin (Fintype.card ι) → ℝ) (hrow : ∀ n, row n ≠ 0) :
+    LinearIndependent ℝ (fun i : ι => fun n =>
+      row n * (column i * r i ^ (n : ℕ))) := by
+  rw [Fintype.linearIndependent_iff]
+  intro a ha i
+  let e : ι ≃ Fin (Fintype.card ι) := Fintype.equivFin ι
+  let v : Fin (Fintype.card ι) → ℝ := fun q =>
+    a (e.symm q) * column (e.symm q)
+  let f : Fin (Fintype.card ι) → ℝ := fun q => r (e.symm q)
+  have hf : Function.Injective f := hr.comp e.symm.injective
+  have hpower : ∀ n : Fin (Fintype.card ι),
+      (∑ q, v q * f q ^ (n : ℕ)) = 0 := by
+    intro n
+    have hn := congrFun ha n
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at hn
+    have hfactored : row n *
+        (∑ p, a p * column p * r p ^ (n : ℕ)) = 0 := by
+      calc
+        row n * (∑ p, a p * column p * r p ^ (n : ℕ)) =
+            ∑ p, a p * (row n * (column p * r p ^ (n : ℕ))) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro p _
+          ring
+        _ = 0 := hn
+    have hunscaled : (∑ p, a p * column p * r p ^ (n : ℕ)) = 0 :=
+      (mul_eq_zero.mp hfactored).resolve_left (hrow n)
+    let g : ι → ℝ := fun p => a p * column p * r p ^ (n : ℕ)
+    change (∑ q, g (e.symm q)) = 0
+    rw [e.symm.sum_comp]
+    exact hunscaled
+  have hv : v = 0 :=
+    Matrix.eq_zero_of_forall_pow_sum_mul_pow_eq_zero hf hpower
+  have hvi := congrFun hv (e i)
+  simp only [v, Equiv.symm_apply_apply, Pi.zero_apply] at hvi
+  exact (mul_eq_zero.mp hvi).resolve_right (hcolumn i)
+
 /-- Specialization of the preceding result to the paper's probe-vector
 interaction family. -/
 theorem interactionFrameBound_basisNondegenerate

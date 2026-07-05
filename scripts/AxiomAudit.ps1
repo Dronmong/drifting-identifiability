@@ -10,7 +10,16 @@ $declarations = @(
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies_of_energy',
   'DriftingIdentifiability.PaperFiniteIdentifiability.PopulationMeanShiftFiniteSetup.coefficientStability',
-  'DriftingIdentifiability.PaperFiniteIdentifiability.empiricalInteractionFrameBound'
+  'DriftingIdentifiability.PaperFiniteIdentifiability.interactionFrameBound_of_linearIndependent',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.linearIndependent_weightedGeometricProfiles',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_basisNondegenerate',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPointFrameBound',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_identifies',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_coefficientStability',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_coefficientStability_one',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.empiricalInteractionFrameBound',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.empirical01Gaussian_identifies',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.empirical01Gaussian_coefficientStability'
 )
 
 $allowedProjectAxioms = @(

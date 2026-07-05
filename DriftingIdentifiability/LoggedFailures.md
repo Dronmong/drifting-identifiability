@@ -229,3 +229,43 @@ so future agents do not repeat equivalent mistakes.
   signed-measure CFG extension.
 - **Relevant Lean declarations/files:** `algorithm2Drift`, `cfgNegativeDensity`,
   `PopulationIdentifiability.lean`.
+
+---
+
+### 2026-07-05 — Gaussian product profiles with colliding pair sums
+
+- **Exact condition:** Use one-dimensional empirical point densities and the
+  structured integer-probe Gaussian construction, but allow two distinct
+  strict pairs `(i,j) ≠ (k,l)` with `zᵢ+zⱼ = zₖ+zₗ`.
+- **Intended mechanism:** Recover every coefficient minor from the Gaussian
+  product profiles.
+- **Counterexample or obstruction:** After removing nonzero row and column
+  factors, both pair profiles have the same geometric base
+  `exp(zᵢ+zⱼ)`, so their columns are proportional and the Vandermonde matrix
+  is singular.
+- **Why the argument fails:** Distinct support points alone do not distinguish
+  unordered pairs; for example, equally spaced supports produce repeated pair
+  sums.
+- **Fatal or repairable:** Repairable for this construction.
+- **Possible repair:** Require `DistinctStrictPairSums` (a finite Sidon-type
+  condition), alter the support geometry, or use richer multidimensional
+  probes that can separate colliding sums.
+- **Relevant Lean declarations/files:** `DistinctStrictPairSums`,
+  `gaussianEmpiricalPoint_basisNondegenerate`, `EmpiricalFrameBound.lean`.
+
+---
+
+### 2026-07-05 — qualitative frame existence treated as good conditioning
+
+- **Exact condition:** Infer practical stability merely from linear
+  independence of the interaction vectors.
+- **Counterexample or obstruction:** Finite-dimensional compactness supplies
+  some `c>0`, but gives no useful lower bound; nearly colliding Gaussian bases
+  can make `c` arbitrarily small.
+- **Why the argument fails:** Exact nonsingularity and numerical conditioning
+  are different claims.
+- **Fatal or repairable:** Repairable with explicit separation and
+  singular-value/Vandermonde bounds.
+- **Relevant Lean declarations/files:**
+  `interactionFrameBound_of_linearIndependent`,
+  `gaussianEmpiricalPointFrameConstant`, `FiniteStability.lean`.

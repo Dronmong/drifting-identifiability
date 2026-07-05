@@ -82,6 +82,44 @@ The same uniform estimate proves coefficient convergence from probe-drift
 convergence. Nondegeneracy also requires
 `card(StrictPair m) ≤ N · dim(E)`, which is now machine checked.
 
+## Concrete general finite family
+
+Let `m≥2`, let `z₀,…,zₘ₋₁∈ℝ` be distinct, and let the reference law be the
+uniform empirical distribution on these points. Define the `i`th basis density
+to equal `m` at `zᵢ` and zero at every other support point. These functions are
+measurable, nonnegative, and have unit integral, so their simplex mixtures are
+genuine probability measures.
+
+For the unit-bandwidth Gaussian kernel and the mean-shift interaction, direct
+finite integration gives
+
+```text
+Uᵢⱼ(n) = k(n,zᵢ)k(n,zⱼ)(zᵢ-zⱼ),
+```
+
+using one integer probe `n` for each strict pair. Expanding the Gaussian gives
+
+```text
+Uᵢⱼ(n)
+ = exp(-n²)
+   [exp(-(zᵢ²+zⱼ²)/2)(zᵢ-zⱼ)]
+   [exp(zᵢ+zⱼ)]ⁿ.
+```
+
+The first factor is nonzero for every probe. The second is nonzero because the
+support points are distinct. If all strict-pair sums `zᵢ+zⱼ` are distinct, the
+geometric bases `exp(zᵢ+zⱼ)` are distinct. The square evaluation matrix is a
+Vandermonde matrix and is nonsingular, so the actual induced vectors are
+linearly independent. Finite-dimensional norm equivalence then supplies a
+positive frame constant.
+
+This proves `gaussianEmpiricalPoint_identifies`: no frame or injectivity
+conclusion is assumed by its caller. Its remaining practical limitation is
+that the selected frame constant is existential rather than a useful explicit
+lower bound. Since the unit Gaussian satisfies `0<k≤1`, each normalizer lies in
+`(0,1]`, so the product bound is explicitly `B=1`; the concrete stability
+estimate is therefore `‖a-b‖₁ ≤ (2/c)‖V_probes‖`.
+
 ## Legitimacy and failure audit
 
 The registered `finiteBasisCandidate` admits distinct laws whenever two
@@ -100,6 +138,8 @@ feature-law equality back to source-law equality.
 - Algebraic grouping and exact coefficient proof: `FiniteGrouping.lean` and
   `PaperFiniteIdentifiability.lean`.
 - Quantitative frame estimates: `FiniteStability.lean`.
+- Concrete empirical bases and the axiom-free Gaussian/Vandermonde theorem:
+  `EmpiricalFrameBound.lean`.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
 
