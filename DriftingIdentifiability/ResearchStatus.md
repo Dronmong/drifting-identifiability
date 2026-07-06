@@ -401,18 +401,25 @@ Progress (done, `FiniteSampleBridge.lean`):
   concentration bound `P{ε < ‖V − Vhat‖} ≤ δ` gives
   `P{coefficient bound holds} ≥ 1 - δ`.
 
+- **Markov concentration and the sample-complexity bound.**
+  `meas_gt_le_meanSquare_div` proves `P{ε < ‖Z‖} ≤ E‖Z‖²/ε²` for any estimator
+  error `Z` (Markov on the squared norm — no independence assumption).
+  `estimate_failure_le_meanSquare` composes the three steps into the concrete
+  bound: the probability that `‖a-b‖₁ ≤ (2B/c)(‖Vhat‖+ε)` *fails* is at most
+  `E‖V − Vhat‖² / ε²`. Hence the bound holds with probability `≥ 1-δ` as soon as
+  the estimator mean squared error satisfies `E‖V − Vhat‖² ≤ δε²`; for a
+  sample-mean estimator with MSE `σ²/N` this is `N ≥ σ²/(δε²)`.
+
 Still open:
 
-- a concrete concentration bound producing `P{ε < ‖V − Vhat‖} ≤ δ` — the natural
-  route is Markov on the squared error `P ≤ E‖V-Vhat‖²/ε²` (generic) plus an
-  iid mean-squared-error bound `E‖V-Vhat‖² ≤ σ²/N` (Mathlib has Chebyshev,
-  variance, and `iIndepFun`), giving sample complexity `N ≳ σ²/(δε²)`;
+- an iid mean-squared-error bound `E‖V − Vhat‖² ≤ σ²/N` for a concrete
+  sample-mean estimator (Mathlib has variance, `iIndepFun`, and the CLT
+  scaffolding), turning the abstract MSE into an explicit `1/N` rate;
 - relating the specific bi-softmax `algorithm2Drift` estimator (with its
   geometric-mean weighting) to the population mean-shift field, including its
   bias;
 - treatment of the reused-generated-sample dependence (`selfMask`), which breaks
-  the plain iid analysis;
-- sample complexity as a function of dimension, batch size, and conditioning.
+  the plain iid analysis.
 
 ### Objective 5: handle feature-space training correctly
 
