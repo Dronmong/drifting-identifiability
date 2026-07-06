@@ -383,14 +383,35 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — in progress
 
-Desired results:
+Progress (done, `FiniteSampleBridge.lean`):
 
-- concentration bounds between the minibatch bi-softmax field and the ideal
-  population field;
-- treatment of dependence caused by reusing generated samples as negatives;
-- propagation of estimator error through the `2/c` stability estimate;
+- **Deterministic propagation of estimator error through `2/c`.**
+  `coefficientStability_of_estimate`: if an observed estimate `Vhat` of the
+  population probe-drift is within `ε` (sup norm) of the truth, then
+  `‖a-b‖₁ ≤ (2B/c)(‖Vhat‖ + ε)`. This is the third desired result, and it isolates
+  the statistical content (`ε`) as an explicit hypothesis rather than assuming
+  it. `ε = 0`, `Vhat = normalizedProbeDrift` recovers `coefficientStability`.
+- **High-probability lift.**  `estimate_failure_measure_le`: for a *random*
+  estimate `Vhat : Ω → (Fin N → E)`, the event that the coefficient bound fails is
+  contained in the event that the estimate is not within `ε` of the truth, so its
+  probability is at most that of the estimation-error event (monotonicity only —
+  no independence/measurability/distributional assumption). Composing with any
+  concentration bound `P{ε < ‖V − Vhat‖} ≤ δ` gives
+  `P{coefficient bound holds} ≥ 1 - δ`.
+
+Still open:
+
+- a concrete concentration bound producing `P{ε < ‖V − Vhat‖} ≤ δ` — the natural
+  route is Markov on the squared error `P ≤ E‖V-Vhat‖²/ε²` (generic) plus an
+  iid mean-squared-error bound `E‖V-Vhat‖² ≤ σ²/N` (Mathlib has Chebyshev,
+  variance, and `iIndepFun`), giving sample complexity `N ≳ σ²/(δε²)`;
+- relating the specific bi-softmax `algorithm2Drift` estimator (with its
+  geometric-mean weighting) to the population mean-shift field, including its
+  bias;
+- treatment of the reused-generated-sample dependence (`selfMask`), which breaks
+  the plain iid analysis;
 - sample complexity as a function of dimension, batch size, and conditioning.
 
 ### Objective 5: handle feature-space training correctly

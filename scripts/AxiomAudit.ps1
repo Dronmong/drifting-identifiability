@@ -27,6 +27,8 @@ $declarations = @(
   'DriftingIdentifiability.PaperFiniteIdentifiability.bumpBasisMeasure_noAtoms',
   'DriftingIdentifiability.PaperFiniteIdentifiability.bumpInteractionFrameBound',
   'DriftingIdentifiability.PaperFiniteIdentifiability.bumpGaussian_identifies_of_probeEnergy_eq_zero',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.PopulationMeanShiftFiniteSetup.coefficientStability_of_estimate',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.PopulationMeanShiftFiniteSetup.estimate_failure_measure_le',
   'DriftingIdentifiability.PaperFiniteIdentifiability.linearIndependent_weightedGeometricProfiles',
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_basisNondegenerate',
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPointFrameBound',
