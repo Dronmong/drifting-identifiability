@@ -220,7 +220,7 @@ matching, and no CFG. Zero population energy reaches the pointwise hypothesis
 only with integrability, continuity, and full topological support. A finite
 minibatch estimator and a signed CFG target require separate theorems.
 
-Objective 4 now has three promoted pieces: `FiniteSampleBridge.lean` propagates
+Objective 4 now has four promoted pieces: `FiniteSampleBridge.lean` propagates
 estimator MSE into coefficient error, `Algorithm2Estimator.lean` proves the
 safe algebraic/boundedness facts for Algorithm 2's `compute_V` (including the
 mass-product times self-normalized-centroid-difference form), and
@@ -229,10 +229,15 @@ bound from the reviewed sample-mean theorem. `Algorithm2SNIS.lean` now
 instantiates that ratio theorem for the fixed-anchor, `selfMask=false`
 Algorithm-2 centroids: the row-softmax factor cancels and the centroids are
 SNIS estimators with the column-reweighted weight
-`sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`. Do not claim this proves
+`sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`. `ColumnReweightedMeanShift.lean`
+then treats that weight as the population mean-shift kernel and proves
+identifiability/stability under an explicit modified-kernel
+`InteractionFrameBound`; `interactionFrameBound_of_strictPairScaling` is the
+preferred transfer tool when the modified vectors are positive pairwise
+rescalings of a certified baseline family. Do not claim this proves
 identifiability for the original bare mean-shift kernel, or for the self-masked
-implementation, until the modified-kernel frame and the self-mask perturbation
-are handled explicitly.
+implementation, until the bare-to-modified frame transfer and the self-mask
+perturbation are handled explicitly.
 
 ## Conditional modules
 

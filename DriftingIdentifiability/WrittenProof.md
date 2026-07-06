@@ -296,10 +296,19 @@ that a lower mass-product bound converts raw drift norm into centroid-difference
 norm.
 
 This still does not identify the original bare-kernel population field. The
-limiting no-mask estimator targets the column-reweighted kernel above, so the
-remaining deterministic task is to certify the finite-basis interaction frame
-for that modified kernel, or to record it as an explicit practical condition.
-The implementation self-mask is also still a separate perturbative correction.
+limiting no-mask estimator targets the column-reweighted kernel above.
+`ColumnReweightedMeanShift.lean` now makes this modified kernel a first-class
+population setup and reuses the finite-basis theorem and finite-sample bridge:
+under an explicit interaction frame bound for the modified interaction vectors,
+zero of the limiting no-mask centroid field identifies the represented
+measures, and random estimates of that field inherit the same MSE-to-coefficient
+guarantee. `FiniteStability.lean` also proves
+`interactionFrameBound_of_strictPairScaling`, which transfers a frame certificate
+through positive strict-pair column scalings.
+
+What remains is concrete certification of that modified-kernel frame in useful
+model classes, plus the implementation self-mask as a separate perturbative
+correction.
 
 ## Lean map and dependencies
 
@@ -317,9 +326,11 @@ The implementation self-mask is also still a separate perturbative correction.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
 - Finite-sample bridge, Algorithm 2 structure, generic self-normalized
-  consistency, and the no-mask Algorithm-2 SNIS specialization:
+  consistency, the no-mask Algorithm-2 SNIS specialization, and the
+  column-reweighted limiting-field bridge:
   `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
-  `SelfNormalizedConsistency.lean`, and `Algorithm2SNIS.lean`.
+  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`, and
+  `ColumnReweightedMeanShift.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

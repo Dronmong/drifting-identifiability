@@ -5,3 +5,4 @@ import DriftingIdentifiability.FiniteSampleBridge
 import DriftingIdentifiability.Algorithm2Estimator
 import DriftingIdentifiability.SelfNormalizedConsistency
 import DriftingIdentifiability.Algorithm2SNIS
+import DriftingIdentifiability.ColumnReweightedMeanShift

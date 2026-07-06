@@ -383,7 +383,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask SNIS consistency complete; modified-field identifiability open
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask modified-field bridge complete; concrete frame/self-mask work remains
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -446,6 +446,27 @@ Progress (done, `FiniteSampleBridge.lean`):
   difference is zero, and that a lower bound on the mass product converts raw
   drift norm into centroid-difference norm.
 
+- **Column-reweighted limiting field bridge.**  `ColumnReweightedMeanShift.lean`
+  promotes the deterministic residual to a first-class setup. It defines the
+  modified population kernel
+  `sqrt(k(x,y) * k(x,y) / sum_r k(anchor_r,y))`, proves its positivity, packages a
+  `ColumnReweightedMeanShiftFiniteSetup`, and reuses the verified finite-basis
+  theorem and finite-sample bridge for this modified kernel. Thus zero of the
+  limiting no-mask centroid field identifies the represented measures under an
+  explicit `InteractionFrameBound` for the modified interaction vectors. It also
+  adds the estimator bridge
+  `ColumnReweightedMeanShiftFiniteSetup.estimate_failure_le_meanSquare`, so a
+  random estimator of this modified population field inherits the same
+  high-probability coefficient guarantee.
+
+- **Frame transfer tool for modified kernels.**  `FiniteStability.lean` now
+  includes `interactionFrameBound_of_strictPairScaling`: if a modified
+  interaction family is obtained from a certified baseline family by scaling
+  each strict-pair column by a factor bounded below by `smin>0`, the frame
+  constant degrades only from `c` to `smin*c`. This is the intended bridge from
+  empirical/bare-kernel certificates to column-reweighted certificates when the
+  modified kernel factors into positive per-support-point column factors.
+
 Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
 estimator-*agnostic*.  This module discharges the estimator-specific facts about
 Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
@@ -484,8 +505,8 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   zero batch drift) and of the population reverse implication `p = q ⟹ V = 0`; it
   is the safe direction and assumes nothing about identifiability.
 
-Still open (now narrowed to deterministic identification of the limiting
-modified field and optional implementation corrections):
+Still open (now narrowed to concrete certification/design and optional
+implementation corrections):
 
 - the **quantitative bias/consistency** of `algorithm2Drift`: its expectation
   against the ideal population mean-shift field as the temperature and sample
@@ -511,15 +532,15 @@ modified field and optional implementation corrections):
   specialization are now formalized in `SelfNormalizedConsistency.lean` and
   `Algorithm2SNIS.lean`.
 
-  The honest residual is deterministic: the limiting centroids use the
-  column-reweighted weight
-  `sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`, not the bare mean-shift kernel.
-  Therefore the remaining identifiability theorem must either instantiate the
-  existing finite-basis/frame machinery for this modified kernel, or state an
-  explicit interaction-frame condition for it.  Separately, the implementation
+  The honest residual has been split cleanly.  The conditional modified-kernel
+  identifiability theorem is now formalized in `ColumnReweightedMeanShift.lean`.
+  What remains is to instantiate that condition in concrete model classes:
+  prove or numerically certify an `InteractionFrameBound` for the actual
+  column-reweighted interaction vectors, preferably via the new strict-pair
+  scaling lemma or a direct certificate.  Separately, the implementation
   self-mask remains a perturbative `O(1/N)` correction rather than part of the
-  promoted no-mask theorem.  This route and the earlier obstruction are recorded in
-  `LoggedFailures.md` (2026-07-06 entry).
+  promoted no-mask theorem.  This route and the earlier obstruction are recorded
+  in `LoggedFailures.md` (2026-07-06 entry).
 
 ### Objective 5: handle feature-space training correctly
 

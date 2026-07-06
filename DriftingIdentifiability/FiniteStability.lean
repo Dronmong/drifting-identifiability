@@ -325,6 +325,51 @@ theorem interactionFrameBound_of_uniformPerturbation
   change (c - δ) * mass ≤ ‖interactionSynthesis U' z‖
   nlinarith
 
+/-! ## Exact rescaling of interaction columns -/
+
+/-- **Exact strict-pair rescaling.**  If every independent interaction column is
+multiplied by a scalar whose absolute value is bounded below by `smin`, a frame
+constant `c` degrades only to `smin * c`.
+
+This is the deterministic bridge needed for modified kernels whose interaction
+vectors are the baseline paper interaction vectors times positive, pairwise
+column factors. -/
+theorem interactionFrameBound_of_strictPairScaling
+    (U U' : Fin m → Fin m → V) (scale : StrictPair m → ℝ)
+    {c smin : ℝ} (hframe : InteractionFrameBound U c) (hsmin : 0 < smin)
+    (hscale : ∀ p : StrictPair m, smin ≤ |scale p|)
+    (hU' : ∀ p : StrictPair m,
+      U' p.1.1 p.1.2 = scale p • U p.1.1 p.1.2) :
+    InteractionFrameBound U' (smin * c) := by
+  refine ⟨mul_pos hsmin hframe.1, fun z => ?_⟩
+  let zscaled : StrictPair m → ℝ := fun p => z p * scale p
+  let mass : ℝ := ∑ p : StrictPair m, |z p|
+  have hsynthesis :
+      interactionSynthesis U' z = interactionSynthesis U zscaled := by
+    rw [interactionSynthesis_apply, interactionSynthesis_apply]
+    apply Finset.sum_congr rfl
+    intro p _
+    rw [hU' p, smul_smul]
+  have hmass_scaled : smin * mass ≤ ∑ p : StrictPair m, |zscaled p| := by
+    calc
+      smin * mass = ∑ p : StrictPair m, smin * |z p| := by
+        rw [Finset.mul_sum]
+      _ ≤ ∑ p : StrictPair m, |scale p| * |z p| := by
+        apply Finset.sum_le_sum
+        intro p _
+        exact mul_le_mul_of_nonneg_right (hscale p) (abs_nonneg (z p))
+      _ = ∑ p : StrictPair m, |zscaled p| := by
+        apply Finset.sum_congr rfl
+        intro p _
+        simp [zscaled, abs_mul, mul_comm]
+  have hbase := hframe.2 zscaled
+  rw [← hsynthesis] at hbase
+  calc
+    (smin * c) * mass = c * (smin * mass) := by ring
+    _ ≤ c * (∑ p : StrictPair m, |zscaled p|) :=
+        mul_le_mul_of_nonneg_left hmass_scaled hframe.1.le
+    _ ≤ ‖interactionSynthesis U' z‖ := hbase
+
 /-! ## Vector-valued dual frame certificates -/
 
 /-- An independently checkable biorthogonal dual family for the strict-pair

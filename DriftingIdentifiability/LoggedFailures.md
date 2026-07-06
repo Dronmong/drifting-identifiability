@@ -374,12 +374,23 @@ so future agents do not repeat equivalent mistakes.
   the generic ratio theorem or the no-mask centroid coupling; it is the
   deterministic identifiability/frame condition for this modified kernel, plus a
   separate perturbative treatment of the implementation self-mask.
+- **Update (2026-07-06, later):** the conditional deterministic bridge for the
+  modified kernel is now formalized in `ColumnReweightedMeanShift.lean`.
+  Under an explicit `InteractionFrameBound` for the column-reweighted interaction
+  vectors, zero of the no-mask limiting centroid field identifies the represented
+  measures and inherits the finite-sample MSE bridge.  `FiniteStability.lean` also
+  contains `interactionFrameBound_of_strictPairScaling`, which is the intended
+  tool for transferring a baseline frame through positive strict-pair column
+  scalings.  The unresolved part is now concrete certification/design of that
+  modified-kernel frame in useful model classes, and the implementation
+  self-mask perturbation.
 - **Relevant Lean declarations/files:** `algorithm2Drift_eq_affinityPairSum`,
   `algorithm2Drift_eq_massScaledCentroid`, `algorithm2Drift_norm_le_affinityMass`,
   `algorithm2Drift_eq_massProduct_centroidDiff`, `algorithm2Drift_matched_zero`,
   `estimate_failure_le_meanSquare`,
   `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`,
-  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`.
+  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`,
+  `ColumnReweightedMeanShift.lean`.
 
 ---
 
