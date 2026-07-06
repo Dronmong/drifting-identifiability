@@ -63,6 +63,12 @@ theorem finiteSoftmax_nonneg (i : ι) : 0 ≤ finiteSoftmax logit i := by
   unfold finiteSoftmax
   exact div_nonneg (Real.exp_pos _).le (Finset.sum_nonneg fun j _ => (Real.exp_pos _).le)
 
+/-- A softmax weight is strictly positive. -/
+theorem finiteSoftmax_pos (i : ι) : 0 < finiteSoftmax logit i := by
+  unfold finiteSoftmax
+  exact div_pos (Real.exp_pos _)
+    (Finset.sum_pos (fun j _ => Real.exp_pos _) ⟨i, Finset.mem_univ i⟩)
+
 /-- A softmax weight is at most one (the numerator is one of the summands). -/
 theorem finiteSoftmax_le_one (i : ι) : finiteSoftmax logit i ≤ 1 := by
   unfold finiteSoftmax
@@ -98,6 +104,10 @@ theorem algorithm2ColumnAffinity_nonneg (i : Fin Nx) (s : Algorithm2SampleIndex 
     0 ≤ algorithm2ColumnAffinity x yPos yNeg temperature selfMask i s := by
   unfold algorithm2ColumnAffinity; exact finiteSoftmax_nonneg _ _
 
+theorem algorithm2ColumnAffinity_pos (i : Fin Nx) (s : Algorithm2SampleIndex Npos Nneg) :
+    0 < algorithm2ColumnAffinity x yPos yNeg temperature selfMask i s := by
+  unfold algorithm2ColumnAffinity; exact finiteSoftmax_pos _ _
+
 theorem algorithm2ColumnAffinity_le_one (i : Fin Nx) (s : Algorithm2SampleIndex Npos Nneg) :
     algorithm2ColumnAffinity x yPos yNeg temperature selfMask i s ≤ 1 := by
   unfold algorithm2ColumnAffinity; exact finiteSoftmax_le_one _ _
@@ -106,6 +116,15 @@ theorem algorithm2ColumnAffinity_le_one (i : Fin Nx) (s : Algorithm2SampleIndex 
 theorem algorithm2Affinity_nonneg (i : Fin Nx) (s : Algorithm2SampleIndex Npos Nneg) :
     0 ≤ algorithm2Affinity x yPos yNeg temperature selfMask i s := by
   unfold algorithm2Affinity; exact Real.sqrt_nonneg _
+
+/-- The geometric-mean affinity is strictly positive. -/
+theorem algorithm2Affinity_pos (i : Fin Nx) (s : Algorithm2SampleIndex Npos Nneg) :
+    0 < algorithm2Affinity x yPos yNeg temperature selfMask i s := by
+  unfold algorithm2Affinity
+  exact Real.sqrt_pos.2
+    (mul_pos
+      (by unfold algorithm2RowAffinity; exact finiteSoftmax_pos _ _)
+      (algorithm2ColumnAffinity_pos x yPos yNeg temperature selfMask i s))
 
 /-- The geometric-mean affinity is at most one. -/
 theorem algorithm2Affinity_le_one (i : Fin Nx) (s : Algorithm2SampleIndex Npos Nneg) :
@@ -189,6 +208,62 @@ variable {Nx Npos Nneg : ℕ}
 variable (x : Fin Nx → E) (yPos : Fin Npos → E) (yNeg : Fin Nneg → E)
 variable (temperature : ℝ) (selfMask : Fin Nx → Fin Nneg → Bool)
 
+/-- Total positive affinity mass used by Algorithm 2 at anchor `i`. -/
+noncomputable def algorithm2PositiveMass (i : Fin Nx) : ℝ :=
+  ∑ j : Fin Npos, algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inl j)
+
+/-- Total negative affinity mass used by Algorithm 2 at anchor `i`. -/
+noncomputable def algorithm2NegativeMass (i : Fin Nx) : ℝ :=
+  ∑ j : Fin Nneg, algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inr j)
+
+/-- Self-normalized positive centroid induced by Algorithm 2's affinity weights. -/
+noncomputable def algorithm2PositiveCentroid (i : Fin Nx) : E :=
+  (algorithm2PositiveMass x yPos yNeg temperature selfMask i)⁻¹ •
+    ∑ j : Fin Npos,
+      algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inl j) • yPos j
+
+/-- Self-normalized negative centroid induced by Algorithm 2's affinity weights. -/
+noncomputable def algorithm2NegativeCentroid (i : Fin Nx) : E :=
+  (algorithm2NegativeMass x yPos yNeg temperature selfMask i)⁻¹ •
+    ∑ j : Fin Nneg,
+      algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inr j) • yNeg j
+
+omit [NormedSpace ℝ E] in
+/-- The positive affinity mass is nonnegative. -/
+theorem algorithm2PositiveMass_nonneg (i : Fin Nx) :
+    0 ≤ algorithm2PositiveMass x yPos yNeg temperature selfMask i := by
+  unfold algorithm2PositiveMass
+  exact Finset.sum_nonneg fun j _ =>
+    algorithm2Affinity_nonneg x yPos yNeg temperature selfMask i (Sum.inl j)
+
+omit [NormedSpace ℝ E] in
+/-- The negative affinity mass is nonnegative. -/
+theorem algorithm2NegativeMass_nonneg (i : Fin Nx) :
+    0 ≤ algorithm2NegativeMass x yPos yNeg temperature selfMask i := by
+  unfold algorithm2NegativeMass
+  exact Finset.sum_nonneg fun j _ =>
+    algorithm2Affinity_nonneg x yPos yNeg temperature selfMask i (Sum.inr j)
+
+omit [NormedSpace ℝ E] in
+/-- With at least one positive sample, the positive affinity mass is strictly
+positive. -/
+theorem algorithm2PositiveMass_pos [Nonempty (Fin Npos)] (i : Fin Nx) :
+    0 < algorithm2PositiveMass x yPos yNeg temperature selfMask i := by
+  unfold algorithm2PositiveMass
+  exact Finset.sum_pos (fun j _ =>
+    algorithm2Affinity_pos x yPos yNeg temperature selfMask i (Sum.inl j))
+    Finset.univ_nonempty
+
+omit [NormedSpace ℝ E] in
+/-- With at least one negative sample, the negative affinity mass is strictly
+positive. -/
+theorem algorithm2NegativeMass_pos [Nonempty (Fin Nneg)] (i : Fin Nx) :
+    0 < algorithm2NegativeMass x yPos yNeg temperature selfMask i := by
+  unfold algorithm2NegativeMass
+  exact Finset.sum_pos (fun j _ =>
+    algorithm2Affinity_pos x yPos yNeg temperature selfMask i (Sum.inr j))
+    Finset.univ_nonempty
+
 /-- **Exact structural form of `compute_V`.**  Algorithm 2's returned drift is
 the affinity-weighted pairwise attraction minus repulsion, summed over all
 positive/negative sample pairs.  With the geometric-mean affinities `A` in the
@@ -262,6 +337,46 @@ theorem algorithm2Drift_eq_massScaledCentroid (i : Fin Nx) :
     apply Finset.sum_congr rfl
     intro j _
     rw [smul_smul, mul_comm]
+
+/-- **Self-normalized centroid form.**  When both affinity masses are nonzero,
+Algorithm 2's drift is the product of the positive and negative masses times
+the difference of the two self-normalized affinity centroids.  This is the
+algebraic bridge from the concrete `compute_V` expression to the generic
+self-normalized ratio-estimator theorem in `SelfNormalizedConsistency.lean`. -/
+theorem algorithm2Drift_eq_massProduct_centroidDiff (i : Fin Nx)
+    (hP : algorithm2PositiveMass x yPos yNeg temperature selfMask i ≠ 0)
+    (hQ : algorithm2NegativeMass x yPos yNeg temperature selfMask i ≠ 0) :
+    algorithm2Drift x yPos yNeg temperature selfMask i =
+      (algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+        algorithm2NegativeMass x yPos yNeg temperature selfMask i) •
+        (algorithm2PositiveCentroid x yPos yNeg temperature selfMask i -
+          algorithm2NegativeCentroid x yPos yNeg temperature selfMask i) := by
+  rw [algorithm2Drift_eq_massScaledCentroid]
+  set Pmass := algorithm2PositiveMass x yPos yNeg temperature selfMask i with hPmass
+  set Qmass := algorithm2NegativeMass x yPos yNeg temperature selfMask i with hQmass
+  set Spos := ∑ j : Fin Npos,
+    algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inl j) • yPos j
+    with hSpos
+  set Sneg := ∑ j : Fin Nneg,
+    algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inr j) • yNeg j
+    with hSneg
+  have hP' : Pmass ≠ 0 := by simpa [hPmass] using hP
+  have hQ' : Qmass ≠ 0 := by simpa [hQmass] using hQ
+  have hPsum :
+      (∑ j : Fin Npos,
+        algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inl j)) = Pmass := by
+    simpa [algorithm2PositiveMass] using hPmass.symm
+  have hQsum :
+      (∑ j : Fin Nneg,
+        algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inr j)) = Qmass := by
+    simpa [algorithm2NegativeMass] using hQmass.symm
+  have hfirst : (Pmass * Qmass) * Pmass⁻¹ = Qmass := by
+    field_simp [hP']
+  have hsecond : (Pmass * Qmass) * Qmass⁻¹ = Pmass := by
+    field_simp [hQ']
+  simp only [algorithm2PositiveCentroid, algorithm2NegativeCentroid]
+  rw [← hSpos, ← hSneg, hPsum, hQsum, ← hPmass, ← hQmass]
+  rw [smul_sub, smul_smul, smul_smul, hfirst, hsecond]
 
 /-- **Boundedness of `compute_V`.**  If every positive and negative sample lies
 in the ball of radius `R`, the estimator is bounded by `2 · Npos · Nneg · R`,

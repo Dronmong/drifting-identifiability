@@ -220,6 +220,16 @@ matching, and no CFG. Zero population energy reaches the pointwise hypothesis
 only with integrability, continuity, and full topological support. A finite
 minibatch estimator and a signed CFG target require separate theorems.
 
+Objective 4 now has three promoted pieces: `FiniteSampleBridge.lean` propagates
+estimator MSE into coefficient error, `Algorithm2Estimator.lean` proves the
+safe algebraic/boundedness facts for Algorithm 2's `compute_V` (including the
+mass-product times self-normalized-centroid-difference form), and
+`SelfNormalizedConsistency.lean` proves a generic self-normalized centroid MSE
+bound from the reviewed sample-mean theorem. Do not claim this closes Algorithm
+2 finite-sample consistency until the generic ratio theorem is instantiated for
+the actual row/column/geometric softmax affinities under an explicit iid
+minibatch sampling model.
+
 ## Conditional modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are

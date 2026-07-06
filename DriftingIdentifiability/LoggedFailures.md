@@ -363,10 +363,19 @@ so future agents do not repeat equivalent mistakes.
   needs the explicit iid sampling model; it is the true content of the remaining
   Objective-4 gap, and it cannot be replaced by an axiom without assuming the
   estimator-consistency conclusion.
+- **Update (2026-07-06):** the generic standalone ratio step is now formalized in
+  `SelfNormalizedConsistency.lean` as `selfNormalized_meanSquare_le`, with no new
+  axiom beyond the already reviewed `sampleMean_meanSquare_le`.  The obstruction
+  recorded here remains relevant to the naive sup-affinity route, and the
+  remaining repair is to instantiate the ratio theorem for Algorithm 2's actual
+  row/column/geometric bi-softmax estimator under a precise minibatch sampling
+  model.
 - **Relevant Lean declarations/files:** `algorithm2Drift_eq_affinityPairSum`,
   `algorithm2Drift_eq_massScaledCentroid`, `algorithm2Drift_norm_le_affinityMass`,
-  `algorithm2Drift_matched_zero`, `estimate_failure_le_meanSquare`,
-  `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`.
+  `algorithm2Drift_eq_massProduct_centroidDiff`, `algorithm2Drift_matched_zero`,
+  `estimate_failure_le_meanSquare`,
+  `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`,
+  `SelfNormalizedConsistency.lean`.
 
 ---
 

@@ -3,3 +3,4 @@ import DriftingIdentifiability.PracticalModelClasses
 import DriftingIdentifiability.SmoothBumpBasis
 import DriftingIdentifiability.FiniteSampleBridge
 import DriftingIdentifiability.Algorithm2Estimator
+import DriftingIdentifiability.SelfNormalizedConsistency

@@ -257,6 +257,32 @@ interaction vectors, insufficient probe dimension, missing full support, and
 non-injective feature maps. A measurable embedding is sufficient to lift
 feature-law equality back to source-law equality.
 
+## Finite-sample bridge and self-normalized consistency
+
+`FiniteSampleBridge.lean` separates the deterministic identifiability/stability
+argument from sampling error: if a random estimator `Vhat` is within `ε` of the
+ideal normalized probe drift, then the coefficient error is controlled by
+`(2B/c)(‖Vhat‖+ε)`, and a Markov/MSE bound turns any estimator mean-squared error
+estimate into a high-probability finite-sample guarantee.
+
+`Algorithm2Estimator.lean` proves the exact algebraic shape of the paper's
+`compute_V`: it is both an affinity-weighted pairwise interaction sum and a
+mass-scaled centroid difference. With nonempty positive and negative batches,
+the affinity masses are strictly positive, so
+`algorithm2Drift_eq_massProduct_centroidDiff` rewrites the field as
+`P Q • (C_pos-C_neg)` for two self-normalized affinity centroids. This is the
+correct form for analyzing the softmax estimator, because the naive sup-norm
+affinity perturbation loses the cancellation across the `N²` pair terms.
+
+`SelfNormalizedConsistency.lean` now proves the generic ratio-estimator theorem
+needed for that route. Under a deterministic positive lower bound on the weights
+and the reviewed sample-mean MSE axiom, the self-normalized centroid
+`(∑ᵢ w(Yᵢ))⁻¹ ∑ᵢ w(Yᵢ)Yᵢ` converges in mean square to the target `c` at rate
+`σ²/(wmin² N)`. This does not yet identify Algorithm 2's full bi-softmax
+minibatch estimator with the population field; the remaining formal task is to
+instantiate the ratio theorem for the row/column/geometric affinities and the
+chosen sampling model.
+
 ## Lean map and dependencies
 
 - Probability measures and normalized bridge:
@@ -272,6 +298,9 @@ feature-law equality back to source-law equality.
   `SmoothBumpBasis.lean`.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
+- Finite-sample bridge, Algorithm 2 structure, and generic self-normalized
+  consistency: `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`, and
+  `SelfNormalizedConsistency.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

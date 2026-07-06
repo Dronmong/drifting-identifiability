@@ -383,7 +383,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — bridge and estimator structure complete; consistency open
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — bridge, estimator structure, and ratio-consistency engine complete; Algorithm-2 coupling open
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -421,6 +421,17 @@ Progress (done, `FiniteSampleBridge.lean`):
   non-conditional, allow-listed); the deterministic bridge and Markov step
   remain axiom-free.
 
+- **Self-normalized ratio-estimator consistency.**  `SelfNormalizedConsistency.lean`
+  proves `selfNormalized_meanSquare_le`: if weights satisfy a deterministic
+  lower bound `wmin>0`, weighted centered samples
+  `w(Yᵢ) • (Yᵢ-c)` are mean-zero with second moment at most `σ²`, and the samples
+  are pairwise independent, then the ratio estimator
+  `(∑ᵢ w(Yᵢ))⁻¹ • ∑ᵢ w(Yᵢ) • Yᵢ` has mean-squared error at most
+  `σ²/(wmin² N)`.  This is the missing generic self-normalized-IS ingredient
+  identified by the failed sup-affinity perturbation route.  It introduces no new
+  axiom and its promoted axiom audit reports only `Paper.sampleMean_meanSquare_le`
+  plus Lean foundations.
+
 Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
 estimator-*agnostic*.  This module discharges the estimator-specific facts about
 Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
@@ -439,6 +450,12 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   `(k x y⁺)(k x y⁻) • (y⁺ − y⁻)` with the affinities `A` in the role of the kernel
   `k`.  Equivalently it is the mass-scaled centroid difference
   `Q • (Σ A(+) yPos) − P • (Σ A(−) yNeg)` (`algorithm2Drift_eq_massScaledCentroid`).
+  With nonempty positive and negative batches, the affinity masses are strictly
+  positive (`algorithm2PositiveMass_pos`, `algorithm2NegativeMass_pos`), and
+  `algorithm2Drift_eq_massProduct_centroidDiff` rewrites the drift as
+  `P Q • (C_pos − C_neg)`, where each `C` is a self-normalized affinity centroid.
+  This is the formal algebraic hook connecting Algorithm 2 to
+  `selfNormalized_meanSquare_le`.
 - **Boundedness.**  `algorithm2Drift_norm_le`: with all samples in the ball of
   radius `R`, `‖algorithm2Drift i‖ ≤ 2 · Npos · Nneg · R`, uniformly in the
   temperature and self-mask — the bounded-range fact a bounded-differences
@@ -453,7 +470,7 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   zero batch drift) and of the population reverse implication `p = q ⟹ V = 0`; it
   is the safe direction and assumes nothing about identifiability.
 
-Still open (a single genuine estimator-analysis question, not theorem
+Still open (now narrowed to the Algorithm-2 specialization, not generic theorem
 infrastructure):
 
 - the **quantitative bias/consistency** of `algorithm2Drift`: its expectation
@@ -475,9 +492,14 @@ infrastructure):
   from *cancellation across the `N²` self-normalized pairs*, which a sup-norm
   perturbation bound discards.  The correct handle is the mass-scaled centroid form
   `algorithm2Drift_eq_massScaledCentroid` (each centroid a self-normalized average
-  with the standard `O(1/N)` importance-sampling bias); the remaining work is a
-  genuine self-normalized-IS / ratio-consistency analysis under an explicit iid
-  sampling model.  This route and its obstruction are recorded in
+  with the standard `O(1/N)` importance-sampling bias); the generic
+  self-normalized-IS consistency theorem is now formalized in
+  `SelfNormalizedConsistency.lean`.  The remaining work is to instantiate that
+  theorem for Algorithm 2's actual bi-softmax/geometric affinity under an
+  explicit iid minibatch sampling model, including statistical assumptions for
+  the random weights, row/column normalizations, temperature, bounded-support or
+  positive-weight assumptions, and self-mask convention.  This route and the
+  earlier obstruction are recorded in
   `LoggedFailures.md` (2026-07-06 entry).
 
 ### Objective 5: handle feature-space training correctly
