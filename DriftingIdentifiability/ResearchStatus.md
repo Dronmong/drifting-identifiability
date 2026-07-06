@@ -383,7 +383,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — in progress
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — bridge and estimator structure complete; consistency open
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -421,17 +421,47 @@ Progress (done, `FiniteSampleBridge.lean`):
   non-conditional, allow-listed); the deterministic bridge and Markov step
   remain axiom-free.
 
-Still open (genuine estimator-specific research, not clean theorem
+Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
+estimator-*agnostic*.  This module discharges the estimator-specific facts about
+Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
+without any distributional or limit hypothesis, all axiom-free (`#print axioms`
+reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
+
+- **Range.**  The row and column softmax affinities and their geometric mean lie
+  in `[0,1]` (`algorithm2Affinity_nonneg`, `algorithm2Affinity_le_one`); the
+  positive/negative sample weights are nonnegative and bounded by the
+  opposite-sample count (`algorithm2PositiveWeight_le` ≤ `Nneg`,
+  `algorithm2NegativeWeight_le` ≤ `Npos`).
+- **Exact structural form.**  `algorithm2Drift_eq_affinityPairSum`: the estimator
+  equals the affinity-weighted pairwise attraction minus repulsion
+  `∑_{j,l} A(i,+j) A(i,-l) • (yPos j − yNeg l)`, the finite-sample instance of the
+  mean-shift interaction kernel `Paper.meanShiftInteractionKernel`
+  `(k x y⁺)(k x y⁻) • (y⁺ − y⁻)` with the affinities `A` in the role of the kernel
+  `k`.  Equivalently it is the mass-scaled centroid difference
+  `Q • (Σ A(+) yPos) − P • (Σ A(−) yNeg)` (`algorithm2Drift_eq_massScaledCentroid`).
+- **Boundedness.**  `algorithm2Drift_norm_le`: with all samples in the ball of
+  radius `R`, `‖algorithm2Drift i‖ ≤ 2 · Npos · Nneg · R`, uniformly in the
+  temperature and self-mask.  This is exactly the bounded-range hypothesis a
+  bounded-differences (McDiarmid-type) concentration inequality consumes, i.e. the
+  concrete estimator input the bridge needs to convert into an `ε`.
+- **Matched-batch cancellation.**  `algorithm2Drift_matched_zero`: with coinciding
+  positive/negative samples and no self-mask, `algorithm2Drift = 0`.  This is the
+  sample-level analogue of `equation_17_matched_batch_drift_zero` (matched laws ⟹
+  zero batch drift) and of the population reverse implication `p = q ⟹ V = 0`; it
+  is the safe direction and assumes nothing about identifiability.
+
+Still open (a single genuine estimator-analysis question, not theorem
 infrastructure):
 
-- relating the specific bi-softmax `algorithm2Drift` estimator (geometric-mean of
-  row/column softmaxes, `selfMask` reused-sample dependence) to the population
-  mean-shift field, including its bias.  The finite-sample framework above is
-  estimator-*agnostic* — it applies to `algorithm2Drift` through its mean squared
-  error against the population field — so the remaining work is the
-  estimator-specific bias/variance computation, anchored by
-  `equation_17_matched_batch_drift_zero` (matched laws ⟹ zero batch drift).  This
-  is a bona fide analysis of one algorithm rather than a gap in the bridge.
+- the **quantitative bias/consistency** of `algorithm2Drift`: its expectation
+  against the ideal population mean-shift field as the temperature and sample
+  counts vary.  The softmax normalization makes it a self-normalized estimator,
+  generally biased at finite sample size; establishing the `→ 0` bias (and hence a
+  vanishing MSE that the bridge turns into identifiability) is a real analysis of
+  one algorithm.  The structural and boundedness facts above constrain this MSE
+  (they give a deterministic `2·Npos·Nneg·R` envelope and the exact
+  attraction–repulsion form) but do not compute the limit; that limit cannot be
+  axiomatized without assuming the substantive consistency claim.
 
 ### Objective 5: handle feature-space training correctly
 
