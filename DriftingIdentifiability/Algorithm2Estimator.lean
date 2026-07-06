@@ -306,6 +306,52 @@ theorem algorithm2Drift_norm_le (i : Fin Nx) {R : ℝ}
       ≤ (Npos : ℝ) * Nneg * R + (Npos : ℝ) * Nneg * R := add_le_add hpos hneg
     _ = 2 * Npos * Nneg * R := by ring
 
+/-- **Affinity-mass boundedness (adaptive convex-hull bound).**  A tighter,
+data-adaptive magnitude bound than `algorithm2Drift_norm_le`.  Using the
+mass-scaled centroid form and that each softmax-weighted sample sum lies in the
+mass-scaled convex hull of the samples, `‖algorithm2Drift i‖ ≤ 2 · P · Q · R`,
+where `P = Σⱼ A(i,+j)` and `Q = Σₗ A(i,−l)` are the total positive and negative
+affinity masses (each at most `Npos`, `Nneg`, so this refines the crude bound).
+It shrinks as the softmax concentrates its mass on few samples. -/
+theorem algorithm2Drift_norm_le_affinityMass (i : Fin Nx) {R : ℝ}
+    (hyPos : ∀ j, ‖yPos j‖ ≤ R) (hyNeg : ∀ j, ‖yNeg j‖ ≤ R) :
+    ‖algorithm2Drift x yPos yNeg temperature selfMask i‖ ≤
+      2 * (∑ j : Fin Npos, algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inl j))
+        * (∑ l : Fin Nneg, algorithm2Affinity x yPos yNeg temperature selfMask i (Sum.inr l))
+        * R := by
+  rw [algorithm2Drift_eq_massScaledCentroid]
+  set A := algorithm2Affinity x yPos yNeg temperature selfMask i with hA
+  have hAnn : ∀ s, 0 ≤ A s := fun s =>
+    algorithm2Affinity_nonneg x yPos yNeg temperature selfMask i s
+  have hPnn : 0 ≤ ∑ j : Fin Npos, A (Sum.inl j) := Finset.sum_nonneg fun j _ => hAnn _
+  have hQnn : 0 ≤ ∑ l : Fin Nneg, A (Sum.inr l) := Finset.sum_nonneg fun l _ => hAnn _
+  have hSpos : ‖∑ j : Fin Npos, A (Sum.inl j) • yPos j‖
+      ≤ (∑ j : Fin Npos, A (Sum.inl j)) * R := by
+    refine le_trans (norm_sum_le _ _) ?_
+    rw [Finset.sum_mul]
+    apply Finset.sum_le_sum
+    intro j _
+    rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (hAnn _)]
+    exact mul_le_mul_of_nonneg_left (hyPos j) (hAnn _)
+  have hSneg : ‖∑ j : Fin Nneg, A (Sum.inr j) • yNeg j‖
+      ≤ (∑ j : Fin Nneg, A (Sum.inr j)) * R := by
+    refine le_trans (norm_sum_le _ _) ?_
+    rw [Finset.sum_mul]
+    apply Finset.sum_le_sum
+    intro j _
+    rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (hAnn _)]
+    exact mul_le_mul_of_nonneg_left (hyNeg j) (hAnn _)
+  refine le_trans (norm_sub_le _ _) ?_
+  rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hQnn,
+    abs_of_nonneg hPnn]
+  calc (∑ l : Fin Nneg, A (Sum.inr l)) * ‖∑ j : Fin Npos, A (Sum.inl j) • yPos j‖
+        + (∑ l : Fin Npos, A (Sum.inl l)) * ‖∑ j : Fin Nneg, A (Sum.inr j) • yNeg j‖
+      ≤ (∑ l : Fin Nneg, A (Sum.inr l)) * ((∑ j : Fin Npos, A (Sum.inl j)) * R)
+        + (∑ l : Fin Npos, A (Sum.inl l)) * ((∑ j : Fin Nneg, A (Sum.inr j)) * R) :=
+        add_le_add (mul_le_mul_of_nonneg_left hSpos hQnn)
+          (mul_le_mul_of_nonneg_left hSneg hPnn)
+    _ = 2 * (∑ j : Fin Npos, A (Sum.inl j)) * (∑ l : Fin Nneg, A (Sum.inr l)) * R := by ring
+
 end Structure
 
 /-! ## Matched-batch cancellation -/

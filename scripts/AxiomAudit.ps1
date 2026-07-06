@@ -39,6 +39,7 @@ $declarations = @(
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_eq_affinityPairSum',
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_eq_massScaledCentroid',
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_norm_le',
+  'DriftingIdentifiability.Algorithm2.algorithm2Drift_norm_le_affinityMass',
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_matched_zero',
   'DriftingIdentifiability.PaperFiniteIdentifiability.linearIndependent_weightedGeometricProfiles',
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_basisNondegenerate',

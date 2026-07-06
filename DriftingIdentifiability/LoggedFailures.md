@@ -321,6 +321,55 @@ so future agents do not repeat equivalent mistakes.
 
 ---
 
+### 2026-07-06 — affinity-perturbation reduction of Algorithm-2 consistency
+
+- **Exact condition:** Close Objective 4 by instantiating the estimator-agnostic
+  finite-sample bridge (`estimate_failure_le_meanSquare`) with
+  `Vhat := algorithm2Drift`, discharging its `‖V − Vhat‖ ≤ ε` hypothesis through a
+  deterministic *stability in the affinities*: compare `algorithm2Drift` (which is
+  `driftOfAffinities A` for the softmax affinity `A`, by
+  `algorithm2Drift_eq_affinityPairSum`) against `driftOfAffinities a*` for the
+  population/expected affinity system `a*`, then bound the sup-affinity deviation
+  `η = maxₛ |A s − a* s|` by a law of large numbers.
+- **Intended mechanism:** `driftOfAffinities` is bilinear in the affinities, so
+  `‖driftOfAffinities A − driftOfAffinities a*‖ ≤ 4·Npos·Nneg·R·η`
+  (each of the `Npos·Nneg` pairs contributes `|A(+)A(−) − a*(+)a*(−)|·‖Δy‖ ≤
+  2η·2R`).  Feed the resulting `ε = 4·Npos·Nneg·R·η` into the bridge.
+- **Stress test/model:** iid samples `y_s`; softmax kernel `k(x,y)=e^{−‖x−y‖/τ}`,
+  so the row affinity is the self-normalized weight `A_row(s)=k_s/Σ_{s'}k_{s'}`.
+- **Counterexample or obstruction:** the crude bilinear bound has the wrong scaling
+  and does **not** vanish.  A single softmax weight is `A ~ 1/N` (it is one of `N`
+  normalized weights), while its sampling fluctuation about the ideal
+  `a* = k/(N·Z)` is `η ~ N^{-3/2}` (numerator fixed `O(1)`, denominator
+  `Σk = N·Z + O(√N)`, so `A − a* = k(N Z − Σk)/(Σk·N Z) ~ O(1)·√N / N² = N^{-3/2}`).
+  The prefactor `4·Npos·Nneg ~ N²` then gives `ε ~ N² · N^{-3/2} = √N → ∞`.  The
+  bound grows instead of shrinking.
+- **Why the argument fails:** the estimator is a **self-normalized** (ratio) sum;
+  its `N²` pairwise terms are each `O(1/N²)` and their consistency comes from
+  *cancellation/averaging across the pairs*, not from smallness of any individual
+  affinity error.  A sup-norm perturbation bound discards exactly that
+  cancellation, so it over-counts by a factor that beats the per-affinity decay.
+- **Fatal or repairable:** Repairable only by the genuine self-normalized analysis;
+  the elementary reduction is fatally lossy.
+- **Possible repair:** work at the level of the *mass-scaled centroid* form
+  `algorithm2Drift = Q•S_pos − P•S_neg` (`algorithm2Drift_eq_massScaledCentroid`),
+  where `S_pos/P` and `S_neg/Q` are softmax-weighted centroids lying in the convex
+  hull of the samples (`algorithm2Drift_norm_le_affinityMass` records the
+  convex-hull bound).  Each of `P`, `Q`, `S_pos`, `S_neg` is a properly-normalized
+  self-normalized average whose LLN bias is the standard importance-sampling
+  `O(1/N)`; ratio consistency (e.g. a delta-method / self-normalized-IS bound)
+  then controls the centroids with the correct scaling.  Formalizing generic
+  self-normalized IS consistency is a standalone (Mathlib-grade) analysis task and
+  needs the explicit iid sampling model; it is the true content of the remaining
+  Objective-4 gap, and it cannot be replaced by an axiom without assuming the
+  estimator-consistency conclusion.
+- **Relevant Lean declarations/files:** `algorithm2Drift_eq_affinityPairSum`,
+  `algorithm2Drift_eq_massScaledCentroid`, `algorithm2Drift_norm_le_affinityMass`,
+  `algorithm2Drift_matched_zero`, `estimate_failure_le_meanSquare`,
+  `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`.
+
+---
+
 ### 2026-07-05 — two-atom Laplace result overgeneralized
 
 - **Exact condition:** Infer general-`m` or high-dimensional Laplace

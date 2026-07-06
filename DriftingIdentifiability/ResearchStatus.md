@@ -441,9 +441,12 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   `Q • (Σ A(+) yPos) − P • (Σ A(−) yNeg)` (`algorithm2Drift_eq_massScaledCentroid`).
 - **Boundedness.**  `algorithm2Drift_norm_le`: with all samples in the ball of
   radius `R`, `‖algorithm2Drift i‖ ≤ 2 · Npos · Nneg · R`, uniformly in the
-  temperature and self-mask.  This is exactly the bounded-range hypothesis a
-  bounded-differences (McDiarmid-type) concentration inequality consumes, i.e. the
-  concrete estimator input the bridge needs to convert into an `ε`.
+  temperature and self-mask — the bounded-range fact a bounded-differences
+  (McDiarmid-type) concentration argument builds on.  `algorithm2Drift_norm_le_affinityMass`
+  refines it to the data-adaptive convex-hull bound `2 · P · Q · R`, where
+  `P = Σⱼ A(i,+j)` and `Q = Σₗ A(i,−l)` are the total affinity masses (each `≤`
+  the sample count); this exposes that the softmax-weighted sample sums are
+  mass-scaled convex combinations of the samples.
 - **Matched-batch cancellation.**  `algorithm2Drift_matched_zero`: with coinciding
   positive/negative samples and no self-mask, `algorithm2Drift = 0`.  This is the
   sample-level analogue of `equation_17_matched_batch_drift_zero` (matched laws ⟹
@@ -462,6 +465,20 @@ infrastructure):
   (they give a deterministic `2·Npos·Nneg·R` envelope and the exact
   attraction–repulsion form) but do not compute the limit; that limit cannot be
   axiomatized without assuming the substantive consistency claim.
+
+  An attempt to close this by an elementary *deterministic* reduction — bound the
+  estimator error by the sup-norm deviation of the softmax affinities from their
+  population values, using the bilinear stability of `driftOfAffinities` — was
+  investigated and **fails by a scaling mismatch**: the crude bilinear bound is
+  `ε ~ 4·Npos·Nneg·η`, but a single softmax weight is `O(1/N)` with sampling
+  fluctuation `η ~ N^{-3/2}`, so `ε ~ √N → ∞`.  The estimator's consistency comes
+  from *cancellation across the `N²` self-normalized pairs*, which a sup-norm
+  perturbation bound discards.  The correct handle is the mass-scaled centroid form
+  `algorithm2Drift_eq_massScaledCentroid` (each centroid a self-normalized average
+  with the standard `O(1/N)` importance-sampling bias); the remaining work is a
+  genuine self-normalized-IS / ratio-consistency analysis under an explicit iid
+  sampling model.  This route and its obstruction are recorded in
+  `LoggedFailures.md` (2026-07-06 entry).
 
 ### Objective 5: handle feature-space training correctly
 
