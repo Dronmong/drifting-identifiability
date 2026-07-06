@@ -278,10 +278,28 @@ affinity perturbation loses the cancellation across the `N²` pair terms.
 needed for that route. Under a deterministic positive lower bound on the weights
 and the reviewed sample-mean MSE axiom, the self-normalized centroid
 `(∑ᵢ w(Yᵢ))⁻¹ ∑ᵢ w(Yᵢ)Yᵢ` converges in mean square to the target `c` at rate
-`σ²/(wmin² N)`. This does not yet identify Algorithm 2's full bi-softmax
-minibatch estimator with the population field; the remaining formal task is to
-instantiate the ratio theorem for the row/column/geometric affinities and the
-chosen sampling model.
+`σ²/(wmin² N)`.
+
+`Algorithm2SNIS.lean` performs the no-self-mask fixed-anchor instantiation. It
+defines the column-reweighted weight
+
+```text
+w_i(y) = sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y)).
+```
+
+For `selfMask=false`, the row-softmax denominator is common to all samples in a
+centroid and cancels. Lean proves that Algorithm 2's positive and negative
+centroids are exactly the SNIS centroids with weight `w_i`, and hence inherit
+the `O(1/N)` MSE bound from `selfNormalized_meanSquare_le`. It also proves that
+raw no-mask drift is zero iff the normalized centroid difference is zero, and
+that a lower mass-product bound converts raw drift norm into centroid-difference
+norm.
+
+This still does not identify the original bare-kernel population field. The
+limiting no-mask estimator targets the column-reweighted kernel above, so the
+remaining deterministic task is to certify the finite-basis interaction frame
+for that modified kernel, or to record it as an explicit practical condition.
+The implementation self-mask is also still a separate perturbative correction.
 
 ## Lean map and dependencies
 
@@ -298,9 +316,10 @@ chosen sampling model.
   `SmoothBumpBasis.lean`.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
-- Finite-sample bridge, Algorithm 2 structure, and generic self-normalized
-  consistency: `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`, and
-  `SelfNormalizedConsistency.lean`.
+- Finite-sample bridge, Algorithm 2 structure, generic self-normalized
+  consistency, and the no-mask Algorithm-2 SNIS specialization:
+  `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
+  `SelfNormalizedConsistency.lean`, and `Algorithm2SNIS.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

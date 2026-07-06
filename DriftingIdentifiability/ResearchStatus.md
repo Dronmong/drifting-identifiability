@@ -383,7 +383,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — bridge, estimator structure, and ratio-consistency engine complete; Algorithm-2 coupling open
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask SNIS consistency complete; modified-field identifiability open
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -432,6 +432,20 @@ Progress (done, `FiniteSampleBridge.lean`):
   axiom and its promoted axiom audit reports only `Paper.sampleMean_meanSquare_le`
   plus Lean foundations.
 
+- **Algorithm-2 no-mask SNIS specialization.**  `Algorithm2SNIS.lean` implements
+  the fixed-anchor, `selfMask=false` route.  It defines the exact
+  column-reweighted weight
+  `sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`, proves that Algorithm 2's
+  positive and negative centroids equal the corresponding self-normalized
+  centroids (`algorithm2PositiveCentroid_false_eq_columnReweighted`,
+  `algorithm2NegativeCentroid_false_eq_columnReweighted`), and lifts
+  `selfNormalized_meanSquare_le` to Algorithm 2's positive and negative
+  centroids (`algorithm2PositiveCentroid_false_meanSquare_le`,
+  `algorithm2NegativeCentroid_false_meanSquare_le`).  It also proves that raw
+  no-mask Algorithm-2 drift is zero exactly when the normalized centroid
+  difference is zero, and that a lower bound on the mass product converts raw
+  drift norm into centroid-difference norm.
+
 Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
 estimator-*agnostic*.  This module discharges the estimator-specific facts about
 Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
@@ -470,8 +484,8 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   zero batch drift) and of the population reverse implication `p = q ⟹ V = 0`; it
   is the safe direction and assumes nothing about identifiability.
 
-Still open (now narrowed to the Algorithm-2 specialization, not generic theorem
-infrastructure):
+Still open (now narrowed to deterministic identification of the limiting
+modified field and optional implementation corrections):
 
 - the **quantitative bias/consistency** of `algorithm2Drift`: its expectation
   against the ideal population mean-shift field as the temperature and sample
@@ -492,14 +506,19 @@ infrastructure):
   from *cancellation across the `N²` self-normalized pairs*, which a sup-norm
   perturbation bound discards.  The correct handle is the mass-scaled centroid form
   `algorithm2Drift_eq_massScaledCentroid` (each centroid a self-normalized average
-  with the standard `O(1/N)` importance-sampling bias); the generic
-  self-normalized-IS consistency theorem is now formalized in
-  `SelfNormalizedConsistency.lean`.  The remaining work is to instantiate that
-  theorem for Algorithm 2's actual bi-softmax/geometric affinity under an
-  explicit iid minibatch sampling model, including statistical assumptions for
-  the random weights, row/column normalizations, temperature, bounded-support or
-  positive-weight assumptions, and self-mask convention.  This route and the
-  earlier obstruction are recorded in
+  with the standard `O(1/N)` importance-sampling bias).  The generic
+  self-normalized-IS consistency theorem and its no-mask Algorithm-2 centroid
+  specialization are now formalized in `SelfNormalizedConsistency.lean` and
+  `Algorithm2SNIS.lean`.
+
+  The honest residual is deterministic: the limiting centroids use the
+  column-reweighted weight
+  `sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`, not the bare mean-shift kernel.
+  Therefore the remaining identifiability theorem must either instantiate the
+  existing finite-basis/frame machinery for this modified kernel, or state an
+  explicit interaction-frame condition for it.  Separately, the implementation
+  self-mask remains a perturbative `O(1/N)` correction rather than part of the
+  promoted no-mask theorem.  This route and the earlier obstruction are recorded in
   `LoggedFailures.md` (2026-07-06 entry).
 
 ### Objective 5: handle feature-space training correctly

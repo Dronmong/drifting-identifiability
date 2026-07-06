@@ -225,10 +225,14 @@ estimator MSE into coefficient error, `Algorithm2Estimator.lean` proves the
 safe algebraic/boundedness facts for Algorithm 2's `compute_V` (including the
 mass-product times self-normalized-centroid-difference form), and
 `SelfNormalizedConsistency.lean` proves a generic self-normalized centroid MSE
-bound from the reviewed sample-mean theorem. Do not claim this closes Algorithm
-2 finite-sample consistency until the generic ratio theorem is instantiated for
-the actual row/column/geometric softmax affinities under an explicit iid
-minibatch sampling model.
+bound from the reviewed sample-mean theorem. `Algorithm2SNIS.lean` now
+instantiates that ratio theorem for the fixed-anchor, `selfMask=false`
+Algorithm-2 centroids: the row-softmax factor cancels and the centroids are
+SNIS estimators with the column-reweighted weight
+`sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`. Do not claim this proves
+identifiability for the original bare mean-shift kernel, or for the self-masked
+implementation, until the modified-kernel frame and the self-mask perturbation
+are handled explicitly.
 
 ## Conditional modules
 

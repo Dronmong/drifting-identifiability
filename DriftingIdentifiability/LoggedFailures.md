@@ -367,15 +367,19 @@ so future agents do not repeat equivalent mistakes.
   `SelfNormalizedConsistency.lean` as `selfNormalized_meanSquare_le`, with no new
   axiom beyond the already reviewed `sampleMean_meanSquare_le`.  The obstruction
   recorded here remains relevant to the naive sup-affinity route, and the
-  remaining repair is to instantiate the ratio theorem for Algorithm 2's actual
-  row/column/geometric bi-softmax estimator under a precise minibatch sampling
-  model.
+  no-self-mask repair is now formalized in `Algorithm2SNIS.lean`: the row
+  softmax factor cancels in the centroids, leaving SNIS estimators for the
+  column-reweighted weight
+  `sqrt(k(x_i,y) * k(x_i,y) / sum_r k(x_r,y))`.  The remaining gap is no longer
+  the generic ratio theorem or the no-mask centroid coupling; it is the
+  deterministic identifiability/frame condition for this modified kernel, plus a
+  separate perturbative treatment of the implementation self-mask.
 - **Relevant Lean declarations/files:** `algorithm2Drift_eq_affinityPairSum`,
   `algorithm2Drift_eq_massScaledCentroid`, `algorithm2Drift_norm_le_affinityMass`,
   `algorithm2Drift_eq_massProduct_centroidDiff`, `algorithm2Drift_matched_zero`,
   `estimate_failure_le_meanSquare`,
   `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`,
-  `SelfNormalizedConsistency.lean`.
+  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`.
 
 ---
 
