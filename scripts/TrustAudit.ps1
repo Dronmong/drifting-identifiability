@@ -22,7 +22,8 @@ $paperEstablishedAxioms = @(
   'radial_mmd_attraction_repulsion',
   'equation_44_eq_meanShiftDrift',
   'gaussian_mmd_meanShiftKernel',
-  'equation_47_matched_zero'
+  'equation_47_matched_zero',
+  'sampleMean_meanSquare_le'
 ) | Sort-Object
 
 $conditionalExternalAxioms = @(

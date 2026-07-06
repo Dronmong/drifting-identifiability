@@ -410,16 +410,28 @@ Progress (done, `FiniteSampleBridge.lean`):
   the estimator mean squared error satisfies `E‖V − Vhat‖² ≤ δε²`; for a
   sample-mean estimator with MSE `σ²/N` this is `N ≥ σ²/(δε²)`.
 
-Still open:
+- **Explicit `1/M` sample-mean rate.**  `sampleMean_concentration` composes the
+  Markov bound with the variance-of-a-sample-mean fact
+  (`Paper.sampleMean_meanSquare_le`, a reviewed external statistical axiom) into
+  `P{ε < ‖(1/M)∑Zᵢ‖} ≤ σ²/(Mε²)`.  This is the concrete `1/M`
+  law-of-large-numbers rate: an unbiased sample-mean estimator with per-sample
+  variance `σ²` achieves identifiability accuracy `ε` at confidence `1-δ` once
+  `M ≥ σ²/(δε²)`.  The iid variance bound is the one place the finite-sample
+  route uses an external statistical axiom (Micchelli-style: standard,
+  non-conditional, allow-listed); the deterministic bridge and Markov step
+  remain axiom-free.
 
-- an iid mean-squared-error bound `E‖V − Vhat‖² ≤ σ²/N` for a concrete
-  sample-mean estimator (Mathlib has variance, `iIndepFun`, and the CLT
-  scaffolding), turning the abstract MSE into an explicit `1/N` rate;
-- relating the specific bi-softmax `algorithm2Drift` estimator (with its
-  geometric-mean weighting) to the population mean-shift field, including its
-  bias;
-- treatment of the reused-generated-sample dependence (`selfMask`), which breaks
-  the plain iid analysis.
+Still open (genuine estimator-specific research, not clean theorem
+infrastructure):
+
+- relating the specific bi-softmax `algorithm2Drift` estimator (geometric-mean of
+  row/column softmaxes, `selfMask` reused-sample dependence) to the population
+  mean-shift field, including its bias.  The finite-sample framework above is
+  estimator-*agnostic* — it applies to `algorithm2Drift` through its mean squared
+  error against the population field — so the remaining work is the
+  estimator-specific bias/variance computation, anchored by
+  `equation_17_matched_batch_drift_zero` (matched laws ⟹ zero batch drift).  This
+  is a bona fide analysis of one algorithm rather than a gap in the bridge.
 
 ### Objective 5: handle feature-space training correctly
 

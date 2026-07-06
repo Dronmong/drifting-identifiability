@@ -62,6 +62,32 @@ theorem meas_gt_le_meanSquare_div
     _ = ENNReal.ofReal ((∫ ω, ‖Z ω‖ ^ 2 ∂P) / ε ^ 2) := by
         rw [← ENNReal.ofReal_div_of_pos hε2]
 
+/-- **Explicit `1/M` sample-mean concentration (Objective 4).**  Composing the
+Markov bound with the well-known variance-of-a-sample-mean fact
+(`Paper.sampleMean_meanSquare_le`): the empirical mean of `M` independent,
+mean-zero, `L²` random vectors deviates from `0` by more than `ε` with
+probability at most `σ²/(M ε²)`.  This is the concrete `1/M` rate that instantiates
+the abstract concentration hypothesis of `estimate_failure_measure_le`; combined
+with the bridge it gives the sample complexity `M ≥ σ²/(δε²)` for
+identifiability accuracy `ε` at confidence `1-δ`. -/
+theorem sampleMean_concentration
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    [MeasurableSpace F] [BorelSpace F] [CompleteSpace F] [SecondCountableTopology F]
+    {M : ℕ} (hM : 0 < M) (Z : Fin M → Ω → F)
+    (hindep : ∀ i j, i ≠ j → ProbabilityTheory.IndepFun (Z i) (Z j) P)
+    (haemeas : AEStronglyMeasurable (fun ω => (M : ℝ)⁻¹ • ∑ i, Z i ω) P)
+    (hint2 : ∀ i, Integrable (fun ω => ‖Z i ω‖ ^ 2) P)
+    (hintmean : Integrable (fun ω => ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖ ^ 2) P)
+    (hmean : ∀ i, ∫ ω, Z i ω ∂P = 0)
+    {σ ε : ℝ} (hε : 0 < ε) (hσ : ∀ i, ∫ ω, ‖Z i ω‖ ^ 2 ∂P ≤ σ ^ 2) :
+    P {ω | ε < ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖} ≤ ENNReal.ofReal (σ ^ 2 / (M * ε ^ 2)) := by
+  refine le_trans (meas_gt_le_meanSquare_div _ haemeas hintmean hε) ?_
+  apply ENNReal.ofReal_le_ofReal
+  have hmse := Paper.sampleMean_meanSquare_le P hM Z hindep hint2 hmean hσ
+  rw [show σ ^ 2 / ((M : ℝ) * ε ^ 2) = σ ^ 2 / (M : ℝ) / ε ^ 2 from (div_div _ _ _).symm]
+  gcongr
+
 namespace PopulationMeanShiftFiniteSetup
 
 variable {m N : ℕ}

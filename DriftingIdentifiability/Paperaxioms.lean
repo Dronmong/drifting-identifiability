@@ -958,5 +958,28 @@ axiom gaussian_gram_linearIndependent
     (x : ι → E) (hx : Function.Injective x) :
     LinearIndependent ℝ (fun p : ι => (fun q : ι => gaussianKernel σ (x p) (x q)))
 
+/-- **Well-known statistical fact** (variance of a sample mean / the `1/M`
+law-of-large-numbers rate).  For independent, mean-zero, square-integrable random
+vectors `Z₀,…,Z_{M-1}` in a real inner-product space, each with `E‖Zᵢ‖² ≤ σ²`, the
+mean squared norm of their empirical mean is at most `σ²/M` — the cross terms
+`E⟪Zᵢ,Zⱼ⟫ = ⟪E Zᵢ, E Zⱼ⟫ = 0` vanish by pairwise independence and mean-zero, so
+`E‖(1/M)∑Zᵢ‖² = (1/M²)∑ᵢ E‖Zᵢ‖² ≤ σ²/M`.
+
+This is standard external probability (`ProbabilityTheory.IndepFun`,
+`variance_sum`, and `IndepFun.integral_bilin` provide the ingredients in Mathlib);
+its analytic assembly is noise for the identifiability project.  It is used only
+to turn the axiom-free mean-squared-error bound of the finite-sample bridge into
+an explicit sample-complexity rate; it says nothing about identifiability. -/
+axiom sampleMean_meanSquare_le
+    {Ω : Type u} [MeasurableSpace Ω] (P : Distribution Ω) [IsProbabilityMeasure P]
+    {F : Type v} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    [MeasurableSpace F] [BorelSpace F] [CompleteSpace F] [SecondCountableTopology F]
+    {M : ℕ} (hM : 0 < M) (Z : Fin M → Ω → F)
+    (hindep : ∀ i j, i ≠ j → ProbabilityTheory.IndepFun (Z i) (Z j) P)
+    (hint2 : ∀ i, Integrable (fun ω => ‖Z i ω‖ ^ 2) P)
+    (hmean : ∀ i, ∫ ω, Z i ω ∂P = 0)
+    {σ : ℝ} (hσ : ∀ i, ∫ ω, ‖Z i ω‖ ^ 2 ∂P ≤ σ ^ 2) :
+    ∫ ω, ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖ ^ 2 ∂P ≤ σ ^ 2 / M
+
 end Paper
 end DriftingIdentifiability

@@ -31,6 +31,7 @@ $declarations = @(
   'DriftingIdentifiability.PaperFiniteIdentifiability.PopulationMeanShiftFiniteSetup.estimate_failure_measure_le',
   'DriftingIdentifiability.PaperFiniteIdentifiability.meas_gt_le_meanSquare_div',
   'DriftingIdentifiability.PaperFiniteIdentifiability.PopulationMeanShiftFiniteSetup.estimate_failure_le_meanSquare',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.sampleMean_concentration',
   'DriftingIdentifiability.PaperFiniteIdentifiability.linearIndependent_weightedGeometricProfiles',
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPoint_basisNondegenerate',
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPointFrameBound',
@@ -56,7 +57,8 @@ $declarations = @(
 $allowedProjectAxioms = @(
   'antisymmetric_kernel_induces_basis_antisymmetry',
   'equation_11_bilinear_mean_shift',
-  'equation_31_bilinear_expansion'
+  'equation_31_bilinear_expansion',
+  'sampleMean_meanSquare_le'
 )
 
 $sourceLines = [System.Collections.Generic.List[string]]::new()
