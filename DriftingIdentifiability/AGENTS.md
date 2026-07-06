@@ -191,8 +191,29 @@ instance on `ℝ`: a uniform empirical point-density basis, unit Gaussian kernel
 integer probes, distinct support points, and distinct strict-pair sums. A
 Vandermonde proof establishes nondegeneracy for the actual integral-induced
 vectors and `gaussianEmpiricalPoint_identifies` packages the full population
-theorem. Do not describe its existential frame constant as numerically useful;
-an explicit conditioning bound remains open.
+theorem. The main concrete setup uses the explicit inverse-interaction-matrix
+certificate `gaussianEmpiricalPointCertifiedFrameConstant`. It is a proved
+positive lower frame constant, but positivity alone must not be described as
+good numerical conditioning; report or bound its actual value for such claims.
+
+The deterministic finite probe loss is `probeDriftEnergy`. Zero loss is
+equivalent to zero at every selected probe, and coefficient error is controlled
+by its square root. Do not identify this ideal finite population quantity with
+Algorithm 2's random minibatch estimator without a separate finite-sample
+theorem.
+
+`PracticalModelClasses.lean` contains the Objective 3 layer. The structured
+Gaussian theorem now works in separable real inner-product spaces at arbitrary
+positive bandwidth. Arbitrary/adaptive probes are accepted only with an
+explicit `InteractionDualCertificate`; never paraphrase that finite
+biorthogonality certificate as an automatically available learned feature.
+Continuous and smooth bases enter through a `δ<c` interaction-perturbation
+bound in the generic route. `SmoothBumpBasis.lean` is the independently proved
+exception: it directly certifies a non-atomic two-component `C∞` basis by an
+ordered-support sign argument. Do not generalize that result to arbitrary
+smooth bases or more than two components. Its promoted Gaussian setup requires
+`ValidBandwidth`. The concrete Laplace result is currently a two-atom,
+one-probe theorem, not a general Laplace identifiability theorem.
 
 The result is deliberately scoped to the ideal population field, data-space
 matching, and no CFG. Zero population energy reaches the pointwise hypothesis

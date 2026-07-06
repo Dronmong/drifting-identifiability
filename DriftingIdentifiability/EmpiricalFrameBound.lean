@@ -453,6 +453,46 @@ theorem gaussianEmpiricalPoint_basisNondegenerate
   rw [hfamily]
   exact hgeom
 
+/-- Explicit inverse-matrix lower frame constant for the concrete structured
+Gaussian interaction system. Every entry is determined by `z`, the unit
+bandwidth kernel, and the prescribed integer probes. -/
+noncomputable def gaussianEmpiricalPointCertifiedFrameConstant
+    {m : ℕ} (z : Fin m → ℝ) : ℝ :=
+  (inverseInteractionCertificateMass
+    (inducedInteractionVector (empiricalFin z)
+      (meanShiftInteractionKernel (gaussianKernel 1))
+      (empiricalPointDensity z) (structuredGaussianProbes m)))⁻¹
+
+/-- The explicit inverse-matrix constant is positive under the concrete
+support separation conditions. -/
+theorem gaussianEmpiricalPointCertifiedFrameConstant_pos
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) :
+    0 < gaussianEmpiricalPointCertifiedFrameConstant z := by
+  let p : StrictPair m :=
+    ⟨(⟨0, by omega⟩, ⟨1, by omega⟩), by simp⟩
+  letI : Nonempty (StrictPair m) := ⟨p⟩
+  exact inv_pos.mpr (inverseInteractionCertificateMass_pos _
+    (gaussianEmpiricalPoint_basisNondegenerate (by omega) z hz hsums))
+
+/-- **Certified concrete lower bound (Objective 1).** The reciprocal
+entrywise `ℓ¹` mass of the inverse concrete interaction matrix satisfies the
+frame inequality. Thus the earlier existential constant has been replaced by
+a finite formula suitable for numerical or interval certification. -/
+theorem gaussianEmpiricalPointCertifiedFrameBound
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) :
+    InteractionFrameBound
+      (inducedInteractionVector (empiricalFin z)
+        (meanShiftInteractionKernel (gaussianKernel 1))
+        (empiricalPointDensity z) (structuredGaussianProbes m))
+      (gaussianEmpiricalPointCertifiedFrameConstant z) := by
+  let p : StrictPair m :=
+    ⟨(⟨0, by omega⟩, ⟨1, by omega⟩), by simp⟩
+  letI : Nonempty (StrictPair m) := ⟨p⟩
+  exact interactionFrameBound_inverseCertificate _
+    (gaussianEmpiricalPoint_basisNondegenerate (by omega) z hz hsums)
+
 /-- The preceding concrete nondegeneracy theorem yields a positive frame
 constant for every nontrivial (`m ≥ 2`) empirical family.  The constant exists
 axiom-freely; obtaining a sharp numerical lower bound remains a conditioning
@@ -647,8 +687,8 @@ noncomputable def gaussianEmpiricalPointSetup
       unfold gaussianKernel
       fun_prop
     exact (hi.mul hj).smul hK
-  frameConstant := gaussianEmpiricalPointFrameConstant hm z hz hsums
-  frameBound := gaussianEmpiricalPointFrameBound hm z hz hsums
+  frameConstant := gaussianEmpiricalPointCertifiedFrameConstant z
+  frameBound := gaussianEmpiricalPointCertifiedFrameBound hm z hz hsums
 
 /-- The normalizer-product bound in the concrete unit-Gaussian setup is
 explicit: `B = 1`. -/
@@ -706,6 +746,18 @@ theorem gaussianEmpiricalPoint_identifies_of_probeZero
   finitePopulationMeanShift_identifies_of_probeZero
     (gaussianEmpiricalPointSetup hm z hz hsums a b) hzero
 
+/-- Zero deterministic squared loss at the structured probes is an equivalent
+finite-loss hypothesis for the concrete exact-identifiability theorem. -/
+theorem gaussianEmpiricalPoint_identifies_of_probeEnergy_eq_zero
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) (a b : FiniteProbabilityVector m)
+    (henergy :
+      (gaussianEmpiricalPointSetup hm z hz hsums a b).normalizedProbeDriftEnergy = 0) :
+    (empiricalPointBasis (by omega) z hz).basisMeasure a =
+      (empiricalPointBasis (by omega) z hz).basisMeasure b :=
+  finitePopulationMeanShift_identifies_of_probeEnergy_eq_zero
+    (gaussianEmpiricalPointSetup hm z hz hsums a b) henergy
+
 /-- General concrete coefficient stability.  The remaining practical input is
 an upper bound `B` on normalizer products; the frame constant is supplied by
 the geometric construction. -/
@@ -716,7 +768,7 @@ theorem gaussianEmpiricalPoint_coefficientStability
     (hnormalizer : ∀ n,
       |(gaussianEmpiricalPointSetup hm z hz hsums a b).normalizerProduct n| ≤ B) :
     (∑ i, |a.weight i - b.weight i|) ≤
-      (2 * B / gaussianEmpiricalPointFrameConstant hm z hz hsums) *
+      (2 * B / gaussianEmpiricalPointCertifiedFrameConstant z) *
         ‖(gaussianEmpiricalPointSetup hm z hz hsums a b).normalizedProbeDrift‖ := by
   exact (gaussianEmpiricalPointSetup hm z hz hsums a b).coefficientStability
     hB0 hnormalizer
@@ -727,11 +779,26 @@ theorem gaussianEmpiricalPoint_coefficientStability_one
     {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
     (hsums : DistinctStrictPairSums z) (a b : FiniteProbabilityVector m) :
     (∑ i, |a.weight i - b.weight i|) ≤
-      (2 / gaussianEmpiricalPointFrameConstant hm z hz hsums) *
+      (2 / gaussianEmpiricalPointCertifiedFrameConstant z) *
         ‖(gaussianEmpiricalPointSetup hm z hz hsums a b).normalizedProbeDrift‖ := by
   simpa using gaussianEmpiricalPoint_coefficientStability hm z hz hsums a b
     (B := 1) (by norm_num)
     (gaussianEmpiricalPoint_normalizerProduct_abs_le_one hm z hz hsums a b)
+
+/-- Energy-form stability with both concrete constants exposed: `B=1` and the
+inverse interaction-matrix frame certificate. -/
+theorem gaussianEmpiricalPoint_coefficientStability_probeEnergy
+    {m : ℕ} (hm : 2 ≤ m) (z : Fin m → ℝ) (hz : Function.Injective z)
+    (hsums : DistinctStrictPairSums z) (a b : FiniteProbabilityVector m) :
+    (∑ i, |a.weight i - b.weight i|) ≤
+      (2 / gaussianEmpiricalPointCertifiedFrameConstant z) *
+        Real.sqrt
+          (gaussianEmpiricalPointSetup hm z hz hsums a b).normalizedProbeDriftEnergy := by
+  have h :=
+    (gaussianEmpiricalPointSetup hm z hz hsums a b).coefficientStability_probeEnergy
+      (B := 1) (by norm_num)
+      (gaussianEmpiricalPoint_normalizerProduct_abs_le_one hm z hz hsums a b)
+  simpa only [gaussianEmpiricalPointSetup, mul_one] using h
 
 /-- **Closed form of the actual integral-induced interaction.**  Against the
 two-point empirical reference, the mean-shift interaction double integral of
@@ -1050,6 +1117,18 @@ theorem empirical01Gaussian_identifies_of_probeZero
   finitePopulationMeanShift_identifies_of_probeZero
     (empirical01GaussianSetup σ hσ a b probes n0) hzero
 
+/-- Two-atom finite-loss form: zero deterministic squared loss over the
+supplied probes identifies the two represented measures. -/
+theorem empirical01Gaussian_identifies_of_probeEnergy_eq_zero
+    {N : ℕ} (σ : ℝ) (hσ : ValidBandwidth σ)
+    (a b : FiniteProbabilityVector 2)
+    (probes : Fin N → ℝ) (n0 : Fin N)
+    (henergy :
+      (empirical01GaussianSetup σ hσ a b probes n0).normalizedProbeDriftEnergy = 0) :
+    empirical01Basis.basisMeasure a = empirical01Basis.basisMeasure b :=
+  finitePopulationMeanShift_identifies_of_probeEnergy_eq_zero
+    (empirical01GaussianSetup σ hσ a b probes n0) henergy
+
 /-- Concrete coefficient stability for the same two-atom population model. -/
 theorem empirical01Gaussian_coefficientStability
     {N : ℕ} (σ : ℝ) (hσ : ValidBandwidth σ)
@@ -1063,6 +1142,157 @@ theorem empirical01Gaussian_coefficientStability
         ‖(empirical01GaussianSetup σ hσ a b probes n0).normalizedProbeDrift‖ := by
   exact (empirical01GaussianSetup σ hσ a b probes n0).coefficientStability
     hB0 hnormalizer
+
+/-- Energy form of the two-atom stability estimate. -/
+theorem empirical01Gaussian_coefficientStability_probeEnergy
+    {N : ℕ} (σ : ℝ) (hσ : ValidBandwidth σ)
+    (a b : FiniteProbabilityVector 2)
+    (probes : Fin N → ℝ) (n0 : Fin N) {B : ℝ} (hB0 : 0 ≤ B)
+    (hnormalizer : ∀ n,
+      |(empirical01GaussianSetup σ hσ a b probes n0).normalizerProduct n| ≤ B) :
+    (∑ i, |a.weight i - b.weight i|) ≤
+      (2 * B /
+        (empirical01GaussianSetup σ hσ a b probes n0).frameConstant) *
+        Real.sqrt
+          (empirical01GaussianSetup σ hσ a b probes n0).normalizedProbeDriftEnergy := by
+  exact (empirical01GaussianSetup σ hσ a b probes n0).coefficientStability_probeEnergy
+    hB0 hnormalizer
+
+/-! ## Higher-dimensional data space (Objective 3)
+
+The `basisInteraction` closed form holds for any data space, so the only
+dimension-specific ingredient is the nondegeneracy of the induced vectors. On an
+arbitrary real inner-product space `F`, placing the probes at integer multiples
+of a fixed direction `u` reduces the Gaussian product to the same
+weighted-geometric shape as on `ℝ`, except the interaction vectors are genuinely
+vector valued (proportional to `zᵢ - zⱼ ∈ F`). The vector-weighted Vandermonde
+engine then discharges nondegeneracy, replacing the distinct-pair-sum Sidon
+condition by distinct *projected* pair-sums `⟪u, zᵢ+zⱼ⟫`. -/
+
+section HigherDimensional
+
+open scoped RealInnerProductSpace
+
+variable {F : Type u} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+  [MeasurableSpace F] [MeasurableSingletonClass F] [CompleteSpace F]
+
+/-- Probes: integer multiples of a fixed direction, one per strict pair. -/
+noncomputable def structuredGaussianProbesND (m : ℕ) (u : F) :
+    Fin (Fintype.card (StrictPair m)) → F := fun n => (n : ℝ) • u
+
+/-- Row factor (depends only on the probe index and the direction length). -/
+noncomputable def gaussianProbeRowND (m : ℕ) (σ : ℝ) (u : F) :
+    Fin (Fintype.card (StrictPair m)) → ℝ :=
+  fun n => Real.exp (-((n : ℝ) ^ 2 * ‖u‖ ^ 2) / σ ^ 2)
+
+/-- Geometric base: exponential of the projected pair-sum. -/
+noncomputable def gaussianPairBaseND (σ : ℝ) (u : F) {m : ℕ} (z : Fin m → F) :
+    StrictPair m → ℝ :=
+  fun p => Real.exp (inner ℝ u (z p.1.1 + z p.1.2) / σ ^ 2)
+
+/-- Column scalar (depends only on the pair). -/
+noncomputable def gaussianPairColumnScalarND (σ : ℝ) {m : ℕ} (z : Fin m → F) :
+    StrictPair m → ℝ :=
+  fun p => Real.exp (-(‖z p.1.1‖ ^ 2 + ‖z p.1.2‖ ^ 2) / (2 * σ ^ 2))
+
+omit [MeasurableSpace F] [MeasurableSingletonClass F] [CompleteSpace F] in
+/-- The higher-dimensional Gaussian interaction factors into a scalar
+weighted-geometric profile times the vector direction `zᵢ - zⱼ`. -/
+theorem gaussianInteractionND_eq_weightedGeometric {m : ℕ} (σ : ℝ) (hσ : σ ≠ 0)
+    (u : F) (z : Fin m → F) (p : StrictPair m)
+    (n : Fin (Fintype.card (StrictPair m))) :
+    meanShiftInteractionKernel (gaussianKernel σ)
+      (structuredGaussianProbesND m u n) (z p.1.1) (z p.1.2) =
+      (gaussianProbeRowND m σ u n * gaussianPairBaseND σ u z p ^ (n : ℕ)) •
+        (gaussianPairColumnScalarND σ z p • (z p.1.1 - z p.1.2)) := by
+  have hσ2 : (σ : ℝ) ^ 2 ≠ 0 := pow_ne_zero 2 hσ
+  have hnu : ‖((n : ℝ)) • u‖ ^ 2 = (n : ℝ) ^ 2 * ‖u‖ ^ 2 := by
+    rw [norm_smul, mul_pow, Real.norm_eq_abs, sq_abs]
+  have hscalar :
+      gaussianKernel σ (structuredGaussianProbesND m u n) (z p.1.1) *
+        gaussianKernel σ (structuredGaussianProbesND m u n) (z p.1.2) =
+      gaussianProbeRowND m σ u n * gaussianPairBaseND σ u z p ^ (n : ℕ) *
+        gaussianPairColumnScalarND σ z p := by
+    simp only [structuredGaussianProbesND, gaussianProbeRowND, gaussianPairBaseND,
+      gaussianPairColumnScalarND, gaussianKernel, ← Real.exp_nat_mul, ← Real.exp_add]
+    congr 1
+    rw [norm_sub_sq_real, norm_sub_sq_real]
+    simp only [hnu, real_inner_smul_left, inner_add_right]
+    field_simp
+    ring
+  rw [meanShiftInteractionKernel, hscalar, smul_smul]
+
+/-- Independently checkable higher-dimensional separation condition: the
+projected pair-sums `⟪u, zᵢ+zⱼ⟫` are distinct. -/
+def DistinctProjectedPairSums {m : ℕ} (u : F) (z : Fin m → F) : Prop :=
+  Function.Injective (fun p : StrictPair m => inner ℝ u (z p.1.1 + z p.1.2))
+
+/-- **Axiom-free higher-dimensional nondegeneracy.**  On any real inner-product
+space, an injective support with distinct projected pair-sums, unit-direction
+integer probes and a Gaussian kernel yields linearly independent actual
+integral-induced interaction vectors. -/
+theorem gaussianEmpiricalPointND_basisNondegenerate
+    {m : ℕ} (hm : 0 < m) (σ : ℝ) (hσ : σ ≠ 0) (u : F) (z : Fin m → F)
+    (hz : Function.Injective z) (hsums : DistinctProjectedPairSums u z) :
+    BasisInteractionNondegenerate
+      (inducedInteractionVector (empiricalFin z)
+        (meanShiftInteractionKernel (gaussianKernel σ))
+        (empiricalPointDensity z) (structuredGaussianProbesND m u)) := by
+  have hσ2 : (σ : ℝ) ^ 2 ≠ 0 := pow_ne_zero 2 hσ
+  have hbase : Function.Injective (gaussianPairBaseND σ u z) := by
+    intro p q hpq
+    apply hsums
+    simp only [gaussianPairBaseND] at hpq
+    have h2 := Real.exp_injective hpq
+    exact (div_left_inj' hσ2).mp h2
+  have hw : ∀ p : StrictPair m,
+      gaussianPairColumnScalarND σ z p • (z p.1.1 - z p.1.2) ≠ 0 := by
+    intro p
+    refine smul_ne_zero (Real.exp_pos _).ne' ?_
+    exact sub_ne_zero.mpr (fun h => (Fin.ne_of_lt p.property) (hz h))
+  have hrow : ∀ n, gaussianProbeRowND m σ u n ≠ 0 :=
+    fun _ => (Real.exp_pos _).ne'
+  have hgeom := linearIndependent_vectorWeightedGeometricProfiles
+    (gaussianPairBaseND σ u z)
+    (fun p => gaussianPairColumnScalarND σ z p • (z p.1.1 - z p.1.2))
+    hbase hw (gaussianProbeRowND m σ u) hrow
+  have hfamily :
+      (fun p : StrictPair m =>
+        inducedInteractionVector (empiricalFin z)
+          (meanShiftInteractionKernel (gaussianKernel σ))
+          (empiricalPointDensity z) (structuredGaussianProbesND m u) p.1.1 p.1.2) =
+      (fun p : StrictPair m => fun n =>
+        (gaussianProbeRowND m σ u n * gaussianPairBaseND σ u z p ^ (n : ℕ)) •
+          (gaussianPairColumnScalarND σ z p • (z p.1.1 - z p.1.2))) := by
+    funext p n
+    change basisInteraction (empiricalFin z)
+      (meanShiftInteractionKernel (gaussianKernel σ))
+      (empiricalPointDensity z p.1.1) (empiricalPointDensity z p.1.2)
+      (structuredGaussianProbesND m u n) = _
+    rw [basisInteraction_empiricalPoint hm z hz]
+    exact gaussianInteractionND_eq_weightedGeometric σ hσ u z p n
+  unfold BasisInteractionNondegenerate
+  rw [hfamily]
+  exact hgeom
+
+/-- **Higher-dimensional frame bound.**  The interaction-frame hypothesis of the
+population theorem is discharged for the arbitrary-dimensional structured
+Gaussian construction (`m ≥ 2`), axiom-free.  Only the qualitative constant is
+provided; the explicit ceiling of accomplishment 8 applies verbatim in each
+coordinate. -/
+theorem gaussianEmpiricalPointND_exists_frameBound
+    {m : ℕ} (hm : 2 ≤ m) (σ : ℝ) (hσ : σ ≠ 0) (u : F) (z : Fin m → F)
+    (hz : Function.Injective z) (hsums : DistinctProjectedPairSums u z) :
+    ∃ c > 0, InteractionFrameBound
+      (inducedInteractionVector (empiricalFin z)
+        (meanShiftInteractionKernel (gaussianKernel σ))
+        (empiricalPointDensity z) (structuredGaussianProbesND m u)) c := by
+  let p : StrictPair m := ⟨(⟨0, by omega⟩, ⟨1, by omega⟩), by simp⟩
+  letI : Nonempty (StrictPair m) := ⟨p⟩
+  apply interactionFrameBound_of_linearIndependent
+  exact gaussianEmpiricalPointND_basisNondegenerate (by omega) σ hσ u z hz hsums
+
+end HigherDimensional
 
 end PaperFiniteIdentifiability
 end DriftingIdentifiability

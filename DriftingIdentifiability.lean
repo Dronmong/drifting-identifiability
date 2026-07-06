@@ -1,2 +1,3 @@
 import DriftingIdentifiability.FailureCases
-import DriftingIdentifiability.EmpiricalFrameBound
+import DriftingIdentifiability.PracticalModelClasses
+import DriftingIdentifiability.SmoothBumpBasis

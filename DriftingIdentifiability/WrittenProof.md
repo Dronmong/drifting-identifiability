@@ -13,8 +13,8 @@ p = (∑ᵢ aᵢφᵢ) · μ,     q = (∑ᵢ bᵢφᵢ) · μ.
 Fix a mean-shift kernel and finitely many probes. Assume all integrals in
 equations (11) and (31) are valid, both normalizers are nonzero at every probe,
 and the strict-pair interaction vectors have a positive frame lower bound.
-Then pointwise zero of the normalized population mean-shift field implies
-`p=q`.
+Then zero finite squared normalized drift at the selected probes implies
+`p=q`. Pointwise zero of the full field is a stronger corollary.
 
 This statement is about the ideal population field in data space. It excludes
 CFG/signed targets and does not identify the finite-batch estimator with the
@@ -100,6 +100,21 @@ estimate, the hypothesis, the observable, and the stability bound all refer to
 the same object. Full topological support is not used by this route; it is only
 needed by the separate zero-energy corollary.
 
+Define the deterministic finite probe loss by
+
+```text
+L_probe := ∑ₙ ‖normalizedProbeDrift n‖².
+```
+
+Because this is a finite sum of nonnegative terms, Lean proves
+`L_probe = 0 ↔ ∀ n, normalizedProbeDrift n = 0`. Hence
+`finitePopulationMeanShift_identifies_of_probeEnergy_eq_zero` states the exact
+result directly from zero finite loss, while quantitative stability becomes
+
+```text
+‖a-b‖₁ ≤ (2B/c) √L_probe.
+```
+
 ## Explicit ceiling on the frame constant (Objective 1)
 
 Instantiating the frame inequality at the coordinate indicator `Pi.single p 1`
@@ -126,8 +141,20 @@ c ≤ min_{i<j} |zᵢ-zⱼ| e^{-(zᵢ-zⱼ)²/4} ≤ √(2/e) ≈ 0.858.
 This is a computable ceiling from the support geometry alone. It is proved as
 `interactionFrameBound_le_interactionNorm` (general) and
 `gaussianEmpiricalPoint_frameConstant_le` (Gaussian). It certifies numerical
-uselessness whenever some pair of support points is close or far, but it is only
-an upper bound; a matching useful lower bound remains open (Objective 1).
+uselessness whenever some pair of support points is close or far.
+
+The complementary certified lower constant is obtained from the actual square
+interaction matrix `M`, with probes as rows and strict pairs as columns:
+
+```text
+c_cert := (∑_{p,r}|(M⁻¹)_{p,r}|)⁻¹.
+```
+
+If the interaction vectors are independent, Lean proves `c_cert > 0` and
+`c_cert ‖z‖₁ ≤ ‖Mz‖∞`. This is
+`interactionFrameBound_inverseCertificate`; its structured-Gaussian
+specialization is `gaussianEmpiricalPointCertifiedFrameBound`. The formula is
+computable/certifiable, although it may be extremely small.
 
 ## Concrete general finite family
 
@@ -157,15 +184,67 @@ The first factor is nonzero for every probe. The second is nonzero because the
 support points are distinct. If all strict-pair sums `zᵢ+zⱼ` are distinct, the
 geometric bases `exp(zᵢ+zⱼ)` are distinct. The square evaluation matrix is a
 Vandermonde matrix and is nonsingular, so the actual induced vectors are
-linearly independent. Finite-dimensional norm equivalence then supplies a
-positive frame constant.
+linearly independent. The inverse interaction-matrix formula above supplies a
+specific positive frame constant.
 
 This proves `gaussianEmpiricalPoint_identifies`: no frame or injectivity
-conclusion is assumed by its caller. Its remaining practical limitation is
-that the selected frame constant is existential rather than a useful explicit
-lower bound. Since the unit Gaussian satisfies `0<k≤1`, each normalizer lies in
-`(0,1]`, so the product bound is explicitly `B=1`; the concrete stability
-estimate is therefore `‖a-b‖₁ ≤ (2/c)‖V_probes‖`.
+conclusion is assumed by its caller. The main concrete setup uses
+`gaussianEmpiricalPointCertifiedFrameConstant`, not the older existential
+choice. Since the unit Gaussian satisfies `0<k≤1`, each normalizer lies in
+`(0,1]`, so the product bound is explicitly `B=1`; the concrete energy estimate
+is `‖a-b‖₁ ≤ (2/c_cert)√L_probe`.
+
+## Higher-dimensional and practical model-class extensions
+
+For a real inner-product data space `F`, choose a direction `u` and probes
+`xₙ=n u`. The Gaussian interaction factors into a nonzero row scaling, a
+geometric profile whose base is
+`exp(⟪u,zᵢ+zⱼ⟫/σ²)`, and the vector weight `zᵢ-zⱼ`. Distinct projected pair sums
+therefore give a vector-weighted Vandermonde family. This yields the complete
+arbitrary-positive-bandwidth theorem
+`gaussianEmpiricalPointND_identifies_of_probeEnergy_eq_zero`.
+
+For arbitrary or adaptively selected probes, an `InteractionDualCertificate`
+stores continuous linear functionals `Lₚ` satisfying
+
+```text
+Lₚ(U_q) = 1 when p=q, and 0 otherwise.
+```
+
+Then `c=(∑ₚ ‖Lₚ‖)⁻¹` is a valid frame constant. This is finite, checkable linear
+algebra and supports fewer probes whenever the stacked output dimension is
+large enough.
+
+For continuous or smooth probability-density bases, uniform interaction
+perturbation gives
+
+```text
+Frame(U,c),   supₚ ‖Uₚ-U'ₚ‖ ≤ δ < c
+    ⟹ Frame(U',c-δ).
+```
+
+Thus a smooth model inherits exact identifiability and stability from a
+certified baseline once the finite analytic/numerical error is bounded. The
+same transfer covers moved probes and approximated kernels. Finally,
+`empirical01Laplace_identifies_of_probeEnergy_eq_zero` instantiates the paper's
+positive-bandwidth Laplace kernel for the two-atom, one-probe family.
+
+## Concrete non-atomic smooth model
+
+`SmoothBumpBasis.lean` instantiates the smooth interface without a perturbation
+assumption. The reference law is the standard Gaussian on `ℝ`. Two normalized
+`C∞` bump densities have disjoint ordered supports, one strictly negative and
+one strictly positive. Their `withDensity` mixtures are genuine non-atomic
+probability measures.
+
+For the strict pair `(0,1)`, positivity of the Gaussian kernel and support
+ordering force the interaction integrand to have a fixed negative sign on a
+positive-measure product set. Hence its integral is strictly negative, so the
+single interaction vector is nonzero and supplies the two-component frame
+bound. For every positive Gaussian bandwidth,
+`bumpGaussian_identifies_of_probeEnergy_eq_zero` concludes equality of the two
+represented measures from zero finite drift energy at one probe. No
+characteristic-kernel or synthetic Gaussian axiom is used.
 
 ## Legitimacy and failure audit
 
@@ -187,6 +266,10 @@ feature-law equality back to source-law equality.
 - Quantitative frame estimates: `FiniteStability.lean`.
 - Concrete empirical bases and the axiom-free Gaussian/Vandermonde theorem:
   `EmpiricalFrameBound.lean`.
+- Higher-dimensional, adaptive-probe, smooth-transfer, and Laplace interfaces:
+  `PracticalModelClasses.lean`.
+- Concrete non-atomic `C∞` bump basis and direct sign-certified frame:
+  `SmoothBumpBasis.lean`.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
 

@@ -276,9 +276,62 @@ so future agents do not repeat equivalent mistakes.
   still missing; it reduces to a weighted-Vandermonde smallest-singular-value
   estimate (a Lagrange-interpolation certificate is written out in
   `WrittenProof.md`) or to a better probe design (Objective 3).
+- **Later update (2026-07-05):** The logical lower-bound gap is now repaired by
+  `interactionFrameBound_inverseCertificate`. For the actual square
+  interaction matrix `M`, Lean proves that
+  `(∑_{p,r}|(M⁻¹)_{p,r}|)⁻¹` is positive and is a valid lower frame constant.
+  `gaussianEmpiricalPointSetup` uses its concrete Gaussian specialization.
+  This does **not** retract the failure warning: the certified value may be
+  extremely small, so no claim of good conditioning is permitted without
+  evaluating or further bounding it.
 - **Relevant Lean declarations/files:**
   `interactionFrameBound_of_linearIndependent`,
+  `interactionFrameBound_inverseCertificate`,
   `interactionFrameBound_le_interactionNorm`,
   `gaussianEmpiricalPoint_frameConstant_le`,
   `gaussianEmpiricalPointFrameConstant`, `FiniteStability.lean`,
   `EmpiricalFrameBound.lean`.
+
+---
+
+### 2026-07-05 — smooth-basis interface mistaken for a certified practical model
+
+- **Exact condition:** Treat the existence of
+  `SmoothProbabilityDensityBasis` or `continuousPerturbationSetup` as proof
+  that a realistic continuum-supported architecture satisfies identifiability.
+- **Counterexample or obstruction:** Smoothness of the component densities says
+  nothing by itself about linear independence or conditioning of their induced
+  interaction vectors. The perturbation route additionally requires an actual
+  finite bound `δ<c` relative to a certified baseline.
+- **Why the argument fails:** Regularity and identifiability are independent
+  properties. A smooth basis may collapse interactions, and a formally positive
+  frame constant may still be numerically useless.
+- **Fatal or repairable:** Repairable by proving or interval-certifying the
+  interaction error for a concrete continuum-supported basis, or by providing
+  a direct `InteractionDualCertificate`.
+- **Update (2026-07-05):** `SmoothBumpBasis.lean` now supplies one direct repair:
+  a non-atomic two-component `C∞` basis whose frame is certified by an exact
+  ordered-support sign argument. The warning remains applicable to every other
+  smooth basis; smoothness alone is still not an identifiability condition.
+- **Relevant Lean declarations/files:** `SmoothProbabilityDensityBasis`,
+  `continuousPerturbationSetup`,
+  `interactionFrameBound_of_uniformPerturbation`,
+  `InteractionDualCertificate`, `bumpInteractionFrameBound`,
+  `PracticalModelClasses.lean`, `SmoothBumpBasis.lean`.
+
+---
+
+### 2026-07-05 — two-atom Laplace result overgeneralized
+
+- **Exact condition:** Infer general-`m` or high-dimensional Laplace
+  identifiability from `empirical01Laplace_identifies_of_probeEnergy_eq_zero`.
+- **Counterexample or obstruction:** The proved theorem has exactly two atoms
+  and one probe. Laplace interaction profiles on a line have substantially
+  different rank behavior from the Gaussian Vandermonde family.
+- **Why the argument fails:** Positivity of the Laplace kernel guarantees
+  nonzero interaction for one strict pair, not independence of many pairs.
+- **Fatal or repairable:** Repairable only with a separate general-`m` frame or
+  dual-certificate construction.
+- **Relevant Lean declarations/files:** `empirical01LaplaceSetup`,
+  `empirical01Laplace_identifies_of_probeEnergy_eq_zero`,
+  `PracticalModelClasses.lean`.

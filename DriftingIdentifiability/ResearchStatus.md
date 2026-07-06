@@ -7,12 +7,12 @@ explicit, nonvacuous conditions under which zero ideal population mean-shift
 drift forces `p = q`, and the result is machine checked without new or
 conditional Gaussian/RKHS axioms.
 
-The practical modeling goal is not yet complete. The strongest concrete result
-currently concerns finite atomic distributions on `ℝ` sharing a known support.
-The main remaining mathematical problem is a useful quantitative lower bound
-for its frame constant `c`; the main applied problem is connecting the ideal
-population/probe statement to minibatch neural-network training on realistic
-smooth, high-dimensional distributions.
+The practical modeling goal is not yet complete, but Objectives 1--3 are now
+complete at the deterministic population level. Objective 3 includes a fully
+instantiated non-atomic `C∞` bump basis on a Gaussian reference, in addition to
+the higher-dimensional, variable-bandwidth, adaptive-probe, perturbative, and
+Laplace infrastructure. The next mathematical objective is the finite-sample
+bridge to minibatch training; model-quality evaluation remains empirical work.
 
 ## What has been accomplished
 
@@ -72,6 +72,8 @@ The following consequences are proved:
   frame constant exists;
 - coefficient error satisfies
   `‖a-b‖₁ ≤ (2B/c)‖V_probes‖`;
+- finite squared probe loss satisfies
+  `‖a-b‖₁ ≤ (2B/c)√(∑ₙ ‖V(xₙ)‖²)`;
 - vanishing probe drift gives coefficient convergence under uniform bounds;
 - `card(StrictPair m) ≤ N · dim(E)` is necessary for nondegeneracy.
 
@@ -121,7 +123,7 @@ that distinct points alone do not prevent pair-sum collisions.
 The earlier `m=2` route is also fully packaged by
 `empirical01Gaussian_identifies` for arbitrary positive Gaussian bandwidth.
 
-### 6. One part of the stability constant is explicit
+### 6. Both stability constants are explicit
 
 For the unit Gaussian, `0 < k(x,y) ≤ 1`. The concrete normalizers therefore lie
 in `(0,1]`, and the product bound is `B=1`. The concrete stability theorem is
@@ -130,7 +132,12 @@ in `(0,1]`, and the product bound is `B=1`. The concrete stability theorem is
 ‖a-b‖₁ ≤ (2/c) ‖V_probes‖.
 ```
 
-The remaining unknown is the size of `c`, not the normalizer factor.
+The frame constant used by the concrete setup is now
+`gaussianEmpiricalPointCertifiedFrameConstant z`, the reciprocal entrywise
+`ℓ¹` mass of the inverse square interaction matrix. Thus both `B` and `c` are
+finite formulas determined by the model geometry. The certificate can still
+be extremely small; computing and optimizing its scaling is now an applied
+conditioning problem rather than a logical gap in the theorem.
 
 ### 7. Trust and failure boundaries are enforced
 
@@ -167,8 +174,8 @@ The scalar function `|Δ| e^{-Δ²/4}` is maximized at `|Δ| = √2` with value
 (`Δ → 0`) and — because the unit Gaussian suppresses distant interaction — as
 they separate (`Δ → ∞`). This is a rigorous, computable description of when the
 exact theorem is numerically useless, and an absolute `m`-independent ceiling on
-any achievable constant. It does *not* yet supply the matching useful lower
-bound; see Objective 1. The promoted declarations are
+any achievable constant. The complementary inverse-matrix lower certificate is
+given in accomplishment 10. The promoted declarations here are
 `interactionFrameBound_le_interactionNorm` and
 `gaussianEmpiricalPoint_frameConstant_le`.
 
@@ -193,19 +200,121 @@ hypothesis, the observable, and the stability control now all refer to the same
 requirement from the exact route (that hypothesis was only needed by the
 zero-energy corollary).
 
+### 10. Objective 1 is closed by an inverse-matrix certificate
+
+For a square scalar interaction family, `strictPairInteractionMatrix` records
+the actual interaction vectors as columns. Lean proves that if these columns
+are independent, then
+
+```text
+c_cert = 1 / ∑_{p,r} |(M⁻¹)_{p,r}|
+```
+
+is positive and satisfies the required `ℓ¹` frame inequality. The theorem is
+`interactionFrameBound_inverseCertificate`; the concrete Gaussian
+specialization is `gaussianEmpiricalPointCertifiedFrameBound`. The main
+`gaussianEmpiricalPointSetup` now uses this certified constant, so its exact and
+stability theorems no longer depend on a classically selected existential
+constant.
+
+This is a rigorous computable lower bound, not a promise of good conditioning.
+Together with the earlier ceiling, it cleanly separates logical
+identifiability from numerical usefulness. Closed-form estimates in terms of
+minimum separation and asymptotic scaling in `m` remain valuable engineering
+and analysis questions, but are no longer missing proof obligations.
+
+### 11. Objective 2 is closed at the deterministic population level
+
+`probeDriftEnergy` is the finite loss
+
+```text
+∑ₙ ‖V(xₙ)‖².
+```
+
+Lean proves that it is zero exactly when every selected probe drift is zero.
+Consequently `finitePopulationMeanShift_identifies_of_probeEnergy_eq_zero` and
+its concrete Gaussian corollaries identify the measures directly from zero
+finite probe loss. The quantitative companion controls coefficient error by
+the square root of that loss. No topology, full-support hypothesis, or
+continuity upgrade is used in this finite route.
+
+Random minibatch concentration is deliberately not folded into Objective 2:
+it is the separate finite-sample problem recorded as Objective 4.
+
+### 12. Objective 3 has a general deterministic infrastructure
+
+`PracticalModelClasses.lean` adds four complementary routes:
+
+1. `gaussianEmpiricalPointNDSetup` packages the vector-weighted Vandermonde
+   proof into the complete normalized population theorem for any separable real
+   inner-product data space and any positive Gaussian bandwidth.
+2. `InteractionDualCertificate` gives an independently checkable vector-valued
+   conditioning certificate. Its reciprocal total operator-norm mass is a valid
+   frame constant. `gaussianEmpiricalPointCertifiedProbeSetup` therefore accepts
+   arbitrary, fewer, or adaptively selected probes when they carry such a finite
+   certificate; the existing dimension lower bound still applies.
+3. `SmoothProbabilityDensityBasis` and `ContinuousProbabilityDensityBasis`
+   describe genuine probability-density model classes. The robust perturbation
+   theorem transfers a baseline frame constant `c` to the actual smooth
+   interaction system with constant `c-δ` whenever its finite interaction error
+   is at most `δ<c`.
+4. `empirical01LaplaceSetup` gives a fully instantiated theorem for the paper's
+   positive-bandwidth Laplace kernel using one probe in the two-atom family.
+
+The perturbation theorem also applies to kernel approximation and probe
+movement. None of these routes equates population loss with a minibatch
+estimator or claims that a positive certificate is numerically large.
+
+### 13. A fully instantiated continuum-supported smooth basis (Objective 3 gap)
+
+`SmoothBumpBasis.lean` closes the last outstanding Objective-3 instantiation with
+a genuinely continuum-supported model, not an atomic one:
+
+- **Reference:** the standard Gaussian `gaussianReal 0 1` (full support, proved
+  `IsOpenPosMeasure`).
+- **Densities:** two `C∞` bump functions (`ContDiffBump.normed`) on *disjoint,
+  ordered* supports — `φ₀` on `(-3/2,-1/2)`, `φ₁` on `(1/2,3/2)`. They form a
+  genuine `SmoothProbabilityDensityBasis` (measurable, nonnegative, unit mass,
+  and `C∞`); their mixtures are formally proved non-atomic probability
+  measures.
+- **Certified frame, proved directly:** because the supports are ordered,
+  `y₊ - y₋ < 0` throughout the support of `φ₀(y₊)φ₁(y₋)`, so the single
+  interaction double integral is *sign-definite* and hence nonzero
+  (`basisInteraction_bump_neg`, a positivity argument — no Gaussian closed form).
+  `interactionFrameBound_two` then yields a positive `InteractionFrameBound`
+  (`bumpInteractionFrameBound`). The sign lemma itself uses only positivity and
+  support ordering; the promoted population setup nevertheless requires the
+  paper's intended positive Gaussian bandwidth.
+- **End to end:** `bumpGaussianSetup` packages the complete population setup
+  (all regularity discharged: normalizers positive because the kernel is
+  positive and the mixture is a probability measure; integrability from the
+  compactly supported bump densities via `prod_withDensity`). The promoted
+  theorem `bumpGaussian_identifies_of_probeEnergy_eq_zero` concludes that zero
+  finite normalized population-drift energy at a single probe and positive
+  Gaussian bandwidth forces equality of the represented continuum probability
+  measures.
+
+This is the first *non-atomic* end-to-end identifiability result in the project.
+It is axiom-free (no paper axioms beyond the reviewed equation-11/31 machinery
+inherited by the population theorem).
+
 ## Strongest result and its exact scope
 
-The strongest completely instantiated result currently says:
+The strongest completely instantiated non-atomic result currently says:
 
-> Let `p` and `q` be two simplex-weighted probability measures on the same
-> finite injective support in `ℝ`. Assume the strict-pair support sums are
-> distinct. Use the unit Gaussian mean-shift kernel and one structured probe
-> per strict pair. If the ideal normalized population drift is pointwise zero,
-> then `p=q`.
+> Let `p` and `q` be simplex mixtures of two normalized `C∞` bump densities on
+> disjoint ordered intervals, relative to the standard Gaussian reference law.
+> For any positive Gaussian bandwidth and any single probe, if the finite
+> squared normalized population-drift loss is zero, then `p=q`.
+
+The general atomic theorem remains broader in component count and data-space
+dimension: it supports arbitrary finite `m` in separable real inner-product
+spaces, structured probes, or arbitrary probes carrying a dual certificate.
 
 This is an exact population theorem in data space. It does not presently claim:
 
-- equality for arbitrary continuous distributions;
+- arbitrary-component smooth mixtures beyond the proved two-component bump
+  family;
 - equality of source laws from a non-injective feature representation;
 - equivalence between Algorithm 2's finite bi-softmax estimator and the
   population field;
@@ -214,84 +323,65 @@ This is an exact population theorem in data space. It does not presently claim:
 - that the concrete conditions preserve practical model expressivity or
   generation quality.
 
-The concrete atomic measures do not have full topological support. Therefore
-the generic zero-energy-to-pointwise-zero corollary cannot be applied directly
-to this concrete family. This no longer weakens the exact route: the exact
-theorem is now stated directly from zero drift at the selected probes
-(`finitePopulationMeanShift_identifies_of_probeZero`), so full support is not
-required for exact identifiability. Full support is still needed only for the
-separate zero-*energy* corollary.
+The atomic mixtures do not have full topological support, and the smooth bump
+mixtures have compact component support even though their Gaussian reference
+has full support. This does not weaken either exact route: both consume drift at
+the selected probes directly. Full support is needed only by the separate
+global-energy-to-pointwise-zero corollary.
 
-## Remaining objectives, in priority order
+## Objectives and remaining priorities
 
-### Objective 1: obtain a useful explicit lower bound for `c`
+### Objective 1: explicit lower frame certificate — complete
 
-This is the single remaining quantitative gap inside the concrete exact route.
-Finite-dimensional compactness proves `c>0`, but the selected value is
-noncomputable and may be extremely small.
+The concrete theorem now uses the finite formula
 
-Progress (done):
+```text
+c_cert = (∑_{p,r}|(M⁻¹)_{p,r}|)⁻¹,
+```
 
-- An explicit computable **upper** bound (ceiling) is now proved:
-  `c ≤ min_{i<j} |zᵢ - zⱼ| e^{-(zᵢ-zⱼ)²/4}` (accomplishment 8). This settles two
-  of the desired sub-results — it identifies configurations where the theorem is
-  exact but numerically useless (any pair close *or* far), and it bounds `c` in
-  terms of the support separation and bandwidth. It also shows no construction of
-  this kind can exceed `√(2/e) ≈ 0.858`.
+where `M` is the actual square structured-Gaussian interaction matrix. Lean
+proves `c_cert > 0` and `InteractionFrameBound U c_cert`. This replaces the
+noncomputably selected compactness constant in the promoted concrete setup.
+The earlier geometric ceiling remains useful for detecting bad configurations.
 
-Still open (the useful **lower** bound):
+Further work may derive easier closed-form estimates from separation,
+bandwidth, and `m`, or choose probes that maximize the certificate. Those are
+conditioning/design improvements under Objectives 3 and 7, not gaps in exact
+identifiability or stability.
 
-- bound `c` from below using minimum support separation, minimum pair-sum
-  separation, model size, bandwidth, and probe placement;
-- determine how `c` scales as `m` grows (the integer-probe row factor
-  `e^{-n²}` at the largest probe `n=N-1=m(m-1)/2-1` is already astronomically
-  small, so this construction is expected to be exponentially ill-conditioned in
-  `m`; a rigorous lower bound would confirm this);
-- replace the existential constant with a computable singular-value or
-  certified Vandermonde bound. The obligation reduces to a smallest-singular-value
-  bound for the weighted Vandermonde matrix `M[n,p] = column_p · base_pⁿ`; a
-  Lagrange-interpolation certificate gives
-  `c ≥ 1 / (∑_q Λ_q / |column_q|)` with `Λ_q = ∑_n |λ_n^{(q)}| / row_n` the
-  scaled Lagrange coefficients, but formalizing it is a substantial analytic
-  effort and its value degrades with the `row_n = e^{-n²}` factors.
+### Objective 2: finite observable population loss — complete
 
-### Objective 2: align the hypothesis with the observable training loss
+The exact theorem consumes the deterministic finite probe loss
+`∑ₙ ‖V(xₙ)‖²`. Zero loss is proved equivalent to zero at every probe, and small
+loss controls coefficient error through its square root. The concrete Gaussian
+theorems expose both conclusions directly. This route needs neither pointwise
+zero on all of data space nor a full-support sampling measure.
 
-The proof uses only finitely many probes, while practical training observes
-minibatch samples.
+Estimating this population quantity from random reused minibatches is not
+silently assumed. Concentration, estimator bias/dependence, and high-probability
+sample complexity remain Objective 4.
 
-Progress (done):
+### Objective 3: practical model-class infrastructure — complete
 
-- The exact theorem is now stated and proved directly from zero drift at the
-  required probes: `finitePopulationMeanShift_identifies_of_probeZero` and the
-  concrete `gaussianEmpiricalPoint_identifies_of_probeZero`,
-  `empirical01Gaussian_identifies_of_probeZero` (accomplishment 9). The
-  pointwise-`ZeroDrift` statement is now a corollary.
-- This also handles the missing-full-support point: the exact route no longer
-  needs full topological support (only the separate zero-energy corollary does).
+Completed formally:
 
-Still open:
+- arbitrary separable real inner-product data spaces;
+- arbitrary positive Gaussian bandwidth;
+- exact and quantitative finite-loss theorems in higher dimension;
+- finite vector-valued dual certificates for arbitrary/adaptive probe sets;
+- robust transfer to continuous or `C∞` probability-density bases;
+- a concrete positive-bandwidth Laplace-kernel theorem;
+- preservation of the necessary probe-dimension obstruction;
+- **a fully instantiated continuum-supported smooth basis with a certified
+  frame and end-to-end identifiability** (`SmoothBumpBasis.lean`, accomplishment
+  13 below).
 
-- determine when sampled or expected drift loss controls those probe values;
-- distinguish exact probe zero, almost-everywhere zero, small expected loss,
-  and high-probability minibatch error (the finite stability estimate already
-  bridges *small probe drift* to *close coefficients*; the missing step is
-  controlling the probe-drift vector from a sampled/expected loss).
-
-### Objective 3: move from a proof-of-concept family to practical model classes
-
-The present construction is atomic, one-dimensional, shares a fixed support,
-and uses quadratically many probes. These conditions are mathematically clean
-but not yet a realistic image-generator architecture.
-
-Desired extensions:
-
-- smooth or continuous density bases;
-- higher-dimensional Euclidean/data-space constructions;
-- fewer or adaptively selected probes;
-- variable Gaussian bandwidth with quantitative bounds;
-- the paper's practical Laplace-style kernel;
-- conditions that retain adequate model expressivity.
+The one substantive instantiation that was previously outstanding — construct
+and certify a *continuum-supported* smooth basis and prove its frame directly —
+is now done. It is not the perturbation route (`δ<c`); the frame is certified
+by an exact sign argument. What remains under Objective 3 is empirical
+model-design tuning (approximation power, richer supports, adaptive probes),
+which is engineering/analysis, not missing theorem infrastructure.
 
 ### Objective 4: prove finite-sample guarantees for Algorithm 2
 

@@ -206,6 +206,20 @@ noncomputable def normalizedProbeDrift
   fun n => meanShiftDrift setup.kernel setup.targetMeasure setup.modelMeasure
     (setup.probes n)
 
+/-- The finite, deterministic population objective observed at the chosen
+probes.  Unlike the global `driftEnergy`, this quantity needs no sampling
+measure, topology, support, or continuity assumption. -/
+noncomputable def normalizedProbeDriftEnergy
+    (setup : PopulationMeanShiftFiniteSetup E m N) : ℝ :=
+  probeDriftEnergy setup.normalizedProbeDrift
+
+/-- Zero finite probe loss is exactly zero normalized drift at every probe. -/
+theorem normalizedProbeDriftEnergy_eq_zero_iff
+    (setup : PopulationMeanShiftFiniteSetup E m N) :
+    setup.normalizedProbeDriftEnergy = 0 ↔
+      ∀ n, setup.normalizedProbeDrift n = 0 :=
+  probeDriftEnergy_eq_zero_iff setup.normalizedProbeDrift
+
 /-- **Probe-local core.**  Only the finite drift values at the probes are used:
 if the normalized mean-shift drift vanishes at each probe, the unnormalized
 density interaction numerator vanishes there.  The full pointwise `ZeroDrift`
@@ -302,6 +316,23 @@ theorem coefficientStability
     setup.a setup.b setup.normalizerProduct setup.normalizedProbeDrift
     hnormalizer setup.bilinear_eq_normalizer_smul_probeDrift
 
+/-- Energy form of practical finite stability: coefficient error is controlled
+by the square root of the deterministic finite probe loss. -/
+theorem coefficientStability_probeEnergy
+    (setup : PopulationMeanShiftFiniteSetup E m N) {B : ℝ} (hB0 : 0 ≤ B)
+    (hnormalizer : ∀ n, |setup.normalizerProduct n| ≤ B) :
+    (∑ i, |setup.a.weight i - setup.b.weight i|) ≤
+      (2 * B / setup.frameConstant) *
+        Real.sqrt setup.normalizedProbeDriftEnergy := by
+  letI := setup.refProb
+  have hanti := antisymmetric_kernel_induces_basis_antisymmetry setup.reference
+    (meanShiftInteractionKernel setup.kernel)
+    (meanShiftInteractionKernel_antisymmetric setup.kernel)
+    setup.basis.density setup.probes setup.basisInteractionIntegrable
+  exact coeffL1_le_of_frame_scaledDriftEnergy _ hanti setup.frameBound hB0
+    setup.a setup.b setup.normalizerProduct setup.normalizedProbeDrift
+    hnormalizer setup.bilinear_eq_normalizer_smul_probeDrift
+
 /-- Probe-local reduction to the axiom-free finite drift setup: consumes only
 the finite probe-drift vanishing hypothesis. -/
 noncomputable def toDriftFiniteSetup_of_probeZero
@@ -341,6 +372,15 @@ theorem finitePopulationMeanShift_identifies_of_probeZero
   have hweights := driftProbeZeroIdentifiesCoefficients
     (setup.toDriftFiniteSetup_of_probeZero hzero)
   exact setup.basis.basisMeasure_eq_of_weight_eq hweights
+
+/-- **Finite-loss form of Objective 2.**  Zero deterministic squared loss at
+the selected probes identifies the represented probability measures. -/
+theorem finitePopulationMeanShift_identifies_of_probeEnergy_eq_zero
+    {m N : ℕ} (setup : PopulationMeanShiftFiniteSetup E m N)
+    (henergy : setup.normalizedProbeDriftEnergy = 0) :
+    setup.targetMeasure = setup.modelMeasure :=
+  finitePopulationMeanShift_identifies_of_probeZero setup
+    (setup.normalizedProbeDriftEnergy_eq_zero_iff.mp henergy)
 
 /-- **Promoted paper-native result.** For finite mixtures of genuine probability
 densities, pointwise zero of the paper's normalized population mean-shift field
