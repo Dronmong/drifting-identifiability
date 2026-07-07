@@ -345,9 +345,25 @@ the concrete class, completing the chain: sampled no-mask Algorithm-2 centroids
 → SNIS mean-square consistency → certified column-reweighted population field →
 `p = q`.
 
-What remains is the implementation self-mask as a separate perturbative
-correction, and richer (more than two atoms, non-atomic) certified classes for
-the modified kernel.
+`SelfMaskPerturbation.lean` now supplies the separate implementation-mask
+correction.  With `δ = exp(-1000000/temperature)`, the masked sample weight is
+exactly the no-mask sample weight multiplied by `δ` on masked negative entries
+and by `1` elsewhere.  Comparing the masked estimator to the estimator with
+those entries hard-deleted gives a deterministic affinity bound
+`maskAffinityErrorBound`, and hence
+
+```text
+‖algorithm2Drift(selfMask) - deletedDrift(selfMask)‖
+  ≤ 4*Npos*Nneg*R0*maskAffinityErrorBound.
+```
+
+The eye-mask specialization proves the required unmasked-column condition when
+there are at least two anchors.  This is deliberately a masked-vs-deleted
+comparison, not a masked-vs-full-no-mask comparison on the same reused samples.
+The remaining statistical proof obligation is consistency of the deleted
+estimator for the column-reweighted limiting field.  Richer (more than two
+atoms, non-atomic) certified classes for the modified kernel also remain
+valuable model-design work.
 
 ## Lean map and dependencies
 
@@ -369,7 +385,8 @@ the modified kernel.
   column-reweighted limiting-field bridge, and its concrete two-atom certified
   frame: `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
   `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`,
-  `ColumnReweightedMeanShift.lean`, and `ColumnReweightedTwoAtom.lean`.
+  `ColumnReweightedMeanShift.lean`, `ColumnReweightedTwoAtom.lean`, and
+  `SelfMaskPerturbation.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

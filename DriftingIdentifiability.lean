@@ -7,3 +7,4 @@ import DriftingIdentifiability.ColumnReweightedTwoAtom
 import DriftingIdentifiability.SelfNormalizedConsistency
 import DriftingIdentifiability.Algorithm2SNIS
 import DriftingIdentifiability.ColumnReweightedMeanShift
+import DriftingIdentifiability.SelfMaskPerturbation

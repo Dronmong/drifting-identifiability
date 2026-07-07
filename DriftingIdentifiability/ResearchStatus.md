@@ -8,11 +8,15 @@ drift forces `p = q`, and the result is machine checked without new or
 conditional Gaussian/RKHS axioms.
 
 The practical modeling goal is not yet complete, but Objectives 1--3 are now
-complete at the deterministic population level. Objective 3 includes a fully
+complete at the deterministic population level, and Objective 4 now has a
+verified no-mask Algorithm-2 bridge plus a deterministic implementation-mask
+perturbation bound. Objective 3 includes a fully
 instantiated non-atomic `C∞` bump basis on a Gaussian reference, in addition to
 the higher-dimensional, variable-bandwidth, adaptive-probe, perturbative, and
-Laplace infrastructure. The next mathematical objective is the finite-sample
-bridge to minibatch training; model-quality evaluation remains empirical work.
+Laplace infrastructure. The remaining Objective-4 gap is narrower: prove or
+import a statistical consistency theorem for the leave-masked-out/deleted
+estimator targeted by the implementation mask, and then certify richer modified
+kernel model classes. Model-quality evaluation remains empirical work.
 
 ## What has been accomplished
 
@@ -383,7 +387,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask route complete with a concrete certified frame; self-mask remains a documented perturbation
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask route complete; self-mask perturbation formalized
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -536,18 +540,17 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
   zero batch drift) and of the population reverse implication `p = q ⟹ V = 0`; it
   is the safe direction and assumes nothing about identifiability.
 
-Still open (now narrowed to concrete certification/design and optional
-implementation corrections):
+Remaining work after the current Objective-4 implementation:
 
-- the **quantitative bias/consistency** of `algorithm2Drift`: its expectation
-  against the ideal population mean-shift field as the temperature and sample
-  counts vary.  The softmax normalization makes it a self-normalized estimator,
-  generally biased at finite sample size; establishing the `→ 0` bias (and hence a
-  vanishing MSE that the bridge turns into identifiability) is a real analysis of
-  one algorithm.  The structural and boundedness facts above constrain this MSE
-  (they give a deterministic `2·Npos·Nneg·R` envelope and the exact
-  attraction–repulsion form) but do not compute the limit; that limit cannot be
-  axiomatized without assuming the substantive consistency claim.
+- the **quantitative bias/consistency** of the implementation estimator after
+  deletion/leave-out masking.  The no-mask fixed-anchor centroids already have
+  an SNIS consistency theorem, and the finite `1e6` mask is now deterministically
+  close to the deleted estimator.  What is still missing is the statistical
+  theorem saying the deleted estimator itself converges to the intended
+  column-reweighted population field, with the exact index-dependent
+  leave-masked-out structure in its hypotheses.  This can be proved directly or
+  imported as a carefully stated external LLN/SNIS theorem; it cannot assert the
+  final identifiability conclusion.
 
   An attempt to close this by an elementary *deterministic* reduction — bound the
   estimator error by the sup-norm deviation of the softmax affinities from their
@@ -572,8 +575,12 @@ implementation corrections):
   sampled-estimator-to-identifiability chain in a concrete model class.  What
   remains under Objective 4 is scoped and explicit:
   - the implementation **self-mask** (`selfMask = true` with the `1e6` penalty)
-    is a perturbative `O(1/N)` correction relative to the promoted no-mask
-    theorems, not yet formalized;
+    is now formalized in `SelfMaskPerturbation.lean` as a deterministic
+    `δ = exp(-1000000/temperature)` perturbation of the leave-masked-out/deleted
+    estimator, not of the full no-mask estimator on the same samples;
+  - the remaining statistical task is to prove consistency for that deleted
+    estimator (or safely import a standard theorem matching its exact
+    index-dependent leave-out structure);
   - richer certified classes for the modified kernel (more than two atoms,
     non-atomic bases) — the same design/conditioning work already recorded
     under Objectives 3 and 7 for the bare kernel.

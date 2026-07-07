@@ -220,7 +220,8 @@ matching, and no CFG. Zero population energy reaches the pointwise hypothesis
 only with integrability, continuity, and full topological support. A finite
 minibatch estimator and a signed CFG target require separate theorems.
 
-Objective 4 now has four promoted pieces: `FiniteSampleBridge.lean` propagates
+Objective 4 now has promoted finite-sample infrastructure:
+`FiniteSampleBridge.lean` propagates
 estimator MSE into coefficient error, `Algorithm2Estimator.lean` proves the
 safe algebraic/boundedness facts for Algorithm 2's `compute_V` (including the
 mass-product times self-normalized-centroid-difference form), and
@@ -242,9 +243,15 @@ strict-pair rescaling `U^col = (1/sqrt(g(0)g(1))) • U^bare` of the bare one,
 and `columnReweighted01Setup` certifies the sharp frame constant directly from
 kernel positivity (with `B = 1` at the anchors and an explicit `≥ bare/N`
 conditioning floor). Do not generalize that certificate beyond the two-atom
-class without a new frame proof, and do not claim any result for the
-self-masked implementation (`selfMask = true`): the self-mask remains an
-unformalized `O(1/N)` perturbation of the promoted no-mask theorems.
+class without a new frame proof. `SelfMaskPerturbation.lean` now formalizes the
+implementation mask as an explicit deterministic perturbation of the
+leave-masked-out/deleted estimator: masked logits equal the no-mask logits
+times `exp(-1000000/temperature)` on masked entries, every masked affinity is
+within the proved `maskAffinityErrorBound` of its deleted counterpart, and the
+drifts differ by at most `4*Npos*Nneg*R0*eta`. This deliberately does not compare
+the masked estimator to the full no-mask estimator on the same reused samples,
+and it does not yet prove a statistical SNIS consistency theorem for the
+deleted estimator.
 
 ## Conditional modules
 

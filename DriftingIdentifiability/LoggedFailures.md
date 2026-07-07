@@ -384,13 +384,25 @@ so future agents do not repeat equivalent mistakes.
   scalings.  The unresolved part is now concrete certification/design of that
   modified-kernel frame in useful model classes, and the implementation
   self-mask perturbation.
+- **Update (2026-07-06, self-mask repair):** the implementation mask is now
+  formalized in `SelfMaskPerturbation.lean` as an explicit deterministic
+  perturbation, but the target of the comparison is the leave-masked-out/deleted
+  estimator, not the full no-mask estimator on the same samples.  The proved
+  facts include the exact multiplicative logit suppression
+  `maskedWeight_eq_factor_mul_noMaskWeight`, the reconciliation
+  `deletedDrift_false_eq_algorithm2Drift`, the eye-mask unmasked-column lemma,
+  and the bound
+  `algorithm2Drift_sub_deletedDrift_norm_le_eyeMask`.  This repairs the
+  deterministic implementation-mask correction; the remaining statistical gap
+  is a consistency theorem for the deleted estimator's index-dependent leave-out
+  SNIS structure.
 - **Relevant Lean declarations/files:** `algorithm2Drift_eq_affinityPairSum`,
   `algorithm2Drift_eq_massScaledCentroid`, `algorithm2Drift_norm_le_affinityMass`,
   `algorithm2Drift_eq_massProduct_centroidDiff`, `algorithm2Drift_matched_zero`,
   `estimate_failure_le_meanSquare`,
   `Algorithm2Estimator.lean`, `FiniteSampleBridge.lean`,
   `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`,
-  `ColumnReweightedMeanShift.lean`.
+  `ColumnReweightedMeanShift.lean`, `SelfMaskPerturbation.lean`.
 
 ---
 
