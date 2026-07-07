@@ -360,10 +360,49 @@ those entries hard-deleted gives a deterministic affinity bound
 The eye-mask specialization proves the required unmasked-column condition when
 there are at least two anchors.  This is deliberately a masked-vs-deleted
 comparison, not a masked-vs-full-no-mask comparison on the same reused samples.
-The remaining statistical proof obligation is consistency of the deleted
-estimator for the column-reweighted limiting field.  Richer (more than two
-atoms, non-atomic) certified classes for the modified kernel also remain
-valuable model-design work.
+
+`DeletedEstimatorConsistency.lean` discharges the statistical obligation for
+that deleted estimator.  The written argument:
+
+1. The deleted drift is bilinear in the deleted affinities, so the generic
+   algebra `sum_sum_mul_smul_sub` gives the mass-scaled form and, with nonzero
+   masses, `deletedDrift = (P_del · Q_del) • (C⁺_del − C⁻_del)`
+   (`deletedDrift_eq_massProduct_centroidDiff`), mirroring the raw drift.
+2. The deleted affinity is `dw/√(R_del·C_del)`.  Splitting the square root
+   (`deletedAffinity_eq_rowScale_mul_deletedColumnWeight`) exposes a common row
+   scale `√(R_del(i)⁻¹)` — which cancels in each self-normalized centroid via
+   `selfNormalizedCentroid_eq_of_common_scale` — times the per-slot weight
+   `deletedColumnWeight i s (y) = df(i,s)·k(x_i,y)/√(Σ_{i'} df(i',s)·k(x_{i'},y))`,
+   whose column mass keeps exactly the anchors unmasked in slot `s`.
+3. Positive slots are never masked, so the positive per-slot weight is the
+   plain column-reweighted weight (`deletedColumnWeight_inl_eq`) and the
+   deleted positive centroid **equals** the promoted no-mask positive centroid
+   (`deletedPositiveCentroid_eq_algorithm2PositiveCentroid_false`).  Its
+   mean-square bound `σ²/(wmin²·Npos)` transports verbatim.
+4. The deleted negative centroid is a self-normalized average with a
+   *different* weight function on each slot, and the per-slot reweighted means
+   need not share a single target.  The generic theorem
+   `selfNormalizedIndexed_meanSquare_le` covers exactly this: writing
+   `Z_l = w_l(Y_l)•(Y_l − c)` with means `μ l = E Z_l`, the centered summands
+   are pairwise independent and mean zero, so the reviewed sample-mean axiom
+   bounds `E‖Σ(Z_l − μ_l)‖² ≤ N·σ²`; the deterministic denominator floor
+   `dmin ≤ Σ_l w_l(Y_l)` and `‖Σμ_l‖ ≤ N·b` then give
+
+   ```text
+   E‖ĉ − c‖² ≤ (2·N·σ² + 2·N²·b²)/dmin².
+   ```
+
+   `deletedNegativeCentroid_meanSquare_le` instantiates this with
+   `w_l := deletedNegativeColumnWeight … i l`.  The bias `b` (per-slot
+   leave-out reweighting bias) and the floor `dmin` are honest caller-supplied
+   hypotheses; for the eye mask they are conditioning quantities of the same
+   kind as the kernel floors in the no-mask theorems.  Nothing here asserts
+   identifiability: the bounds feed the estimator-agnostic bridge through the
+   mean squared error.
+
+Richer (more than two atoms, non-atomic) certified classes for the modified
+kernel remain valuable model-design work, as does numerically discharging the
+eye-mask bias/floor hypotheses.
 
 ## Lean map and dependencies
 
@@ -381,12 +420,14 @@ valuable model-design work.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
 - Finite-sample bridge, Algorithm 2 structure, generic self-normalized
-  consistency, the no-mask Algorithm-2 SNIS specialization, the
-  column-reweighted limiting-field bridge, and its concrete two-atom certified
-  frame: `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
-  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`,
-  `ColumnReweightedMeanShift.lean`, `ColumnReweightedTwoAtom.lean`, and
-  `SelfMaskPerturbation.lean`.
+  consistency (common-weight and indexed/bias-tolerant), the no-mask
+  Algorithm-2 SNIS specialization, the column-reweighted limiting-field
+  bridge, its concrete two-atom certified frame, the self-mask perturbation,
+  and the deleted-estimator consistency: `FiniteSampleBridge.lean`,
+  `Algorithm2Estimator.lean`, `SelfNormalizedConsistency.lean`,
+  `Algorithm2SNIS.lean`, `ColumnReweightedMeanShift.lean`,
+  `ColumnReweightedTwoAtom.lean`, `SelfMaskPerturbation.lean`, and
+  `DeletedEstimatorConsistency.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

@@ -8,15 +8,19 @@ drift forces `p = q`, and the result is machine checked without new or
 conditional Gaussian/RKHS axioms.
 
 The practical modeling goal is not yet complete, but Objectives 1--3 are now
-complete at the deterministic population level, and Objective 4 now has a
-verified no-mask Algorithm-2 bridge plus a deterministic implementation-mask
-perturbation bound. Objective 3 includes a fully
+complete at the deterministic population level, and Objective 4's theorem
+infrastructure is complete for both estimator routes: the verified no-mask
+Algorithm-2 chain (SNIS consistency → certified column-reweighted field →
+identifiability), a deterministic implementation-mask perturbation bound, and a
+statistical consistency theorem for the leave-masked-out/deleted estimator with
+its exact index-dependent hypotheses. Objective 3 includes a fully
 instantiated non-atomic `C∞` bump basis on a Gaussian reference, in addition to
 the higher-dimensional, variable-bandwidth, adaptive-probe, perturbative, and
-Laplace infrastructure. The remaining Objective-4 gap is narrower: prove or
-import a statistical consistency theorem for the leave-masked-out/deleted
-estimator targeted by the implementation mask, and then certify richer modified
-kernel model classes. Model-quality evaluation remains empirical work.
+Laplace infrastructure. What remains under Objective 4 is numeric
+instantiation (per-slot leave-out bias and denominator floors for concrete
+masks) and richer certified modified-kernel model classes — conditioning
+work of the Objectives-3/7 kind. Model-quality evaluation remains empirical
+work.
 
 ## What has been accomplished
 
@@ -387,7 +391,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask route complete; self-mask perturbation formalized
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — complete for both routes: no-mask chain and masked implementation (perturbation + deleted-estimator consistency)
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -502,6 +506,33 @@ Progress (done, `FiniteSampleBridge.lean`):
     only on the three reviewed equation-11/31/antisymmetry paper axioms; the
     rescaling identity itself is axiom-free.
 
+- **Deleted-estimator statistical consistency.**  `SelfNormalizedConsistency.lean`
+  now also proves `selfNormalizedIndexed_meanSquare_le`, the indexed,
+  bias-tolerant ratio theorem: per-index weight functions `w l`, an abstract
+  deterministic denominator floor `dmin`, per-index reweighted mean shifts
+  `μ l` bounded by `b`, and per-index centered second moments bounded by `σ²`
+  give `E‖ĉ − c‖² ≤ (2Nσ² + 2N²b²)/dmin²`.  `DeletedEstimatorConsistency.lean`
+  instantiates it for the leave-masked-out estimator targeted by the
+  implementation mask, with the exact index-dependent structure:
+  - `deletedDrift_eq_massProduct_centroidDiff` (axiom-free): the deleted drift
+    is a mass product times a difference of self-normalized centroids, exactly
+    like the raw drift.
+  - Row cancellation (`deletedAffinity_eq_rowScale_mul_deletedColumnWeight`):
+    the deleted affinity factors into a common row scale times the per-slot
+    weight `deletedColumnWeight`, whose column mass drops precisely the anchors
+    masked in that slot's column (`deletedNegativeColumnWeight` packages the
+    negative-slot family).
+  - **The mask does not move the positive centroid**
+    (`deletedPositiveCentroid_eq_algorithm2PositiveCentroid_false`, axiom-free):
+    positives are never masked and the row scale cancels, so the no-mask SNIS
+    bound transports verbatim (`deletedPositiveCentroid_meanSquare_le`).
+  - `deletedNegativeCentroid_meanSquare_le`: the negative centroid is a
+    self-normalized average with a *different* weight function on each slot;
+    its mean-square bound consumes the per-slot leave-out biases `‖μ l‖ ≤ b`
+    and the mask-aware floor `dmin`.  Both consistency theorems depend only on
+    the reviewed `sampleMean_meanSquare_le` axiom plus Lean foundations — no
+    new axiom was needed.
+
 Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
 estimator-*agnostic*.  This module discharges the estimator-specific facts about
 Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
@@ -543,14 +574,16 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
 Remaining work after the current Objective-4 implementation:
 
 - the **quantitative bias/consistency** of the implementation estimator after
-  deletion/leave-out masking.  The no-mask fixed-anchor centroids already have
-  an SNIS consistency theorem, and the finite `1e6` mask is now deterministically
-  close to the deleted estimator.  What is still missing is the statistical
-  theorem saying the deleted estimator itself converges to the intended
-  column-reweighted population field, with the exact index-dependent
-  leave-masked-out structure in its hypotheses.  This can be proved directly or
-  imported as a carefully stated external LLN/SNIS theorem; it cannot assert the
-  final identifiability conclusion.
+  deletion/leave-out masking — **now formalized**.  The no-mask fixed-anchor
+  centroids have an SNIS consistency theorem, the finite `1e6` mask is
+  deterministically close to the deleted estimator, and
+  `DeletedEstimatorConsistency.lean` now proves the statistical theorem for the
+  deleted estimator itself, with the exact index-dependent leave-masked-out
+  structure in its hypotheses (per-slot weight functions, per-slot leave-out
+  bias `b`, mask-aware denominator floor `dmin`).  It was proved directly from
+  the reviewed sample-mean axiom rather than imported, and it does not assert
+  the identifiability conclusion: it feeds the estimator-agnostic bridge
+  through the mean squared error.
 
   An attempt to close this by an elementary *deterministic* reduction — bound the
   estimator error by the sup-norm deviation of the softmax affinities from their
@@ -575,12 +608,18 @@ Remaining work after the current Objective-4 implementation:
   sampled-estimator-to-identifiability chain in a concrete model class.  What
   remains under Objective 4 is scoped and explicit:
   - the implementation **self-mask** (`selfMask = true` with the `1e6` penalty)
-    is now formalized in `SelfMaskPerturbation.lean` as a deterministic
+    is formalized in `SelfMaskPerturbation.lean` as a deterministic
     `δ = exp(-1000000/temperature)` perturbation of the leave-masked-out/deleted
     estimator, not of the full no-mask estimator on the same samples;
-  - the remaining statistical task is to prove consistency for that deleted
-    estimator (or safely import a standard theorem matching its exact
-    index-dependent leave-out structure);
+  - the statistical consistency of that deleted estimator is now proved
+    (`DeletedEstimatorConsistency.lean`): the positive centroid coincides with
+    the no-mask one, and the negative centroid satisfies the indexed
+    bias-tolerant SNIS bound.  What remains is *numeric instantiation*: for a
+    concrete mask (e.g. `eyeMask` at batch size `N`), discharging the per-slot
+    bias bound `b` (the one-anchor-drop reweighting bias, expected `O(1/N)`)
+    and the denominator floor `dmin` from kernel floors — conditioning
+    estimates of the same kind as Objectives 3/7, not missing theorem
+    infrastructure;
   - richer certified classes for the modified kernel (more than two atoms,
     non-atomic bases) — the same design/conditioning work already recorded
     under Objectives 3 and 7 for the bare kernel.

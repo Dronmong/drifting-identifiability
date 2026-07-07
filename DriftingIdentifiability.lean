@@ -8,3 +8,4 @@ import DriftingIdentifiability.SelfNormalizedConsistency
 import DriftingIdentifiability.Algorithm2SNIS
 import DriftingIdentifiability.ColumnReweightedMeanShift
 import DriftingIdentifiability.SelfMaskPerturbation
+import DriftingIdentifiability.DeletedEstimatorConsistency

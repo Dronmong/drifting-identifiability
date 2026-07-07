@@ -155,5 +155,206 @@ theorem selfNormalized_meanSquare_le
         rw [inv_pow]
         field_simp
 
+/-- **Indexed, bias-tolerant self-normalized consistency.**  The leave-masked-out
+(deleted) Algorithm-2 estimator normalizes with a *different* weight function on
+each sample slot (each negative column drops its own masked anchors), and the
+per-slot reweighted means need not share one common target.  This theorem states
+the ratio-estimator mean-square bound in exactly that generality:
+
+* per-index weight functions `w i : E → ℝ`;
+* an abstract deterministic denominator floor `dmin ≤ ∑ᵢ wᵢ(Yᵢ)` (for the
+  masked/deleted case the floor comes from the unmasked-slot count times a
+  weight floor);
+* per-index mean shifts `μ i = E[wᵢ(Yᵢ) • (Yᵢ - c)]` bounded by `b` (the
+  leave-one-out bias), and per-index centered second moments bounded by `σ²`.
+
+Conclusion: `E‖ĉ - c‖² ≤ (2·N·σ² + 2·N²·b²)/dmin²`.  With one common weight,
+zero bias, and the floor `dmin = N·wmin` this recovers the unbiased bound up to
+a factor `2`.  Built on `Paper.sampleMean_meanSquare_le` applied to the centered
+summands; introduces no new axiom. -/
+theorem selfNormalizedIndexed_meanSquare_le
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    {E : Type u} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+      [MeasurableSpace E] [BorelSpace E] [CompleteSpace E] [SecondCountableTopology E]
+    {N : ℕ} (hN : 0 < N) (Y : Fin N → Ω → E) (w : Fin N → E → ℝ) (c : E)
+    (μ : Fin N → E) {dmin wmax R b σ : ℝ}
+    (hdmin : 0 < dmin) (hwmax : 0 ≤ wmax) (_hR : 0 ≤ R)
+    (hYmeas : ∀ i, Measurable (Y i)) (hw : ∀ i, Measurable (w i))
+    (hindep : ∀ i j, i ≠ j → IndepFun (Y i) (Y j) P)
+    (hD : ∀ ω, dmin ≤ ∑ i, w i (Y i ω))
+    (hwabs : ∀ i ω, |w i (Y i ω)| ≤ wmax)
+    (hYbd : ∀ i ω, ‖Y i ω - c‖ ≤ R)
+    (hμ : ∀ i, ∫ ω, w i (Y i ω) • (Y i ω - c) ∂P = μ i)
+    (hb : ∀ i, ‖μ i‖ ≤ b)
+    (hσ : ∀ i, ∫ ω, ‖w i (Y i ω) • (Y i ω - c) - μ i‖ ^ 2 ∂P ≤ σ ^ 2) :
+    ∫ ω, ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2 ∂P
+      ≤ (2 * N * σ ^ 2 + 2 * N ^ 2 * b ^ 2) / dmin ^ 2 := by
+  set Z : Fin N → Ω → E := fun i ω => w i (Y i ω) • (Y i ω - c) with hZdef
+  set Z' : Fin N → Ω → E := fun i ω => Z i ω - μ i with hZ'def
+  have hNpos : (0 : ℝ) < N := by exact_mod_cast hN
+  have hb0 : 0 ≤ b := le_trans (norm_nonneg (μ ⟨0, hN⟩)) (hb ⟨0, hN⟩)
+  -- measurability building blocks
+  have hgz : ∀ i, Measurable (fun y : E => w i y • (y - c)) := fun i =>
+    (hw i).smul (measurable_id.sub measurable_const)
+  have hgz' : ∀ i, Measurable (fun y : E => w i y • (y - c) - μ i) := fun i =>
+    (hgz i).sub measurable_const
+  have hZmeas : ∀ i, Measurable (Z i) := fun i => (hgz i).comp (hYmeas i)
+  have hZ'meas : ∀ i, Measurable (Z' i) := fun i => (hZmeas i).sub measurable_const
+  have hsummeas : Measurable (fun ω => ∑ i, Z' i ω) :=
+    Finset.measurable_sum _ (fun i _ => hZ'meas i)
+  have hDmeas : Measurable (fun ω => ∑ i, w i (Y i ω)) :=
+    Finset.measurable_sum _ (fun i _ => (hw i).comp (hYmeas i))
+  have hNummeas : Measurable (fun ω => ∑ i, w i (Y i ω) • Y i ω) :=
+    Finset.measurable_sum _ (fun i _ => ((hw i).comp (hYmeas i)).smul (hYmeas i))
+  have hcmeas : Measurable
+      (fun ω => (∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c) :=
+    (hDmeas.inv.smul hNummeas).sub measurable_const
+  -- denominator control
+  have hDpos : ∀ ω, 0 < ∑ i, w i (Y i ω) := fun ω => lt_of_lt_of_le hdmin (hD ω)
+  -- per-sample bounds
+  have hZbd : ∀ i ω, ‖Z i ω‖ ≤ wmax * R := by
+    intro i ω
+    simp only [hZdef, norm_smul, Real.norm_eq_abs]
+    exact mul_le_mul (hwabs i ω) (hYbd i ω) (norm_nonneg _) hwmax
+  have hZ'bd : ∀ i ω, ‖Z' i ω‖ ≤ wmax * R + b := by
+    intro i ω
+    calc ‖Z' i ω‖ ≤ ‖Z i ω‖ + ‖μ i‖ := norm_sub_le _ _
+      _ ≤ wmax * R + b := add_le_add (hZbd i ω) (hb i)
+  -- integrability of Z and mean-zero of Z'
+  have hZint : ∀ i, Integrable (Z i) P := fun i =>
+    (integrable_const (wmax * R)).mono' (hZmeas i).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => by
+        simpa using hZbd i ω)
+  have hZ'mean : ∀ i, ∫ ω, Z' i ω ∂P = 0 := by
+    intro i
+    simp only [hZ'def]
+    rw [integral_sub (hZint i) (integrable_const _),
+      show ∫ ω, Z i ω ∂P = μ i from hμ i, integral_const]
+    simp
+  have hZ'indep : ∀ i j, i ≠ j → IndepFun (Z' i) (Z' j) P := fun i j hij =>
+    (hindep i j hij).comp (hgz' i) (hgz' j)
+  have hZ'int2 : ∀ i, Integrable (fun ω => ‖Z' i ω‖ ^ 2) P := fun i =>
+    (integrable_const ((wmax * R + b) ^ 2)).mono'
+      ((hZ'meas i).norm.pow_const 2).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => by
+        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+        nlinarith [hZ'bd i ω, norm_nonneg (Z' i ω)])
+  -- sample-mean variance for the centered summands
+  have haxiom : ∫ ω, ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 ∂P ≤ σ ^ 2 / N :=
+    Paper.sampleMean_meanSquare_le P hN Z' hZ'indep hZ'int2 hZ'mean hσ
+  -- pointwise identity and bound
+  have hpoint : ∀ ω, (∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c
+      = (∑ i, w i (Y i ω))⁻¹ • (∑ i, Z i ω) := by
+    intro ω
+    have hDne : (∑ i, w i (Y i ω)) ≠ 0 := (hDpos ω).ne'
+    have hsplit : (∑ i, Z i ω)
+        = (∑ i, w i (Y i ω) • Y i ω) - (∑ i, w i (Y i ω)) • c := by
+      rw [Finset.sum_smul, ← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intro i _
+      simp only [hZdef, smul_sub]
+    rw [hsplit, smul_sub, smul_smul, inv_mul_cancel₀ hDne, one_smul]
+  have hμsum : ‖∑ i, μ i‖ ≤ (N : ℝ) * b := by
+    calc ‖∑ i, μ i‖ ≤ ∑ i, ‖μ i‖ := norm_sum_le _ _
+      _ ≤ ∑ _i : Fin N, b := Finset.sum_le_sum fun i _ => hb i
+      _ = (N : ℝ) * b := by
+          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  have hZsplit : ∀ ω, (∑ i, Z i ω) = (∑ i, Z' i ω) + ∑ i, μ i := by
+    intro ω
+    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro i _
+    simp [hZ'def]
+  have hnorm : ∀ ω,
+      ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ≤
+        dmin⁻¹ * (‖∑ i, Z' i ω‖ + (N : ℝ) * b) := by
+    intro ω
+    rw [hpoint ω, norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr (hDpos ω))]
+    have hinv : (∑ i, w i (Y i ω))⁻¹ ≤ dmin⁻¹ := by
+      simpa [one_div] using one_div_le_one_div_of_le hdmin (hD ω)
+    have hZnorm : ‖∑ i, Z i ω‖ ≤ ‖∑ i, Z' i ω‖ + (N : ℝ) * b := by
+      rw [hZsplit ω]
+      calc ‖(∑ i, Z' i ω) + ∑ i, μ i‖ ≤ ‖∑ i, Z' i ω‖ + ‖∑ i, μ i‖ := norm_add_le _ _
+        _ ≤ ‖∑ i, Z' i ω‖ + (N : ℝ) * b := by linarith [hμsum]
+    calc (∑ i, w i (Y i ω))⁻¹ * ‖∑ i, Z i ω‖
+        ≤ dmin⁻¹ * ‖∑ i, Z i ω‖ :=
+          mul_le_mul_of_nonneg_right hinv (norm_nonneg _)
+      _ ≤ dmin⁻¹ * (‖∑ i, Z' i ω‖ + (N : ℝ) * b) :=
+          mul_le_mul_of_nonneg_left hZnorm (inv_pos.mpr hdmin).le
+  -- pointwise squared bound in terms of the axiom quantity
+  have hscale : ∀ ω, ‖∑ i, Z' i ω‖ ^ 2 = (N : ℝ) ^ 2 * ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 := by
+    intro ω
+    rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hNpos), mul_pow]
+    field_simp
+  have hsq : ∀ ω,
+      ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2 ≤
+        (2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) * ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 +
+          2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2 := by
+    intro ω
+    have h1 := hnorm ω
+    have h0 : 0 ≤ ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ :=
+      norm_nonneg _
+    have h2 : ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2 ≤
+        (dmin⁻¹ * (‖∑ i, Z' i ω‖ + (N : ℝ) * b)) ^ 2 := by
+      have hrhs : 0 ≤ dmin⁻¹ * (‖∑ i, Z' i ω‖ + (N : ℝ) * b) := by positivity
+      nlinarith
+    have h3 : (dmin⁻¹ * (‖∑ i, Z' i ω‖ + (N : ℝ) * b)) ^ 2 ≤
+        dmin⁻¹ ^ 2 * (2 * ‖∑ i, Z' i ω‖ ^ 2 + 2 * ((N : ℝ) * b) ^ 2) := by
+      nlinarith [sq_nonneg (‖∑ i, Z' i ω‖ - (N : ℝ) * b), sq_nonneg dmin⁻¹]
+    calc ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2
+        ≤ dmin⁻¹ ^ 2 * (2 * ‖∑ i, Z' i ω‖ ^ 2 + 2 * ((N : ℝ) * b) ^ 2) :=
+          le_trans h2 h3
+      _ = (2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) * ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 +
+            2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2 := by
+          rw [hscale ω]; ring
+  -- integrability plumbing
+  have hmsq_int : Integrable (fun ω => ‖(N : ℝ)⁻¹ • (∑ i, Z' i ω)‖ ^ 2) P := by
+    refine (integrable_const ((wmax * R + b) ^ 2)).mono'
+      ((hsummeas.const_smul _).norm.pow_const 2).aestronglyMeasurable ?_
+    filter_upwards with ω
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+    have hmean : ‖(N : ℝ)⁻¹ • (∑ i, Z' i ω)‖ ≤ wmax * R + b := by
+      rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hNpos)]
+      calc (N : ℝ)⁻¹ * ‖∑ i, Z' i ω‖
+          ≤ (N : ℝ)⁻¹ * ∑ i, ‖Z' i ω‖ :=
+            mul_le_mul_of_nonneg_left (norm_sum_le _ _) (by positivity)
+        _ ≤ (N : ℝ)⁻¹ * ∑ _i : Fin N, (wmax * R + b) :=
+            mul_le_mul_of_nonneg_left
+              (Finset.sum_le_sum fun i _ => hZ'bd i ω) (by positivity)
+        _ = wmax * R + b := by
+            rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+              ← mul_assoc, inv_mul_cancel₀ (ne_of_gt hNpos), one_mul]
+    nlinarith [hmean, norm_nonneg ((N : ℝ)⁻¹ • (∑ i, Z' i ω))]
+  have hg_int : Integrable
+      (fun ω => (2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) * ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 +
+        2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2) P :=
+    (hmsq_int.const_mul _).add (integrable_const _)
+  have hf_int : Integrable
+      (fun ω =>
+        ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2) P := by
+    refine hg_int.mono' (hcmeas.norm.pow_const 2).aestronglyMeasurable ?_
+    filter_upwards with ω
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+    exact hsq ω
+  -- assemble
+  calc ∫ ω, ‖(∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c‖ ^ 2 ∂P
+      ≤ ∫ ω, ((2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) * ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 +
+          2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2) ∂P :=
+        integral_mono hf_int hg_int hsq
+    _ = (2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) *
+          (∫ ω, ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 ∂P) +
+          2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2 := by
+        rw [integral_add (hmsq_int.const_mul _) (integrable_const _),
+          integral_const_mul, integral_const]
+        simp
+    _ ≤ (2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2) * (σ ^ 2 / N) +
+          2 * dmin⁻¹ ^ 2 * ((N : ℝ) * b) ^ 2 := by
+        have hcoef : (0 : ℝ) ≤ 2 * (N : ℝ) ^ 2 * dmin⁻¹ ^ 2 := by positivity
+        have := mul_le_mul_of_nonneg_left haxiom hcoef
+        linarith
+    _ = (2 * N * σ ^ 2 + 2 * N ^ 2 * b ^ 2) / dmin ^ 2 := by
+        rw [inv_pow]
+        field_simp
+
 end SelfNormalized
 end DriftingIdentifiability

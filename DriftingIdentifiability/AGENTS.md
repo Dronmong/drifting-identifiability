@@ -249,9 +249,18 @@ leave-masked-out/deleted estimator: masked logits equal the no-mask logits
 times `exp(-1000000/temperature)` on masked entries, every masked affinity is
 within the proved `maskAffinityErrorBound` of its deleted counterpart, and the
 drifts differ by at most `4*Npos*Nneg*R0*eta`. This deliberately does not compare
-the masked estimator to the full no-mask estimator on the same reused samples,
-and it does not yet prove a statistical SNIS consistency theorem for the
-deleted estimator.
+the masked estimator to the full no-mask estimator on the same reused samples.
+`DeletedEstimatorConsistency.lean` supplies the statistical theorem for the
+deleted estimator: `deletedDrift` factors as a mass product times a centroid
+difference; the deleted positive centroid provably equals the no-mask positive
+centroid (positives are never masked), so its SNIS bound transports; the
+deleted negative centroid satisfies the indexed bias-tolerant ratio theorem
+`selfNormalizedIndexed_meanSquare_le` with per-slot weight functions
+(`deletedNegativeColumnWeight`), per-slot leave-out mean shifts bounded by `b`,
+and an abstract denominator floor `dmin`. Do not silently set `b = 0` for the
+eye mask (the per-slot leave-out targets genuinely differ), and do not present
+the mean-square bounds as identifiability claims: they feed the
+estimator-agnostic bridge through the MSE only.
 
 ## Conditional modules
 
