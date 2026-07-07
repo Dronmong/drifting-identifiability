@@ -708,7 +708,7 @@ affine target is nonnegative for useful model classes and guidance scales,
 instantiate stability constants for those classes, and only then convert the
 affine-density result back to genuine probability measures.
 
-### Objective 7: evaluate whether the conditions are useful in practice
+### Objective 7: evaluate whether the conditions are useful in practice — first numerical evaluation complete
 
 After obtaining computable conditioning criteria:
 
@@ -717,6 +717,67 @@ After obtaining computable conditioning criteria:
 - compare population and minibatch drift numerically;
 - evaluate whether enforcing the conditions harms expressivity, optimization,
   FID/IS, or compute requirements.
+
+**First numerical evaluation (2026-07-07, `numerics/`).**  A Python suite
+(`numerics/driftlab.py`, `numerics/run_all.py`; report `numerics/RESULTS.md`)
+transcribes the certified formulas (crosswalk in `numerics/README.md`) and
+evaluates them at the paper's actual operating point (Table 8 / A.6: kernel
+`exp(-dist/tau)` on normalized distances with mean 1, `tau ∈ {0.02, 0.05,
+0.2}`, per-class batch `N = 64`, eye-masked reused negatives, CFG
+`alpha ∈ [1,4]`).  Nothing in the suite is a proof; it prices the proofs.
+Findings:
+
+1. **Transcription audit.**  A verbatim port of the paper's Algorithm-2
+   pseudo-code and a literal port of the Lean `finiteSoftmax` pipeline agree to
+   `1e-16`; the proved identities (matched-batch zero, mass-product centroid
+   form, drift bound, frame-certificate inequality over 20k random vectors)
+   all check numerically.
+2. **Frame certificates are the binding constraint, as the ceiling theorem
+   predicted.**  The sharp two-atom constant peaks at `sqrt(2/e) ≈ 0.858` at
+   separation `sqrt(2)`; the general-`m` inverse-matrix certificate collapses
+   double-exponentially (`~1e-32` at `m = 5`, float64 zero by `m = 8`).
+   Midpoint (pairwise-optimal) probes buy 10–20 orders of magnitude over
+   integer probes and still collapse: probe design matters enormously but
+   cannot beat the Vandermonde decay.  Certified identifiability is realistic
+   for small bases at near-optimal separation, not for large `m`.
+3. **The estimator provably and measurably targets the modified field.**
+   Monte-Carlo MSE against the column-reweighted field decays at the proved
+   `1/N` rate, while against the bare mean-shift field a bias floor of exactly
+   `‖modified − bare‖²` remains — numerical confirmation of the central
+   structural discovery of Objective 4.
+4. **The masked-route design is validated.**  The eye-mask leave-out bias is
+   at most `O(1/N)` (empirically better), so the indexed SNIS bias term is
+   subdominant; the masked-vs-deleted gap `exp(-1e6/tau_tilde)` is
+   `~10^{-135000}` or smaller at every paper configuration — bit-identical in
+   float64 — so the deleted-estimator theorems carry all statistical content.
+5. **What each temperature sees.**  Under a normalized-distance feature model
+   at `N = 64`, `tau = 0.02` operates in the nearest-neighbor regime
+   (softmax ESS ~ 1–3), `tau = 0.2` averages broadly (ESS ~ 30–60), `tau =
+   0.05` sits at the transition; the cross-mode identifiability signal is
+   carried almost entirely by the largest temperature.  This matches the
+   paper's own multi-temperature ablation and gives the SNIS constants their
+   practical meaning.
+6. **Conditioning ledger (the headline).**  For the certified two-atom class,
+   recovering `‖a-b‖₁ ≤ 0.1` at 90% confidence needs, per the certified chain,
+   `N ≈ 5e8` samples at `tau = 0.2` (worse at smaller `tau`); with the
+   LLN-typical (non-theorem) denominator `N ≈ 6e4`, temperature-invariantly;
+   observed Monte-Carlo needs `N ≈ 2e5`.  The paper trains at `N = 64`.
+   Consequences: (a) training-signal scale and certification scale are
+   different regimes — the theorems are sound, their constants bite only at
+   certification-scale batches; (b) the single dominant slack in the certified
+   chain is the *deterministic* SNIS denominator floor `dmin = N·wmin` — an
+   actionable next theorem is a high-probability (Bernstein-type) lower bound
+   on the random denominator, which would bring the certified complexity
+   within ~30x of observed.
+7. **CFG gate.**  At the paper's strongest guidance `alpha = 4`, the CFG
+   affine target is a genuine probability vector on only a `(1/alpha)^{m-1}`
+   sliver of the simplex (validated against closed form): Objective 6's
+   signed/affine treatment is the generic case, not a corner case.
+
+Remaining Objective-7 work: run the interaction-matrix diagnostics on *real*
+encoder features (requires the paper's pretrained encoders, outside this
+repo), and the FID/IS-level question of whether enforcing certified designs
+harms generation quality (requires training runs).
 
 ## What would complete the practical phase
 
