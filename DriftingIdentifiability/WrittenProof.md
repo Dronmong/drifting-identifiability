@@ -303,6 +303,50 @@ approximate learned-feature claims must exhibit an actual stability
 certificate and useful constants; they are not consequences of feature matching
 alone.
 
+## CFG as affine densities
+
+Classifier-free guidance is not a probability theorem by default.  The paper's
+equation (15) defines the effective negative density
+
+```text
+q_tilde = (1-γ) q + γ u,
+```
+
+where `u` is the unconditional data density.  Solving `q_tilde = p_cond` gives
+equation (16):
+
+```text
+q = (1/(1-γ)) p_cond - ((1/(1-γ))-1) u.
+```
+
+The right finite object is therefore a normalized affine coefficient vector:
+the coefficients sum to one, but they may be negative.  `CFGAffine.lean`
+introduces `FiniteAffineVector` for this purpose and proves that the existing
+anti-symmetric finite-basis algebra still works: vanishing minors plus affine
+normalization imply coefficient equality, and a positive interaction frame
+controls affine coefficient error by drift error.  No nonnegativity is used in
+this algebraic step.
+
+The CFG-specific setup compares the conditional coefficients with the
+effective negative coefficients `(1-γ)q + γu`.  If the finite density-interaction
+drift vanishes at the probes and the interaction family is nondegenerate, then
+the effective negative coefficients equal the conditional coefficients.  For
+`γ≠1`, elementary algebra then gives
+
+```text
+q = cfgTargetCoefficients γ p_cond u.
+```
+
+This is `CFGDriftFiniteSetup.generated_eq_cfgTarget`.  The density bridge
+lemmas show that these coefficient formulas represent the paper's
+`cfgNegativeDensity`, `cfgWeightedNegativeDensity`, and equation-(16) affine
+density expressions.
+
+To recover an ordinary probability vector from the affine CFG target, the proof
+requires the explicit side condition `CFGTargetNonnegative`.  Without it, the
+target is only an affine signed density, so no measure-level probability claim
+is made.
+
 ## Finite-sample bridge and self-normalized consistency
 
 `FiniteSampleBridge.lean` separates the deterministic identifiability/stability
@@ -467,6 +511,9 @@ eye-mask bias/floor hypotheses.
   `FailureCases.lean`.
 - Feature-space pushforward conclusions and measurable-embedding lifts:
   `FeatureSpaceIdentifiability.lean`.
+- CFG affine-density coefficients, finite affine identifiability/stability,
+  density bridges for equations (15)/(16), and the CFG drift theorem:
+  `CFGAffine.lean`.
 - Finite-sample bridge, Algorithm 2 structure, generic self-normalized
   consistency (common-weight and indexed/bias-tolerant), the no-mask
   Algorithm-2 SNIS specialization, the column-reweighted limiting-field

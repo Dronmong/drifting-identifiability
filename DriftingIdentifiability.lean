@@ -1,5 +1,6 @@
 import DriftingIdentifiability.FailureCases
 import DriftingIdentifiability.FeatureSpaceIdentifiability
+import DriftingIdentifiability.CFGAffine
 import DriftingIdentifiability.PracticalModelClasses
 import DriftingIdentifiability.SmoothBumpBasis
 import DriftingIdentifiability.FiniteSampleBridge

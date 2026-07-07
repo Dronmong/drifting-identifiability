@@ -274,6 +274,16 @@ by `HeterogeneousFeatureFamily`; exact lifting may use an independently proved
 feature discrepancies. Do not turn feature-space matching into `p=q` unless one
 of these lifting hypotheses is present and independently justified.
 
+Objective 6 is initialized in `CFGAffine.lean`. CFG is treated as an affine
+density/coefficient problem, not as an automatic probability-measure theorem.
+Use `FiniteAffineVector` for coefficients that sum to one but may be negative.
+`CFGDriftFiniteSetup.generated_eq_cfgTarget` proves the safe CFG conclusion:
+zero drift matching the effective negative density `(1-γ)q + γu` to the
+conditional density `p` implies `q = (1/(1-γ))p - ((1/(1-γ))-1)u`. Do not
+paraphrase this as `q=p`, and do not convert the affine target to a probability
+law unless `CFGTargetNonnegative` (or an equivalent concrete nonnegativity
+proof) has been supplied.
+
 ## Conditional modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are

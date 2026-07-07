@@ -669,13 +669,44 @@ Wasserstein, MMD, task metrics, etc.), prove or estimate a usable
 whether the resulting constants are meaningful for learned non-injective
 features.
 
-### Objective 6: treat CFG separately
+### Objective 6: treat CFG separately — affine-density core complete
 
 CFG equation (16) can define a signed affine target rather than a probability
 measure. It is outside the current probability-mixture theorem.
+`CFGAffine.lean` now gives it a separate finite affine-density treatment.
 
-Desired result: develop a signed-measure or affine-density formulation with its
-own normalization, identifiability, and stability analysis.
+Completed formally:
+
+- `FiniteAffineVector` records finite coefficients with total mass one but no
+  nonnegativity requirement.
+- `affineParallelCoefficientsAreEqual`, `affineCoefficientIdentifiable`, and
+  `AffineDriftFiniteSetup.identifiesCoefficients` generalize the finite
+  anti-symmetric minor argument from probability coefficients to affine
+  coefficients.
+- `affineCoeffL1_le_of_frame_scaledDrift` gives the corresponding quantitative
+  coefficient-stability estimate.
+- `cfgNegativeCoefficients` formalizes equation (15) at coefficient level:
+  `q̃ = (1-γ)q + γu`.
+- `cfgTargetCoefficients` formalizes equation (16):
+  `q = (1/(1-γ))p - ((1/(1-γ))-1)u`.
+- `cfgGenerated_eq_target_of_effective_eq` proves the algebraic CFG solve:
+  if the effective negative coefficients equal the conditional coefficients and
+  `γ≠1`, then the generated coefficients equal the CFG affine target.
+- `basisDensity_cfgNegativeCoefficients`,
+  `basisDensity_cfgTargetCoefficients`, and
+  `basisDensity_cfgWeightedNegativeCoefficients` connect the coefficient
+  formulas to the paper's density-level CFG expressions.
+- `CFGDriftFiniteSetup.generated_eq_cfgTarget` is the Objective-6 core theorem:
+  zero drift identifying the effective negative density with the conditional
+  density implies the generated finite affine density is the paper's CFG affine
+  target, not necessarily the conditional density itself.
+- `CFGTargetNonnegative` and `cfgTargetProbabilityVector` are the explicit gate
+  for recovering an ordinary finite probability vector from the affine target.
+
+Remaining Objective-6 work is concrete/probabilistic: determine when the CFG
+affine target is nonnegative for useful model classes and guidance scales,
+instantiate stability constants for those classes, and only then convert the
+affine-density result back to genuine probability measures.
 
 ### Objective 7: evaluate whether the conditions are useful in practice
 

@@ -246,8 +246,19 @@ so future agents do not repeat equivalent mistakes.
   current theorem.
 - **Possible repair:** Prove finite-sample approximation bounds and formalize a
   signed-measure CFG extension.
+- **Update (2026-07-07):** The CFG part is now repaired at the finite
+  affine-density level in `CFGAffine.lean`.  `FiniteAffineVector` replaces
+  probability vectors when coefficients may be negative, the anti-symmetric
+  minor algebra and frame stability are generalized to affine coefficients, and
+  `CFGDriftFiniteSetup.generated_eq_cfgTarget` proves the honest CFG conclusion:
+  zero drift matching the effective negative density `(1-γ)q+γu` with the
+  conditional density `p` implies
+  `q = (1/(1-γ))p - ((1/(1-γ))-1)u`.  This is not `q=p`, and it is not a
+  probability-measure claim unless `CFGTargetNonnegative` is separately proved.
 - **Relevant Lean declarations/files:** `algorithm2Drift`, `cfgNegativeDensity`,
-  `PopulationIdentifiability.lean`.
+  `PopulationIdentifiability.lean`, `FiniteAffineVector`,
+  `CFGTargetNonnegative`, `CFGDriftFiniteSetup.generated_eq_cfgTarget`,
+  `CFGAffine.lean`.
 
 ---
 
