@@ -632,9 +632,8 @@ The Objective-7 conditioning ledger (`numerics/RESULTS.md`, E5) measured that
 the single dominant slack in the certified finite-sample chain is the
 *deterministic* SNIS denominator floor `dmin = N·wmin`, which pays the full
 worst-case kernel value `e^{-1/tau}` and alone separates the certified sample
-complexity (`~5e8` at `tau = 0.2`, astronomically worse at smaller `tau`) from
-the LLN-typical (`~6e4`) and observed (`~2e5`) complexities.  Every other link
-in the chain is within ~30x of observation.
+complexity (`~8.6e8` at `tau = 0.2`, astronomically worse at smaller `tau`)
+from the LLN-typical (`~2.9e5`) and observed (`~2e5`) complexities.
 
 `DenominatorTail.lean` now implements the planned repair while staying inside
 the existing trusted boundary.  No new axiom is introduced: both promoted
@@ -658,9 +657,14 @@ This does not touch identifiability itself: it sharpens the constants of the
 finite-sample route only.  The theorem deliberately does not assume the
 denominator's mean is large for free — `Σ μw`, `σw`, and the split point `t`
 remain caller-supplied checkable data, with the side condition
-`0 < t < Σ μw`.  The remaining numerical task is to re-run the Objective-7
-ledger with the refined bound (optimizing `t`) and record the before/after
-certified sample complexity against the observed one.
+`0 < t < Σ μw`.
+
+The Objective-7 ledger has now been re-run with this theorem.  In the two-atom
+certified class, optimizing `t = ρNμw` lowers the certified sample count from
+`~8.6e8` to `~1.3e6` at `tau = 0.2`, and removes the astronomical small-`tau`
+deterministic-floor explosion.  The refined certificate remains conservative
+relative to the observed extrapolation (`~2e5`) because it still pays an
+explicit denominator-tail term and a union bound over four centroids.
 
 ### Objective 5: handle feature-space training correctly — core infrastructure complete
 
@@ -794,17 +798,19 @@ Findings:
    paper's own multi-temperature ablation and gives the SNIS constants their
    practical meaning.
 6. **Conditioning ledger (the headline).**  For the certified two-atom class,
-   recovering `‖a-b‖₁ ≤ 0.1` at 90% confidence needs, per the certified chain,
-   `N ≈ 5e8` samples at `tau = 0.2` (worse at smaller `tau`); with the
-   LLN-typical (non-theorem) denominator `N ≈ 6e4`, temperature-invariantly;
-   observed Monte-Carlo needs `N ≈ 2e5`.  The paper trains at `N = 64`.
-   Consequences: (a) training-signal scale and certification scale are
-   different regimes — the theorems are sound, their constants bite only at
-   certification-scale batches; (b) the single dominant slack in the certified
-   chain is the *deterministic* SNIS denominator floor `dmin = N·wmin` — an
-   actionable next theorem is a high-probability (Bernstein-type) lower bound
-   on the random denominator, which would bring the certified complexity
-   within ~30x of observed.
+   recovering `‖a-b‖₁ ≤ 0.1` at 90% confidence originally needed, per the
+   deterministic-floor certified chain, `N ≈ 8.6e8` samples at `tau = 0.2`
+   and astronomically more at smaller `tau`.  The new denominator-tail theorem
+   cuts this to `N ≈ 1.1e6--1.3e6` across the paper's temperatures by replacing
+   `dmin = N·wmin` with checkable denominator mean/variance data and an
+   optimized lower-tail split.  The LLN-typical benchmark is
+   `N ≈ 2.6e5--3.0e5`, and observed Monte-Carlo extrapolation is `N ≈ 2e5`.
+   The paper trains at `N = 64`.  Consequences: (a) training-signal scale and
+   certification scale are still different regimes; (b) the previous dominant
+   proof slack has been repaired to within an order of magnitude of observed
+   scaling; (c) remaining improvement is now constant-level sharpening
+   (e.g. Bernstein-style tails, less crude union bounds), not an exponential
+   denominator-floor pathology.
 7. **CFG gate.**  At the paper's strongest guidance `alpha = 4`, the CFG
    affine target is a genuine probability vector on only a `(1/alpha)^{m-1}`
    sliver of the simplex (validated against closed form): Objective 6's

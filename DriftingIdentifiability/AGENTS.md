@@ -257,10 +257,14 @@ centroid (positives are never masked), so its SNIS bound transports; the
 deleted negative centroid satisfies the indexed bias-tolerant ratio theorem
 `selfNormalizedIndexed_meanSquare_le` with per-slot weight functions
 (`deletedNegativeColumnWeight`), per-slot leave-out mean shifts bounded by `b`,
-and an abstract denominator floor `dmin`. Do not silently set `b = 0` for the
-eye mask (the per-slot leave-out targets genuinely differ), and do not present
-the mean-square bounds as identifiability claims: they feed the
-estimator-agnostic bridge through the MSE only.
+and an abstract denominator floor `dmin`. `DenominatorTail.lean` separately
+provides the high-probability replacement for the deterministic denominator
+floor: `selfNormalizedIndexed_deviation_prob_le` uses checkable denominator
+means/variances and an explicit split `0 < t < Σ μw`. Do not silently set
+`b = 0` for the eye mask (the per-slot leave-out targets genuinely differ),
+do not assume `Σ μw` is large without data, and do not present the
+mean-square or denominator-tail bounds as identifiability claims: they feed the
+estimator-agnostic bridge through estimator-error control only.
 
 Objective 5 is now initialized in `FeatureSpaceIdentifiability.lean`. The safe
 default conclusion of any feature-space theorem is equality of feature laws

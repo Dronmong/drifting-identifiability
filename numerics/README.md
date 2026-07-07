@@ -49,7 +49,7 @@ The operating point is taken from the paper, not chosen for convenience:
 | `centroid_diff` | `Algorithm2.noMaskCentroidDrift` / masked analogue |
 | E3b bias | `deletedNegativeColumnWeight`, hypotheses of `deletedNegativeCentroid_meanSquare_le` |
 | E3c delta | `maskPenaltyFactor`, `algorithm2Drift_sub_deletedDrift_norm_le` |
-| E5 chain | `columnReweighted01_coefficientStability` + `estimate_failure_le_meanSquare` + `selfNormalizedIndexed_meanSquare_le` |
+| E5 chain | `columnReweighted01_coefficientStability` + `estimate_failure_le_meanSquare` + `selfNormalizedIndexed_meanSquare_le` + `selfNormalizedIndexed_deviation_prob_le` |
 | E6 gate | `CFGTargetNonnegative` / `cfgTargetCoefficients` (`CFGAffine.lean`) |
 
 ## Experiments
@@ -66,7 +66,8 @@ The operating point is taken from the paper, not chosen for convenience:
 - **E4** — softmax effective sample size per temperature at `N = 64` under a
   normalized-distance feature-geometry model: what each `tau` "sees".
 - **E5** — the conditioning ledger: the full certified chain multiplied out
-  into a sample-complexity number, against its LLN-typical and observed
-  counterparts.
+  into a sample-complexity number, comparing the old deterministic denominator
+  floor, the new high-probability denominator-tail refinement, the LLN-typical
+  benchmark, and observed Monte-Carlo scaling.
 - **E6** — how often the CFG affine target is an actual probability vector at
   the paper's guidance scales.

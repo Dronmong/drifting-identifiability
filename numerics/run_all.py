@@ -319,11 +319,64 @@ def e4_ess(rng) -> None:
 # ============================================================================
 
 
+def _centroid_snis_moments(
+    coeffs: np.ndarray, anchors: np.ndarray, tau: float, anchor_index: int
+) -> dict[str, float]:
+    """Exact two-atom SNIS moment data for one anchor/one branch.
+
+    The denominator-tail theorem (`SelfNormalized.selfNormalizedIndexed_deviation_prob_le`)
+    consumes:
+      mu_w    = E[w(Y)]
+      var_w   = E[(w(Y)-mu_w)^2]
+      sigma_z = E[|w(Y)(Y-c)|^2] when c is the weighted centroid.
+    """
+    atoms = np.array([0.0, 1.0])
+    w = dl.column_reweighted_weight(anchors, tau, anchor_index, atoms)
+    mu_w = float((coeffs * w).sum())
+    c = float((coeffs * w * atoms).sum() / mu_w)
+    sigma_z_sq = float((coeffs * (w * (atoms - c)) ** 2).sum())
+    sigma_w_sq = float((coeffs * (w - mu_w) ** 2).sum())
+    return {
+        "mu_w": mu_w,
+        "sigma_w_sq": sigma_w_sq,
+        "sigma_z_sq": sigma_z_sq,
+        "w_floor": float(w.min()),
+    }
+
+
+def _denominator_tail_piece_constant(
+    sigma_z_sq: float, sigma_w_sq: float, mu_w: float, eta: float
+) -> tuple[float, float]:
+    """Optimize the denominator-tail split for one centroid.
+
+    With t = rho * N * mu_w, the theorem gives
+
+        P{|chat-c| > eta}
+          <= [ 2 sigma_z^2 / (mu_w^2 (1-rho)^2 eta^2)
+               + sigma_w^2 / (mu_w^2 rho^2) ] / N.
+
+    The minimizer of A/(1-rho)^2 + B/rho^2 is
+    rho = B^(1/3)/(A^(1/3)+B^(1/3)), with value
+    (A^(1/3)+B^(1/3))^3.
+    """
+    A = 2.0 * sigma_z_sq / (mu_w**2 * eta**2)
+    B = sigma_w_sq / (mu_w**2)
+    if A <= 0.0 and B <= 0.0:
+        return 0.0, 0.5
+    if A <= 0.0:
+        return B, 1.0
+    if B <= 0.0:
+        return A, 0.0
+    a = np.cbrt(A)
+    b = np.cbrt(B)
+    rho = b / (a + b)
+    return float((a + b) ** 3), float(rho)
+
+
 def e5_ledger(rng) -> None:
     sec("E5. Conditioning ledger: the certified chain, multiplied out")
     a = np.array([0.3, 0.7])
     b = np.array([0.6, 0.4])
-    atoms = np.array([0.0, 1.0])
     anchors = np.array([0.0, 1.0])  # probes = anchors = the atoms
     delta_conf = 0.1  # 90% confidence
     target_l1 = 0.1
@@ -332,33 +385,54 @@ def e5_ledger(rng) -> None:
     out("")
     out("Chain: coefficient bound (2B/c_col)(||Vhat|| + eps) with B = 1")
     out("(`columnReweighted01_coefficientStability`), failure probability")
-    out("MSE/eps^2 (`estimate_failure_le_meanSquare`), SNIS mean-square")
-    out("2 N sigma^2 / dmin^2 (`selfNormalizedIndexed_meanSquare_le`, b = 0).")
-    out("The theorem's denominator floor dmin must hold *deterministically*:")
-    out("dmin = N * wmin (worst atom).  The LLN-typical denominator N * wbar is")
-    out("NOT a theorem; it is listed to expose the slack of the certified floor.")
+    out("MSE/eps^2 (`estimate_failure_le_meanSquare`), and SNIS control.  The")
+    out("old certified column uses the deterministic denominator floor")
+    out("`dmin = N*wmin` from `selfNormalizedIndexed_meanSquare_le`.  The new")
+    out("certified column uses `selfNormalizedIndexed_deviation_prob_le`: for")
+    out("each centroid it replaces `wmin` by checkable denominator moments")
+    out("`mu_w = E[w(Y)]`, `sigma_w^2 = E[(w(Y)-mu_w)^2]`, optimizes")
+    out("`t = rho*N*mu_w`, and union-bounds the two anchors and two branches.")
+    out("The LLN-typical column is still not a theorem; it is the benchmark")
+    out("obtained by pretending the denominator is deterministically `N*mu_w`.")
     out("")
-    out("| tau | c_col | 2B/c_col | sigma_z^2 | wmin | wbar | N cert (wmin) | N typical (wbar) |")
-    out("|-----|-------|----------|-----------|------|------|----------------|-------------------|")
+    out("| tau | c_col | 2B/c_col | min wmin | mean mu_w | old N cert | refined N cert | N typical | rho* range |")
+    out("|-----|-------|----------|----------|-----------|------------|----------------|-----------|------------|")
     for tau in TAUS:
         c_bare = float(dl.u01_bare(anchors, tau).max())  # sup norm over probes
         s_col = dl.col_reweight_scale(anchors, tau)
         c_col = c_bare * s_col
         amp = 2.0 / c_col  # B = 1
-        # per-anchor SNIS ingredients at anchor 0 (worst case by symmetry)
-        w = dl.column_reweighted_weight(anchors, tau, 0, atoms)
-        cq = (b * w * atoms).sum() / (b * w).sum()
-        z_sq = (b * (w * (atoms - cq)) ** 2).sum()  # E|w(Y)(Y-c)|^2
-        wmin = float(w.min())  # deterministic per-sample weight floor
-        wbar = float((b * w).sum())  # typical (mean) weight, not certified
-        # MSE per centroid <= 2*N*sigma^2/dmin^2; dmin = N*wfloor
-        # stacked over 2 anchors x 2 branches: 8 sigma^2/(N wfloor^2) (crude)
-        need_mse = (target_l1 / amp) ** 2 * delta_conf
-        n_cert = 8.0 * z_sq / (wmin**2 * need_mse)
-        n_typ = 8.0 * z_sq / (wbar**2 * need_mse)
+        eps_v = target_l1 / amp
+        need_mse = eps_v**2 * delta_conf
+        # Four SNIS centroids: positive/negative branches at two anchors.
+        pieces = [
+            _centroid_snis_moments(coeffs, anchors, tau, anchor_index)
+            for coeffs in (a, b)
+            for anchor_index in range(len(anchors))
+        ]
+        # Old deterministic aggregate: sum of the four centroid MSE bounds.
+        n_cert_old = sum(
+            2.0 * p["sigma_z_sq"] / (p["w_floor"] ** 2) for p in pieces
+        ) / need_mse
+        # Non-theorem LLN benchmark: same algebra with mu_w in place of w_floor.
+        n_typ = sum(2.0 * p["sigma_z_sq"] / (p["mu_w"] ** 2) for p in pieces) / need_mse
+        # New theorem: if every centroid is within eps_v/2 then the drift vector
+        # is within eps_v in sup norm; union-bound the four optimized tails.
+        eta_centroid = eps_v / 2.0
+        refined_terms = [
+            _denominator_tail_piece_constant(
+                p["sigma_z_sq"], p["sigma_w_sq"], p["mu_w"], eta_centroid
+            )
+            for p in pieces
+        ]
+        n_refined = sum(term for term, _rho in refined_terms) / delta_conf
+        rhos = [rho for _term, rho in refined_terms]
+        min_wfloor = min(p["w_floor"] for p in pieces)
+        mean_muw = sum(p["mu_w"] for p in pieces) / len(pieces)
         out(
-            f"| {tau} | {c_col:.2e} | {amp:.1e} | {z_sq:.2e} | "
-            f"{wmin:.2e} | {wbar:.2e} | {n_cert:.1e} | {n_typ:.1e} |"
+            f"| {tau} | {c_col:.2e} | {amp:.1e} | {min_wfloor:.2e} | "
+            f"{mean_muw:.2e} | {n_cert_old:.1e} | {n_refined:.1e} | "
+            f"{n_typ:.1e} | {min(rhos):.3f}-{max(rhos):.3f} |"
         )
     out("")
     out("Observed check (tau = 0.2): Monte-Carlo MSE at the paper batch N = 64:")
@@ -383,21 +457,19 @@ def e5_ledger(rng) -> None:
     out(f"- extrapolating observed MSE ~ C/N: N_observed for the target = `{n_obs:.1e}`.")
     out("")
     out("Readings:")
-    out("1. The *typical*-denominator complexity is temperature-invariant")
-    out("   (~6e4): signal (field ~ c_col) and noise (sigma_z) carry the same")
-    out("   kernel scale, so tiny tau does not by itself doom certification.")
-    out("2. The *certified* complexity explodes as tau shrinks because the")
-    out("   deterministic floor dmin = N*wmin pays the full cross-atom kernel")
-    out("   e^{-1/tau}.  At tau = 0.2 certified/observed slack is ~10^3; at")
-    out("   tau = 0.02 the certified route is astronomically pessimistic.")
-    out("   Actionable theory gap surfaced by the numerics: replace the")
-    out("   deterministic dmin with a high-probability lower bound on the")
-    out("   random denominator (e.g. Bernstein for sums of bounded weights);")
-    out("   everything else in the chain is within ~30x of observed.")
-    out("3. Even observed, certifying ||a-b||_1 <= 0.1 needs N ~ 2e5 per class")
-    out("   vs the paper's N = 64: training signal and certification are")
-    out("   different regimes; the theorems are sound but their constants")
-    out("   matter only at certification-scale batch sizes.")
+    out("1. The denominator-tail theorem fixes the dominant certified slack:")
+    out("   at tau = 0.2 the certified sample count drops from ~9e8 to ~1e6,")
+    out("   and at smaller tau it avoids the astronomical e^{1/tau} penalty.")
+    out("   The optimized split is small (rho ~ 0.03-0.06): most denominator")
+    out("   mass is kept for the ratio bound, with a small Chebyshev tail budget.")
+    out("2. The refined theorem tracks the LLN-typical benchmark within a")
+    out("   modest constant factor, but it is still a theorem: it pays an explicit")
+    out("   denominator-tail term and a union bound over the four centroids.")
+    out("3. Even after the denominator repair, certifying ||a-b||_1 <= 0.1 needs")
+    out("   N ~ 1e6 per class in this conservative chain vs the paper's N = 64.")
+    out("   The observed extrapolation is ~2e5, so the theorem is now within an")
+    out("   order of magnitude of observed scaling rather than many orders away.")
+    out("   Training signal and formal certification remain different regimes.")
 
 
 # ============================================================================

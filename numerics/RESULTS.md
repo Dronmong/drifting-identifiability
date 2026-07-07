@@ -203,17 +203,21 @@ anchors = atoms = {0,1}, confidence 90%, target ||a-b||_1 <= 0.1.
 
 Chain: coefficient bound (2B/c_col)(||Vhat|| + eps) with B = 1
 (`columnReweighted01_coefficientStability`), failure probability
-MSE/eps^2 (`estimate_failure_le_meanSquare`), SNIS mean-square
-2 N sigma^2 / dmin^2 (`selfNormalizedIndexed_meanSquare_le`, b = 0).
-The theorem's denominator floor dmin must hold *deterministically*:
-dmin = N * wmin (worst atom).  The LLN-typical denominator N * wbar is
-NOT a theorem; it is listed to expose the slack of the certified floor.
+MSE/eps^2 (`estimate_failure_le_meanSquare`), and SNIS control.  The
+old certified column uses the deterministic denominator floor
+`dmin = N*wmin` from `selfNormalizedIndexed_meanSquare_le`.  The new
+certified column uses `selfNormalizedIndexed_deviation_prob_le`: for
+each centroid it replaces `wmin` by checkable denominator moments
+`mu_w = E[w(Y)]`, `sigma_w^2 = E[(w(Y)-mu_w)^2]`, optimizes
+`t = rho*N*mu_w`, and union-bounds the two anchors and two branches.
+The LLN-typical column is still not a theorem; it is the benchmark
+obtained by pretending the denominator is deterministically `N*mu_w`.
 
-| tau | c_col | 2B/c_col | sigma_z^2 | wmin | wbar | N cert (wmin) | N typical (wbar) |
-|-----|-------|----------|-----------|------|------|----------------|-------------------|
-| 0.02 | 1.93e-22 | 1.0e+22 | 2.48e-44 | 1.93e-22 | 6.00e-01 | 5.7e+47 | 5.9e+04 |
-| 0.05 | 2.06e-09 | 9.7e+08 | 2.83e-18 | 2.06e-09 | 6.00e-01 | 5.0e+21 | 5.9e+04 |
-| 0.2 | 6.69e-03 | 3.0e+02 | 2.98e-05 | 6.72e-03 | 6.01e-01 | 4.7e+08 | 5.9e+04 |
+| tau | c_col | 2B/c_col | min wmin | mean mu_w | old N cert | refined N cert | N typical | rho* range |
+|-----|-------|----------|----------|-----------|------------|----------------|-----------|------------|
+| 0.02 | 1.93e-22 | 1.0e+22 | 1.93e-22 | 5.00e-01 | 8.4e+47 | 1.1e+06 | 2.6e+05 | 0.030-0.057 |
+| 0.05 | 2.06e-09 | 9.7e+08 | 2.06e-09 | 5.00e-01 | 9.3e+21 | 1.3e+06 | 3.0e+05 | 0.030-0.051 |
+| 0.2 | 6.69e-03 | 3.0e+02 | 6.72e-03 | 5.02e-01 | 8.6e+08 | 1.3e+06 | 2.9e+05 | 0.030-0.050 |
 
 Observed check (tau = 0.2): Monte-Carlo MSE at the paper batch N = 64:
 - observed MSE(N=64) = `3.351e-05`; via the bridge, at 90% confidence
@@ -222,21 +226,19 @@ Observed check (tau = 0.2): Monte-Carlo MSE at the paper batch N = 64:
 - extrapolating observed MSE ~ C/N: N_observed for the target = `1.9e+05`.
 
 Readings:
-1. The *typical*-denominator complexity is temperature-invariant
-   (~6e4): signal (field ~ c_col) and noise (sigma_z) carry the same
-   kernel scale, so tiny tau does not by itself doom certification.
-2. The *certified* complexity explodes as tau shrinks because the
-   deterministic floor dmin = N*wmin pays the full cross-atom kernel
-   e^{-1/tau}.  At tau = 0.2 certified/observed slack is ~10^3; at
-   tau = 0.02 the certified route is astronomically pessimistic.
-   Actionable theory gap surfaced by the numerics: replace the
-   deterministic dmin with a high-probability lower bound on the
-   random denominator (e.g. Bernstein for sums of bounded weights);
-   everything else in the chain is within ~30x of observed.
-3. Even observed, certifying ||a-b||_1 <= 0.1 needs N ~ 2e5 per class
-   vs the paper's N = 64: training signal and certification are
-   different regimes; the theorems are sound but their constants
-   matter only at certification-scale batch sizes.
+1. The denominator-tail theorem fixes the dominant certified slack:
+   at tau = 0.2 the certified sample count drops from ~9e8 to ~1e6,
+   and at smaller tau it avoids the astronomical e^{1/tau} penalty.
+   The optimized split is small (rho ~ 0.03-0.06): most denominator
+   mass is kept for the ratio bound, with a small Chebyshev tail budget.
+2. The refined theorem tracks the LLN-typical benchmark within a
+   modest constant factor, but it is still a theorem: it pays an explicit
+   denominator-tail term and a union bound over the four centroids.
+3. Even after the denominator repair, certifying ||a-b||_1 <= 0.1 needs
+   N ~ 1e6 per class in this conservative chain vs the paper's N = 64.
+   The observed extrapolation is ~2e5, so the theorem is now within an
+   order of magnitude of observed scaling rather than many orders away.
+   Training signal and formal certification remain different regimes.
 
 ## E6. CFG affine target: how often is it a probability vector?
 
@@ -255,4 +257,4 @@ a genuine probability vector only on a (1/alpha)^(m-1) sliver of the
 simplex: for realistic basis sizes the signed-measure treatment of
 Objective 6 (`CFGAffine.lean`) is the *generic* case, not a corner case.
 
-_Runtime: 0.7s._
+_Runtime: 0.6s._
