@@ -626,17 +626,34 @@ Remaining work after the current Objective-4 implementation:
   This route and the earlier obstruction are recorded in `LoggedFailures.md`
   (2026-07-06 entry).
 
-### Objective 5: handle feature-space training correctly
+### Objective 5: handle feature-space training correctly — baseline complete
 
 The current data-space theorem gives equality of data-space measures. In
 feature space, zero drift can generally identify only the pushforward laws.
+`FeatureSpaceIdentifiability.lean` now formalizes this boundary.
 
-Desired results:
+Completed formally:
 
-- retain pushforward equality as the default conclusion;
-- lift it to source-law equality only under an independently stated
-  measure-determining or measurable-embedding condition;
-- study approximate lifting when the learned feature map is not injective.
+- `FeatureModel` packages a measurable feature map `φ : X → F`.
+- `FeatureModel.law` is the paper's feature law `φ♯p`.
+- `law_eq_of_feature_identifiesAtZero` says a feature-space zero-drift theorem
+  gives equality of feature laws by default.
+- `source_eq_of_law_eq` and
+  `source_eq_of_feature_identifiesAtZero` lift feature-law equality to
+  source-law equality only under an explicit `MeasurableEmbedding φ`
+  hypothesis.
+- `AllFeatureLawsEqual` and the multi-feature lift theorem show that one
+  embedded feature in a finite feature family is enough to recover source-law
+  equality after all feature laws have been matched.
+- `featureLaw_collision_distinct_source_diracs` is the formal warning: in a
+  measurable space that separates points, a non-injective feature collision
+  gives distinct source Dirac laws with equal feature laws.
+
+This closes the basic logical guardrail for feature-space training. Remaining
+Objective-5 work is practical/quantitative: approximate lifting for nearly
+injective or information-losing learned features, heterogeneous feature spaces,
+and usable criteria showing when a learned representation is measure
+determining enough for the intended source-law conclusion.
 
 ### Objective 6: treat CFG separately
 

@@ -257,6 +257,29 @@ interaction vectors, insufficient probe dimension, missing full support, and
 non-injective feature maps. A measurable embedding is sufficient to lift
 feature-law equality back to source-law equality.
 
+## Feature-space lifting
+
+If the drift theorem is applied after a feature map `φ : X → F`, the immediate
+measure-level conclusion is equality of feature laws:
+
+```text
+φ♯p = φ♯q.
+```
+
+This is the correct default statement for feature-space training.  It does not
+by itself imply `p=q`: a non-injective feature can collapse two distinct source
+points, and hence the corresponding distinct Dirac source laws have identical
+feature laws.
+
+`FeatureSpaceIdentifiability.lean` formalizes the safe lift.  A measurable
+feature model has a law `FeatureModel.law p = φ♯p`.  Any feature-space
+identifiability theorem `ZeroDrift V (φ♯p) (φ♯q) → φ♯p = φ♯q` can be used as-is
+to match feature laws.  To conclude source-law equality, the proof additionally
+requires `MeasurableEmbedding φ`; then Mathlib's injectivity of `Measure.map`
+along measurable embeddings gives `p=q`.  For a finite family of features,
+matching every feature law plus one embedded feature is enough to lift back to
+source laws.
+
 ## Finite-sample bridge and self-normalized consistency
 
 `FiniteSampleBridge.lean` separates the deterministic identifiability/stability
@@ -419,6 +442,8 @@ eye-mask bias/floor hypotheses.
   `SmoothBumpBasis.lean`.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
+- Feature-space pushforward conclusions and measurable-embedding lifts:
+  `FeatureSpaceIdentifiability.lean`.
 - Finite-sample bridge, Algorithm 2 structure, generic self-normalized
   consistency (common-weight and indexed/bias-tolerant), the no-mask
   Algorithm-2 SNIS specialization, the column-reweighted limiting-field

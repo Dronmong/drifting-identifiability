@@ -211,8 +211,18 @@ so future agents do not repeat equivalent mistakes.
   distinct Dirac measures.
 - **Fatal or repairable:** Repairable when `φ` is a measurable embedding; in
   general only pushforward equality may be claimed.
+- **Update (2026-07-06):** `FeatureSpaceIdentifiability.lean` now promotes this
+  into the Objective-5 guardrail.  `law_eq_of_feature_identifiesAtZero` keeps
+  feature-space conclusions at the pushforward-law level by default;
+  `source_eq_of_feature_identifiesAtZero` lifts to source-law equality only
+  under `MeasurableEmbedding φ`; and
+  `featureLaw_collision_distinct_source_diracs` records the exact non-injective
+  Dirac collapse.
 - **Relevant Lean declarations/files:** `noninjectiveFeature_collapses_dirac`,
-  `sourceMeasure_eq_of_featureLaw_eq`.
+  `sourceMeasure_eq_of_featureLaw_eq`, `FeatureModel.law`,
+  `FeatureModel.source_eq_of_law_eq`,
+  `featureLaw_collision_distinct_source_diracs`,
+  `FeatureSpaceIdentifiability.lean`.
 
 ---
 

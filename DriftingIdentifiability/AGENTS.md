@@ -262,6 +262,15 @@ eye mask (the per-slot leave-out targets genuinely differ), and do not present
 the mean-square bounds as identifiability claims: they feed the
 estimator-agnostic bridge through the MSE only.
 
+Objective 5 is now initialized in `FeatureSpaceIdentifiability.lean`. The safe
+default conclusion of any feature-space theorem is equality of feature laws
+`φ♯p = φ♯q`; source-law equality is promoted only through an explicit
+`MeasurableEmbedding φ` hypothesis (or one embedded feature in a finite feature
+family). A non-injective feature collision is formalized by distinct source
+Dirac laws with equal feature laws. Do not turn feature-space matching into
+`p=q` unless this lifting hypothesis, or a future independently verified
+measure-determining replacement, is present.
+
 ## Conditional modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are
