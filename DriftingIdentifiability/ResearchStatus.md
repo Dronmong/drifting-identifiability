@@ -626,40 +626,41 @@ Remaining work after the current Objective-4 implementation:
   This route and the earlier obstruction are recorded in `LoggedFailures.md`
   (2026-07-06 entry).
 
-**In progress (started 2026-07-07): high-probability denominator refinement.**
+**Implemented and verified (2026-07-07): high-probability denominator
+refinement.**
 The Objective-7 conditioning ledger (`numerics/RESULTS.md`, E5) measured that
 the single dominant slack in the certified finite-sample chain is the
 *deterministic* SNIS denominator floor `dmin = N·wmin`, which pays the full
 worst-case kernel value `e^{-1/tau}` and alone separates the certified sample
 complexity (`~5e8` at `tau = 0.2`, astronomically worse at smaller `tau`) from
 the LLN-typical (`~6e4`) and observed (`~2e5`) complexities.  Every other link
-in the chain is within ~30x of observation.  Planned work, staying inside the
-existing trusted boundary (no new axiom expected — the denominator is a sample
-mean of bounded scalars, so its lower tail follows from the reviewed
-`sampleMean_meanSquare_le` axiom plus the existing Markov lemma):
+in the chain is within ~30x of observation.
 
-1. `weightSum_lower_tail_prob_le`: for independent per-slot weights with means
-   `μw l` and centered second moments `≤ σw²`,
+`DenominatorTail.lean` now implements the planned repair while staying inside
+the existing trusted boundary.  No new axiom is introduced: both promoted
+theorems depend only on Lean foundations and the reviewed
+`Paper.sampleMean_meanSquare_le` statistical axiom.
+
+1. `SelfNormalized.weightSum_lower_tail_prob_le`: for independent per-slot
+   weights with means `μw l` and centered second moments `≤ σw²`,
    `P{Σ w_l(Y_l) < Σ μw - t} ≤ N σw²/t²` (Chebyshev lower tail via centering
    and `meas_gt_le_meanSquare_div`).
-2. A deviation-probability form of the indexed ratio theorem,
-   `selfNormalizedIndexed_deviation_prob_le`: splitting on the event
-   `{Σ w ≥ Σ μw - t}`,
-   `P{ε < ‖ĉ - c‖} ≤ (2Nσ² + 2N²b²)/((Σμw - t)² ε²) + N σw²/t²` —
-   the deterministic floor hypothesis replaced by *checkable mean/variance
+2. `SelfNormalized.selfNormalizedIndexed_deviation_prob_le`: a
+   deviation-probability form of the indexed ratio theorem.  Splitting on
+   `{Σ w ≥ Σ μw - t}` gives
+   `P{ε < ‖ĉ - c‖} ≤ (2Nσ² + 2N²b²)/((Σμw - t)² ε²) + N σw²/t²`, so the
+   deterministic floor hypothesis is replaced by *checkable mean/variance
    hypotheses on the weights*.  This is a probability-level composition; it
    plugs into the coefficient bridge through the same event-inclusion lemma as
    before.
-3. Re-run the Objective-7 ledger with the refined bound (optimizing the split
-   `t`) and record the before/after certified sample complexity against the
-   observed one — closing the loop between the theorem and the number it was
-   built to improve.
 
 This does not touch identifiability itself: it sharpens the constants of the
-finite-sample route only.  Failure modes to watch (per the failure log): the
-split must not silently assume the denominator's mean is large — `Σ μw` and
-`σw` remain caller-supplied checkable data, and the bound is stated for any
-`0 < t < Σ μw`.
+finite-sample route only.  The theorem deliberately does not assume the
+denominator's mean is large for free — `Σ μw`, `σw`, and the split point `t`
+remain caller-supplied checkable data, with the side condition
+`0 < t < Σ μw`.  The remaining numerical task is to re-run the Objective-7
+ledger with the refined bound (optimizing `t`) and record the before/after
+certified sample complexity against the observed one.
 
 ### Objective 5: handle feature-space training correctly — core infrastructure complete
 

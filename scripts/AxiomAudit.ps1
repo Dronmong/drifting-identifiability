@@ -67,6 +67,8 @@ $declarations = @(
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_sub_deletedDrift_norm_le',
   'DriftingIdentifiability.Algorithm2.algorithm2Drift_sub_deletedDrift_norm_le_eyeMask',
   'DriftingIdentifiability.SelfNormalized.selfNormalizedIndexed_meanSquare_le',
+  'DriftingIdentifiability.SelfNormalized.weightSum_lower_tail_prob_le',
+  'DriftingIdentifiability.SelfNormalized.selfNormalizedIndexed_deviation_prob_le',
   'DriftingIdentifiability.Algorithm2.deletedDrift_eq_massProduct_centroidDiff',
   'DriftingIdentifiability.Algorithm2.deletedAffinity_eq_rowScale_mul_deletedColumnWeight',
   'DriftingIdentifiability.Algorithm2.deletedColumnWeight_inl_eq',

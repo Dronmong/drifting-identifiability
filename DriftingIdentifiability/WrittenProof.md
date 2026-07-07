@@ -494,6 +494,55 @@ Richer (more than two atoms, non-atomic) certified classes for the modified
 kernel remain valuable model-design work, as does numerically discharging the
 eye-mask bias/floor hypotheses.
 
+## High-probability denominator refinement
+
+The Objective-7 numerics measured that the deterministic denominator floor
+`dmin = N·wmin` is the dominant slack of the certified chain.
+`DenominatorTail.lean` replaces it with checkable mean/variance data on the
+weights.  Write `W_l := w_l(Y_l) − μw_l` for the centered weights, `D := Σ_l
+w_l(Y_l)` for the random denominator, and `M := Σ_l μw_l`.
+
+**Lemma (weight-sum lower tail).**  If the `Y_l` are pairwise independent, the
+weights are bounded (`|w_l(Y_l)| ≤ wmax`), have means `μw_l` and centered
+second moments `E W_l² ≤ σw²`, then for every `t > 0`
+
+```text
+P{D < M − t} ≤ N σw² / t².
+```
+
+*Proof.*  `D − M = Σ W_l`, so on the event `{D < M − t}` we have
+`t < |Σ W_l|`.  The `W_l` are pairwise independent (composition of independent
+variables with measurable maps), mean zero (`∫W_l = μw_l − μw_l`), and have
+second moments `≤ σw²`; the reviewed sample-mean axiom gives
+`E|N⁻¹ Σ W_l|² ≤ σw²/N`, hence `E|Σ W_l|² ≤ N σw²`.  Markov on the squared
+norm (`meas_gt_le_meanSquare_div`) bounds `P{t < |Σ W_l|}` by
+`E|Σ W_l|²/t² ≤ N σw²/t²`.  ∎
+
+**Theorem (deviation probability with a random denominator).**  Under the
+hypotheses of the indexed ratio theorem — minus the deterministic floor — plus
+the weight mean/variance data above, for every `ε > 0` and `0 < t < M`
+
+```text
+P{ε < ‖ĉ − c‖} ≤ (2Nσ² + 2N²b²) / ((M − t)² ε²)  +  N σw² / t².
+```
+
+*Proof.*  Split on the denominator event.  If `D ≥ M − t > 0`, the pointwise
+ratio identity `ĉ − c = D⁻¹ • Σ Z_l` is valid and
+`‖ĉ − c‖ ≤ (M − t)⁻¹ ‖Σ Z_l‖`, so the deviation event is contained in
+`{(M − t)ε < ‖Σ Z_l‖}`; otherwise `ω` lies in the tail event of the lemma.
+Subadditivity of the measure gives two terms.  For the first, centering
+`Z_l = Z'_l + μ_l` gives the pointwise bound
+`‖Σ Z_l‖² ≤ 2‖Σ Z'_l‖² + 2(Nb)²`; the sample-mean axiom bounds
+`E‖Σ Z'_l‖² ≤ N σ²`, and Markov on the squared norm yields
+`(2Nσ² + 2N²b²)/((M−t)²ε²)`.  The second term is the lemma.  ∎
+
+Dependencies: the reviewed `sampleMean_meanSquare_le` axiom (twice: once for
+the vector summands, once for the scalar weights) and the axiom-free Markov
+lemma.  No step assumes identifiability, and no new axiom is introduced.  The
+data `(μw, σw)` are checkable expectations of the weight function alone; the
+theorem holds for every split point `t`, which the caller (or the numeric
+ledger) optimizes.
+
 ## Lean map and dependencies
 
 - Probability measures and normalized bridge:
