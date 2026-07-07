@@ -816,10 +816,14 @@ Findings:
    sliver of the simplex (validated against closed form): Objective 6's
    signed/affine treatment is the generic case, not a corner case.
 
-Remaining Objective-7 work: run the interaction-matrix diagnostics on *real*
-encoder features (requires the paper's pretrained encoders, outside this
-repo), and the FID/IS-level question of whether enforcing certified designs
-harms generation quality (requires training runs).
+Remaining Objective-7 work: run `numerics/real_feature_diagnostics.py` on
+*real* encoder features.  The runner is implemented and expects externally
+supplied `.npy`/`.npz` feature arrays, but this workspace currently contains no
+paper encoder checkpoints or real feature tensors.  Once those are supplied,
+the report will measure bare and column-reweighted interaction-matrix
+conditioning, finite dual-certificate constants, and softmax ESS in the actual
+feature geometry.  The FID/IS-level question of whether enforcing certified
+designs harms generation quality still requires training runs.
 
 ## What would complete the practical phase
 

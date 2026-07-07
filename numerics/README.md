@@ -11,6 +11,24 @@ uv run --with numpy python numerics/run_all.py
 
 Output: `numerics/RESULTS.md` (deterministic, seed 20260707).
 
+Real encoder features:
+
+```
+uv run --with numpy python numerics/real_feature_diagnostics.py \
+  --features path/to/features.npy \
+  --m 8 --num-probes 64 --taus 0.02 0.05 0.2
+```
+
+The feature file should be a `.npy` array of shape
+`[num_samples, feature_dim]`, or a `.npz` archive containing such an array
+(select with `--key`; otherwise the first array is used). The runner centers
+and rescales features by default so the sampled mean pairwise distance is one,
+matching the normalized units used elsewhere in this numerical ledger. It
+reports softmax effective sample sizes, bare interaction-matrix conditioning,
+and column-reweighted interaction-matrix conditioning. Large feature tensors
+and generated `REAL_FEATURES*.md` reports are ignored by Git by default; commit
+only small sanitized summaries intentionally.
+
 ## What this is and is not
 
 This suite does **not** prove anything.  It evaluates the *proved* formulas at
@@ -51,6 +69,7 @@ The operating point is taken from the paper, not chosen for convenience:
 | E3c delta | `maskPenaltyFactor`, `algorithm2Drift_sub_deletedDrift_norm_le` |
 | E5 chain | `columnReweighted01_coefficientStability` + `estimate_failure_le_meanSquare` + `selfNormalizedIndexed_meanSquare_le` + `selfNormalizedIndexed_deviation_prob_le` |
 | E6 gate | `CFGTargetNonnegative` / `cfgTargetCoefficients` (`CFGAffine.lean`) |
+| `real_feature_diagnostics.py` | empirical finite matrix for `InteractionFrameBound`; column-reweighted matrix for `ColumnReweightedMeanShiftFiniteSetup` |
 
 ## Experiments
 
@@ -71,3 +90,6 @@ The operating point is taken from the paper, not chosen for convenience:
   benchmark, and observed Monte-Carlo scaling.
 - **E6** — how often the CFG affine target is an actual probability vector at
   the paper's guidance scales.
+- **Real features** — `real_feature_diagnostics.py` runs the same frame and
+  Algorithm-2 column-reweighting diagnostics on externally supplied encoder
+  features.

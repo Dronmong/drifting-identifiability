@@ -288,6 +288,15 @@ paraphrase this as `q=p`, and do not convert the affine target to a probability
 law unless `CFGTargetNonnegative` (or an equivalent concrete nonnegativity
 proof) has been supplied.
 
+Objective 7 numerical diagnostics live in `numerics/`. `run_all.py` is the
+synthetic/paper-parameter ledger; `real_feature_diagnostics.py` consumes
+externally supplied `.npy`/`.npz` encoder features and reports the actual
+finite interaction-matrix conditioning, dual-certificate constants, softmax
+ESS, and column-reweighted diagnostics. Do not present synthetic diagnostics
+as evidence about the paper's real encoder, and do not claim the real-feature
+evaluation has been run unless an actual feature tensor or checkpoint is
+present.
+
 ## Conditional modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are
