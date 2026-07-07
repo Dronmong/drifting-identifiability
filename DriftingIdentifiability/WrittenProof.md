@@ -306,9 +306,48 @@ guarantee. `FiniteStability.lean` also proves
 `interactionFrameBound_of_strictPairScaling`, which transfers a frame certificate
 through positive strict-pair column scalings.
 
-What remains is concrete certification of that modified-kernel frame in useful
-model classes, plus the implementation self-mask as a separate perturbative
-correction.
+`ColumnReweightedTwoAtom.lean` discharges that certification exactly in the
+two-atom model class. Three observations make the frame certificate exact
+rather than perturbative:
+
+1. `algorithm2Kernel` is definitionally the paper's positive-bandwidth Laplace
+   kernel (`-‖x-y‖/τ = -(1/τ)‖x-y‖`), so the bare baseline is the already
+   studied paper kernel class.
+2. Against the two-point empirical reference, the interaction integral has the
+   kernel-generic closed form `basisInteraction_empirical2`, and the column
+   reweighting factor `1/sqrt(g(y))` depends only on the sample slot, which the
+   atoms pin to the support points `{0, 1}`. Hence
+
+   ```text
+   U^col_01(n) = (1/sqrt(g(0) g(1))) · U^bare_01(n)
+   ```
+
+   exactly (`inducedInteractionVector_columnReweighted01_eq_smul`), an
+   axiom-free identity. The transfer lemma
+   `interactionFrameBound_of_strictPairScaling` is instantiated with this
+   constant scale (`columnReweighted01_frameBound_of_bare`).
+3. Strict positivity of the column-reweighted kernel makes `U^col_01` nonzero,
+   so `interactionFrameBound_two` certifies the sharp constant `‖U^col_01‖`
+   directly. Since `g ≤ N` at positive temperature, the reweighting costs at
+   most a factor `N` against the bare constant
+   (`columnReweighted01_interactionNorm_ge`).
+
+The packaged setup `columnReweighted01Setup` discharges every analytic field
+(normalizer positivity from kernel positivity, integrability from the atomic
+reference, continuity of the reweighted kernel from positivity of the column
+mass), with the `B = 1` normalizer bound at the anchors because the column mass
+dominates its own anchor term (`k/sqrt(g) ≤ sqrt(k) ≤ 1`). The promoted
+theorems `columnReweighted01_identifies_of_probeEnergy_eq_zero`,
+`columnReweighted01_coefficientStability`, and
+`columnReweighted01_estimate_failure_le_meanSquare` give end-to-end
+identifiability, stability, and the high-probability finite-sample bridge for
+the concrete class, completing the chain: sampled no-mask Algorithm-2 centroids
+→ SNIS mean-square consistency → certified column-reweighted population field →
+`p = q`.
+
+What remains is the implementation self-mask as a separate perturbative
+correction, and richer (more than two atoms, non-atomic) certified classes for
+the modified kernel.
 
 ## Lean map and dependencies
 
@@ -326,11 +365,11 @@ correction.
 - Candidate legitimacy and regressions: `PopulationCandidate.lean` and
   `FailureCases.lean`.
 - Finite-sample bridge, Algorithm 2 structure, generic self-normalized
-  consistency, the no-mask Algorithm-2 SNIS specialization, and the
-  column-reweighted limiting-field bridge:
-  `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
-  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`, and
-  `ColumnReweightedMeanShift.lean`.
+  consistency, the no-mask Algorithm-2 SNIS specialization, the
+  column-reweighted limiting-field bridge, and its concrete two-atom certified
+  frame: `FiniteSampleBridge.lean`, `Algorithm2Estimator.lean`,
+  `SelfNormalizedConsistency.lean`, `Algorithm2SNIS.lean`,
+  `ColumnReweightedMeanShift.lean`, and `ColumnReweightedTwoAtom.lean`.
 
 The promoted theorem uses only the reviewed paper facts
 `equation_11_bilinear_mean_shift`,

@@ -383,7 +383,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask modified-field bridge complete; concrete frame/self-mask work remains
+### Objective 4: prove finite-sample guarantees for Algorithm 2 — no-mask route complete with a concrete certified frame; self-mask remains a documented perturbation
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -467,6 +467,37 @@ Progress (done, `FiniteSampleBridge.lean`):
   empirical/bare-kernel certificates to column-reweighted certificates when the
   modified kernel factors into positive per-support-point column factors.
 
+- **Concrete certified column-reweighted frame (two-atom class).**
+  `ColumnReweightedTwoAtom.lean` discharges the modified-kernel frame condition
+  exactly, closing the "prove an `InteractionFrameBound` for the actual
+  column-reweighted interaction vectors" item:
+  - `algorithm2Kernel_eq_laplaceKernel`: Algorithm 2's kernel *is* the paper's
+    positive-bandwidth Laplace kernel, so the bare baseline is the certified
+    paper kernel class.
+  - Against the two-atom empirical basis, the kernel-generic closed form
+    `basisInteraction_empirical2` pins the reweighting factor `1/sqrt(g(y))` to
+    the support atoms, so the modified interaction vector is an **exact**
+    strict-pair rescaling of the bare one:
+    `U^col_01 = (1/sqrt(g(0)g(1))) • U^bare_01`
+    (`inducedInteractionVector_columnReweighted01_eq_smul`, axiom-free), with
+    the transfer lemma instantiated in `columnReweighted01_frameBound_of_bare`
+    and the sharp norm identity in `columnReweighted01_interactionNorm_eq`.
+  - `columnReweighted01_interactionNorm_ge`: at positive temperature `g ≤ N`,
+    so the column reweighting costs at most a factor `N` (the anchor count) in
+    the frame constant — the explicit conditioning price of the column softmax.
+  - `columnReweighted01Setup` packages the complete certified population setup
+    (frame certified directly by kernel positivity via
+    `interactionFrameBound_two`; all analytic obligations discharged; `B = 1`
+    at the anchors because `k/sqrt(g) ≤ sqrt(k) ≤ 1` there).  The promoted
+    theorems `columnReweighted01_identifies_of_probeEnergy_eq_zero`,
+    `columnReweighted01_coefficientStability`, and
+    `columnReweighted01_estimate_failure_le_meanSquare` complete the chain:
+    sampled no-mask Algorithm-2 centroids → SNIS mean-square consistency →
+    certified column-reweighted population field → `p = q`, with an explicit
+    high-probability sample-complexity bound.  The end-to-end theorems depend
+    only on the three reviewed equation-11/31/antisymmetry paper axioms; the
+    rescaling identity itself is axiom-free.
+
 Estimator structure (done, `Algorithm2Estimator.lean`): the bridge above is
 estimator-*agnostic*.  This module discharges the estimator-specific facts about
 Algorithm 2's actual bi-softmax `compute_V` (`Paper.algorithm2Drift`) that hold
@@ -533,14 +564,21 @@ implementation corrections):
   `Algorithm2SNIS.lean`.
 
   The honest residual has been split cleanly.  The conditional modified-kernel
-  identifiability theorem is now formalized in `ColumnReweightedMeanShift.lean`.
-  What remains is to instantiate that condition in concrete model classes:
-  prove or numerically certify an `InteractionFrameBound` for the actual
-  column-reweighted interaction vectors, preferably via the new strict-pair
-  scaling lemma or a direct certificate.  Separately, the implementation
-  self-mask remains a perturbative `O(1/N)` correction rather than part of the
-  promoted no-mask theorem.  This route and the earlier obstruction are recorded
-  in `LoggedFailures.md` (2026-07-06 entry).
+  identifiability theorem is formalized in `ColumnReweightedMeanShift.lean`, and
+  `ColumnReweightedTwoAtom.lean` now **instantiates the condition concretely**:
+  the two-atom class carries a certified `InteractionFrameBound` for the actual
+  column-reweighted interaction vectors (exact strict-pair rescaling of the bare
+  Laplace family — no perturbation argument), completing the no-mask
+  sampled-estimator-to-identifiability chain in a concrete model class.  What
+  remains under Objective 4 is scoped and explicit:
+  - the implementation **self-mask** (`selfMask = true` with the `1e6` penalty)
+    is a perturbative `O(1/N)` correction relative to the promoted no-mask
+    theorems, not yet formalized;
+  - richer certified classes for the modified kernel (more than two atoms,
+    non-atomic bases) — the same design/conditioning work already recorded
+    under Objectives 3 and 7 for the bare kernel.
+  This route and the earlier obstruction are recorded in `LoggedFailures.md`
+  (2026-07-06 entry).
 
 ### Objective 5: handle feature-space training correctly
 

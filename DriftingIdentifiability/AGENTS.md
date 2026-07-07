@@ -234,10 +234,17 @@ then treats that weight as the population mean-shift kernel and proves
 identifiability/stability under an explicit modified-kernel
 `InteractionFrameBound`; `interactionFrameBound_of_strictPairScaling` is the
 preferred transfer tool when the modified vectors are positive pairwise
-rescalings of a certified baseline family. Do not claim this proves
-identifiability for the original bare mean-shift kernel, or for the self-masked
-implementation, until the bare-to-modified frame transfer and the self-mask
-perturbation are handled explicitly.
+rescalings of a certified baseline family. `ColumnReweightedTwoAtom.lean`
+discharges that frame condition concretely for the two-atom empirical basis:
+`algorithm2Kernel` is definitionally the paper Laplace kernel, the atoms pin
+the reweighting factor so the modified interaction vector is an exact
+strict-pair rescaling `U^col = (1/sqrt(g(0)g(1))) • U^bare` of the bare one,
+and `columnReweighted01Setup` certifies the sharp frame constant directly from
+kernel positivity (with `B = 1` at the anchors and an explicit `≥ bare/N`
+conditioning floor). Do not generalize that certificate beyond the two-atom
+class without a new frame proof, and do not claim any result for the
+self-masked implementation (`selfMask = true`): the self-mask remains an
+unformalized `O(1/N)` perturbation of the promoted no-mask theorems.
 
 ## Conditional modules
 
