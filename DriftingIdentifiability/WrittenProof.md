@@ -280,6 +280,29 @@ along measurable embeddings gives `p=q`.  For a finite family of features,
 matching every feature law plus one embedded feature is enough to lift back to
 source laws.
 
+The same module now handles heterogeneous feature families
+`φ_j : X → F_j`.  The exact lift is packaged as
+`HeterogeneousFeatureFamily.MeasureDetermining`: equality of every feature
+pushforward law implies equality of source laws.  This condition is not assumed
+silently; it is proved from one measurable embedding by
+`measureDetermining_of_embedding`, or must be supplied later by a concrete
+measure-determining theorem.
+
+For approximate feature matching, the project uses
+`FeatureStabilityCertificate`.  Given a source discrepancy `D_X`, feature
+discrepancies `D_j`, and a constant `C`, the certificate states
+
+```text
+D_X(p,q) ≤ C ∑_j D_j((φ_j)♯p, (φ_j)♯q).
+```
+
+Lean proves that per-feature bounds `D_j ≤ ε_j` imply
+`D_X(p,q) ≤ C∑_j ε_j`, and that zero feature discrepancies imply source-law
+equality whenever the chosen source discrepancy separates measures.  Thus
+approximate learned-feature claims must exhibit an actual stability
+certificate and useful constants; they are not consequences of feature matching
+alone.
+
 ## Finite-sample bridge and self-normalized consistency
 
 `FiniteSampleBridge.lean` separates the deterministic identifiability/stability

@@ -218,10 +218,19 @@ so future agents do not repeat equivalent mistakes.
   under `MeasurableEmbedding φ`; and
   `featureLaw_collision_distinct_source_diracs` records the exact non-injective
   Dirac collapse.
+- **Update (2026-07-07):** the approximate/heterogeneous repair is also
+  formalized. `HeterogeneousFeatureFamily` supports feature families with
+  different codomains, `MeasureDetermining` records the exact lift condition,
+  and `FeatureStabilityCertificate` is now the required route for approximate
+  lifting: a concrete source discrepancy must be controlled by concrete
+  feature-law discrepancies with a stated constant.  Small feature loss alone
+  still does not imply source-law closeness.
 - **Relevant Lean declarations/files:** `noninjectiveFeature_collapses_dirac`,
   `sourceMeasure_eq_of_featureLaw_eq`, `FeatureModel.law`,
   `FeatureModel.source_eq_of_law_eq`,
   `featureLaw_collision_distinct_source_diracs`,
+  `HeterogeneousFeatureFamily.MeasureDetermining`,
+  `HeterogeneousFeatureFamily.FeatureStabilityCertificate`,
   `FeatureSpaceIdentifiability.lean`.
 
 ---

@@ -626,7 +626,7 @@ Remaining work after the current Objective-4 implementation:
   This route and the earlier obstruction are recorded in `LoggedFailures.md`
   (2026-07-06 entry).
 
-### Objective 5: handle feature-space training correctly — baseline complete
+### Objective 5: handle feature-space training correctly — core infrastructure complete
 
 The current data-space theorem gives equality of data-space measures. In
 feature space, zero drift can generally identify only the pushforward laws.
@@ -648,12 +648,26 @@ Completed formally:
 - `featureLaw_collision_distinct_source_diracs` is the formal warning: in a
   measurable space that separates points, a non-injective feature collision
   gives distinct source Dirac laws with equal feature laws.
+- `HeterogeneousFeatureFamily` handles finite feature families whose feature
+  spaces differ by index, e.g. pixels, embeddings, logits, and auxiliary
+  statistics in one training objective.
+- `HeterogeneousFeatureFamily.MeasureDetermining` packages the exact
+  measure-determining condition for a heterogeneous family, and
+  `measureDetermining_of_embedding` proves it from one embedded feature.
+- `FeatureStabilityCertificate` is the quantitative replacement for exact
+  embedding: it certifies a real source discrepancy by a finite weighted sum of
+  feature-law discrepancies. `sourceDist_le_of_featureDist_le` turns per-feature
+  approximate bounds into a source-discrepancy bound, and
+  `source_eq_of_featureDist_zero_of_stability` recovers exact source equality
+  when the certified source discrepancy separates measures.
 
-This closes the basic logical guardrail for feature-space training. Remaining
-Objective-5 work is practical/quantitative: approximate lifting for nearly
-injective or information-losing learned features, heterogeneous feature spaces,
-and usable criteria showing when a learned representation is measure
-determining enough for the intended source-law conclusion.
+This closes the logical guardrail and the abstract quantitative route for
+feature-space training. Remaining Objective-5 work is now concrete
+instantiation: choose source and feature discrepancies (total variation,
+Wasserstein, MMD, task metrics, etc.), prove or estimate a usable
+`FeatureStabilityCertificate` for the actual representation, and evaluate
+whether the resulting constants are meaningful for learned non-injective
+features.
 
 ### Objective 6: treat CFG separately
 

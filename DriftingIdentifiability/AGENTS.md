@@ -267,9 +267,12 @@ default conclusion of any feature-space theorem is equality of feature laws
 `φ♯p = φ♯q`; source-law equality is promoted only through an explicit
 `MeasurableEmbedding φ` hypothesis (or one embedded feature in a finite feature
 family). A non-injective feature collision is formalized by distinct source
-Dirac laws with equal feature laws. Do not turn feature-space matching into
-`p=q` unless this lifting hypothesis, or a future independently verified
-measure-determining replacement, is present.
+Dirac laws with equal feature laws. Heterogeneous feature families are supported
+by `HeterogeneousFeatureFamily`; exact lifting may use an independently proved
+`MeasureDetermining` condition, and approximate lifting must pass through a
+`FeatureStabilityCertificate` controlling a stated source discrepancy by stated
+feature discrepancies. Do not turn feature-space matching into `p=q` unless one
+of these lifting hypotheses is present and independently justified.
 
 ## Conditional modules
 
