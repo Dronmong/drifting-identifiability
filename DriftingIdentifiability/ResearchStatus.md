@@ -865,6 +865,15 @@ Certified (2026-07-07, no new axioms):
   reconciliation: the literal two-step finite matrix implementation is a
   per-row common scaling of the weight-form estimator, and that common scaling
   cancels exactly in the centroid.
+- `threeStepWeight_rel_of_rowMass_rel` and
+  `balancedThreeStepCentroid_deviation_prob_le_of_mass_tails` implement the
+  fixed `t = 3` unrolling core: if both raw row masses and first-balanced row
+  masses obey explicit tail bounds around reference profiles, then the
+  realized `t = 3` centroid has a high-probability bridge to the
+  fixed-reference `t = 3` field.  The associated
+  `balancedThreeStepNormalizedDrift_deviation_prob_le_of_centroids` gives the
+  two-branch normalized drift assembly.  The primitive iid proof of the
+  first-balanced row-mass tails remains open and is now isolated.
 
 Toy-scale evidence (`SinkhornImplementation/RESULTS.md`, seed-deterministic):
 one balancing step reproduces the paper's estimator to `1e-16`; mass CV falls
@@ -875,8 +884,10 @@ measured in `numerics/` E5; particle descent on an unequal-mass 2-D target
 error in every initialization; signal-normalized dispersion favors moderate
 depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  The S6 guardrail
 check validates the `BalancedSampling.lean` perturbation constants on the
-two-atom testbed.  Open: finite unrolling for `t ≥ 3` and any at-scale (FID)
-claim.  The `t = 2` full-matrix reconciliation is now certified.
+two-atom testbed.  Open: primitive concentration for the first-balanced
+row-mass tails used by the conditional `t = 3` theorem, deeper `t ≥ 4`
+unrolling, and any at-scale (FID) claim.  The `t = 2` full-matrix
+reconciliation is certified.
 
 ## What would complete the practical phase
 

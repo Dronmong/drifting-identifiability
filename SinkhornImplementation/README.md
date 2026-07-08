@@ -40,6 +40,9 @@ uv run --with numpy python SinkhornImplementation/run_sinkhorn.py
 | `balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids` | positive/negative centroid bounds compose into a normalized two-branch drift bound |
 | `twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight` | literal two-step finite matrix affinity equals a per-row common factor times the weight-form `twoStepWeight` |
 | `twoStepBalancedMatrixCentroid_eq_weightCentroid` | the full matrix-form `t = 2` centroid equals the weight-form centroid used by the sampling theorem |
+| `threeStepWeight_rel_of_rowMass_rel` | deterministic relative-error propagation for the row-cancelled `t = 3` weights from raw and first-balanced row-mass errors |
+| `balancedThreeStepCentroid_deviation_prob_le_of_mass_tails` | fixed-depth `t = 3` centroid bridge assuming explicit raw/first-balanced row-mass tail bounds |
+| `balancedThreeStepNormalizedDrift_deviation_prob_le_of_centroids` | positive/negative `t = 3` centroid bounds compose into a normalized two-branch drift bound |
 
 Identifiability theorems use only the three reviewed equation-11/31/
 antisymmetry paper axioms; no new axioms anywhere.
@@ -73,10 +76,13 @@ antisymmetry paper axioms; no new axioms anywhere.
 - The algorithm balances over the random batch. The Lean track certifies the
   orbit of *fixed* positive rescalings and now proves a first sampling theorem
   for the realized `t = 2` centroid by concentrating the random row masses.
-  General `t >= 3` sampling theory is still future work.
+  A fixed `t = 3` bridge is now formalized conditional on tail bounds for the
+  first-balanced row masses; deriving those tails from primitive iid
+  assumptions, and general `t >= 4` sampling theory, remain future work.
 - The `t = 1` estimator's statistical theory (SNIS consistency etc.) is
   developed in the main track; the `t = 2` balanced centroid now has a
   high-probability bridge to a reference balanced population field, and two
   branch centroid bounds now assemble into a normalized drift bound. Full
   matrix reconciliation with the implementation form is certified for `t = 2`;
-  deeper unrolling remains extension work.
+  the `t = 3` unrolling core is certified with explicit level-1 mass-tail
+  hypotheses.

@@ -29,6 +29,10 @@ the existing weight-sum machinery concentrates.  The theorem chain:
 * `twoStepBalancedMatrixCentroid_eq_weightCentroid` — the full finite
   matrix-form two-step centroid equals the weight-form centroid used by the
   sampling theorem, because the remaining per-row factor cancels.
+* `balancedThreeStepCentroid_deviation_prob_le_of_mass_tails` — a fixed
+  `t = 3` bridge conditional on explicit tails for raw and first-balanced row
+  masses; the primitive proof of the first-balanced tails is intentionally
+  left as the isolated remaining concentration problem.
 
 No new axioms: the probabilistic inputs are the reviewed sample-mean axiom
 (through the existing lemmas); everything else is finite algebra.
@@ -349,6 +353,39 @@ theorem abs_sum_sub_sum_le_of_rel {ι : Type*} [Fintype ι]
         apply Finset.sum_congr rfl
         intro j _
         ring
+
+/-- Product version of relative-error propagation.  If each factor is close
+to a nonnegative reference factor, then the product is close with the usual
+`η + θ + ηθ` loss. -/
+theorem abs_mul_sub_mul_le_of_rel {a b abar bbar η θ : ℝ}
+    (hη0 : 0 ≤ η) (_hθ0 : 0 ≤ θ) (habar : 0 ≤ abar) (hbbar : 0 ≤ bbar)
+    (ha : |a - abar| ≤ η * abar) (hb : |b - bbar| ≤ θ * bbar) :
+    |a * b - abar * bbar| ≤ (η + θ + η * θ) * (abar * bbar) := by
+  have hterm :
+      a * b - abar * bbar =
+        (a - abar) * (b - bbar) + (a - abar) * bbar + abar * (b - bbar) := by
+    ring
+  rw [hterm]
+  calc
+    |(a - abar) * (b - bbar) + (a - abar) * bbar + abar * (b - bbar)|
+        ≤ |(a - abar) * (b - bbar)| +
+            |(a - abar) * bbar| + |abar * (b - bbar)| := by
+          calc
+            |(a - abar) * (b - bbar) + (a - abar) * bbar +
+                abar * (b - bbar)|
+                ≤ |(a - abar) * (b - bbar) + (a - abar) * bbar| +
+                    |abar * (b - bbar)| := abs_add_le _ _
+            _ ≤ |(a - abar) * (b - bbar)| + |(a - abar) * bbar| +
+                    |abar * (b - bbar)| := by
+                  nlinarith [abs_add_le ((a - abar) * (b - bbar))
+                    ((a - abar) * bbar)]
+    _ = |a - abar| * |b - bbar| + |a - abar| * bbar +
+          abar * |b - bbar| := by
+          rw [abs_mul, abs_mul, abs_mul, abs_of_nonneg hbbar, abs_of_nonneg habar]
+    _ ≤ (η * abar) * (θ * bbar) + (η * abar) * bbar +
+          abar * (θ * bbar) := by
+          gcongr
+    _ = (η + θ + η * θ) * (abar * bbar) := by ring
 
 end SelfNormalized
 
@@ -741,10 +778,480 @@ theorem twoStepBalancedMatrixCentroid_eq_weightCentroid
   rw [hsum, hsumY]
   simpa [w] using selfNormalizedCentroid_eq_of_common_scale lam w Y hlam_ne
 
+/-! ## B5: fixed `t = 3` finite unrolling core -/
+
+/-- Level-two numerator profile:
+`Σ_j k_j(y)/(sqrt(r_j) sqrt(q_j))`, where `r` is the raw row-mass profile and
+`q` is the first-balanced row-mass profile. -/
+noncomputable def twoStepLevelMass (anchors : Fin M → ℝ) (τ : ℝ)
+    (r q : Fin M → ℝ) (y : ℝ) : ℝ :=
+  ∑ j, algorithm2Kernel τ (anchors j) y *
+    ((Real.sqrt (r j))⁻¹ * (Real.sqrt (q j))⁻¹)
+
+/-- Column mass profile of the second balanced matrix, written in the
+row-cancelled coordinates used by the `t = 3` centroid. -/
+noncomputable def secondBalancedColumnProfile (anchors : Fin M → ℝ) (τ : ℝ)
+    (r q : Fin M → ℝ) (y : ℝ) : ℝ :=
+  twoStepLevelMass anchors τ r q y /
+    (Real.sqrt (Real.sqrt (algorithm2ColumnKernelMass anchors τ y)) *
+      Real.sqrt (balancedLevelMass anchors τ r y))
+
+/-- The `t = 3` per-sample weight after cancelling all per-anchor row factors
+in the row centroid. -/
+noncomputable def threeStepWeight (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (r q : Fin M → ℝ) (y : ℝ) : ℝ :=
+  twoStepWeight anchors τ i r y /
+    Real.sqrt (secondBalancedColumnProfile anchors τ r q y)
+
+theorem twoStepLevelMass_pos [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ) {r q : Fin M → ℝ}
+    (hr : ∀ j, 0 < r j) (hq : ∀ j, 0 < q j) (y : ℝ) :
+    0 < twoStepLevelMass anchors τ r q y := by
+  unfold twoStepLevelMass
+  exact Finset.sum_pos (fun j _ =>
+    mul_pos (algorithm2Kernel_pos τ (anchors j) y)
+      (mul_pos (inv_pos.mpr (Real.sqrt_pos.mpr (hr j)))
+        (inv_pos.mpr (Real.sqrt_pos.mpr (hq j))))) Finset.univ_nonempty
+
+theorem secondBalancedColumnProfile_pos [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ) {r q : Fin M → ℝ}
+    (hr : ∀ j, 0 < r j) (hq : ∀ j, 0 < q j) (y : ℝ) :
+    0 < secondBalancedColumnProfile anchors τ r q y := by
+  unfold secondBalancedColumnProfile
+  refine div_pos (twoStepLevelMass_pos anchors τ hr hq y) (mul_pos ?_ ?_)
+  · exact Real.sqrt_pos.mpr (Real.sqrt_pos.mpr
+      (algorithm2ColumnKernelMass_pos anchors τ y))
+  · exact Real.sqrt_pos.mpr (balancedLevelMass_pos anchors τ hr y)
+
+theorem threeStepWeight_pos [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M) {r q : Fin M → ℝ}
+    (hr : ∀ j, 0 < r j) (hq : ∀ j, 0 < q j) (y : ℝ) :
+    0 < threeStepWeight anchors τ i r q y := by
+  unfold threeStepWeight
+  exact div_pos (twoStepWeight_pos anchors τ i hr y)
+    (Real.sqrt_pos.mpr (secondBalancedColumnProfile_pos anchors τ hr hq y))
+
+theorem twoStepLevelMass_measurable (anchors : Fin M → ℝ) (τ : ℝ)
+    (r q : Fin M → ℝ) :
+    Measurable (twoStepLevelMass anchors τ r q) := by
+  unfold twoStepLevelMass
+  exact Finset.measurable_sum _ fun j _ =>
+    ((PaperFiniteIdentifiability.algorithm2Kernel_continuous_snd τ
+      (anchors j)).measurable).mul_const _
+
+theorem secondBalancedColumnProfile_measurable (anchors : Fin M → ℝ) (τ : ℝ)
+    (r q : Fin M → ℝ) :
+    Measurable (secondBalancedColumnProfile anchors τ r q) := by
+  unfold secondBalancedColumnProfile
+  refine (twoStepLevelMass_measurable anchors τ r q).div (Measurable.mul ?_ ?_)
+  · refine Real.continuous_sqrt.measurable.comp
+      (Real.continuous_sqrt.measurable.comp ?_)
+    unfold Algorithm2.algorithm2ColumnKernelMass
+    exact Finset.measurable_sum _ fun j _ =>
+      (PaperFiniteIdentifiability.algorithm2Kernel_continuous_snd τ
+        (anchors j)).measurable
+  · refine Real.continuous_sqrt.measurable.comp ?_
+    unfold balancedLevelMass
+    exact Finset.measurable_sum _ fun j _ =>
+      ((PaperFiniteIdentifiability.algorithm2Kernel_continuous_snd τ
+        (anchors j)).measurable).mul_const _
+
+theorem threeStepWeight_measurable (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (r q : Fin M → ℝ) :
+    Measurable (threeStepWeight anchors τ i r q) := by
+  unfold threeStepWeight
+  exact (twoStepWeight_measurable anchors τ i r).div
+    (Real.continuous_sqrt.measurable.comp
+      (secondBalancedColumnProfile_measurable anchors τ r q))
+
+/-- Relative error for the level-two numerator profile. -/
+theorem twoStepLevelMass_rel_of_rowMass_rel [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ)
+    {r q Mbar Qbar : Fin M → ℝ} {δ : ℝ}
+    (hδ0 : 0 ≤ δ) (hδ : δ ≤ 1 / 4)
+    (hMbar : ∀ j, 0 < Mbar j) (hQbar : ∀ j, 0 < Qbar j)
+    (hrrel : ∀ j, |r j - Mbar j| ≤ δ * Mbar j)
+    (hqrel : ∀ j, |q j - Qbar j| ≤ δ * Qbar j) (y : ℝ) :
+    |twoStepLevelMass anchors τ r q y -
+        twoStepLevelMass anchors τ Mbar Qbar y| ≤
+      5 * δ * twoStepLevelMass anchors τ Mbar Qbar y := by
+  unfold twoStepLevelMass
+  refine abs_sum_sub_sum_le_of_rel _ _ _
+    (fun j => (algorithm2Kernel_pos τ (anchors j) y).le) ?_
+  intro j
+  have hrinv := abs_inv_sqrt_sub_inv_sqrt_le (hMbar j) hδ0 (by linarith) (hrrel j)
+  have hqinv := abs_inv_sqrt_sub_inv_sqrt_le (hQbar j) hδ0 (by linarith) (hqrel j)
+  have hprod := abs_mul_sub_mul_le_of_rel
+    (by nlinarith : 0 ≤ 2 * δ) (by nlinarith : 0 ≤ 2 * δ)
+    (inv_nonneg.mpr (Real.sqrt_pos.mpr (hMbar j)).le)
+    (inv_nonneg.mpr (Real.sqrt_pos.mpr (hQbar j)).le)
+    hrinv hqinv
+  calc
+    |(Real.sqrt (r j))⁻¹ * (Real.sqrt (q j))⁻¹ -
+        (Real.sqrt (Mbar j))⁻¹ * (Real.sqrt (Qbar j))⁻¹|
+        ≤ (2 * δ + 2 * δ + (2 * δ) * (2 * δ)) *
+            ((Real.sqrt (Mbar j))⁻¹ * (Real.sqrt (Qbar j))⁻¹) := hprod
+    _ ≤ 5 * δ * ((Real.sqrt (Mbar j))⁻¹ * (Real.sqrt (Qbar j))⁻¹) := by
+        refine mul_le_mul_of_nonneg_right ?_ ?_
+        · nlinarith [hδ0, hδ]
+        · exact mul_nonneg
+            (inv_nonneg.mpr (Real.sqrt_pos.mpr (hMbar j)).le)
+            (inv_nonneg.mpr (Real.sqrt_pos.mpr (hQbar j)).le)
+
+/-- Relative error for the second balanced column profile. -/
+theorem secondBalancedColumnProfile_rel_of_rowMass_rel [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ)
+    {r q Mbar Qbar : Fin M → ℝ} {δ : ℝ}
+    (hδ0 : 0 ≤ δ) (hδ : δ ≤ 1 / 8)
+    (hMbar : ∀ j, 0 < Mbar j) (hQbar : ∀ j, 0 < Qbar j)
+    (hrrel : ∀ j, |r j - Mbar j| ≤ δ * Mbar j)
+    (hqrel : ∀ j, |q j - Qbar j| ≤ δ * Qbar j) (y : ℝ) :
+    |secondBalancedColumnProfile anchors τ r q y -
+        secondBalancedColumnProfile anchors τ Mbar Qbar y| ≤
+      12 * δ * secondBalancedColumnProfile anchors τ Mbar Qbar y := by
+  have hlevel : |balancedLevelMass anchors τ r y -
+      balancedLevelMass anchors τ Mbar y| ≤
+      (2 * δ) * balancedLevelMass anchors τ Mbar y := by
+    unfold balancedLevelMass
+    refine abs_sum_sub_sum_le_of_rel _ _ _
+      (fun j => (algorithm2Kernel_pos τ (anchors j) y).le) ?_
+    intro j
+    exact abs_inv_sqrt_sub_inv_sqrt_le (hMbar j) hδ0 (by linarith) (hrrel j)
+  have hlevelpos := balancedLevelMass_pos anchors τ hMbar y
+  have hlevelInv : |(Real.sqrt (balancedLevelMass anchors τ r y))⁻¹ -
+      (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹| ≤
+      (4 * δ) * (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹ := by
+    have h := abs_inv_sqrt_sub_inv_sqrt_le hlevelpos
+      (by nlinarith : (0 : ℝ) ≤ 2 * δ) (by nlinarith) hlevel
+    calc |(Real.sqrt (balancedLevelMass anchors τ r y))⁻¹ -
+        (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹|
+        ≤ 2 * (2 * δ) *
+          (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹ := h
+      _ = (4 * δ) *
+          (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹ := by ring
+  have htwo := twoStepLevelMass_rel_of_rowMass_rel anchors τ hδ0
+    (by linarith) hMbar hQbar hrrel hqrel y
+  have htwoPos := twoStepLevelMass_pos anchors τ hMbar hQbar y
+  have hprod := abs_mul_sub_mul_le_of_rel
+    (by nlinarith : 0 ≤ 5 * δ) (by nlinarith : 0 ≤ 4 * δ)
+    htwoPos.le (inv_nonneg.mpr (Real.sqrt_pos.mpr hlevelpos).le)
+    htwo hlevelInv
+  have hconst : 0 ≤ (Real.sqrt (Real.sqrt (algorithm2ColumnKernelMass anchors τ y)))⁻¹ :=
+    inv_nonneg.mpr (Real.sqrt_pos.mpr (Real.sqrt_pos.mpr
+      (algorithm2ColumnKernelMass_pos anchors τ y))).le
+  unfold secondBalancedColumnProfile
+  rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv, mul_inv]
+  set C := (Real.sqrt (Real.sqrt (algorithm2ColumnKernelMass anchors τ y)))⁻¹ with hC
+  set A := twoStepLevelMass anchors τ r q y with hA
+  set B := (Real.sqrt (balancedLevelMass anchors τ r y))⁻¹ with hB
+  set Abar := twoStepLevelMass anchors τ Mbar Qbar y with hAbar
+  set Bbar := (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹ with hBbar
+  change |A * (C * B) - Abar * (C * Bbar)| ≤ 12 * δ * (Abar * (C * Bbar))
+  have hCnonneg : 0 ≤ C := by
+    simp [C, hconst]
+  have hrewrite : A * (C * B) - Abar * (C * Bbar) = C * (A * B - Abar * Bbar) := by
+    ring
+  rw [hrewrite, abs_mul, abs_of_nonneg hCnonneg]
+  calc
+    C * |A * B - Abar * Bbar|
+        ≤ C *
+            ((5 * δ + 4 * δ + (5 * δ) * (4 * δ)) *
+              (Abar * Bbar)) := by
+          exact mul_le_mul_of_nonneg_left (by simpa [A, B, Abar, Bbar] using hprod) hCnonneg
+    _ ≤ C *
+            ((12 * δ) *
+              (Abar * Bbar)) := by
+          refine mul_le_mul_of_nonneg_left ?_ hCnonneg
+          refine mul_le_mul_of_nonneg_right ?_ ?_
+          · nlinarith [hδ0, hδ]
+          · exact mul_nonneg htwoPos.le
+              (inv_nonneg.mpr (Real.sqrt_pos.mpr hlevelpos).le)
+    _ = 12 * δ * (Abar * (C * Bbar)) := by ring
+
+/-- If both the raw row masses and first-balanced row masses are within
+relative `δ`, then the `t = 3` row-cancelled weights are within relative
+`32δ`.  Constants are intentionally loose. -/
+theorem threeStepWeight_rel_of_rowMass_rel [Nonempty (Fin M)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    {r q Mbar Qbar : Fin M → ℝ} {δ : ℝ}
+    (hδ0 : 0 ≤ δ) (hδ : δ ≤ 1 / 24)
+    (hMbar : ∀ j, 0 < Mbar j) (hQbar : ∀ j, 0 < Qbar j)
+    (hrrel : ∀ j, |r j - Mbar j| ≤ δ * Mbar j)
+    (hqrel : ∀ j, |q j - Qbar j| ≤ δ * Qbar j) (y : ℝ) :
+    |threeStepWeight anchors τ i r q y -
+        threeStepWeight anchors τ i Mbar Qbar y| ≤
+      32 * δ * threeStepWeight anchors τ i Mbar Qbar y := by
+  have hW2 := twoStepWeight_rel_of_rowMass_rel anchors τ i hδ0
+    (by linarith) hMbar hrrel y
+  have hprof := secondBalancedColumnProfile_rel_of_rowMass_rel anchors τ
+    hδ0 (by linarith) hMbar hQbar hrrel hqrel y
+  have hprofPos := secondBalancedColumnProfile_pos anchors τ hMbar hQbar y
+  have hprofInv : |(Real.sqrt (secondBalancedColumnProfile anchors τ r q y))⁻¹ -
+      (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹| ≤
+      (24 * δ) *
+        (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹ := by
+    have h := abs_inv_sqrt_sub_inv_sqrt_le hprofPos
+      (by nlinarith : (0 : ℝ) ≤ 12 * δ) (by nlinarith) hprof
+    calc |(Real.sqrt (secondBalancedColumnProfile anchors τ r q y))⁻¹ -
+        (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹|
+        ≤ 2 * (12 * δ) *
+          (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹ := h
+      _ = (24 * δ) *
+          (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹ := by ring
+  have hW2Pos := twoStepWeight_pos anchors τ i hMbar y
+  have hprod := abs_mul_sub_mul_le_of_rel
+    (by nlinarith : 0 ≤ 4 * δ) (by nlinarith : 0 ≤ 24 * δ)
+    hW2Pos.le (inv_nonneg.mpr (Real.sqrt_pos.mpr hprofPos).le)
+    hW2 hprofInv
+  unfold threeStepWeight
+  rw [div_eq_mul_inv, div_eq_mul_inv]
+  calc
+    |twoStepWeight anchors τ i r y *
+          (Real.sqrt (secondBalancedColumnProfile anchors τ r q y))⁻¹ -
+        twoStepWeight anchors τ i Mbar y *
+          (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹|
+        ≤ (4 * δ + 24 * δ + (4 * δ) * (24 * δ)) *
+          (twoStepWeight anchors τ i Mbar y *
+            (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹) := hprod
+    _ ≤ 32 * δ *
+          (twoStepWeight anchors τ i Mbar y *
+            (Real.sqrt (secondBalancedColumnProfile anchors τ Mbar Qbar y))⁻¹) := by
+        refine mul_le_mul_of_nonneg_right ?_ ?_
+        · nlinarith [hδ0, hδ]
+        · exact mul_nonneg hW2Pos.le
+            (inv_nonneg.mpr (Real.sqrt_pos.mpr hprofPos).le)
+
 /-- The realized (batch) row masses. -/
 noncomputable def realizedRowMass {Ω : Type*} (anchors : Fin M → ℝ) (τ : ℝ)
     (Y : Fin N → Ω → ℝ) (ω : Ω) : Fin M → ℝ :=
   fun j => ∑ s, algorithm2Kernel τ (anchors j) (Y s ω)
+
+/-- First-balanced row masses of a realized batch. -/
+noncomputable def realizedFirstBalancedRowMass {Ω : Type*} (anchors : Fin M → ℝ)
+    (τ : ℝ) (Y : Fin N → Ω → ℝ) (ω : Ω) : Fin M → ℝ :=
+  fun j => balancedMatrixRowMass
+    (balancedMatrixStep (balancedKernelMatrix anchors τ (fun s => Y s ω))) j
+
+/-- The realized `t = 3` balanced centroid in row-cancelled weight form. -/
+noncomputable def balancedThreeStepCentroid {Ω : Type*} (anchors : Fin M → ℝ)
+    (τ : ℝ) (i : Fin M) (Y : Fin N → Ω → ℝ) (ω : Ω) : ℝ :=
+  (∑ l, threeStepWeight anchors τ i
+      (realizedRowMass anchors τ Y ω) (realizedFirstBalancedRowMass anchors τ Y ω)
+      (Y l ω))⁻¹ •
+    ∑ l, threeStepWeight anchors τ i
+      (realizedRowMass anchors τ Y ω) (realizedFirstBalancedRowMass anchors τ Y ω)
+      (Y l ω) • Y l ω
+
+/-- Fixed-reference `t = 3` balanced centroid. -/
+noncomputable def balancedThreeStepReferenceCentroid {Ω : Type*}
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Mbar Qbar : Fin M → ℝ) (Y : Fin N → Ω → ℝ) (ω : Ω) : ℝ :=
+  (∑ l, threeStepWeight anchors τ i Mbar Qbar (Y l ω))⁻¹ •
+    ∑ l, threeStepWeight anchors τ i Mbar Qbar (Y l ω) • Y l ω
+
+/-- Normalized two-branch `t = 3` balanced drift. -/
+noncomputable def balancedThreeStepNormalizedDrift {Ω : Type*}
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Ypos : Fin Npos → Ω → ℝ) (Yneg : Fin Nneg → Ω → ℝ) (ω : Ω) : ℝ :=
+  balancedThreeStepCentroid anchors τ i Ypos ω -
+    balancedThreeStepCentroid anchors τ i Yneg ω
+
+/-- **Two-branch normalized drift assembly at `t = 3`.**  This is the same
+metric/event bookkeeping as the `t = 2` assembly theorem. -/
+theorem balancedThreeStepNormalizedDrift_deviation_prob_le_of_centroids
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Ypos : Fin Npos → Ω → ℝ) (Yneg : Fin Nneg → Ω → ℝ)
+    (cPos cNeg : ℝ) {εPos εNeg : ℝ} {Bpos Bneg : ℝ≥0∞}
+    (hpos : P {ω | εPos <
+        ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖} ≤ Bpos)
+    (hneg : P {ω | εNeg <
+        ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖} ≤ Bneg) :
+    P {ω | εPos + εNeg <
+        ‖balancedThreeStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖} ≤ Bpos + Bneg := by
+  have hsub :
+      {ω | εPos + εNeg <
+          ‖balancedThreeStepNormalizedDrift anchors τ i Ypos Yneg ω -
+            (cPos - cNeg)‖} ⊆
+        {ω | εPos <
+          ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖} ∪
+        {ω | εNeg <
+          ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖} := by
+    intro ω hω
+    simp only [Set.mem_setOf_eq, Set.mem_union] at hω ⊢
+    by_cases hp : εPos <
+        ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖
+    · exact Or.inl hp
+    · right
+      by_contra hn
+      have hp_le : ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖ ≤ εPos :=
+        le_of_not_gt hp
+      have hn_le : ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖ ≤ εNeg :=
+        le_of_not_gt hn
+      have hrewrite :
+          balancedThreeStepNormalizedDrift anchors τ i Ypos Yneg ω - (cPos - cNeg) =
+            (balancedThreeStepCentroid anchors τ i Ypos ω - cPos) -
+              (balancedThreeStepCentroid anchors τ i Yneg ω - cNeg) := by
+        unfold balancedThreeStepNormalizedDrift
+        ring
+      have htri : ‖balancedThreeStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖ ≤ εPos + εNeg := by
+        rw [hrewrite]
+        calc ‖(balancedThreeStepCentroid anchors τ i Ypos ω - cPos) -
+              (balancedThreeStepCentroid anchors τ i Yneg ω - cNeg)‖
+            ≤ ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖ +
+                ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖ := norm_sub_le _ _
+          _ ≤ εPos + εNeg := add_le_add hp_le hn_le
+      exact (not_lt_of_ge htri) hω
+  calc P {ω | εPos + εNeg <
+        ‖balancedThreeStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖}
+      ≤ P ({ω | εPos <
+          ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖} ∪
+        {ω | εNeg <
+          ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖}) := measure_mono hsub
+    _ ≤ P {ω | εPos <
+          ‖balancedThreeStepCentroid anchors τ i Ypos ω - cPos‖} +
+        P {ω | εNeg <
+          ‖balancedThreeStepCentroid anchors τ i Yneg ω - cNeg‖} := measure_union_le _ _
+    _ ≤ Bpos + Bneg := add_le_add hpos hneg
+
+/-- **Fixed-depth `t = 3` batch-dependence bridge.**  If the raw row masses
+and first-balanced row masses are both close to fixed reference profiles, then
+the realized `t = 3` centroid is close to the fixed-reference centroid.  The
+first-balanced mass tails are hypotheses: proving them from primitive iid
+assumptions is the remaining deeper concentration step. -/
+theorem balancedThreeStepCentroid_deviation_prob_le_of_mass_tails
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [Nonempty (Fin M)]
+    (hN : 0 < N)
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Y : Fin N → Ω → ℝ) (c : ℝ) (Mbar Qbar : Fin M → ℝ)
+    {R δ ε : ℝ} {Bref : ℝ≥0∞} (B0 B1 : Fin M → ℝ≥0∞)
+    (hR : 0 ≤ R) (hδ0 : 0 < δ) (hδ : δ ≤ 1 / 64)
+    (hMbar : ∀ j, 0 < Mbar j) (hQbar : ∀ j, 0 < Qbar j)
+    (hYbd : ∀ l ω, ‖Y l ω - c‖ ≤ R)
+    (href : P {ω | ε <
+        ‖balancedThreeStepReferenceCentroid anchors τ i Mbar Qbar Y ω - c‖} ≤ Bref)
+    (hrow0tail : ∀ j, P {ω |
+        δ * Mbar j < |realizedRowMass anchors τ Y ω j - Mbar j|} ≤ B0 j)
+    (hrow1tail : ∀ j, P {ω |
+        δ * Qbar j < |realizedFirstBalancedRowMass anchors τ Y ω j - Qbar j|} ≤ B1 j) :
+    P {ω | ε + 128 * δ * R <
+        ‖balancedThreeStepCentroid anchors τ i Y ω - c‖} ≤
+      (Bref + ∑ j, B0 j) + ∑ j, B1 j := by
+  let Cref : Ω → ℝ := fun ω =>
+    balancedThreeStepReferenceCentroid anchors τ i Mbar Qbar Y ω
+  let Brow0 : Fin M → Set Ω := fun j =>
+    {ω | δ * Mbar j < |realizedRowMass anchors τ Y ω j - Mbar j|}
+  let Brow1 : Fin M → Set Ω := fun j =>
+    {ω | δ * Qbar j < |realizedFirstBalancedRowMass anchors τ Y ω j - Qbar j|}
+  haveI : Nonempty (Fin N) := ⟨⟨0, hN⟩⟩
+  have hpert : ∀ ω, (∀ j, ω ∉ Brow0 j) → (∀ j, ω ∉ Brow1 j) →
+      ‖balancedThreeStepCentroid anchors τ i Y ω - Cref ω‖ ≤ 128 * δ * R := by
+    intro ω hgood0 hgood1
+    have hδnonneg : 0 ≤ δ := hδ0.le
+    have heta0 : 0 ≤ 32 * δ := by nlinarith
+    have heta1 : 32 * δ < 1 := by nlinarith [hδ]
+    have hrelω : ∀ l,
+        |threeStepWeight anchors τ i
+            (realizedRowMass anchors τ Y ω) (realizedFirstBalancedRowMass anchors τ Y ω)
+            (Y l ω) -
+          threeStepWeight anchors τ i Mbar Qbar (Y l ω)| ≤
+        (32 * δ) * threeStepWeight anchors τ i Mbar Qbar (Y l ω) := by
+      intro l
+      refine threeStepWeight_rel_of_rowMass_rel anchors τ i hδnonneg
+        (by linarith) hMbar hQbar ?_ ?_ (Y l ω)
+      · intro j
+        have hj := hgood0 j
+        simp only [Brow0, Set.mem_setOf_eq, not_lt] at hj
+        exact hj
+      · intro j
+        have hj := hgood1 j
+        simp only [Brow1, Set.mem_setOf_eq, not_lt] at hj
+        exact hj
+    have hdiam : ∀ s t, ‖Y s ω - Y t ω‖ ≤ 2 * R := by
+      intro s t
+      have hrewrite : Y s ω - Y t ω = (Y s ω - c) - (Y t ω - c) := by ring
+      rw [hrewrite]
+      calc ‖(Y s ω - c) - (Y t ω - c)‖
+          ≤ ‖Y s ω - c‖ + ‖Y t ω - c‖ := norm_sub_le _ _
+        _ ≤ R + R := add_le_add (hYbd s ω) (hYbd t ω)
+        _ = 2 * R := by ring
+    have hcent := selfNormalizedCentroid_relative_perturbation
+      (fun l => threeStepWeight anchors τ i
+        (realizedRowMass anchors τ Y ω) (realizedFirstBalancedRowMass anchors τ Y ω)
+        (Y l ω))
+      (fun l => threeStepWeight anchors τ i Mbar Qbar (Y l ω))
+      (fun l => Y l ω) heta0 heta1
+      (fun l => threeStepWeight_pos anchors τ i hMbar hQbar (Y l ω))
+      hrelω hdiam
+    have hsmall :
+        (32 * δ) * (2 * R) / (1 - 32 * δ) ≤ 128 * δ * R := by
+      have hden : (1 / 2 : ℝ) ≤ 1 - 32 * δ := by nlinarith [hδ]
+      have hnum : 0 ≤ 64 * δ * R := by nlinarith [hδnonneg, hR]
+      calc (32 * δ) * (2 * R) / (1 - 32 * δ)
+          = (64 * δ * R) / (1 - 32 * δ) := by ring
+        _ ≤ (64 * δ * R) / (1 / 2 : ℝ) :=
+            div_le_div_of_nonneg_left hnum (by norm_num) hden
+        _ = 128 * δ * R := by ring
+    simpa [balancedThreeStepCentroid, balancedThreeStepReferenceCentroid, Cref]
+      using le_trans hcent hsmall
+  have hsub :
+      {ω | ε + 128 * δ * R <
+          ‖balancedThreeStepCentroid anchors τ i Y ω - c‖} ⊆
+        ({ω | ε < ‖Cref ω - c‖} ∪ ⋃ j, Brow0 j) ∪ ⋃ j, Brow1 j := by
+    intro ω hω
+    simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_iUnion] at hω ⊢
+    by_cases hgood0 : ∀ j, ω ∉ Brow0 j
+    · by_cases hgood1 : ∀ j, ω ∉ Brow1 j
+      · left
+        left
+        have hgap := hpert ω hgood0 hgood1
+        have htri : ‖balancedThreeStepCentroid anchors τ i Y ω - c‖ ≤
+            ‖balancedThreeStepCentroid anchors τ i Y ω - Cref ω‖ +
+              ‖Cref ω - c‖ := by
+          have hrewrite : balancedThreeStepCentroid anchors τ i Y ω - c =
+              (balancedThreeStepCentroid anchors τ i Y ω - Cref ω) + (Cref ω - c) := by
+            ring
+          rw [hrewrite]
+          exact norm_add_le _ _
+        have hupper : ‖balancedThreeStepCentroid anchors τ i Y ω - c‖ ≤
+            128 * δ * R + ‖Cref ω - c‖ := by linarith
+        linarith
+      · right
+        push Not at hgood1
+        exact hgood1
+    · left
+      right
+      push Not at hgood0
+      exact hgood0
+  have hbad0 : P (⋃ j, Brow0 j) ≤ ∑ j, B0 j := by
+    calc P (⋃ j, Brow0 j) ≤ ∑ j, P (Brow0 j) :=
+        measure_iUnion_fintype_le P Brow0
+      _ ≤ ∑ j, B0 j :=
+        Finset.sum_le_sum fun j _ => by
+          simpa [Brow0] using hrow0tail j
+  have hbad1 : P (⋃ j, Brow1 j) ≤ ∑ j, B1 j := by
+    calc P (⋃ j, Brow1 j) ≤ ∑ j, P (Brow1 j) :=
+        measure_iUnion_fintype_le P Brow1
+      _ ≤ ∑ j, B1 j :=
+        Finset.sum_le_sum fun j _ => by
+          simpa [Brow1] using hrow1tail j
+  have hrefrow0 :
+      P ({ω | ε < ‖Cref ω - c‖} ∪ ⋃ j, Brow0 j) ≤
+        P {ω | ε < ‖Cref ω - c‖} + P (⋃ j, Brow0 j) :=
+    measure_union_le _ _
+  calc P {ω | ε + 128 * δ * R <
+          ‖balancedThreeStepCentroid anchors τ i Y ω - c‖}
+      ≤ P (({ω | ε < ‖Cref ω - c‖} ∪ ⋃ j, Brow0 j) ∪ ⋃ j, Brow1 j) :=
+        measure_mono hsub
+    _ ≤ P ({ω | ε < ‖Cref ω - c‖} ∪ ⋃ j, Brow0 j) + P (⋃ j, Brow1 j) :=
+        measure_union_le _ _
+    _ ≤ (P {ω | ε < ‖Cref ω - c‖} + P (⋃ j, Brow0 j)) + P (⋃ j, Brow1 j) := by
+        exact add_le_add hrefrow0 le_rfl
+    _ ≤ (Bref + ∑ j, B0 j) + ∑ j, B1 j := by
+        exact add_le_add (add_le_add (by simpa [Cref] using href) hbad0) hbad1
 
 /-- The realized two-step balanced centroid (weight form; the per-anchor
 balancing factor cancels by `selfNormalizedCentroid_eq_of_common_scale`). -/

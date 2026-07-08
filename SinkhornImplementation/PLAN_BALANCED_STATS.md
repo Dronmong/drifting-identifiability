@@ -161,6 +161,28 @@ Implemented in `BalancedSampling.lean` as:
   cancels, so the full matrix-form centroid equals the weight-form centroid
   used by the B3 sampling theorem.
 
+### B5. Fixed `t = 3` unrolling core
+
+Implemented the next finite unrolling layer without claiming a uniform
+all-depth theorem:
+
+- `twoStepLevelMass`, `secondBalancedColumnProfile`, and `threeStepWeight`
+  express the row-cancelled `t = 3` centroid weights.
+- `twoStepLevelMass_rel_of_rowMass_rel`,
+  `secondBalancedColumnProfile_rel_of_rowMass_rel`, and
+  `threeStepWeight_rel_of_rowMass_rel` prove deterministic relative-error
+  propagation through the extra balancing level (`32*delta`, deliberately
+  loose).
+- `balancedThreeStepCentroid_deviation_prob_le_of_mass_tails` gives the
+  high-probability bridge for the realized `t = 3` centroid, assuming explicit
+  tails for both raw row masses and first-balanced row masses.
+- `balancedThreeStepNormalizedDrift_deviation_prob_le_of_centroids` assembles
+  positive/negative `t = 3` centroid bounds into a normalized drift bound.
+
+Honest residual: the primitive iid proof of the first-balanced row-mass tails
+is still open.  This is now isolated as a concentration lemma rather than
+entangled with the `t = 3` algebra.
+
 ## Audit and docs
 
 - No new axioms anywhere (B0 uses the reviewed sample-mean axiom via the
@@ -172,6 +194,8 @@ Implemented in `BalancedSampling.lean` as:
   `Algorithm2`),
   `Algorithm2.twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight`,
   `Algorithm2.twoStepBalancedMatrixCentroid_eq_weightCentroid`,
+  `Algorithm2.threeStepWeight_rel_of_rowMass_rel`,
+  `Algorithm2.balancedThreeStepCentroid_deviation_prob_le_of_mass_tails`,
   `Algorithm2.balancedTwoStepCentroid_deviation_prob_le`.
 - `scripts/Check.ps1` green; `#print axioms`: B1/B2 foundations-only, B0/B3
   foundations + `sampleMean_meanSquare_le`.
@@ -184,9 +208,9 @@ Implemented in `BalancedSampling.lean` as:
 
 ## Honest scope statements (repeat in all write-ups)
 
-- This is `t = 2` with the level-1 coupling handled exactly; general `t`
-  follows by the same induction (each level's masses are bounded sums of the
-  previous level's quantities) but is not formalized here.
+- This is fully closed at `t = 2`.  The fixed `t = 3` algebra/probability
+  bridge is formalized conditional on first-balanced row-mass tail bounds;
+  deriving those tails from primitive iid hypotheses remains open.
 - Fixed anchors, one centroid branch (negative); the positive branch and the
   two-branch drift assembly compose exactly as in
   `DeletedEstimatorConsistency` / `meanSquare_sub_sub_le_two_add`.
@@ -202,6 +226,7 @@ Implemented in `BalancedSampling.lean` as:
 - [x] B3 defs + balancedTwoStepCentroid_deviation_prob_le
 - [x] Two-branch normalized drift assembly
 - [x] B4 full-matrix reconciliation (optional)
+- [x] B5 fixed t=3 unrolling core with explicit level-1 mass-tail hypotheses
 - [x] Audit entries + Check.ps1 + #print axioms
 - [x] S6 numeric validation of constants
 - [x] Docs updated
