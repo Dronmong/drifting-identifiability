@@ -184,12 +184,13 @@ algebra; B4 upgrades it to a theorem.
 
 ## Checklist
 
-- [ ] PLAN_BALANCED_STATS.md committed
-- [ ] B0 two-sided weight-sum deviation
-- [ ] B1 centroid relative perturbation (+ in-hull sub-lemma)
-- [ ] B2a/B2b/B2c relative-error toolkit
-- [ ] B3 defs + balancedTwoStepCentroid_deviation_prob_le
+- [x] PLAN_BALANCED_STATS.md committed
+- [x] B0 two-sided weight-sum deviation
+- [x] B1 centroid relative perturbation (+ in-hull sub-lemma)
+- [x] B2a/B2b/B2c relative-error toolkit
+- [x] B3 defs + balancedTwoStepCentroid_deviation_prob_le
 - [ ] B4 full-matrix reconciliation (optional)
-- [ ] Audit entries + Check.ps1 + #print axioms
+- [x] Audit entries + Check.ps1 + #print axioms
 - [ ] S6 numeric validation of constants (optional)
-- [ ] Docs + memory + final commit
+- [x] Docs updated
+- [ ] Final commit

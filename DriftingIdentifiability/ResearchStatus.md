@@ -847,6 +847,15 @@ Certified (2026-07-07, no new axioms):
   identity `inducedInteractionVector_sinkhornOrbit01_eq` is axiom-free.
 - `oneStepBalanced01Setup`: the explicit one-full-step kernel
   `k/sqrt(r(x)·g(y))`.
+- `BalancedSampling.lean` closes the first batch-dependence theorem for the
+  extension: `balancedTwoStepCentroid_deviation_prob_le` proves a
+  high-probability deviation bound for the realized `t = 2` balanced centroid.
+  The proof decomposes the random scaling gap into two-sided row-mass
+  concentration (`weightSum_deviation_prob_le`), deterministic relative
+  centroid perturbation (`selfNormalizedCentroid_relative_perturbation`), and
+  fixed-weight SNIS deviation.  It uses only the reviewed
+  `sampleMean_meanSquare_le` statistical axiom; the perturbation algebra is
+  axiom-free.
 
 Toy-scale evidence (`SinkhornImplementation/RESULTS.md`, seed-deterministic):
 one balancing step reproduces the paper's estimator to `1e-16`; mass CV falls
@@ -855,9 +864,10 @@ denominators deterministic — removing the dominant certified-chain slack
 measured in `numerics/` E5; particle descent on an unequal-mass 2-D target
 (the paper's Figure-3 methodology) shows `t = 3` beating `t = 1` on mode-mass
 error in every initialization; signal-normalized dispersion favors moderate
-depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  Open: sampling
-theory for balanced affinities (`t ≥ 2`), batch-dependence of the realized
-scalings, and any at-scale (FID) claim.
+depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  Open: full
+positive/negative drift assembly for the `t = 2` sampling theorem, finite
+unrolling for `t ≥ 3`, full-matrix reconciliation with the implementation
+form, and any at-scale (FID) claim.
 
 ## What would complete the practical phase
 

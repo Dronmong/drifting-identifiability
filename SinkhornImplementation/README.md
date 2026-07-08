@@ -19,6 +19,7 @@ balancing depth `t` as a design dimension (`t = 1` is the paper,
 | `run_sinkhorn.py` | experiments S0-S4, writes `RESULTS.md` |
 | `RESULTS.md` | generated report (seed 20260707) |
 | `DriftingIdentifiability/SinkhornBalanced.lean` | certified theory (lives in the audited source tree, marked as extension) |
+| `DriftingIdentifiability/BalancedSampling.lean` | certified `t = 2` balanced-affinity sampling theorem |
 
 Run:
 
@@ -35,6 +36,7 @@ uv run --with numpy python SinkhornImplementation/run_sinkhorn.py
 | `inducedInteractionVector_sinkhornOrbit01_eq` | exact orbit rescaling identity `U_orbit(n) = u(x_n)^2 v(0) v(1) U_bare(n)`; axiom-free; verified numerically to 1e-17 (S4) |
 | `sinkhornOrbit01Setup` / `sinkhornOrbit01_identifies_of_probeEnergy_eq_zero` | certified two-atom identifiability for **every** positive rescaling `u(x) k(x,y) v(y)` — the whole Sinkhorn orbit at once |
 | `oneStepBalanced01Setup` / `oneStepBalanced01_identifies_of_probeEnergy_eq_zero` | the explicit one-full-balancing-step kernel `k/sqrt(r(x) g(y))` |
+| `balancedTwoStepCentroid_deviation_prob_le` | high-probability deviation bound for the realized `t = 2` batch-balanced centroid, reducing batch-dependence to row-mass concentration plus fixed-weight SNIS |
 
 Identifiability theorems use only the three reviewed equation-11/31/
 antisymmetry paper axioms; no new axioms anywhere.
@@ -62,10 +64,11 @@ antisymmetry paper axioms; no new axioms anywhere.
 
 - All empirical results are toy scale (1-D two-atom, 2-D particle descent);
   no FID/ImageNet claims are made or implied.
-- The algorithm balances over the random batch; the Lean track certifies the
-  orbit of *fixed* positive rescalings, which contains every realized iterate
-  but does not model the batch-dependence of the scalings themselves.
+- The algorithm balances over the random batch. The Lean track certifies the
+  orbit of *fixed* positive rescalings and now proves a first sampling theorem
+  for the realized `t = 2` centroid by concentrating the random row masses.
+  General `t >= 3` sampling theory is still future work.
 - The `t = 1` estimator's statistical theory (SNIS consistency etc.) is
-  developed in the main track; the `t >= 2` estimators inherit the certified
-  *population* identifiability from the orbit theorem, but their sampling
-  theory (balanced-affinity concentration) is future work.
+  developed in the main track; the `t = 2` balanced centroid now has a
+  high-probability bridge to a reference balanced population field. Full
+  drift assembly for both branches and deeper unrolling remain extension work.
