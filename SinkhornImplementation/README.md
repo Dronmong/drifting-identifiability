@@ -37,6 +37,7 @@ uv run --with numpy python SinkhornImplementation/run_sinkhorn.py
 | `sinkhornOrbit01Setup` / `sinkhornOrbit01_identifies_of_probeEnergy_eq_zero` | certified two-atom identifiability for **every** positive rescaling `u(x) k(x,y) v(y)` — the whole Sinkhorn orbit at once |
 | `oneStepBalanced01Setup` / `oneStepBalanced01_identifies_of_probeEnergy_eq_zero` | the explicit one-full-balancing-step kernel `k/sqrt(r(x) g(y))` |
 | `balancedTwoStepCentroid_deviation_prob_le` | high-probability deviation bound for the realized `t = 2` batch-balanced centroid, reducing batch-dependence to row-mass concentration plus fixed-weight SNIS |
+| `balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids` | positive/negative centroid bounds compose into a normalized two-branch drift bound |
 
 Identifiability theorems use only the three reviewed equation-11/31/
 antisymmetry paper axioms; no new axioms anywhere.
@@ -59,6 +60,9 @@ antisymmetry paper axioms; no new axioms anywhere.
   matrices; the biscaling transfer bound is valid at every depth; the *direct*
   sharp constant grows ~18x along the orbit (balancing amplifies weak
   cross-mode interactions).
+- **S6**: on the `t = 2` row-mass good event, the observed weight and centroid
+  perturbations are far below the explicit Lean constants (`4 delta` and
+  `16 delta R`) on the two-atom testbed.
 
 ## Honest limitations
 
@@ -70,5 +74,7 @@ antisymmetry paper axioms; no new axioms anywhere.
   General `t >= 3` sampling theory is still future work.
 - The `t = 1` estimator's statistical theory (SNIS consistency etc.) is
   developed in the main track; the `t = 2` balanced centroid now has a
-  high-probability bridge to a reference balanced population field. Full
-  drift assembly for both branches and deeper unrolling remain extension work.
+  high-probability bridge to a reference balanced population field, and two
+  branch centroid bounds now assemble into a normalized drift bound. Full
+  matrix reconciliation with the implementation form and deeper unrolling
+  remain extension work.

@@ -856,6 +856,10 @@ Certified (2026-07-07, no new axioms):
   fixed-weight SNIS deviation.  It uses only the reviewed
   `sampleMean_meanSquare_le` statistical axiom; the perturbation algebra is
   axiom-free.
+- `balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids` supplies the
+  two-branch normalized drift assembly: positive and negative centroid
+  high-probability bounds imply a high-probability bound for their difference.
+  This closes the non-matrix normalized `t = 2` statistical bridge.
 
 Toy-scale evidence (`SinkhornImplementation/RESULTS.md`, seed-deterministic):
 one balancing step reproduces the paper's estimator to `1e-16`; mass CV falls
@@ -864,10 +868,10 @@ denominators deterministic — removing the dominant certified-chain slack
 measured in `numerics/` E5; particle descent on an unequal-mass 2-D target
 (the paper's Figure-3 methodology) shows `t = 3` beating `t = 1` on mode-mass
 error in every initialization; signal-normalized dispersion favors moderate
-depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  Open: full
-positive/negative drift assembly for the `t = 2` sampling theorem, finite
-unrolling for `t ≥ 3`, full-matrix reconciliation with the implementation
-form, and any at-scale (FID) claim.
+depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  The S6 guardrail
+check validates the `BalancedSampling.lean` perturbation constants on the
+two-atom testbed.  Open: finite unrolling for `t ≥ 3`, full-matrix
+reconciliation with the implementation form, and any at-scale (FID) claim.
 
 ## What would complete the practical phase
 

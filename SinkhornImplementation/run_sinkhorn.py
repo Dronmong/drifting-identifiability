@@ -165,9 +165,10 @@ def s3_particles(rng) -> None:
     weights = np.array([0.3, 0.7])
     out("| init | t | err @ step 100 | err @ step 300 | mean err (last 100) |")
     out("|------|---|----------------|----------------|----------------------|")
+    init_seed = {"between": 101, "far": 202, "collapsed": 303}
     for init in ("between", "far", "collapsed"):
         for t in (1, 3):
-            r2 = np.random.default_rng(20260707 + hash(init) % 1000)
+            r2 = np.random.default_rng(20260707 + init_seed[init])
             traj = sk.particle_descent(
                 weights, centers, 0.5, init, 400, 400, 300, 0.5, 0.2, t, r2
             )
@@ -234,6 +235,69 @@ def s4_certified(rng) -> None:
     out("rides along the whole orbit, as proved in `SinkhornBalanced.lean`.")
 
 
+# ----------------------------------------------------------------------------
+# S6. Numerical validation of the BalancedSampling.lean constants
+# ----------------------------------------------------------------------------
+
+
+def _two_step_weights(anchors: np.ndarray, tau: float, i: int, row_mass, y):
+    """Weight from `BalancedSampling.lean::twoStepWeight` for scalar y."""
+    y = np.asarray(y, dtype=float)
+    K_y = np.exp(-np.abs(anchors[:, None] - y[None, :]) / tau)
+    g = K_y.sum(axis=0)
+    h = (K_y / np.sqrt(row_mass)[:, None]).sum(axis=0)
+    return K_y[i] / (np.sqrt(np.sqrt(g)) * np.sqrt(h))
+
+
+def s6_balanced_sampling_constants(rng) -> None:
+    sec("S6. BalancedSampling constants: row-mass event -> weight/centroid bounds")
+    out("Monte-Carlo sanity check for the Lean theorem")
+    out("`balancedTwoStepCentroid_deviation_prob_le` at `t = 2`.")
+    out("We condition on the good event")
+    out("`|r_j - Mbar_j| <= delta Mbar_j` for all anchors, then check")
+    out("`|W - Wbar| <= 4 delta Wbar` and centroid gap `<= 16 delta R`.")
+    out("")
+    anchors = np.array([0.0, 0.3, 1.0])
+    atom_weights = np.array([0.3, 0.7])
+    atoms = np.array([0.0, 1.0])
+    tau = 0.2
+    i_anchor = 1
+    n = 512
+    reps = 500
+    delta = 1.0 / 8.0
+    c = 0.5
+    R_ball = 0.5
+    K_atoms = np.exp(-np.abs(anchors[:, None] - atoms[None, :]) / tau)
+    mbar = n * (K_atoms @ atom_weights)
+    good = 0
+    max_rel_over = 0.0
+    max_centroid_over = 0.0
+    for _ in range(reps):
+        y = dl.sample_two_atom(atom_weights, n, rng)
+        K_sample = np.exp(-np.abs(anchors[:, None] - y[None, :]) / tau)
+        r = K_sample.sum(axis=1)
+        rel = np.max(np.abs(r - mbar) / mbar)
+        if rel > delta:
+            continue
+        good += 1
+        w = _two_step_weights(anchors, tau, i_anchor, r, y)
+        wbar = _two_step_weights(anchors, tau, i_anchor, mbar, y)
+        rel_w = np.max(np.abs(w - wbar) / np.maximum(wbar, 1e-300))
+        cref = float(np.dot(wbar, y) / wbar.sum())
+        creal = float(np.dot(w, y) / w.sum())
+        max_rel_over = max(max_rel_over, rel_w / (4.0 * delta))
+        max_centroid_over = max(
+            max_centroid_over, abs(creal - cref) / (16.0 * delta * R_ball)
+        )
+    out(f"- reps: `{reps}`, good-event reps: `{good}` (`delta = 1/8`, N = {n})")
+    out(f"- max observed weight ratio / theorem bound: `{max_rel_over:.3f}`")
+    out(f"- max observed centroid-gap ratio / theorem bound: `{max_centroid_over:.3f}`")
+    out("")
+    out("Ratios below 1 validate the explicit constants used by the Lean")
+    out("finite-sample theorem on this two-atom testbed.  The constants are")
+    out("deliberately loose; this is a guardrail check, not a tuning claim.")
+
+
 def main() -> None:
     t0 = time.time()
     rng = np.random.default_rng(20260707)
@@ -248,6 +312,7 @@ def main() -> None:
     s2_mass(rng)
     s3_particles(rng)
     s4_certified(rng)
+    s6_balanced_sampling_constants(rng)
     R.append("")
     R.append(f"_Runtime: {time.time() - t0:.1f}s._")
     OUT.write_text("\n".join(R), encoding="utf-8")

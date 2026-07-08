@@ -189,8 +189,9 @@ algebra; B4 upgrades it to a theorem.
 - [x] B1 centroid relative perturbation (+ in-hull sub-lemma)
 - [x] B2a/B2b/B2c relative-error toolkit
 - [x] B3 defs + balancedTwoStepCentroid_deviation_prob_le
+- [x] Two-branch normalized drift assembly
 - [ ] B4 full-matrix reconciliation (optional)
 - [x] Audit entries + Check.ps1 + #print axioms
-- [ ] S6 numeric validation of constants (optional)
+- [x] S6 numeric validation of constants
 - [x] Docs updated
-- [ ] Final commit
+- [x] Final commit

@@ -89,12 +89,12 @@ reuse.  Metric: |empirical mass of mode 1 - 0.7| (mode-mass error).
 
 | init | t | err @ step 100 | err @ step 300 | mean err (last 100) |
 |------|---|----------------|----------------|----------------------|
-| between | 1 | 0.085 | 0.082 | 0.082 |
-| between | 3 | 0.073 | 0.073 | 0.073 |
+| between | 1 | 0.112 | 0.105 | 0.105 |
+| between | 3 | 0.095 | 0.092 | 0.092 |
 | far | 1 | 0.300 | 0.300 | 0.300 |
-| far | 3 | 0.295 | 0.295 | 0.295 |
-| collapsed | 1 | 0.693 | 0.670 | 0.675 |
-| collapsed | 3 | 0.660 | 0.625 | 0.634 |
+| far | 3 | 0.298 | 0.295 | 0.297 |
+| collapsed | 1 | 0.693 | 0.670 | 0.676 |
+| collapsed | 3 | 0.662 | 0.637 | 0.638 |
 
 This is the extension's toy-scale test of the paper's Figure-3 claim
 (convergence without mode collapse), with the harder unequal-mass
@@ -123,4 +123,20 @@ The transfer bound is valid (<= direct) at every depth, and the direct
 constant stabilizes as the matrix balances — certified identifiability
 rides along the whole orbit, as proved in `SinkhornBalanced.lean`.
 
-_Runtime: 36.7s._
+## S6. BalancedSampling constants: row-mass event -> weight/centroid bounds
+
+Monte-Carlo sanity check for the Lean theorem
+`balancedTwoStepCentroid_deviation_prob_le` at `t = 2`.
+We condition on the good event
+`|r_j - Mbar_j| <= delta Mbar_j` for all anchors, then check
+`|W - Wbar| <= 4 delta Wbar` and centroid gap `<= 16 delta R`.
+
+- reps: `500`, good-event reps: `474` (`delta = 1/8`, N = 512)
+- max observed weight ratio / theorem bound: `0.059`
+- max observed centroid-gap ratio / theorem bound: `0.009`
+
+Ratios below 1 validate the explicit constants used by the Lean
+finite-sample theorem on this two-atom testbed.  The constants are
+deliberately loose; this is a guardrail check, not a tuning claim.
+
+_Runtime: 37.8s._

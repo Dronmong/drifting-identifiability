@@ -31,7 +31,7 @@ No new axioms: the probabilistic inputs are the reviewed sample-mean axiom
 (through the existing lemmas); everything else is finite algebra.
 -/
 
-open scoped BigOperators
+open scoped BigOperators ENNReal
 open MeasureTheory ProbabilityTheory
 
 namespace DriftingIdentifiability
@@ -359,7 +359,7 @@ universe u
 
 section TwoStep
 
-variable {M N : ℕ}
+variable {M N Npos Nneg : ℕ}
 
 /-- Level-one column-mass profile at row masses `r`:
 `h(y, r) = Σ_j k_j(y)/√(r_j)`. -/
@@ -487,6 +487,106 @@ noncomputable def balancedTwoStepCentroid {Ω : Type*} (anchors : Fin M → ℝ)
   (∑ l, twoStepWeight anchors τ i (realizedRowMass anchors τ Y ω) (Y l ω))⁻¹ •
     ∑ l, twoStepWeight anchors τ i (realizedRowMass anchors τ Y ω) (Y l ω) •
       Y l ω
+
+/-- The fixed-reference `t = 2` balanced centroid: same weight formula, but
+with caller-supplied row masses `Mbar` instead of the random realized row
+masses. -/
+noncomputable def balancedTwoStepReferenceCentroid {Ω : Type*}
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M) (Mbar : Fin M → ℝ)
+    (Y : Fin N → Ω → ℝ) (ω : Ω) : ℝ :=
+  (∑ l, twoStepWeight anchors τ i Mbar (Y l ω))⁻¹ •
+    ∑ l, twoStepWeight anchors τ i Mbar (Y l ω) • Y l ω
+
+/-- The normalized two-branch `t = 2` balanced drift, i.e. positive centroid
+minus negative centroid.  This is the identifiability-relevant normalized field;
+the raw Algorithm-2-style field is a positive mass product times this object. -/
+noncomputable def balancedTwoStepNormalizedDrift {Ω : Type*}
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Ypos : Fin Npos → Ω → ℝ) (Yneg : Fin Nneg → Ω → ℝ) (ω : Ω) : ℝ :=
+  balancedTwoStepCentroid anchors τ i Ypos ω -
+    balancedTwoStepCentroid anchors τ i Yneg ω
+
+/-- Fixed-reference normalized two-branch `t = 2` balanced drift. -/
+noncomputable def balancedTwoStepReferenceDrift {Ω : Type*}
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (MbarPos MbarNeg : Fin M → ℝ)
+    (Ypos : Fin Npos → Ω → ℝ) (Yneg : Fin Nneg → Ω → ℝ) (ω : Ω) : ℝ :=
+  balancedTwoStepReferenceCentroid anchors τ i MbarPos Ypos ω -
+    balancedTwoStepReferenceCentroid anchors τ i MbarNeg Yneg ω
+
+/-- Closed-form right-hand side for the `t = 2` balanced centroid deviation
+theorem. -/
+noncomputable def balancedTwoStepCentroidDeviationBound
+    (μw : Fin N → ℝ) (Mbar : Fin M → ℝ)
+    (tw ε σ σw b δ σrow : ℝ) : ℝ≥0∞ :=
+  ENNReal.ofReal ((2 * N * σ ^ 2 + 2 * N ^ 2 * b ^ 2) /
+      (((∑ l, μw l) - tw) ^ 2 * ε ^ 2)) +
+    ENNReal.ofReal ((N * σw ^ 2) / tw ^ 2) +
+    ∑ j, ENNReal.ofReal ((N * σrow ^ 2) / (δ * Mbar j) ^ 2)
+
+/-- **Two-branch normalized drift assembly.**  Any high-probability bounds for
+the positive and negative `t = 2` centroids compose into a high-probability
+bound for their normalized drift difference.  This is pure metric/event
+bookkeeping; it is independent of the probabilistic mechanism used to obtain
+the two centroid bounds. -/
+theorem balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M)
+    (Ypos : Fin Npos → Ω → ℝ) (Yneg : Fin Nneg → Ω → ℝ)
+    (cPos cNeg : ℝ) {εPos εNeg : ℝ} {Bpos Bneg : ℝ≥0∞}
+    (hpos : P {ω | εPos <
+        ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖} ≤ Bpos)
+    (hneg : P {ω | εNeg <
+        ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖} ≤ Bneg) :
+    P {ω | εPos + εNeg <
+        ‖balancedTwoStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖} ≤ Bpos + Bneg := by
+  have hsub :
+      {ω | εPos + εNeg <
+          ‖balancedTwoStepNormalizedDrift anchors τ i Ypos Yneg ω -
+            (cPos - cNeg)‖} ⊆
+        {ω | εPos <
+          ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖} ∪
+        {ω | εNeg <
+          ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖} := by
+    intro ω hω
+    simp only [Set.mem_setOf_eq, Set.mem_union] at hω ⊢
+    by_cases hp : εPos <
+        ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖
+    · exact Or.inl hp
+    · right
+      by_contra hn
+      have hp_le : ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖ ≤ εPos :=
+        le_of_not_gt hp
+      have hn_le : ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖ ≤ εNeg :=
+        le_of_not_gt hn
+      have hrewrite :
+          balancedTwoStepNormalizedDrift anchors τ i Ypos Yneg ω - (cPos - cNeg) =
+            (balancedTwoStepCentroid anchors τ i Ypos ω - cPos) -
+              (balancedTwoStepCentroid anchors τ i Yneg ω - cNeg) := by
+        unfold balancedTwoStepNormalizedDrift
+        ring
+      have htri : ‖balancedTwoStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖ ≤ εPos + εNeg := by
+        rw [hrewrite]
+        calc ‖(balancedTwoStepCentroid anchors τ i Ypos ω - cPos) -
+              (balancedTwoStepCentroid anchors τ i Yneg ω - cNeg)‖
+            ≤ ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖ +
+                ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖ := norm_sub_le _ _
+          _ ≤ εPos + εNeg := add_le_add hp_le hn_le
+      exact (not_lt_of_ge htri) hω
+  calc P {ω | εPos + εNeg <
+        ‖balancedTwoStepNormalizedDrift anchors τ i Ypos Yneg ω -
+          (cPos - cNeg)‖}
+      ≤ P ({ω | εPos <
+          ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖} ∪
+        {ω | εNeg <
+          ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖}) := measure_mono hsub
+    _ ≤ P {ω | εPos <
+          ‖balancedTwoStepCentroid anchors τ i Ypos ω - cPos‖} +
+        P {ω | εNeg <
+          ‖balancedTwoStepCentroid anchors τ i Yneg ω - cNeg‖} := measure_union_le _ _
+    _ ≤ Bpos + Bneg := add_le_add hpos hneg
 
 /-- **Headline: deviation probability for the two-step balanced centroid.**
 The realized `t = 2` centroid deviates from the target `c` by more than

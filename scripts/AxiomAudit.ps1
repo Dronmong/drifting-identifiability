@@ -80,6 +80,7 @@ $declarations = @(
   'DriftingIdentifiability.SelfNormalized.abs_inv_sqrt_sub_inv_sqrt_le',
   'DriftingIdentifiability.SelfNormalized.abs_sum_sub_sum_le_of_rel',
   'DriftingIdentifiability.Algorithm2.twoStepWeight_rel_of_rowMass_rel',
+  'DriftingIdentifiability.Algorithm2.balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids',
   'DriftingIdentifiability.Algorithm2.balancedTwoStepCentroid_deviation_prob_le',
   'DriftingIdentifiability.Algorithm2.deletedDrift_eq_massProduct_centroidDiff',
   'DriftingIdentifiability.Algorithm2.deletedAffinity_eq_rowScale_mul_deletedColumnWeight',
