@@ -15,8 +15,10 @@ balancing depth `t` as a design dimension (`t = 1` is the paper,
 | file | role |
 |---|---|
 | `PLAN.md` | goals, math, staged spec, resumption notes |
-| `sinkhorn_drift.py` | balanced-affinity drift library (`iters = 1` reproduces the paper exactly) |
-| `run_sinkhorn.py` | experiments S0-S4, writes `RESULTS.md` |
+| `PLAN_BALANCED_STATS.md` | resumable spec for the `t = 2`/`t = 3` batch-dependence sampling theorems |
+| `PROPOSAL_CERTIFIED_GAIN.md` | gain-scheduling extension: design, derivation, checklist, and honest status (S7) |
+| `sinkhorn_drift.py` | balanced-affinity drift library (`iters = 1` reproduces the paper exactly); `gain=` parameter on `compute_v_sinkhorn` for the gain-scheduling extension |
+| `run_sinkhorn.py` | experiments S0-S4, S6-S7, writes `RESULTS.md` |
 | `RESULTS.md` | generated report (seed 20260707) |
 | `DriftingIdentifiability/SinkhornBalanced.lean` | certified theory (lives in the audited source tree, marked as extension) |
 | `DriftingIdentifiability/BalancedSampling.lean` | certified `t = 2` balanced-affinity sampling theorem and full matrix/weight-form reconciliation |
@@ -68,6 +70,18 @@ antisymmetry paper axioms; no new axioms anywhere.
 - **S6**: on the `t = 2` row-mass good event, the observed weight and centroid
   perturbations are far below the explicit Lean constants (`4 delta` and
   `16 delta R`) on the two-atom testbed.
+- **S7** (gain-scheduling extension, `PROPOSAL_CERTIFIED_GAIN.md`): splitting
+  the drift into `(P*Q) . (C+ - C-)` (gain times centroid-difference signal;
+  `algorithm2Drift_eq_massProduct_centroidDiff`) and replacing the paper's
+  `P*Q` gain with alternatives DOES unfreeze the exponential mass-product
+  collapse (median gain rises `~1e6x` at the far init; the swarm's mean
+  position genuinely reaches the target mode within 300 steps) but does NOT
+  by itself deliver dramatic mode-mass recovery there, because the far/
+  collapsed swarms start nearly homogeneous and move as one body toward the
+  nearest mode instead of splitting into the correct proportions -- a
+  separate limitation this ablation isolates rather than solves.  Where it
+  does help, the simplest fixed-gain alternative is the most consistently
+  strong performer, not the finite-sample-certificate gain.
 
 ## Honest limitations
 
@@ -86,3 +100,11 @@ antisymmetry paper axioms; no new axioms anywhere.
   matrix reconciliation with the implementation form is certified for `t = 2`;
   the `t = 3` unrolling core is certified with explicit level-1 mass-tail
   hypotheses.
+- The gain-scheduling extension (S7) has no new Lean theorem of its own; it
+  relies on the existing `interactionFrameBound_of_probeScaling` (any
+  positive per-query rescaling of the signal transfers a frame bound), which
+  covers it but was not proved specifically for it. It fixes the mass-product
+  collapse it targets, confirmed directly, but does not fix the separate
+  swarm-homogeneity failure mode it exposed at the far/collapsed
+  initializations, and the simplest alternative (a fixed, non-adaptive gain)
+  outperformed the fancier finite-sample-certificate gain at toy scale.

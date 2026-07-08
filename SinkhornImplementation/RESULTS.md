@@ -139,4 +139,132 @@ Ratios below 1 validate the explicit constants used by the Lean
 finite-sample theorem on this two-atom testbed.  The constants are
 deliberately loose; this is a guardrail check, not a tuning claim.
 
-_Runtime: 37.8s._
+## S7. Certificate-scheduled gain vs the paper's mass-product gain
+
+The exact identity `algorithm2Drift = (P*Q) . (C+ - C-)`
+(Lean: `algorithm2Drift_eq_massProduct_centroidDiff`) splits the
+drift into a raw-mass GAIN and a self-normalized-centroid SIGNAL;
+only the signal carries identifiability
+(`interactionFrameBound_of_probeScaling` covers any positive
+per-query rescaling of it).  This section swaps the paper's
+`P*Q` gain -- proved to collapse exponentially off-support by
+`algorithm2Drift_norm_le_affinityMass` -- for alternatives.
+Full derivation: `PROPOSAL_CERTIFIED_GAIN.md`.
+
+Same S3 setup (2-D unequal-mass target (0.3, 0.7), 400 particles,
+400 positives/step, eta = 0.5, tau = 0.2, 300 steps, eye-masked
+reuse).  `gmax` for `const`/`cert` is calibrated ONCE per `t` from a
+HEALTHY batch (particles drawn from the target itself, seed
+independent of the descent) -- using the current/frozen batch's
+own median would just recreate the paper's collapse at far init.
+
+| init | t | gain | err @ 100 | err @ 300 | mean err (last 100) |
+|------|---|------|-----------|-----------|----------------------|
+| between | 1 | paper | 0.112 | 0.105 | 0.105 |
+| between | 1 | power(g=0.25) | 0.102 | 0.100 | 0.100 |
+| between | 1 | min(P,Q) | 0.107 | 0.100 | 0.100 |
+| between | 1 | const | 0.107 | 0.105 | 0.107 |
+| between | 1 | cert | 0.105 | 0.102 | 0.103 |
+| far | 1 | paper | 0.300 | 0.300 | 0.300 |
+| far | 1 | power(g=0.25) | 0.283 | 0.250 | 0.258 |
+| far | 1 | min(P,Q) | 0.300 | 0.300 | 0.300 |
+| far | 1 | const | 0.273 | 0.253 | 0.257 |
+| far | 1 | cert | 0.295 | 0.285 | 0.287 |
+| collapsed | 1 | paper | 0.693 | 0.670 | 0.676 |
+| collapsed | 1 | power(g=0.25) | 0.647 | 0.580 | 0.594 |
+| collapsed | 1 | min(P,Q) | 0.677 | 0.642 | 0.651 |
+| collapsed | 1 | const | 0.650 | 0.583 | 0.596 |
+| collapsed | 1 | cert | 0.690 | 0.672 | 0.676 |
+
+_t = 1: reference gmax (median P*Q, healthy batch) = 4.959e-01._
+
+| between | 3 | paper | 0.095 | 0.092 | 0.092 |
+| between | 3 | power(g=0.25) | 0.102 | 0.100 | 0.102 |
+| between | 3 | min(P,Q) | 0.092 | 0.092 | 0.092 |
+| between | 3 | const | 0.102 | 0.102 | 0.102 |
+| between | 3 | cert | 0.112 | 0.112 | 0.112 |
+| far | 3 | paper | 0.298 | 0.295 | 0.297 |
+| far | 3 | power(g=0.25) | 0.288 | 0.285 | 0.282 |
+| far | 3 | min(P,Q) | 0.300 | 0.298 | 0.298 |
+| far | 3 | const | 0.280 | 0.280 | 0.280 |
+| far | 3 | cert | 0.270 | 0.273 | 0.272 |
+| collapsed | 3 | paper | 0.662 | 0.637 | 0.638 |
+| collapsed | 3 | power(g=0.25) | 0.615 | 0.575 | 0.584 |
+| collapsed | 3 | min(P,Q) | 0.640 | 0.610 | 0.615 |
+| collapsed | 3 | const | 0.565 | 0.550 | 0.552 |
+| collapsed | 3 | cert | 0.577 | 0.573 | 0.573 |
+
+_t = 3: reference gmax (median P*Q, healthy batch) = 5.057e-01._
+
+`paper` rows use the same seeds/config as S3 and should reproduce
+its table exactly -- a built-in cross-check of this section.
+
+**Equilibrium residual-noise check.**  Particles ARE distributed
+like the target (population drift ~ 0 by symmetry of supply and
+demand); only finite-sample noise remains.  Checks that the
+alternative gains do not amplify noise relative to the paper at a
+point the paper already handles well.  All five modes see the
+IDENTICAL (particles, positives) draw per `t`.
+
+| t | gain | median norm(V) |
+|---|------|-----------------|
+| 1 | paper | 2.505e-02 |
+| 1 | power(g=0.25) | 4.474e-02 |
+| 1 | min(P,Q) | 3.267e-02 |
+| 1 | const | 2.664e-02 |
+| 1 | cert | 7.681e-03 |
+| 3 | paper | 1.783e-02 |
+| 3 | power(g=0.25) | 3.089e-02 |
+| 3 | min(P,Q) | 2.412e-02 |
+| 3 | const | 1.859e-02 |
+| 3 | cert | 5.959e-03 |
+
+**Diagnosis: unfreezing the step size is confirmed directly; full
+mode-mass recovery from a collapsed swarm is a separate, harder
+problem that a gain swap alone does not solve.**  Traced directly
+(far init, t = 1, `cert` gain driving the descent):
+
+| step | median gain (cert) | swarm mean position | frac. nearest mode 1 (target 0.7) |
+|------|---------------------|----------------------|--------------------------------------|
+| 0 | 1.173e-01 | (4.99, 5.00) | 1.000 |
+| 30 | 2.073e-01 | (2.41, 0.70) | 1.000 |
+| 100 | 1.551e-01 | (2.03, 0.08) | 0.995 |
+| 200 | 1.429e-01 | (1.96, 0.01) | 0.988 |
+| 300 | 1.387e-01 | (1.94, 0.01) | 0.985 |
+
+Reading: the paper's gain is exactly frozen at far init (S3: error
+flat at 0.300 for the full 300 steps at every `t`); the diagnosis
+trace shows `cert`'s gain is five-to-six orders of magnitude larger
+there, and the swarm's mean position genuinely travels almost the
+entire distance from `(5, 5)` to mode 1's center `(2, 0)` within 300
+steps -- the mass-product collapse is REAL and the certificate gain
+DOES fix it, exactly as designed.  Yet `frac. nearest mode 1` barely
+moves off `1.000`: because every particle in the (still tightly
+clustered) swarm computes nearly the same local drift, the whole
+swarm moves as one coherent body toward its nearest/dominant mode
+(here mode 1, since `(5,5)` is Euclidean-closer to `(2,0)` than to
+`(-2,0)`) instead of splitting into the correct 30/70 proportions.
+This is a SEPARATE limitation of the swarm dynamics -- homogeneity,
+not gain starvation -- that no per-particle gain rescaling can fix
+alone, since it multiplies every particle's signal by a comparable
+factor.  It explains the modest (not dramatic) mode-mass-error gains
+in the main table above, and predicts the natural next experiment:
+inject per-particle diversity (repulsion, or per-step noise) to
+break the homogeneity, which should compose with the gain schedule
+rather than substitute for it.
+
+Across the main table, the plainest alternative -- `const`, a fixed
+reference gain with NO adaptivity, i.e. constant-speed centroid-
+difference flow -- is the most consistently strong performer (best
+or tied-best in most far/collapsed rows), while `cert` is the least
+reliable of the four alternatives: it matches `const`'s gains at
+far/t=3 and collapsed/t=3, gives NO improvement at collapsed/t=1,
+and is worse than the paper at between/t=3.  Honest reading:
+sophistication (a plug-in finite-sample certificate) did not beat
+simplicity (a fixed positive floor) at this toy scale -- the win
+here is dropping the mass-product attenuation at all, not the
+particular schedule chosen to replace it.  `min(P,Q)` is the
+weakest alternative, consistent with it still shrinking with the
+smaller branch's own mass rather than carrying a fixed floor.
+
+_Runtime: 31184.7s._

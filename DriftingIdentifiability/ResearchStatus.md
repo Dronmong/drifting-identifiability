@@ -889,6 +889,44 @@ row-mass tails used by the conditional `t = 3` theorem, deeper `t ≥ 4`
 unrolling, and any at-scale (FID) claim.  The `t = 2` full-matrix
 reconciliation is certified.
 
+### Gain-scheduling sub-track: separating signal from mass-product gain
+
+**Not a paper claim; no new Lean this round.**  The exact structural
+identity `algorithm2Drift_eq_massProduct_centroidDiff`
+(`DriftingIdentifiability/Algorithm2Estimator.lean`) factors the paper's
+drift as `(P·Q) · (C⁺ − C⁻)`: a raw affinity-mass GAIN times a
+self-normalized-centroid SIGNAL.  Every identifiability theorem in this repo
+factors through `C⁺ = C⁻`; the gain is identifiability-inert and provably
+collapses exponentially off-support (`algorithm2Drift_norm_le_affinityMass`).
+`SinkhornImplementation/sinkhorn_drift.py` now exposes a `gain=` parameter on
+`compute_v_sinkhorn` (default `"paper"`, bit-identical to the original code
+path — S0-regression-checked) that replaces `P·Q` with alternatives
+(`power`, `min`, `const`, `cert`), every one a strictly positive per-query
+rescaling of the same signal — exactly the class already certified by
+`interactionFrameBound_of_probeScaling`, so no new identifiability theorem
+is required (a named specializing corollary would still be a nice,
+currently-missing, crosswalk entry).
+
+S7 (`SinkhornImplementation/RESULTS.md`) verifies this empirically and
+corrects an over-optimistic prediction from the design proposal
+(`SinkhornImplementation/PROPOSAL_CERTIFIED_GAIN.md`): the alternative gains
+DO unfreeze the paper's exponential collapse — traced directly, the median
+gain rises from `~1e-6` to `~0.1–0.2` at the far initialization, and the
+particle swarm's mean position genuinely travels almost the entire distance
+from its start to the target mode within 300 steps — but this does not
+translate into dramatic mode-mass-error recovery, because the far/collapsed
+initializations start nearly homogeneous: every particle computes almost
+the same local drift, so the whole swarm moves as one body toward its
+nearest mode instead of splitting into the correct proportions.  This is a
+separate limitation of swarm homogeneity, not gain starvation, and a
+per-particle gain rescaling cannot fix it alone.  Where mode-mass error does
+improve, the plainest alternative (`const`, a fixed reference gain with no
+adaptivity) is the most consistently strong performer — sophistication (the
+finite-sample-certificate gain) did not beat simplicity at this toy scale.
+Open: testing whether injecting per-particle diversity (repulsion or
+per-step noise) breaks the homogeneity and lets the gain fix compound with
+it; the optional named Lean corollary; any at-scale claim.
+
 ## What would complete the practical phase
 
 The practical objective should be considered complete only when the project has
