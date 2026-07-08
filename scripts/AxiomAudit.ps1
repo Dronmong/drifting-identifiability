@@ -90,6 +90,7 @@ $declarations = @(
   'DriftingIdentifiability.Algorithm2.balancedThreeStepCentroid_deviation_prob_le_of_mass_tails',
   'DriftingIdentifiability.Algorithm2.balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids',
   'DriftingIdentifiability.Algorithm2.balancedTwoStepCentroid_deviation_prob_le',
+  'DriftingIdentifiability.Algorithm2.balancedTwoStepCentroid_eq_matrixCentroid',
   'DriftingIdentifiability.Algorithm2.deletedDrift_eq_massProduct_centroidDiff',
   'DriftingIdentifiability.Algorithm2.deletedAffinity_eq_rowScale_mul_deletedColumnWeight',
   'DriftingIdentifiability.Algorithm2.deletedColumnWeight_inl_eq',

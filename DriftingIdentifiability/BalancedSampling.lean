@@ -1514,6 +1514,21 @@ theorem balancedTwoStepCentroid_deviation_prob_le
       ∑ j, ENNReal.ofReal ((N * σrow ^ 2) / (δ * Mbar j) ^ 2) := by
         exact add_le_add (by simpa [Cref] using hsnis) hbadRows
 
+/-- **Chain closure.**  The realized estimator analyzed by the sampling
+theorem `balancedTwoStepCentroid_deviation_prob_le` is, at every outcome, the
+*literal* twice-balanced matrix centroid of the realized batch — combining the
+definitional identity of the realized row masses with the B4 reconciliation
+`twoStepBalancedMatrixCentroid_eq_weightCentroid`.  Together the two theorems
+give a fully unconditional finite-sample bound for the genuine `t = 2`
+Sinkhorn-balanced Algorithm-2-style estimator. -/
+theorem balancedTwoStepCentroid_eq_matrixCentroid
+    {Ω : Type*} [Nonempty (Fin M)] [Nonempty (Fin N)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M) (Y : Fin N → Ω → ℝ) (ω : Ω) :
+    balancedTwoStepCentroid anchors τ i Y ω =
+      twoStepBalancedMatrixCentroid anchors τ i (fun l => Y l ω) := by
+  rw [twoStepBalancedMatrixCentroid_eq_weightCentroid]
+  rfl
+
 end TwoStep
 
 end Algorithm2
