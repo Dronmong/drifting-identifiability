@@ -111,7 +111,7 @@ theorem weightSum_lower_tail_prob_le
     exact hσw l
   -- the reviewed sample-mean axiom at F := ℝ
   have haxiomW : ∫ ω, ‖(N : ℝ)⁻¹ • ∑ l, W l ω‖ ^ 2 ∂P ≤ σw ^ 2 / N :=
-    Paper.sampleMean_meanSquare_le P hN W hWindep hWint2 hWmean hWσ
+    Paper.sampleMean_meanSquare_le P hN W hWindep hWmeas hWint2 hWmean hWσ
   -- event inclusion: below-mean tail forces a large centered sum
   have hsub : {ω | (∑ l, w l (Y l ω)) < (∑ l, μw l) - t} ⊆
       {ω | t < ‖∑ l, W l ω‖} := by
@@ -233,7 +233,7 @@ theorem selfNormalizedIndexed_deviation_prob_le
         rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
         nlinarith [hZ'bd l ω, norm_nonneg (Z' l ω)])
   have haxiom : ∫ ω, ‖(N : ℝ)⁻¹ • ∑ l, Z' l ω‖ ^ 2 ∂P ≤ σ ^ 2 / N :=
-    Paper.sampleMean_meanSquare_le P hN Z' hZ'indep hZ'int2 hZ'mean hσ
+    Paper.sampleMean_meanSquare_le P hN Z' hZ'indep hZ'meas hZ'int2 hZ'mean hσ
   -- numerator second moment
   have hμsum : ‖∑ l, μ l‖ ≤ (N : ℝ) * b := by
     calc ‖∑ l, μ l‖ ≤ ∑ l, ‖μ l‖ := norm_sum_le _ _

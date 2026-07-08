@@ -114,7 +114,7 @@ theorem weightSum_deviation_prob_le
     rw [heq]
     exact hσw l
   have haxiomW : ∫ ω, ‖(N : ℝ)⁻¹ • ∑ l, W l ω‖ ^ 2 ∂P ≤ σw ^ 2 / N :=
-    Paper.sampleMean_meanSquare_le P hN W hWindep hWint2 hWmean hWσ
+    Paper.sampleMean_meanSquare_le P hN W hWindep hWmeas hWint2 hWmean hWσ
   have hsub : {ω | t < |(∑ l, w l (Y l ω)) - ∑ l, μw l|} ⊆
       {ω | t < ‖∑ l, W l ω‖} := by
     intro ω hω

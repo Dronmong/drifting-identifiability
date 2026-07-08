@@ -285,3 +285,26 @@ dependency, not by implementation convenience.
 Implementation status: items 1–3 are authorized to proceed without modifying
 the trusted boundary; item 4 is approval-gated; items 5–8 are substantive
 research work rather than documentation cleanup.
+
+Progress (2026-07-08):
+- **Items 1–3 DONE** (commit `2fa14e9`): scope relabel, docs/CI/architecture
+  (CI now runs the full `Check.ps1`; Sinkhorn extension moved to the opt-in
+  `Extensions.lean` root), and the completed candidate workflow
+  (`finitePopulationMeanShiftCandidate_identifiesAtZero` + `_isLegitimate`).
+  A start on item 7's cancellation record also landed
+  (`aggregateTemperatureDrift_cancels`, `_zero_with_nonzero_component`).
+- **Item 4 DONE** (user-approved; commit pending): `sampleMean_meanSquare_le`
+  now requires `hmeas : ∀ i, Measurable (Z i)` for the vector summands. On a
+  second-countable Borel space this is strong measurability, so with `hint2`
+  each `Z i` is genuinely `L¹` and the mean-zero premise `hmean` is a real
+  Bochner integral rather than the vacuous totalized `0` a non-integrable
+  function would give — closing the soundness gap the audit flagged. All six
+  call sites already carried the measurability fact and were threaded through;
+  the caller-less `sampleMean_concentration` gained the matching hypothesis.
+  Manifest regenerated; `Check.ps1` green.
+- **Beyond the audit** (user-approved; commit `cc465fe`): the raw-field Gaussian
+  converse `gaussianMeanShiftDrift_identifiesAtZero` (opt-in Conditional module,
+  one new conditional axiom `gaussianMeanShift_injective`) — the rigorous form
+  of the reviewer rebuttal's argument 1; see `DriftingIdentifiability/RawFieldConverse.md`.
+- **Still open:** items 5 (reused-negative estimator — the main practical gap),
+  6, 7 (beyond the cancellation record), 8 (asymptotic).

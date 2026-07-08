@@ -138,7 +138,7 @@ theorem selfNormalized_meanSquare_le
   -- the sample-mean variance axiom applied to Z
   have haxiom : ∫ ω, ‖(N : ℝ)⁻¹ • (∑ i, Z i ω)‖ ^ 2 ∂P ≤ σ ^ 2 / N := by
     refine Paper.sampleMean_meanSquare_le P hN Z (fun i j hij => (hindep i j hij).comp hg hg)
-      (fun i => ?_) hmean hσ
+      hZmeas (fun i => ?_) hmean hσ
     refine (integrable_const ((wmax * R) ^ 2)).mono'
       ((hZmeas i).norm.pow_const 2).aestronglyMeasurable ?_
     filter_upwards with ω
@@ -241,7 +241,7 @@ theorem selfNormalizedIndexed_meanSquare_le
         nlinarith [hZ'bd i ω, norm_nonneg (Z' i ω)])
   -- sample-mean variance for the centered summands
   have haxiom : ∫ ω, ‖(N : ℝ)⁻¹ • ∑ i, Z' i ω‖ ^ 2 ∂P ≤ σ ^ 2 / N :=
-    Paper.sampleMean_meanSquare_le P hN Z' hZ'indep hZ'int2 hZ'mean hσ
+    Paper.sampleMean_meanSquare_le P hN Z' hZ'indep hZ'meas hZ'int2 hZ'mean hσ
   -- pointwise identity and bound
   have hpoint : ∀ ω, (∑ i, w i (Y i ω))⁻¹ • (∑ i, w i (Y i ω) • Y i ω) - c
       = (∑ i, w i (Y i ω))⁻¹ • (∑ i, Z i ω) := by

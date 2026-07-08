@@ -995,13 +995,22 @@ This is standard external probability (`ProbabilityTheory.IndepFun`,
 `variance_sum`, and `IndepFun.integral_bilin` provide the ingredients in Mathlib);
 its analytic assembly is noise for the identifiability project.  It is used only
 to turn the axiom-free mean-squared-error bound of the finite-sample bridge into
-an explicit sample-complexity rate; it says nothing about identifiability. -/
+an explicit sample-complexity rate; it says nothing about identifiability.
+
+The vector summands are required to be measurable (`hmeas`): on a
+second-countable Borel space this is strong measurability, so together with
+`hint2` on a probability space each `Z i` is genuinely `L¹`, the mean-zero
+premise `hmean` is a real Bochner integral rather than the vacuous `0` that the
+totalized integral assigns to a non-integrable function, and the `L²`
+inner-product argument for the cross terms is well defined.  Stating this
+explicitly keeps the assumption honest instead of leaving it to callers. -/
 axiom sampleMean_meanSquare_le
     {Ω : Type u} [MeasurableSpace Ω] (P : Distribution Ω) [IsProbabilityMeasure P]
     {F : Type v} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     [MeasurableSpace F] [BorelSpace F] [CompleteSpace F] [SecondCountableTopology F]
     {M : ℕ} (hM : 0 < M) (Z : Fin M → Ω → F)
     (hindep : ∀ i j, i ≠ j → ProbabilityTheory.IndepFun (Z i) (Z j) P)
+    (hmeas : ∀ i, Measurable (Z i))
     (hint2 : ∀ i, Integrable (fun ω => ‖Z i ω‖ ^ 2) P)
     (hmean : ∀ i, ∫ ω, Z i ω ∂P = 0)
     {σ : ℝ} (hσ : ∀ i, ∫ ω, ‖Z i ω‖ ^ 2 ∂P ≤ σ ^ 2) :

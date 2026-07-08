@@ -76,6 +76,7 @@ theorem sampleMean_concentration
     [MeasurableSpace F] [BorelSpace F] [CompleteSpace F] [SecondCountableTopology F]
     {M : ℕ} (hM : 0 < M) (Z : Fin M → Ω → F)
     (hindep : ∀ i j, i ≠ j → ProbabilityTheory.IndepFun (Z i) (Z j) P)
+    (hZmeas : ∀ i, Measurable (Z i))
     (haemeas : AEStronglyMeasurable (fun ω => (M : ℝ)⁻¹ • ∑ i, Z i ω) P)
     (hint2 : ∀ i, Integrable (fun ω => ‖Z i ω‖ ^ 2) P)
     (hintmean : Integrable (fun ω => ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖ ^ 2) P)
@@ -84,7 +85,7 @@ theorem sampleMean_concentration
     P {ω | ε < ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖} ≤ ENNReal.ofReal (σ ^ 2 / (M * ε ^ 2)) := by
   refine le_trans (meas_gt_le_meanSquare_div _ haemeas hintmean hε) ?_
   apply ENNReal.ofReal_le_ofReal
-  have hmse := Paper.sampleMean_meanSquare_le P hM Z hindep hint2 hmean hσ
+  have hmse := Paper.sampleMean_meanSquare_le P hM Z hindep hZmeas hint2 hmean hσ
   rw [show σ ^ 2 / ((M : ℝ) * ε ^ 2) = σ ^ 2 / (M : ℝ) / ε ^ 2 from (div_div _ _ _).symm]
   gcongr
 
