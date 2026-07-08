@@ -152,6 +152,28 @@ theorem interactionFrameBound_of_biScaling
         have h := mul_le_mul_of_nonneg_left hnorm_le hρmin.le
         rwa [← mul_assoc, mul_inv_cancel₀ hρmin.ne', one_mul] at h
 
+/-- **Gain-scheduling frame transfer (extension crosswalk anchor).**  The
+gain-scheduling sub-track (`SinkhornImplementation/PROPOSAL_CERTIFIED_GAIN.md`,
+experiment S7) replaces the paper's identifiability-inert mass-product gain
+`P·Q` by an arbitrary *strictly positive* per-query gain `g`, forming the field
+`g n • Uᵢⱼ n`.  A strictly positive function on the finite, nonempty probe index
+attains a positive minimum, so this is a per-probe positive rescaling and
+`interactionFrameBound_of_probeScaling` transfers the certified frame bound with
+that positive minimum as its constant.  Hence *every* gain mode in
+`sinkhorn_drift.gain_schedule` — each strictly positive by construction — keeps a
+certified positive frame constant: gain scheduling costs no identifiability.
+Axiom-free. -/
+theorem interactionFrameBound_of_positiveGain [Nonempty (Fin N)]
+    (U Ug : Fin m → Fin m → Fin N → E) (g : Fin N → ℝ)
+    {c : ℝ} (hframe : InteractionFrameBound U c) (hg : ∀ n, 0 < g n)
+    (hUg : ∀ i j n, Ug i j n = g n • U i j n) :
+    ∃ gmin, 0 < gmin ∧ InteractionFrameBound Ug (gmin * c) := by
+  obtain ⟨n₀, -, hn₀⟩ :=
+    Finset.exists_min_image Finset.univ g Finset.univ_nonempty
+  exact ⟨g n₀, hg n₀,
+    interactionFrameBound_of_probeScaling U Ug g hframe (hg n₀)
+      (fun n => hn₀ n (Finset.mem_univ n)) hUg⟩
+
 end Scaling
 
 /-! ## The two-atom orbit kernel and its certified setup -/

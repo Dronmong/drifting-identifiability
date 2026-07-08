@@ -35,6 +35,7 @@ uv run --with numpy python SinkhornImplementation/run_sinkhorn.py
 |---|---|
 | `interactionFrameBound_of_probeScaling` | per-probe positive scaling transfers a frame bound (`rhomin * c`); axiom-free |
 | `interactionFrameBound_of_biScaling` | simultaneous per-probe/per-pair scaling (`rhomin * smin * c`); axiom-free |
+| `interactionFrameBound_of_positiveGain` | gain-scheduling anchor (S7): any strictly positive per-query gain keeps a certified positive frame constant, so no gain mode costs identifiability; axiom-free |
 | `inducedInteractionVector_sinkhornOrbit01_eq` | exact orbit rescaling identity `U_orbit(n) = u(x_n)^2 v(0) v(1) U_bare(n)`; axiom-free; verified numerically to 1e-17 (S4) |
 | `sinkhornOrbit01Setup` / `sinkhornOrbit01_identifies_of_probeEnergy_eq_zero` | certified two-atom identifiability for **every** positive rescaling `u(x) k(x,y) v(y)` — the whole Sinkhorn orbit at once |
 | `oneStepBalanced01Setup` / `oneStepBalanced01_identifies_of_probeEnergy_eq_zero` | the explicit one-full-balancing-step kernel `k/sqrt(r(x) g(y))` |
@@ -100,11 +101,14 @@ antisymmetry paper axioms; no new axioms anywhere.
   matrix reconciliation with the implementation form is certified for `t = 2`;
   the `t = 3` unrolling core is certified with explicit level-1 mass-tail
   hypotheses.
-- The gain-scheduling extension (S7) has no new Lean theorem of its own; it
-  relies on the existing `interactionFrameBound_of_probeScaling` (any
-  positive per-query rescaling of the signal transfers a frame bound), which
-  covers it but was not proved specifically for it. It fixes the mass-product
-  collapse it targets, confirmed directly, but does not fix the separate
-  swarm-homogeneity failure mode it exposed at the far/collapsed
-  initializations, and the simplest alternative (a fixed, non-adaptive gain)
-  outperformed the fancier finite-sample-certificate gain at toy scale.
+- The gain-scheduling extension (S7) is certified by
+  `interactionFrameBound_of_positiveGain` — a named corollary of
+  `interactionFrameBound_of_probeScaling` stating that any strictly positive
+  per-query gain (which every `gain_schedule` mode is, by construction) keeps
+  a certified positive frame constant, so no gain mode costs identifiability
+  (axiom-free; `#print axioms` shows only the three foundational axioms).
+  Empirically it fixes the mass-product collapse it targets, confirmed
+  directly, but does not fix the separate swarm-homogeneity failure mode it
+  exposed at the far/collapsed initializations, and the simplest alternative
+  (a fixed, non-adaptive gain) outperformed the fancier
+  finite-sample-certificate gain at toy scale.

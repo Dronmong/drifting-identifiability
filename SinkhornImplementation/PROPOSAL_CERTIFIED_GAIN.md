@@ -127,12 +127,15 @@ Dhat   = robust diameter of the y_pos ∪ y_neg batch (e.g. max coordinate
    modest rather than dramatic.
 3. [x] `RESULTS.md`: S7 tables + honest reading (including the corrected
    prediction — see "Actual results" above).
-4. [ ] Optional Lean polish (small, NOT done this round): a named corollary
-   specializing `interactionFrameBound_of_probeScaling` to the
-   gain-scheduled field, so the crosswalk table can cite one line instead
-   of relying on the general lemma by inspection.  Extension-marked,
-   audited tree.  Deferred for tokens/time, not difficulty — the transfer
-   is a direct instantiation, no new proof idea needed.
+4. [x] Named Lean corollary `interactionFrameBound_of_positiveGain`
+   (`DriftingIdentifiability/SinkhornBalanced.lean`, end of the `Scaling`
+   section): from `∀ n, 0 < g n` it derives the positive finite-min lower
+   bound and applies `interactionFrameBound_of_probeScaling`, concluding
+   `∃ gmin > 0, InteractionFrameBound Ug (gmin * c)`.  Caller supplies only
+   pointwise positivity — exactly what every `gain_schedule` mode guarantees.
+   Registered in `scripts/AxiomAudit.ps1` (160 promoted declarations);
+   `scripts/Check.ps1` green; `#print axioms` shows only
+   `propext, Classical.choice, Quot.sound` (axiom-free).
 
 ## Success criteria / predictions (as originally written, 2026-07-07)
 
@@ -252,7 +255,9 @@ deterministic masses ⟹ tight certificates).  Not started.
       "Actual results" section) — do not skip this step for future
       ablations; the discrepancy was the most useful output of S7
 - [x] README.md / ResearchStatus.md / memory updated
-- [ ] Optional named Lean corollary (see Implementation plan item 4)
+- [x] Named Lean corollary `interactionFrameBound_of_positiveGain`
+      (see Implementation plan item 4) — built, audited (160 decls),
+      axiom-free
 - [ ] Follow-up experiment: per-particle diversity/repulsion to break
       far/collapsed swarm homogeneity (new mechanism; the natural next
       step this proposal's own results point to — NOT started)

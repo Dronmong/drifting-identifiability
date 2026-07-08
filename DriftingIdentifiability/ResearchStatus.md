@@ -891,7 +891,7 @@ reconciliation is certified.
 
 ### Gain-scheduling sub-track: separating signal from mass-product gain
 
-**Not a paper claim; no new Lean this round.**  The exact structural
+**Not a paper claim.**  The exact structural
 identity `algorithm2Drift_eq_massProduct_centroidDiff`
 (`DriftingIdentifiability/Algorithm2Estimator.lean`) factors the paper's
 drift as `(P·Q) · (C⁺ − C⁻)`: a raw affinity-mass GAIN times a
@@ -902,10 +902,15 @@ collapses exponentially off-support (`algorithm2Drift_norm_le_affinityMass`).
 `compute_v_sinkhorn` (default `"paper"`, bit-identical to the original code
 path — S0-regression-checked) that replaces `P·Q` with alternatives
 (`power`, `min`, `const`, `cert`), every one a strictly positive per-query
-rescaling of the same signal — exactly the class already certified by
-`interactionFrameBound_of_probeScaling`, so no new identifiability theorem
-is required (a named specializing corollary would still be a nice,
-currently-missing, crosswalk entry).
+rescaling of the same signal — exactly the class certified by
+`interactionFrameBound_of_probeScaling`.  The named corollary
+`interactionFrameBound_of_positiveGain` makes this explicit: from pointwise
+positivity of the gain (what every `gain_schedule` mode guarantees) it
+derives the positive finite-min lower bound and concludes a certified
+positive frame constant for the gain-scheduled field, so no gain mode costs
+identifiability.  Axiom-free (`#print axioms`: only the three foundational
+axioms); registered in the audit (160 promoted declarations); Check.ps1
+green.
 
 S7 (`SinkhornImplementation/RESULTS.md`) verifies this empirically and
 corrects an over-optimistic prediction from the design proposal
@@ -925,7 +930,7 @@ adaptivity) is the most consistently strong performer — sophistication (the
 finite-sample-certificate gain) did not beat simplicity at this toy scale.
 Open: testing whether injecting per-particle diversity (repulsion or
 per-step noise) breaks the homogeneity and lets the gain fix compound with
-it; the optional named Lean corollary; any at-scale claim.
+it; any at-scale claim.
 
 ## What would complete the practical phase
 

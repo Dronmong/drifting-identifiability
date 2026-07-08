@@ -71,6 +71,7 @@ $declarations = @(
   'DriftingIdentifiability.SelfNormalized.selfNormalizedIndexed_deviation_prob_le',
   'DriftingIdentifiability.PaperFiniteIdentifiability.interactionFrameBound_of_probeScaling',
   'DriftingIdentifiability.PaperFiniteIdentifiability.interactionFrameBound_of_biScaling',
+  'DriftingIdentifiability.PaperFiniteIdentifiability.interactionFrameBound_of_positiveGain',
   'DriftingIdentifiability.PaperFiniteIdentifiability.inducedInteractionVector_sinkhornOrbit01_eq',
   'DriftingIdentifiability.PaperFiniteIdentifiability.sinkhornOrbit01_identifies_of_probeEnergy_eq_zero',
   'DriftingIdentifiability.PaperFiniteIdentifiability.sinkhornOrbit01_coefficientStability',
