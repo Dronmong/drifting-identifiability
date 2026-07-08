@@ -12,3 +12,4 @@ import DriftingIdentifiability.ColumnReweightedMeanShift
 import DriftingIdentifiability.SelfMaskPerturbation
 import DriftingIdentifiability.DeletedEstimatorConsistency
 import DriftingIdentifiability.DenominatorTail
+import DriftingIdentifiability.SinkhornBalanced

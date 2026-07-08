@@ -177,14 +177,14 @@ Fix the two-atom certified class (atoms `{0,1}`, kernel
 
 ## Checklist (tick as completed)
 
-- [ ] PLAN.md committed
-- [ ] L1 probe-scaling transfer proved
-- [ ] L2 biscaling transfer proved
-- [ ] L3 orbit setup + identifiability + stability + rescaling identity
-- [ ] L4 one-step balanced corollary
-- [ ] AxiomAudit entries + Check.ps1 green + #print axioms clean
-- [ ] P1 library (+ agreement assert vs driftlab at iters = 1)
-- [ ] P2 S1-S4 experiments + RESULTS.md
+- [x] PLAN.md committed
+- [x] L1 probe-scaling transfer proved
+- [x] L2 biscaling transfer proved
+- [x] L3 orbit setup + identifiability + stability + rescaling identity
+- [x] L4 one-step balanced corollary
+- [x] AxiomAudit entries + Check.ps1 green + #print axioms clean
+- [x] P1 library (+ agreement assert vs driftlab at iters = 1)
+- [x] P2 S1-S4 experiments + RESULTS.md
 - [ ] README + ResearchStatus extension section + memory
 - [ ] Final commit(s)
 

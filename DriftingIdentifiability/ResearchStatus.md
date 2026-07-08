@@ -825,6 +825,40 @@ conditioning, finite dual-certificate constants, and softmax ESS in the actual
 feature geometry.  The FID/IS-level question of whether enforcing certified
 designs harms generation quality still requires training runs.
 
+## Extension track: Sinkhorn-balanced drifting (beyond the paper)
+
+**Not a paper claim.**  `SinkhornImplementation/` (plan, experiments) and
+`DriftingIdentifiability/SinkhornBalanced.lean` (certified theory) develop a
+*proposed modification* of Algorithm 2, motivated by this repo's results: the
+paper's affinity `A = sqrt(A_row·A_col)` is one geometric-mean Sinkhorn
+balancing step of the kernel matrix; the extension treats balancing depth `t`
+as a design dimension (`t = 1` is the paper; `t → ∞` an entropic-OT coupling).
+
+Certified (2026-07-07, no new axioms):
+
+- `interactionFrameBound_of_probeScaling` and
+  `interactionFrameBound_of_biScaling` (axiom-free): certified frames survive
+  positive per-probe and per-pair rescalings with explicit constants — the
+  exact shape `u(x)²·v(zᵢ)v(zⱼ)` produced by any diagonal kernel rescaling
+  `u(x)k(x,y)v(y)`.
+- `sinkhornOrbit01Setup` / `sinkhornOrbit01_identifies_of_probeEnergy_eq_zero`:
+  the two-atom class is certified for **every** positive rescaling at once —
+  the whole Sinkhorn orbit costs no identifiability.  The exact rescaling
+  identity `inducedInteractionVector_sinkhornOrbit01_eq` is axiom-free.
+- `oneStepBalanced01Setup`: the explicit one-full-step kernel
+  `k/sqrt(r(x)·g(y))`.
+
+Toy-scale evidence (`SinkhornImplementation/RESULTS.md`, seed-deterministic):
+one balancing step reproduces the paper's estimator to `1e-16`; mass CV falls
+from 0.94 (paper, `t = 1`, `tau = 0.2`) to 0.03 (`t = 10`), making the SNIS
+denominators deterministic — removing the dominant certified-chain slack
+measured in `numerics/` E5; particle descent on an unequal-mass 2-D target
+(the paper's Figure-3 methodology) shows `t = 3` beating `t = 1` on mode-mass
+error in every initialization; signal-normalized dispersion favors moderate
+depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  Open: sampling
+theory for balanced affinities (`t ≥ 2`), batch-dependence of the realized
+scalings, and any at-scale (FID) claim.
+
 ## What would complete the practical phase
 
 The practical objective should be considered complete only when the project has
