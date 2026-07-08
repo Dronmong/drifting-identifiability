@@ -26,6 +26,9 @@ the existing weight-sum machinery concentrates.  The theorem chain:
   two-step balanced centroid deviates from the population target by more than
   `ε + 16δR` with probability at most the fixed-weight SNIS bound at the
   *reference* weight plus one row-mass tail per anchor.
+* `twoStepBalancedMatrixCentroid_eq_weightCentroid` — the full finite
+  matrix-form two-step centroid equals the weight-form centroid used by the
+  sampling theorem, because the remaining per-row factor cancels.
 
 No new axioms: the probabilistic inputs are the reviewed sample-mean axiom
 (through the existing lemmas); everything else is finite algebra.
@@ -474,6 +477,269 @@ theorem twoStepWeight_rel_of_rowMass_rel [Nonempty (Fin M)]
     _ = 4 * δ * ((algorithm2Kernel τ (anchors i) y *
           (Real.sqrt (Real.sqrt (algorithm2ColumnKernelMass anchors τ y)))⁻¹) *
           (Real.sqrt (balancedLevelMass anchors τ Mbar y))⁻¹) := by ring
+
+/-! ## B4: full finite-matrix reconciliation -/
+
+/-- Row mass of a finite anchor-by-sample matrix. -/
+noncomputable def balancedMatrixRowMass (A : Fin M → Fin N → ℝ) (i : Fin M) : ℝ :=
+  ∑ s, A i s
+
+/-- Column mass of a finite anchor-by-sample matrix. -/
+noncomputable def balancedMatrixColumnMass (A : Fin M → Fin N → ℝ) (s : Fin N) : ℝ :=
+  ∑ i, A i s
+
+/-- One geometric-mean row/column balancing step on a finite matrix. -/
+noncomputable def balancedMatrixStep (A : Fin M → Fin N → ℝ) (i : Fin M) (s : Fin N) : ℝ :=
+  A i s / (Real.sqrt (balancedMatrixRowMass A i) *
+    Real.sqrt (balancedMatrixColumnMass A s))
+
+/-- The raw Algorithm-2 kernel matrix for fixed anchors and one sample branch. -/
+noncomputable def balancedKernelMatrix (anchors : Fin M → ℝ) (τ : ℝ)
+    (Y : Fin N → ℝ) (i : Fin M) (s : Fin N) : ℝ :=
+  algorithm2Kernel τ (anchors i) (Y s)
+
+/-- Two full finite balancing steps, still in matrix form. -/
+noncomputable def twoStepBalancedMatrixAffinity (anchors : Fin M → ℝ) (τ : ℝ)
+    (Y : Fin N → ℝ) : Fin M → Fin N → ℝ :=
+  balancedMatrixStep (balancedMatrixStep (balancedKernelMatrix anchors τ Y))
+
+/-- Self-normalized centroid of one row of a finite affinity matrix. -/
+noncomputable def balancedMatrixCentroid (A : Fin M → Fin N → ℝ)
+    (Y : Fin N → ℝ) (i : Fin M) : ℝ :=
+  (∑ s, A i s)⁻¹ • ∑ s, A i s • Y s
+
+/-- The literal two-step matrix-form centroid. -/
+noncomputable def twoStepBalancedMatrixCentroid (anchors : Fin M → ℝ) (τ : ℝ)
+    (i : Fin M) (Y : Fin N → ℝ) : ℝ :=
+  balancedMatrixCentroid (twoStepBalancedMatrixAffinity anchors τ Y) Y i
+
+/-- The deterministic weight-form centroid used by the two-step sampling
+theorem, with row masses supplied by the same finite batch. -/
+noncomputable def balancedTwoStepWeightCentroid (anchors : Fin M → ℝ) (τ : ℝ)
+    (i : Fin M) (Y : Fin N → ℝ) : ℝ :=
+  (∑ s, twoStepWeight anchors τ i
+      (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s))⁻¹ •
+    ∑ s, twoStepWeight anchors τ i
+      (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) • Y s
+
+theorem balancedMatrixRowMass_pos_of_pos [Nonempty (Fin N)]
+    {A : Fin M → Fin N → ℝ} (hA : ∀ i s, 0 < A i s) (i : Fin M) :
+    0 < balancedMatrixRowMass A i := by
+  unfold balancedMatrixRowMass
+  exact Finset.sum_pos (fun s _ => hA i s) Finset.univ_nonempty
+
+theorem balancedMatrixColumnMass_pos_of_pos [Nonempty (Fin M)]
+    {A : Fin M → Fin N → ℝ} (hA : ∀ i s, 0 < A i s) (s : Fin N) :
+    0 < balancedMatrixColumnMass A s := by
+  unfold balancedMatrixColumnMass
+  exact Finset.sum_pos (fun i _ => hA i s) Finset.univ_nonempty
+
+theorem balancedMatrixStep_pos [Nonempty (Fin M)] [Nonempty (Fin N)]
+    {A : Fin M → Fin N → ℝ} (hA : ∀ i s, 0 < A i s) (i : Fin M) (s : Fin N) :
+    0 < balancedMatrixStep A i s := by
+  unfold balancedMatrixStep
+  refine div_pos (hA i s) (mul_pos ?_ ?_)
+  · exact Real.sqrt_pos.mpr (balancedMatrixRowMass_pos_of_pos hA i)
+  · exact Real.sqrt_pos.mpr (balancedMatrixColumnMass_pos_of_pos hA s)
+
+theorem balancedKernelMatrix_pos (anchors : Fin M → ℝ) (τ : ℝ)
+    (Y : Fin N → ℝ) (i : Fin M) (s : Fin N) :
+    0 < balancedKernelMatrix anchors τ Y i s := by
+  unfold balancedKernelMatrix
+  exact algorithm2Kernel_pos τ (anchors i) (Y s)
+
+theorem balancedKernelMatrix_columnMass (anchors : Fin M → ℝ) (τ : ℝ)
+    (Y : Fin N → ℝ) (s : Fin N) :
+    balancedMatrixColumnMass (balancedKernelMatrix anchors τ Y) s =
+      algorithm2ColumnKernelMass anchors τ (Y s) := by
+  rfl
+
+theorem balancedMatrixStep_kernel_eq (anchors : Fin M → ℝ) (τ : ℝ)
+    (Y : Fin N → ℝ) (i : Fin M) (s : Fin N) :
+    balancedMatrixStep (balancedKernelMatrix anchors τ Y) i s =
+      algorithm2Kernel τ (anchors i) (Y s) /
+        (Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) i) *
+          Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s))) := by
+  simp [balancedMatrixStep, balancedKernelMatrix, balancedMatrixColumnMass,
+    algorithm2ColumnKernelMass]
+
+/-- First balancing column mass in the form consumed by `twoStepWeight`. -/
+theorem balancedMatrixColumnMass_firstStep_kernel [Nonempty (Fin M)] [Nonempty (Fin N)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (Y : Fin N → ℝ) (s : Fin N) :
+    balancedMatrixColumnMass
+        (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s =
+      balancedLevelMass anchors τ
+          (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) *
+        (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)))⁻¹ := by
+  calc
+    balancedMatrixColumnMass
+        (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s
+        = ∑ j, algorithm2Kernel τ (anchors j) (Y s) /
+            (Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) *
+              Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s))) := by
+          simp [balancedMatrixColumnMass, balancedMatrixStep, balancedKernelMatrix,
+            algorithm2ColumnKernelMass]
+    _ = ∑ j, (algorithm2Kernel τ (anchors j) (Y s) *
+          (Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j))⁻¹) *
+          (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)))⁻¹ := by
+          apply Finset.sum_congr rfl
+          intro j _
+          rw [div_eq_mul_inv, mul_inv]
+          ring
+    _ = (∑ j, algorithm2Kernel τ (anchors j) (Y s) *
+          (Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j))⁻¹) *
+          (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)))⁻¹ := by
+          rw [Finset.sum_mul]
+    _ = balancedLevelMass anchors τ
+          (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) *
+        (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)))⁻¹ := by
+          rfl
+
+/-- Square-root algebra behind the `t = 2` matrix-to-weight cancellation. -/
+theorem sqrt_mul_sqrt_mul_inv_sqrt_eq {a b : ℝ} (ha : 0 < a) (hb : 0 ≤ b) :
+    Real.sqrt a * Real.sqrt (b * (Real.sqrt a)⁻¹) =
+      Real.sqrt (Real.sqrt a) * Real.sqrt b := by
+  have hsa : 0 < Real.sqrt a := Real.sqrt_pos.mpr ha
+  have hbinv : 0 ≤ b * (Real.sqrt a)⁻¹ := mul_nonneg hb (inv_nonneg.mpr hsa.le)
+  refine (sq_eq_sq₀ ?_ ?_).mp ?_
+  · exact mul_nonneg (Real.sqrt_nonneg a) (Real.sqrt_nonneg _)
+  · exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg b)
+  · rw [mul_pow, mul_pow, Real.sq_sqrt ha.le, Real.sq_sqrt hbinv,
+      Real.sq_sqrt hsa.le, Real.sq_sqrt hb]
+    field_simp [hsa.ne']
+    rw [Real.sq_sqrt ha.le]
+    ring
+
+/-- The full two-step matrix affinity is a per-row common scale times the
+existing `twoStepWeight`.  The common scale cancels in row centroids. -/
+theorem twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight
+    [Nonempty (Fin M)] [Nonempty (Fin N)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (Y : Fin N → ℝ) (i : Fin M) (s : Fin N) :
+    twoStepBalancedMatrixAffinity anchors τ Y i s =
+      ((Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) i) *
+          Real.sqrt (balancedMatrixRowMass
+            (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) i))⁻¹) *
+        twoStepWeight anchors τ i
+          (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) := by
+  let K : Fin M → Fin N → ℝ := balancedKernelMatrix anchors τ Y
+  let A₁ : Fin M → Fin N → ℝ := balancedMatrixStep K
+  have hKpos : ∀ j t, 0 < K j t := by
+    intro j t
+    exact balancedKernelMatrix_pos anchors τ Y j t
+  have hRpos : ∀ j, 0 < balancedMatrixRowMass K j := fun j =>
+    balancedMatrixRowMass_pos_of_pos hKpos j
+  have hA₁pos : ∀ j t, 0 < A₁ j t := by
+    intro j t
+    exact balancedMatrixStep_pos hKpos j t
+  have hA₁rowpos : ∀ j, 0 < balancedMatrixRowMass A₁ j := fun j =>
+    balancedMatrixRowMass_pos_of_pos hA₁pos j
+  have hGpos : 0 < algorithm2ColumnKernelMass anchors τ (Y s) :=
+    algorithm2ColumnKernelMass_pos anchors τ (Y s)
+  have hLpos : 0 < balancedLevelMass anchors τ
+      (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) :=
+    balancedLevelMass_pos anchors τ (by
+      intro j
+      exact balancedMatrixRowMass_pos_of_pos
+        (balancedKernelMatrix_pos anchors τ Y) j) (Y s)
+  have hcol :
+      balancedMatrixColumnMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s =
+        balancedLevelMass anchors τ
+            (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s) *
+          (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)))⁻¹ :=
+    balancedMatrixColumnMass_firstStep_kernel anchors τ Y s
+  have hsqrtcol :
+      Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)) *
+        Real.sqrt (balancedMatrixColumnMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s) =
+      Real.sqrt (Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s))) *
+        Real.sqrt (balancedLevelMass anchors τ
+          (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s)) := by
+    rw [hcol]
+    exact sqrt_mul_sqrt_mul_inv_sqrt_eq hGpos hLpos.le
+  have hsqrtcol_ne :
+      Real.sqrt (algorithm2ColumnKernelMass anchors τ (Y s)) *
+        Real.sqrt (balancedMatrixColumnMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s) ≠ 0 := by
+    rw [hsqrtcol]
+    exact mul_ne_zero
+      (Real.sqrt_pos.mpr (Real.sqrt_pos.mpr hGpos)).ne'
+      (Real.sqrt_pos.mpr hLpos).ne'
+  have hrow_ne :
+      Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) i) *
+        Real.sqrt (balancedMatrixRowMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) i) ≠ 0 := by
+    exact mul_ne_zero
+      (Real.sqrt_pos.mpr (balancedMatrixRowMass_pos_of_pos
+        (balancedKernelMatrix_pos anchors τ Y) i)).ne'
+      (Real.sqrt_pos.mpr (by
+        exact balancedMatrixRowMass_pos_of_pos (by
+          intro j t
+          exact balancedMatrixStep_pos
+            (balancedKernelMatrix_pos anchors τ Y) j t) i)).ne'
+  unfold twoStepBalancedMatrixAffinity
+  change (balancedMatrixStep (balancedKernelMatrix anchors τ Y) i s) /
+      (Real.sqrt (balancedMatrixRowMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) i) *
+        Real.sqrt (balancedMatrixColumnMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) s)) =
+    ((Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) i) *
+        Real.sqrt (balancedMatrixRowMass
+          (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) i))⁻¹) *
+      twoStepWeight anchors τ i
+        (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s)
+  rw [balancedMatrixStep_kernel_eq anchors τ Y i s]
+  unfold twoStepWeight
+  rw [← hsqrtcol]
+  rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv, mul_inv, mul_inv]
+  field_simp [hrow_ne, hsqrtcol_ne]
+
+/-- **B4 matrix reconciliation.**  The literal finite matrix obtained by two
+geometric-mean balancing rounds yields exactly the same row centroid as the
+weight-form `t = 2` estimator used in the sampling theorem.  This is the
+formal bridge between the full matrix implementation and the B3 SNIS-style
+analysis. -/
+theorem twoStepBalancedMatrixCentroid_eq_weightCentroid
+    [Nonempty (Fin M)] [Nonempty (Fin N)]
+    (anchors : Fin M → ℝ) (τ : ℝ) (i : Fin M) (Y : Fin N → ℝ) :
+    twoStepBalancedMatrixCentroid anchors τ i Y =
+      balancedTwoStepWeightCentroid anchors τ i Y := by
+  let lam : ℝ :=
+    (Real.sqrt (balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) i) *
+      Real.sqrt (balancedMatrixRowMass
+        (balancedMatrixStep (balancedKernelMatrix anchors τ Y)) i))⁻¹
+  let w : Fin N → ℝ := fun s =>
+    twoStepWeight anchors τ i
+      (fun j => balancedMatrixRowMass (balancedKernelMatrix anchors τ Y) j) (Y s)
+  have hlam_ne : lam ≠ 0 := by
+    have hKpos : ∀ j s, 0 < balancedKernelMatrix anchors τ Y j s :=
+      balancedKernelMatrix_pos anchors τ Y
+    have hA₁pos : ∀ j s,
+        0 < balancedMatrixStep (balancedKernelMatrix anchors τ Y) j s := by
+      intro j s
+      exact balancedMatrixStep_pos hKpos j s
+    unfold lam
+    exact inv_ne_zero (mul_ne_zero
+      (Real.sqrt_pos.mpr (balancedMatrixRowMass_pos_of_pos hKpos i)).ne'
+      (Real.sqrt_pos.mpr (balancedMatrixRowMass_pos_of_pos hA₁pos i)).ne')
+  have hpoint : ∀ s, twoStepBalancedMatrixAffinity anchors τ Y i s = lam * w s := by
+    intro s
+    unfold lam w
+    exact twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight anchors τ Y i s
+  have hsum :
+      (∑ s, twoStepBalancedMatrixAffinity anchors τ Y i s) = ∑ s, lam * w s := by
+    apply Finset.sum_congr rfl
+    intro s _
+    exact hpoint s
+  have hsumY :
+      (∑ s, twoStepBalancedMatrixAffinity anchors τ Y i s • Y s) =
+        ∑ s, (lam * w s) • Y s := by
+    apply Finset.sum_congr rfl
+    intro s _
+    rw [hpoint s]
+  unfold twoStepBalancedMatrixCentroid balancedMatrixCentroid balancedTwoStepWeightCentroid
+  rw [hsum, hsumY]
+  simpa [w] using selfNormalizedCentroid_eq_of_common_scale lam w Y hlam_ne
 
 /-- The realized (batch) row masses. -/
 noncomputable def realizedRowMass {Ω : Type*} (anchors : Fin M → ℝ) (τ : ℝ)

@@ -153,6 +153,14 @@ factorization `K2[i,s] = (1/sqrt(r_i r1_i)) * W_s`, positivity of all masses,
 then common-scale cancellation).  Numerics S0/S4 already validate this
 algebra; B4 upgrades it to a theorem.
 
+Implemented in `BalancedSampling.lean` as:
+
+- `twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight`: the literal
+  two-step matrix affinity is a per-row common factor times `twoStepWeight`;
+- `twoStepBalancedMatrixCentroid_eq_weightCentroid`: the per-row common factor
+  cancels, so the full matrix-form centroid equals the weight-form centroid
+  used by the B3 sampling theorem.
+
 ## Audit and docs
 
 - No new axioms anywhere (B0 uses the reviewed sample-mean axiom via the
@@ -161,7 +169,10 @@ algebra; B4 upgrades it to a theorem.
   `SelfNormalized.weightSum_deviation_prob_le`,
   `SelfNormalized.selfNormalizedCentroid_relative_perturbation`,
   `SelfNormalized.twoStepWeight_rel_of_rowMass_rel` (name may live in
-  `Algorithm2`), `Algorithm2.balancedTwoStepCentroid_deviation_prob_le`.
+  `Algorithm2`),
+  `Algorithm2.twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight`,
+  `Algorithm2.twoStepBalancedMatrixCentroid_eq_weightCentroid`,
+  `Algorithm2.balancedTwoStepCentroid_deviation_prob_le`.
 - `scripts/Check.ps1` green; `#print axioms`: B1/B2 foundations-only, B0/B3
   foundations + `sampleMean_meanSquare_le`.
 - Numerics (cheap, optional): S6 in `run_sinkhorn.py` — Monte-Carlo check
@@ -190,7 +201,7 @@ algebra; B4 upgrades it to a theorem.
 - [x] B2a/B2b/B2c relative-error toolkit
 - [x] B3 defs + balancedTwoStepCentroid_deviation_prob_le
 - [x] Two-branch normalized drift assembly
-- [ ] B4 full-matrix reconciliation (optional)
+- [x] B4 full-matrix reconciliation (optional)
 - [x] Audit entries + Check.ps1 + #print axioms
 - [x] S6 numeric validation of constants
 - [x] Docs updated

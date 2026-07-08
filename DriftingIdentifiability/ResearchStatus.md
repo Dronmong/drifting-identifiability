@@ -860,6 +860,11 @@ Certified (2026-07-07, no new axioms):
   two-branch normalized drift assembly: positive and negative centroid
   high-probability bounds imply a high-probability bound for their difference.
   This closes the non-matrix normalized `t = 2` statistical bridge.
+- `twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight` and
+  `twoStepBalancedMatrixCentroid_eq_weightCentroid` close the optional B4
+  reconciliation: the literal two-step finite matrix implementation is a
+  per-row common scaling of the weight-form estimator, and that common scaling
+  cancels exactly in the centroid.
 
 Toy-scale evidence (`SinkhornImplementation/RESULTS.md`, seed-deterministic):
 one balancing step reproduces the paper's estimator to `1e-16`; mass CV falls
@@ -870,8 +875,8 @@ measured in `numerics/` E5; particle descent on an unequal-mass 2-D target
 error in every initialization; signal-normalized dispersion favors moderate
 depth (`t = 2–3`) and degrades by `t = 10` at small `tau`.  The S6 guardrail
 check validates the `BalancedSampling.lean` perturbation constants on the
-two-atom testbed.  Open: finite unrolling for `t ≥ 3`, full-matrix
-reconciliation with the implementation form, and any at-scale (FID) claim.
+two-atom testbed.  Open: finite unrolling for `t ≥ 3` and any at-scale (FID)
+claim.  The `t = 2` full-matrix reconciliation is now certified.
 
 ## What would complete the practical phase
 

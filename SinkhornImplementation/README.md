@@ -19,7 +19,7 @@ balancing depth `t` as a design dimension (`t = 1` is the paper,
 | `run_sinkhorn.py` | experiments S0-S4, writes `RESULTS.md` |
 | `RESULTS.md` | generated report (seed 20260707) |
 | `DriftingIdentifiability/SinkhornBalanced.lean` | certified theory (lives in the audited source tree, marked as extension) |
-| `DriftingIdentifiability/BalancedSampling.lean` | certified `t = 2` balanced-affinity sampling theorem |
+| `DriftingIdentifiability/BalancedSampling.lean` | certified `t = 2` balanced-affinity sampling theorem and full matrix/weight-form reconciliation |
 
 Run:
 
@@ -38,6 +38,8 @@ uv run --with numpy python SinkhornImplementation/run_sinkhorn.py
 | `oneStepBalanced01Setup` / `oneStepBalanced01_identifies_of_probeEnergy_eq_zero` | the explicit one-full-balancing-step kernel `k/sqrt(r(x) g(y))` |
 | `balancedTwoStepCentroid_deviation_prob_le` | high-probability deviation bound for the realized `t = 2` batch-balanced centroid, reducing batch-dependence to row-mass concentration plus fixed-weight SNIS |
 | `balancedTwoStepNormalizedDrift_deviation_prob_le_of_centroids` | positive/negative centroid bounds compose into a normalized two-branch drift bound |
+| `twoStepBalancedMatrixAffinity_eq_commonScale_mul_weight` | literal two-step finite matrix affinity equals a per-row common factor times the weight-form `twoStepWeight` |
+| `twoStepBalancedMatrixCentroid_eq_weightCentroid` | the full matrix-form `t = 2` centroid equals the weight-form centroid used by the sampling theorem |
 
 Identifiability theorems use only the three reviewed equation-11/31/
 antisymmetry paper axioms; no new axioms anywhere.
@@ -76,5 +78,5 @@ antisymmetry paper axioms; no new axioms anywhere.
   developed in the main track; the `t = 2` balanced centroid now has a
   high-probability bridge to a reference balanced population field, and two
   branch centroid bounds now assemble into a normalized drift bound. Full
-  matrix reconciliation with the implementation form and deeper unrolling
-  remain extension work.
+  matrix reconciliation with the implementation form is certified for `t = 2`;
+  deeper unrolling remains extension work.
