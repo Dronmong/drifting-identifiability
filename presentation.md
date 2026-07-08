@@ -22,7 +22,7 @@ Our project studied the harder identifiability direction:
 V = 0  ⇒  p = q ?
 ```
 
-We proved this implication under explicit, machine-checked finite-basis/frame conditions, clarified what Algorithm 2 actually estimates, handled feature-space and CFG edge cases honestly, and quantified the sample/conditioning costs numerically.
+We proved this implication under explicit, machine-checked finite-basis/frame conditions, clarified the fixed-anchor form of Algorithm 2, handled feature-space and CFG edge cases honestly, and quantified the sample/conditioning costs numerically.
 
 The result is not “we beat the paper’s FID.” The result is:
 
@@ -416,12 +416,13 @@ wᵢ(y) = k(xᵢ,y) / sqrt(g(y)),
 g(y) = Σ_r k(anchor_r, y).
 ```
 
-So Algorithm 2 targets a column-reweighted field, not generally the bare field.
+So the fixed-anchor/no-mask form targets a column-reweighted field, not
+generally the bare field.
 
 In short:
 
 ```text
-Algorithm 2 estimator → column-reweighted population drift,
+fixed-anchor Algorithm 2 estimator → column-reweighted population drift,
 not necessarily bare mean-shift drift.
 ```
 
@@ -446,7 +447,7 @@ estimation error small
 
 For self-normalized estimators, the project proves `1/N`-type concentration using the reviewed sample-mean axiom.
 
-For the no-mask Algorithm 2 route:
+For the fixed-anchor/sample-split no-mask route:
 
 ```text
 sampled centroids
@@ -460,6 +461,11 @@ For the implementation self-mask:
 - the `1e6` mask is treated as a deterministic perturbation of a deleted/leave-masked-out estimator;
 - the perturbation is astronomically tiny at paper temperatures;
 - the deleted estimator has its own indexed SNIS consistency theorem.
+
+These probability theorems freeze the anchor batch. The paper instead reuses
+the random generated negatives as anchors (`x = y_neg`), making every column
+weight jointly batch-dependent. A concentration theorem for that coupled
+estimator remains open.
 
 ---
 
@@ -587,7 +593,9 @@ fraction ≈ (1/α)^(m-1).
 
 At `α = 4`, this shrinks quickly with basis size.
 
-So the affine/signed treatment is the generic case, not a corner case.
+So under this uniform-Dirichlet finite-basis model, the affine/signed treatment
+is typical rather than a corner case. This is not a claim about the empirical
+distribution of real ImageNet conditionals.
 
 ---
 
@@ -820,7 +828,7 @@ The Drifting Models paper gives a compelling training algorithm and strong Image
 
 We formalized the appendix finite-basis argument in Lean. The key condition is that the pairwise interaction vectors form a nondegenerate, quantitatively well-conditioned frame. Under that condition, zero drift forces all coefficient minors to vanish, and probability normalization gives equality of the distributions. We also proved stability: small finite probe drift controls coefficient error.
 
-Then we connected this population theorem to the actual estimator. The main surprise is that Algorithm 2 does not generally estimate the bare population field; it estimates a column-reweighted field. We built the corresponding theorem for that modified field, proved self-normalized importance-sampling consistency, handled the implementation mask as a deleted-estimator perturbation, and repaired the main denominator-floor looseness with a high-probability denominator-tail theorem.
+Then we connected this population theorem to a fixed-anchor/sample-split form of the estimator. The main surprise is that this form does not generally estimate the bare population field; it estimates a column-reweighted field. We built the corresponding theorem for that modified field, proved self-normalized importance-sampling consistency, handled the implementation mask as a deleted-estimator perturbation, and repaired the main denominator-floor looseness with a high-probability denominator-tail theorem. The paper's exact reused-negative random-anchor coupling remains open.
 
 Finally, we formalized two important guardrails. In feature space, the safe conclusion is equality of feature laws, not source laws, unless the feature map is measure-determining. And with CFG, the target is generally affine or signed, not necessarily a probability distribution.
 

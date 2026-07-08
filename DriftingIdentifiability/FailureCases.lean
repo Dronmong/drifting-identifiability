@@ -87,4 +87,25 @@ theorem sourceMeasure_eq_of_featureLaw_eq
   apply hφ.map_injective
   simpa [featureLaw, pushforward] using h
 
+/-- Two temperature components can cancel exactly even when neither vanishes.
+This is the minimal obstruction to applying a single-temperature zero theorem
+to the paper's summed multi-temperature field. -/
+noncomputable def cancellingTemperatureDrift
+    {F : Type*} [AddCommGroup F] (v : F) : ℝ → F :=
+  fun τ => if τ = 0 then v else if τ = 1 then -v else 0
+
+theorem aggregateTemperatureDrift_cancels
+    {F : Type*} [AddCommGroup F] (v : F) :
+    aggregateTemperatureDrift ({0, 1} : Finset ℝ)
+      (cancellingTemperatureDrift v) = 0 := by
+  simp [aggregateTemperatureDrift, cancellingTemperatureDrift]
+
+theorem aggregateTemperatureDrift_zero_with_nonzero_component
+    {F : Type*} [AddCommGroup F] {v : F} (hv : v ≠ 0) :
+    aggregateTemperatureDrift ({0, 1} : Finset ℝ)
+        (cancellingTemperatureDrift v) = 0 ∧
+      cancellingTemperatureDrift v 0 ≠ 0 := by
+  exact ⟨aggregateTemperatureDrift_cancels v, by
+    simpa [cancellingTemperatureDrift] using hv⟩
+
 end DriftingIdentifiability

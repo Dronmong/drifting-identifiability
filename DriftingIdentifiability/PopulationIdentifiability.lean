@@ -360,11 +360,12 @@ noncomputable def toDriftFiniteSetup
 end PopulationMeanShiftFiniteSetup
 
 /-- **Promoted probe-local result (Objective 2).**  Identifiability needs only
-the *finite* observable drift vector to vanish: if the normalized population
+the *finite query-access* drift vector to vanish: if the normalized population
 mean-shift drift is zero at each of the `N` probes, the represented probability
 measures coincide.  This is strictly weaker than pointwise `ZeroDrift` and does
 not require full topological support; it is the exact hypothesis the proof
-consumes and matches the finite quantity a training loss can observe. -/
+consumes. The selected probes are caller supplied and need not be generated
+anchors observed by the paper's training loss. -/
 theorem finitePopulationMeanShift_identifies_of_probeZero
     {m N : ℕ} (setup : PopulationMeanShiftFiniteSetup E m N)
     (hzero : ∀ n, setup.normalizedProbeDrift n = 0) :

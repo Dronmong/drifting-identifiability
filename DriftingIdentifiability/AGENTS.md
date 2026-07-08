@@ -183,8 +183,14 @@ normalizers and equation (11), then applies the axiom-free minor algebra.
 Practical versions must supply a positive `InteractionFrameBound`, not merely
 assert unnamed injectivity. This bound implies nondegeneracy and yields the
 explicit stability estimate `‖a-b‖₁ ≤ (2B/c)‖V_probes‖`. A necessary probe
-dimension bound is also formalized. `finiteBasisCandidate` records the model
-family and proves legitimacy from an independently unequal pair.
+dimension bound is also formalized. `finiteBasisCandidate` records the
+preliminary model-family condition. The accepted
+`finitePopulationMeanShiftCandidate` additionally packages the full
+`PopulationMeanShiftFiniteSetup`; its condition includes the fixed kernel,
+probes, regularity, integrability, and positive frame certificate, and
+`finitePopulationMeanShiftCandidate_identifiesAtZero` proves the canonical
+`IdentifiesAtZero` target. Its legitimacy theorem still requires an
+independently unequal represented pair before zero drift is assumed.
 
 `EmpiricalFrameBound.lean` now supplies an axiom-free concrete general-`m`
 instance on `ℝ`: a uniform empirical point-density basis, unit Gaussian kernel,
@@ -220,7 +226,8 @@ matching, and no CFG. Zero population energy reaches the pointwise hypothesis
 only with integrability, continuity, and full topological support. A finite
 minibatch estimator and a signed CFG target require separate theorems.
 
-Objective 4 now has promoted finite-sample infrastructure:
+Objective 4 now has promoted **fixed-anchor/sample-split** finite-sample
+infrastructure:
 `FiniteSampleBridge.lean` propagates
 estimator MSE into coefficient error, `Algorithm2Estimator.lean` proves the
 safe algebraic/boundedness facts for Algorithm 2's `compute_V` (including the
@@ -265,6 +272,13 @@ means/variances and an explicit split `0 < t < Σ μw`. Do not silently set
 do not assume `Σ μw` is large without data, and do not present the
 mean-square or denominator-tail bounds as identifiability claims: they feed the
 estimator-agnostic bridge through estimator-error control only.
+
+These probability theorems do not cover the paper's exact reuse
+`anchors(ω) = Yneg(ω)`. Their theorem signatures take deterministic anchors
+separately from the random negative batch. Substitution would make the weight
+functions random and jointly batch-dependent, invalidating the fixed-weight
+SNIS hypotheses. Do not call Objective 4 complete for the paper estimator until
+that coupled random-anchor concentration theorem is proved.
 
 Objective 5 is now initialized in `FeatureSpaceIdentifiability.lean`. The safe
 default conclusion of any feature-space theorem is equality of feature laws

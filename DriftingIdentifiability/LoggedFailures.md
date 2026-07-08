@@ -450,3 +450,71 @@ so future agents do not repeat equivalent mistakes.
 - **Relevant Lean declarations/files:** `empirical01LaplaceSetup`,
   `empirical01Laplace_identifies_of_probeEnergy_eq_zero`,
   `PracticalModelClasses.lean`.
+
+---
+
+### 2026-07-08 — fixed-anchor SNIS mistaken for reused-negative Algorithm 2
+
+- **Exact condition:** Apply
+  `algorithm2PositiveCentroid_false_meanSquare_le`,
+  `algorithm2NegativeCentroid_false_meanSquare_le`, or the deleted-estimator
+  consistency theorems to the paper's batch by substituting
+  `anchors := Yneg ω`.
+- **Intended mechanism:** Use the fixed-anchor column-reweighted SNIS theorem
+  as the end-to-end concentration theorem for Algorithm 1, where generated
+  negatives are reused as query anchors.
+- **Precise obstruction:** The current theorem signatures take
+  `anchors : Fin Nx → F` as deterministic data separately from
+  `Yneg : Fin Nneg → Ω → F`. With `anchors := Yneg ω`, the column mass
+  `Σᵣ k(Yneg r ω,y)` and every per-slot weight become random functions of the
+  entire negative batch. Pairwise independence of the sampled summands and the
+  fixed-weight hypotheses used by `selfNormalized_meanSquare_le` no longer
+  apply.
+- **Fatal or repairable:** Repairable, but not by rewriting. It requires a
+  coupled batch-functional theorem: leave-one-out conditioning, a U-statistic
+  argument, bounded differences, or another concentration method that retains
+  the shared random-anchor dependence.
+- **Relevant Lean declarations/files:** `Algorithm2SNIS.lean`,
+  `DeletedEstimatorConsistency.lean`, `ColumnReweightedMeanShift.lean`,
+  `FiniteSampleBridge.lean`.
+
+---
+
+### 2026-07-08 — selected probes silently identified with training anchors
+
+- **Exact condition:** Describe
+  `finitePopulationMeanShift_identifies_of_probeZero` as consuming the finite
+  drift vector observed by the paper's generated-anchor loss for arbitrary
+  caller-selected probes.
+- **Intended mechanism:** Treat finite query access at structured or
+  dual-certificate probes as if it followed from evaluation at `x ∼ q`.
+- **Precise obstruction:** The theorem permits arbitrary selected probes. In
+  the general atomic Gaussian construction, structured integer probes need not
+  lie in the generated support, so the paper's loss need not evaluate them.
+- **Fatal or repairable:** Repairable by stating query access explicitly, by
+  ensuring the probes belong to the generated support, or by using the existing
+  continuity/full-support population-energy theorem. The latter does not apply
+  automatically to finite atomic model laws.
+- **Relevant Lean declarations/files:** `PopulationIdentifiability.lean`,
+  `EmpiricalFrameBound.lean`, `PracticalModelClasses.lean`.
+
+---
+
+### 2026-07-08 — multi-temperature zero treated as componentwise zero
+
+- **Exact condition:** Infer that every temperature-specific drift vanishes
+  from zero of the practical aggregate `Στ Ṽτ`.
+- **Intended mechanism:** Apply a single-kernel identifiability theorem to one
+  or all terms of the paper's normalized multi-temperature loss.
+- **Smallest obstruction:** In any nontrivial real vector space, choose two
+  components `Ṽτ₁ = v` and `Ṽτ₂ = -v` with `v ≠ 0`. Their aggregate is zero
+  although neither component vanishes. Drift RMS and batch feature
+  normalizations introduce additional data dependence that is absent from the
+  current population setup.
+- **Fatal or repairable:** Fatal without a non-cancellation condition.
+  Repairable through separate per-temperature losses, positive independent
+  coordinates, an orthogonality/frame condition across temperatures, or a
+  direct identifiability proof for the aggregate field.
+- **Relevant Lean declarations/files:** `Paper.aggregateTemperatureDrift`,
+  `Paper.normalizedDrift`, `Paper.normalizedFeatureLoss`,
+  `Paperaxioms.lean`.

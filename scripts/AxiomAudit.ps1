@@ -165,7 +165,11 @@ $declarations = @(
   'DriftingIdentifiability.PaperFiniteIdentifiability.gaussianEmpiricalPointCertifiedProbe_coefficientStability_probeEnergy',
   'DriftingIdentifiability.PaperFiniteIdentifiability.continuousPerturbation_identifies_of_probeEnergy_eq_zero',
   'DriftingIdentifiability.PaperFiniteIdentifiability.empirical01Laplace_identifies_of_probeEnergy_eq_zero',
-  'DriftingIdentifiability.PaperFiniteIdentifiability.empirical01Laplace_coefficientStability_probeEnergy'
+  'DriftingIdentifiability.PaperFiniteIdentifiability.empirical01Laplace_coefficientStability_probeEnergy',
+  'DriftingIdentifiability.CandidateConditions.finitePopulationMeanShiftCandidate_identifiesAtZero',
+  'DriftingIdentifiability.CandidateConditions.finitePopulationMeanShiftCandidate_isLegitimate',
+  'DriftingIdentifiability.aggregateTemperatureDrift_cancels',
+  'DriftingIdentifiability.aggregateTemperatureDrift_zero_with_nonzero_component'
 )
 
 $allowedProjectAxioms = @(
@@ -177,6 +181,7 @@ $allowedProjectAxioms = @(
 
 $sourceLines = [System.Collections.Generic.List[string]]::new()
 $sourceLines.Add('import DriftingIdentifiability')
+$sourceLines.Add('import DriftingIdentifiability.Extensions')
 foreach ($declaration in $declarations) {
   $sourceLines.Add("#print axioms $declaration")
 }

@@ -315,7 +315,7 @@ def e4_ess(rng) -> None:
 
 
 # ============================================================================
-# E5. Conditioning ledger: end-to-end certified sample complexity
+# E5. Conditioning ledger: fixed-anchor two-atom certificate
 # ============================================================================
 
 
@@ -374,7 +374,7 @@ def _denominator_tail_piece_constant(
 
 
 def e5_ledger(rng) -> None:
-    sec("E5. Conditioning ledger: the certified chain, multiplied out")
+    sec("E5. Conditioning ledger: the fixed-anchor certified chain")
     a = np.array([0.3, 0.7])
     b = np.array([0.6, 0.4])
     anchors = np.array([0.0, 1.0])  # probes = anchors = the atoms
@@ -382,6 +382,8 @@ def e5_ledger(rng) -> None:
     target_l1 = 0.1
     out("Operating point: two-atom certified class (columnReweighted01Setup),")
     out(f"anchors = atoms = {{0,1}}, confidence 90%, target ||a-b||_1 <= {target_l1}.")
+    out("Scope: theorem-informed fixed-anchor/sample-split calculation; this is")
+    out("not a certificate for the paper's coupled reuse x = y_neg.")
     out("")
     out("Chain: coefficient bound (2B/c_col)(||Vhat|| + eps) with B = 1")
     out("(`columnReweighted01_coefficientStability`), failure probability")
@@ -499,8 +501,9 @@ def e6_cfg_gate(rng) -> None:
     out("")
     out("At the paper's strongest guidance (alpha = 4) the affine CFG target is")
     out("a genuine probability vector only on a (1/alpha)^(m-1) sliver of the")
-    out("simplex: for realistic basis sizes the signed-measure treatment of")
-    out("Objective 6 (`CFGAffine.lean`) is the *generic* case, not a corner case.")
+    out("simplex under this Dirichlet(1) prior: for larger basis sizes the")
+    out("signed-measure treatment of Objective 6 (`CFGAffine.lean`) is typical")
+    out("under the chosen prior, not a claim about real ImageNet conditionals.")
 
 
 # ============================================================================

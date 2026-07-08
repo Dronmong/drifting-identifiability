@@ -62,7 +62,8 @@ antisymmetry paper axioms; no new axioms anywhere.
   `numerics/RESULTS.md` E5.
 - **S3** (particle descent, paper's Figure-3 methodology, unequal masses
   0.3/0.7): balanced `t = 3` beats the paper's `t = 1` on mode-mass error in
-  every initialization (between: 0.050 vs 0.065; collapsed: 0.638 vs 0.678);
+  every tested initialization (mean last 100 steps: between 0.092 vs 0.105,
+  far 0.297 vs 0.300, collapsed 0.638 vs 0.676);
   neither recovers from the far initialization at this step budget.
 - **S4**: the Lean rescaling identity holds to `1e-17` on realized balanced
   matrices; the biscaling transfer bound is valid at every depth; the *direct*

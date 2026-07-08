@@ -7,20 +7,26 @@ explicit, nonvacuous conditions under which zero ideal population mean-shift
 drift forces `p = q`, and the result is machine checked without new or
 conditional Gaussian/RKHS axioms.
 
+This is an exact, restricted population theorem. No promoted theorem currently
+shows that vanishing raw mean-shift drift along a sequence forces convergence
+of distributions in a specified topology; the paper's asymptotic question
+remains open.
+
 The practical modeling goal is not yet complete, but Objectives 1--3 are now
-complete at the deterministic population level, and Objective 4's theorem
-infrastructure is complete for both estimator routes: the verified no-mask
-Algorithm-2 chain (SNIS consistency → certified column-reweighted field →
-identifiability), a deterministic implementation-mask perturbation bound, and a
-statistical consistency theorem for the leave-masked-out/deleted estimator with
-its exact index-dependent hypotheses. Objective 3 includes a fully
+complete at the deterministic population level. Objective 4 is complete for
+the **fixed-anchor/sample-split** no-mask route (SNIS consistency → certified
+column-reweighted field → identifiability), and supplies a deterministic
+implementation-mask perturbation bound plus a fixed-anchor statistical
+consistency theorem for the leave-masked-out/deleted estimator. It does **not**
+yet cover the paper's coupled implementation where the random generated
+negative batch is reused as the anchor batch, `x = y_neg`. Objective 3 includes a fully
 instantiated non-atomic `C∞` bump basis on a Gaussian reference, in addition to
 the higher-dimensional, variable-bandwidth, adaptive-probe, perturbative, and
-Laplace infrastructure. What remains under Objective 4 is numeric
-instantiation (per-slot leave-out bias and denominator floors for concrete
-masks) and richer certified modified-kernel model classes — conditioning
-work of the Objectives-3/7 kind. Model-quality evaluation remains empirical
-work.
+Laplace infrastructure. What remains under Objective 4 is first a
+concentration/consistency theorem for that reused-negative random-anchor
+coupling, then numeric instantiation (per-slot leave-out bias and denominator
+floors for concrete masks) and richer certified modified-kernel model classes.
+Model-quality evaluation remains empirical work.
 
 ## What has been accomplished
 
@@ -337,6 +343,19 @@ has full support. This does not weaken either exact route: both consume drift at
 the selected probes directly. Full support is needed only by the separate
 global-energy-to-pointwise-zero corollary.
 
+### 14. The accepted candidate now matches the theorem
+
+`finiteBasisCandidate` is retained as the preliminary shared-family condition.
+`finitePopulationMeanShiftCandidate` is the accepted theorem-level
+`CandidateSpec`: its pair condition contains a complete
+`PopulationMeanShiftFiniteSetup`, hence the fixed kernel, represented
+probability measures, selected probes, regularity, integrability, and positive
+interaction frame consumed by the proof.
+`finitePopulationMeanShiftCandidate_identifiesAtZero` proves the canonical
+`IdentifiesAtZero` statement for the fixed `meanShiftDrift` field, while
+`finitePopulationMeanShiftCandidate_isLegitimate` requires an independently
+distinct represented pair and makes no zero-drift assumption.
+
 ## Objectives and remaining priorities
 
 ### Objective 1: explicit lower frame certificate — complete
@@ -357,13 +376,17 @@ bandwidth, and `m`, or choose probes that maximize the certificate. Those are
 conditioning/design improvements under Objectives 3 and 7, not gaps in exact
 identifiability or stability.
 
-### Objective 2: finite observable population loss — complete
+### Objective 2: finite query-access population loss — complete
 
 The exact theorem consumes the deterministic finite probe loss
-`∑ₙ ‖V(xₙ)‖²`. Zero loss is proved equivalent to zero at every probe, and small
-loss controls coefficient error through its square root. The concrete Gaussian
-theorems expose both conclusions directly. This route needs neither pointwise
-zero on all of data space nor a full-support sampling measure.
+`∑ₙ ‖V(xₙ)‖²`. Zero loss is proved equivalent to zero at every selected probe,
+and small loss controls coefficient error through its square root. The concrete
+Gaussian theorems expose both conclusions directly. This is a query-access
+theorem: it assumes those selected probes can be evaluated. Structured probes
+need not be generated anchors observed by the paper's loss. The separate
+continuity/full-support energy theorem can recover pointwise zero from
+generated-law population energy, but that route does not apply automatically
+to finite atomic model laws.
 
 Estimating this population quantity from random reused minibatches is not
 silently assumed. Concentration, estimator bias/dependence, and high-probability
@@ -391,7 +414,7 @@ by an exact sign argument. What remains under Objective 3 is empirical
 model-design tuning (approximation power, richer supports, adaptive probes),
 which is engineering/analysis, not missing theorem infrastructure.
 
-### Objective 4: prove finite-sample guarantees for Algorithm 2 — complete for both routes: no-mask chain and masked implementation (perturbation + deleted-estimator consistency)
+### Objective 4: finite-sample guarantees — fixed-anchor/sample-split routes complete; reused-negative coupling open
 
 Progress (done, `FiniteSampleBridge.lean`):
 
@@ -499,10 +522,12 @@ Progress (done, `FiniteSampleBridge.lean`):
     at the anchors because `k/sqrt(g) ≤ sqrt(k) ≤ 1` there).  The promoted
     theorems `columnReweighted01_identifies_of_probeEnergy_eq_zero`,
     `columnReweighted01_coefficientStability`, and
-    `columnReweighted01_estimate_failure_le_meanSquare` complete the chain:
-    sampled no-mask Algorithm-2 centroids → SNIS mean-square consistency →
-    certified column-reweighted population field → `p = q`, with an explicit
-    high-probability sample-complexity bound.  The end-to-end theorems depend
+    `columnReweighted01_estimate_failure_le_meanSquare` complete the
+    **fixed-anchor/sample-split** chain: sampled no-mask centroids → SNIS
+    mean-square consistency → certified column-reweighted population field →
+    `p = q`, with an explicit high-probability sample-complexity bound. They do
+    not permit substituting `anchors := Yneg ω`, because that makes the weight
+    function random and jointly batch-dependent. The promoted theorems depend
     only on the three reviewed equation-11/31/antisymmetry paper axioms; the
     rescaling identity itself is axiom-free.
 
@@ -573,6 +598,16 @@ reports only `propext`/`Classical.choice`/`Quot.sound` — no paper axioms):
 
 Remaining work after the current Objective-4 implementation:
 
+- **Paper implementation's reused-negative coupling — open.** Algorithm 1 sets
+  `x = y_neg`. The current SNIS and deleted-estimator probability theorems take
+  `anchors : Fin Nx → F` as deterministic data separate from
+  `Yneg : Fin Nneg → Ω → F`. Instantiating the former with `Yneg ω` invalidates
+  the fixed per-slot weight-function hypothesis. Closing this requires a
+  leave-one-out, conditional, U-statistic, bounded-difference, or comparable
+  batch-functional concentration argument. Until then, the finite-sample
+  certificate applies to fixed-anchor or sample-split variants, not the exact
+  reused-negative training batch.
+
 - the **quantitative bias/consistency** of the implementation estimator after
   deletion/leave-out masking — **now formalized**.  The no-mask fixed-anchor
   centroids have an SNIS consistency theorem, the finite `1e6` mask is
@@ -605,8 +640,8 @@ Remaining work after the current Objective-4 implementation:
   the two-atom class carries a certified `InteractionFrameBound` for the actual
   column-reweighted interaction vectors (exact strict-pair rescaling of the bare
   Laplace family — no perturbation argument), completing the no-mask
-  sampled-estimator-to-identifiability chain in a concrete model class.  What
-  remains under Objective 4 is scoped and explicit:
+  fixed-anchor sampled-estimator-to-identifiability chain in a concrete model
+  class. The additional fixed-anchor residuals are scoped and explicit:
   - the implementation **self-mask** (`selfMask = true` with the `1e6` penalty)
     is formalized in `SelfMaskPerturbation.lean` as a deterministic
     `δ = exp(-1000000/temperature)` perturbation of the leave-masked-out/deleted
@@ -813,8 +848,9 @@ Findings:
    denominator-floor pathology.
 7. **CFG gate.**  At the paper's strongest guidance `alpha = 4`, the CFG
    affine target is a genuine probability vector on only a `(1/alpha)^{m-1}`
-   sliver of the simplex (validated against closed form): Objective 6's
-   signed/affine treatment is the generic case, not a corner case.
+   sliver of the simplex under the chosen uniform Dirichlet prior (validated
+   against closed form): Objective 6's signed/affine treatment is typical in
+   that numerical model, not a claim about real ImageNet conditionals.
 
 Remaining Objective-7 work: run `numerics/real_feature_diagnostics.py` on
 *real* encoder features.  The runner is implemented and expects externally

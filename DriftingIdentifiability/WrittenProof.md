@@ -431,9 +431,16 @@ theorems `columnReweighted01_identifies_of_probeEnergy_eq_zero`,
 `columnReweighted01_coefficientStability`, and
 `columnReweighted01_estimate_failure_le_meanSquare` give end-to-end
 identifiability, stability, and the high-probability finite-sample bridge for
-the concrete class, completing the chain: sampled no-mask Algorithm-2 centroids
-→ SNIS mean-square consistency → certified column-reweighted population field →
-`p = q`.
+the concrete **fixed-anchor/sample-split** class, completing the chain: sampled
+no-mask centroids → SNIS mean-square consistency → certified
+column-reweighted population field → `p = q`.
+
+This is not yet a theorem for the paper's exact reuse pattern `x = y_neg`.
+The probability theorems take deterministic `anchors : Fin Nx → F` separately
+from random `Yneg : Fin Nneg → Ω → F`. Replacing the former by `Yneg ω` makes
+the column weight random and jointly dependent on the whole negative batch, so
+the fixed-weight SNIS hypotheses no longer apply. A separate coupled-batch
+concentration argument is required.
 
 `SelfMaskPerturbation.lean` now supplies the separate implementation-mask
 correction.  With `δ = exp(-1000000/temperature)`, the masked sample weight is

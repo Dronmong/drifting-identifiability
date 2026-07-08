@@ -15,7 +15,8 @@ lake build
 ./scripts/Check.ps1
 ```
 
-`Check.ps1` runs both the trust-boundary audit and a warning-free Lean build.
+`Check.ps1` runs the trust-boundary audit, a warning-free Lean build,
+conditional-module compilation, and the promoted-theorem axiom audit.
 To inspect the trusted dependencies of a theorem without editing a Lean file:
 
 ```powershell
@@ -26,53 +27,54 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
 
 - `papers/2602.04770v2.pdf` — source paper.
 - `DriftingIdentifiability/Paperaxioms.lean` — reviewed paper definitions and
-  axioms; frozen by a SHA-256 trust manifest.
-- `DriftingIdentifiability/TrustedBoundary.lean` — exact and asymptotic theorem
-  targets plus nonvacuity requirements for candidate conditions.
-- `DriftingIdentifiability/CounterexampleHarness.lean` — finite-model and
-  counterexample definitions.
-- `DriftingIdentifiability/CandidateConditions.lean` — proposed conditions and
-  research-stage metadata.
-- `DriftingIdentifiability/FiniteGrouping.lean` — axiom-free proof of the
-  coefficient-minor vanishing (anti-symmetric grouping identity + Mathlib linear
-  independence), replacing the paper axiom `zero_drift_coefficient_minors`.
-- `DriftingIdentifiability/PaperFiniteIdentifiability.lean` — finite-basis route
-  from Appendix C.1; now proves density equality with no paper axiom.
-- `DriftingIdentifiability/FiniteLegitimacy.lean` — machine-checked legitimacy
-  witnesses for the finite route: a distinct pair before zero drift, the lift to
-  distinct densities, and satisfiability of the interaction-separation premises.
-- `DriftingIdentifiability/PaperDriftIdentifiability.lean` — connects the
-  *actual* density-interaction drift (Appendix C.1) to the finite algebra:
-  probe-wise zero drift plus nondegeneracy identifies the basis densities, with
-  a specialization to the paper's mean-shift interaction kernel.
-- `DriftingIdentifiability/GaussianNondegeneracy.lean` — discharges the
-  interaction-nondegeneracy hypothesis for a concrete Gaussian-kernel system:
-  reduces it to Micchelli's strict positive definiteness of the Gaussian, so the
-  finite identifiability holds with nondegeneracy *derived* rather than assumed.
-- `DriftingIdentifiability/FiniteStability.lean` — axiom-free quantitative
-  stability: the `ℓ¹` coefficient distance is bounded by the total minor mass,
-  giving the convergence statement `minor mass → 0 ⟹ coefficients → 0` (the
-  finite-coefficient shadow of the asymptotic target).
-- `DriftingIdentifiability/EmpiricalFrameBound.lean` — closes the frame-bound
-  gap for `m = 2` with the *actual* integral-induced vectors: computes the
-  mean-shift `basisInteraction` in closed form against a two-point empirical
-  reference and proves a positive `InteractionFrameBound` for the Gaussian
-  kernel, axiom-free (no synthetic substitute).
-- `DriftingIdentifiability/CharacteristicIdentifiability.lean` — the
-  distribution-level target: for a characteristic kernel (witnessed by the
-  Gaussian), zero MMD drift (equation 41) between probability measures forces
-  `p = q` (exact), and the MMD discrepancy tending to zero forces convergence in
-  distribution (asymptotic, Lévy–Prokhorov). Reduces identifiability to reviewed
-  RKHS axioms; see the transparency notes in `Paperaxioms.lean` and
-  `LoggedFailures.md`.
-- `DriftingIdentifiability/AGENT.md` — mandatory agent workflow and anti-cheating
+  axioms, frozen by a SHA-256 trust manifest.
+- `DriftingIdentifiability/TrustedBoundary.lean` — exact/asymptotic targets and
+  nonvacuity requirements.
+- `DriftingIdentifiability/PopulationIdentifiability.lean` — promoted
+  paper-native theorem for genuine finite-basis probability measures, including
+  finite-probe and full-support population-energy forms.
+- `DriftingIdentifiability/PopulationCandidate.lean` — preliminary
+  finite-family candidate plus the accepted full-setup candidate, its
+  legitimacy theorem, and its `IdentifiesAtZero` theorem.
+- `DriftingIdentifiability/FiniteGrouping.lean`,
+  `PaperFiniteIdentifiability.lean`, and `FiniteStability.lean` — coefficient
+  algebra, frame bounds, stability, dimension obstructions, and certificates.
+- `DriftingIdentifiability/EmpiricalFrameBound.lean` — actual integral-induced
+  empirical interactions, including the general-`m` Gaussian Vandermonde
+  construction and two-atom specializations.
+- `DriftingIdentifiability/PracticalModelClasses.lean` and
+  `SmoothBumpBasis.lean` — higher-dimensional/adaptive-probe infrastructure, a
+  two-atom paper-Laplace theorem, and a concrete non-atomic two-bump theorem.
+- `DriftingIdentifiability/Algorithm2SNIS.lean`,
+  `DeletedEstimatorConsistency.lean`, and `DenominatorTail.lean` —
+  fixed-anchor/sample-split finite-sample theory. These do not yet cover the
+  paper's coupled reuse `x = y_neg`.
+- `DriftingIdentifiability/FeatureSpaceIdentifiability.lean` and
+  `CFGAffine.lean` — feature-law and signed/affine CFG guardrails.
+- `DriftingIdentifiability/Extensions.lean` — opt-in root for audited Sinkhorn
+  extension research; these are not paper claims.
+- `DriftingIdentifiability/Conditional.lean` — opt-in conditional
+  Gaussian/RKHS research. Its synthetic or externally axiomatized results do
+  not support promoted claims.
+- `DriftingIdentifiability/AGENTS.md` — mandatory workflow and anti-cheating
   rules.
-- `DriftingIdentifiability/WrittenProof.md` — proof-development template.
-- `DriftingIdentifiability/LoggedFailures.md` — permanent counterexample and
-  failed-approach log.
-- `scripts/TrustAudit.ps1` — rejects unreviewed axioms and proof escapes.
-- `scripts/PrintAxioms.ps1` — prints a theorem's kernel-visible axiom
-  dependencies.
+- `DriftingIdentifiability/ResearchStatus.md` — authoritative scope and open-gap
+  ledger.
+- `DriftingIdentifiability/WrittenProof.md` and `LoggedFailures.md` — written
+  proof and permanent failure log.
+- `scripts/Check.ps1` — complete local verification entry point.
+- `scripts/PrintAxioms.ps1` — theorem dependency inspection.
+
+## Current scope
+
+The exact restricted population result is verified: under finite-basis,
+regularity, and positive interaction-frame conditions, zero normalized
+population mean-shift drift identifies the represented probability measures.
+The paper's stronger end-to-end practical and asymptotic questions remain open:
+the current sampling theorems freeze or sample-split anchors, while the paper
+reuses the random negative batch as anchors; selected proof probes need not be
+training anchors; and normalized multi-temperature cancellation has not yet
+been ruled out.
 
 ## Trust policy
 

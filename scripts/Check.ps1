@@ -11,6 +11,11 @@ try {
   & $lake build --wfail
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+  # Audited research extensions are intentionally absent from the default
+  # paper-native root, so build their opt-in aggregator explicitly.
+  & $lake build DriftingIdentifiability.Extensions --wfail
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
   $conditionalModules = @(
     'CharacteristicIdentifiability',
     'GaussianNondegeneracy'

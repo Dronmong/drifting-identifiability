@@ -21,4 +21,7 @@ jobs:
         shell: pwsh
         run: ./scripts/TrustAudit.ps1
       - uses: leanprover/lean-action@v1
+      - name: Run full project verification
+        shell: pwsh
+        run: ./scripts/Check.ps1
       - uses: leanprover-community/docgen-action@v1

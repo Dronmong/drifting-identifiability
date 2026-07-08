@@ -196,10 +196,12 @@ regimes, matching its own ablation (single tau FID 8.67-10.62 vs 8.46).
 For the SNIS bounds this is the practical dmin/sigma dial: the certified
 constants are honest but only as strong as the smallest-tau ESS.
 
-## E5. Conditioning ledger: the certified chain, multiplied out
+## E5. Conditioning ledger: the fixed-anchor certified chain
 
 Operating point: two-atom certified class (columnReweighted01Setup),
 anchors = atoms = {0,1}, confidence 90%, target ||a-b||_1 <= 0.1.
+Scope: theorem-informed fixed-anchor/sample-split calculation; this is
+not a certificate for the paper's coupled reuse x = y_neg.
 
 Chain: coefficient bound (2B/c_col)(||Vhat|| + eps) with B = 1
 (`columnReweighted01_coefficientStability`), failure probability
@@ -254,7 +256,8 @@ Fraction of Dirichlet(1)-random conditionals passing the gate (u uniform):
 
 At the paper's strongest guidance (alpha = 4) the affine CFG target is
 a genuine probability vector only on a (1/alpha)^(m-1) sliver of the
-simplex: for realistic basis sizes the signed-measure treatment of
-Objective 6 (`CFGAffine.lean`) is the *generic* case, not a corner case.
+simplex under this Dirichlet(1) prior: for larger basis sizes the
+signed-measure treatment of Objective 6 (`CFGAffine.lean`) is typical
+under the chosen prior, not a claim about real ImageNet conditionals.
 
-_Runtime: 0.6s._
+_Runtime: 1.0s._
