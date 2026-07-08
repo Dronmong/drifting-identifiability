@@ -1,12 +1,18 @@
 # Raw-field general converse: landscape record + axiom-route plan
 
-**Status:** planning document, written 2026-07-08. Part I records where the
-identifiability question stands across the paper, the authors' reviewer
-rebuttal, and this project. Part II is the resumable work plan for the open
-piece — the general converse for the *raw* mean-shift drift field of arbitrary
-targets — using the **axiom route** (deliberate: this is a discovery/
-contribution project, not a formalize-everything project; well-known external
-facts are axiomatized with citations, per the standing project policy).
+**Status:** Part II **IMPLEMENTED 2026-07-08** (axiom route, user-approved).
+`Paper.gaussianMeanShift_injective` and the bridge theorem
+`gaussianMeanShiftDrift_identifiesAtZero` are in the tree; Check.ps1 green
+(33 files, 15 paper + 6 conditional axioms, 164 promoted declarations);
+`#print axioms` of the bridge theorem shows exactly `propext, Classical.choice,
+Quot.sound, Paper.gaussianMeanShift_injective` — the single cited external
+axiom, nothing else. Part I records where the identifiability question stands
+across the paper, the authors' reviewer rebuttal, and this project; Part II
+below is the (now completed) plan for the open piece — the general converse for
+the *raw* mean-shift drift field of arbitrary targets — using the **axiom
+route** (deliberate: this is a discovery/contribution project, not a
+formalize-everything project; well-known external facts are axiomatized with
+citations, per the standing project policy).
 
 Main track (not the Sinkhorn extension). Follows the candidate discipline in
 `AGENTS.md` / `CandidateConditions.lean`: legitimacy check → counterexample
@@ -221,24 +227,34 @@ reviewer sees the condition is nonvacuous. Optionally add an
 `IsExactCounterexample` note recording the band-limited-kernel obstruction from
 Part I §5 (shows why the kernel hypothesis cannot be dropped).
 
-### Audit / build checklist
+### Audit / build checklist — ALL DONE (2026-07-08)
 
-- [ ] `gaussianMeanShift_injective` added to `Paperaxioms.lean`, docstring states
-      it is about the map, not the drift; cite Sriperumbudur et al. 2010.
-- [ ] `TrustAudit.ps1` / the axiom classification updated: the conditional
-      external axiom class grows by one (currently 5 → 6). Verify the Check.ps1
-      banner count and any hash/allowlist the audit maintains.
-- [ ] `gaussianMeanShiftDrift_identifiesAtZero` added to the **opt-in**
-      `CharacteristicIdentifiability.lean` (NOT the trusted route), and registered
-      in `scripts/AxiomAudit.ps1` promoted-declaration list.
-- [ ] `#print axioms gaussianMeanShiftDrift_identifiesAtZero` shows exactly the
-      three foundational axioms **plus** `gaussianMeanShift_injective` (and
-      whatever `equation_11`/`meanShift` pull in) — and confirm it is reachable
-      only through `DriftingIdentifiability.Conditional`, so the trusted-route
-      audit still reports "no conditional Gaussian/RKHS dependencies".
-- [ ] `scripts/Check.ps1` green.
-- [ ] Update `ResearchStatus.md` (conditional-modules section) and this file's
-      status line.
+- [x] `gaussianMeanShift_injective` added to `Paperaxioms.lean`, docstring states
+      it is about the map, not the drift; cites Sriperumbudur et al. 2010.
+- [x] `TrustAudit.ps1` conditional-external allowlist updated (5 → 6); manifest
+      `.trusted/Paperaxioms.sha256` regenerated (BOM-less, `Get-FileHash` method).
+      Check.ps1 banner now reads "15 paper axioms and 6 conditional external
+      axioms".
+- [x] `gaussianMeanShiftDrift_identifiesAtZero` added to the **opt-in**
+      `CharacteristicIdentifiability.lean` (NOT the trusted route). **Correction
+      to the original plan:** it is *not* registered in `AxiomAudit.ps1` — that
+      list is for *promoted* declarations, which must have no conditional
+      dependencies, and the audit imports only the root + `Extensions` (not
+      `Conditional`). The bridge theorem is conditional by design, so it stays
+      out of the promoted list, exactly like `gaussianMmd_identifiesAtZero`.
+- [x] `#print axioms gaussianMeanShiftDrift_identifiesAtZero` = `propext,
+      Classical.choice, Quot.sound, Paper.gaussianMeanShift_injective` — the
+      single cited axiom, nothing else (not even `equation_11`; the proof rides
+      on the definitional unfolding of `meanShiftDrift`). The promoted-route
+      audit still reports "no conditional Gaussian/RKHS dependencies" (164 decls).
+- [x] `scripts/Check.ps1` green.
+- [x] `ResearchStatus.md` conditional-modules section and this status line
+      updated.
+
+The proof compiled as written (`sub_eq_zero.mp (hzero x)` fired via defeq; no
+`simp only [meanShiftDrift]` fallback needed). The legitimacy obligation is met
+by the existing `bothProbability_allowsDistinctPair`; the band-limited-kernel
+`IsExactCounterexample` note remains an optional future addition.
 
 ### Scope statement to carry into any write-up
 

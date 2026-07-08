@@ -62,6 +62,24 @@ theorem gaussianMmd_identifiesAtZero (σ : ℝ) (hσ : ValidBandwidth σ) :
       (radialMmdDrift (gaussianRadialDeriv σ)) :=
   characteristicKernel_identifiesAtZero _ (gaussian_gradient_isCharacteristic σ hσ)
 
+/-- **Raw-field identifiability for the Gaussian mean-shift drift.**  Zero raw
+mean-shift drift (equation 10) between two probability measures forces equality.
+This closes the gap left by `gaussianMmd_identifiesAtZero`, which handled only the
+*unnormalized* MMD embedding field: the paper's raw field `meanShiftDrift` is the
+difference of *normalized* mean-shift maps, so zero drift reduces to the maps
+agreeing, and the reviewed external fact `gaussianMeanShift_injective` (Gaussian
+score/convolution injectivity of the mean-shift map) supplies `p = q`.  Rebuttal
+argument 1 of the reviewer response, made rigorous modulo that single cited
+axiom.  See `RawFieldConverse.md`. -/
+theorem gaussianMeanShiftDrift_identifiesAtZero (σ : ℝ) (hσ : ValidBandwidth σ) :
+    IdentifiesAtZero (BothProbability (E := E)) (meanShiftDrift (gaussianKernel σ)) := by
+  rintro p q ⟨hp, hq⟩ hzero
+  haveI := hp
+  haveI := hq
+  refine gaussianMeanShift_injective σ hσ p q ?_
+  intro x
+  exact sub_eq_zero.mp (hzero x)
+
 end Gaussian
 
 section Asymptotic

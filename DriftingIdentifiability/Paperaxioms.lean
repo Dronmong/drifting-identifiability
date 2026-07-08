@@ -914,6 +914,32 @@ axiom characteristic_gradientEmbedding_injective
     (h : ∀ x, kernelGradientEmbedding kg p x = kernelGradientEmbedding kg q x) :
     p = q
 
+/-- **Well-known consequence of Gaussian characteristicness** (Sriperumbudur et
+al. 2010) together with the fact that a density is determined by its score: the
+normalized Gaussian *mean-shift* map `p ↦ meanShift (gaussianKernel σ) p` is
+injective on probability measures.  For the Gaussian kernel the mean-shift field
+is (proportional to) the score of the Gaussian-smoothed law, `∇ log (p ∗ φ_σ)`;
+matching mean-shift maps forces equal smoothed densities, and Gaussian
+convolution is injective, so `p = q`.
+
+This constrains the mean-shift map only; it does not mention a drifting field or
+its zeros, so it is not the identifiability conclusion in disguise (same
+discipline as `characteristic_gradientEmbedding_injective`).  It is the
+normalized-field analogue of that axiom: the existing conditional route closes
+the *unnormalized* MMD embedding field `∫kg dp − ∫kg dq`, whereas the raw paper
+field `meanShift` is normalized (`Z_p⁻¹∫k(x,y)(y−x)dp`), a genuinely different
+injectivity with no reduction to the embedding case (see
+`RawFieldConverse.md`).  Conditional external assumption; used only through the
+opt-in `DriftingIdentifiability.Conditional` module. -/
+axiom gaussianMeanShift_injective
+    {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] [CompleteSpace E] [FiniteDimensional ℝ E]
+    [BorelSpace E] [SecondCountableTopology E]
+    (σ : ℝ) (hσ : ValidBandwidth σ)
+    (p q : Distribution E) [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : ∀ x, meanShift (gaussianKernel σ) p x = meanShift (gaussianKernel σ) q x) :
+    p = q
+
 /-- The Gaussian derivative profile `ξ'(r) = -(2σ²)⁻¹ exp(-(2σ²)⁻¹ r)` appearing
 in equations (43)–(45). -/
 noncomputable def gaussianRadialDeriv (σ : ℝ) : ℝ → ℝ :=

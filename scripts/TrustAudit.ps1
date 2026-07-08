@@ -30,6 +30,7 @@ $conditionalExternalAxioms = @(
   'IsCharacteristic',
   'characteristic_gradientEmbedding_injective',
   'gaussian_gradient_isCharacteristic',
+  'gaussianMeanShift_injective',
   'gaussian_mmd_metrizes_weakConvergence',
   'gaussian_gram_linearIndependent'
 ) | Sort-Object

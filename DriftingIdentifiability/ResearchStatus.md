@@ -981,3 +981,21 @@ estimator, and evidence that the restrictions do not destroy model quality.
 available only through `DriftingIdentifiability.Conditional`. They depend on
 external Gaussian/RKHS axioms or a synthetic interaction construction and are
 not accepted project solutions.
+
+`CharacteristicIdentifiability.lean` now also carries
+`gaussianMeanShiftDrift_identifiesAtZero` (2026-07-08): the exact
+`V ≡ 0 ⟹ p = q` converse for the paper's **raw** Gaussian mean-shift field
+`meanShiftDrift (gaussianKernel σ)` and arbitrary probability measures. This is
+the rigorous form of the authors' reviewer rebuttal argument 1, and it closes
+the gap left by `gaussianMmd_identifiesAtZero` (which handled only the
+*unnormalized* MMD embedding field): the raw field is the difference of
+*normalized* mean-shift maps, a genuinely different injectivity with no
+reduction to the embedding case. It rests on a single new conditional external
+axiom `Paper.gaussianMeanShift_injective` (Gaussian score/convolution
+injectivity of the mean-shift map — a statement about the map, not the drift;
+Sriperumbudur et al. 2010), bringing the conditional-external axiom class to 6.
+`#print axioms` of the theorem shows only the three foundational axioms plus
+that one axiom. Scope: exact `V ≡ 0` only — the asymptotic `V → 0` version and
+non-characteristic kernels remain out of scope (a band-limited kernel is a
+counterexample to dropping the kernel condition). Full landscape and design
+record: `RawFieldConverse.md`.
