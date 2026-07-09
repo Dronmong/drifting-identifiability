@@ -1033,6 +1033,39 @@ converse for arbitrary fields" concession is answered for the Gaussian kernel
 (arbitrary targets) and for the Laplace kernel (Gaussian targets), while the
 Laplace-kernel arbitrary-target converse remains open.
 
+## Laplacian-kernel arbitrary-target structural reduction
+
+`LaplaceCompanion.lean` now proves the first structural reduction for the
+paper's exact Laplace kernel with arbitrary probability targets. The full
+arbitrary-target converse is **not** claimed. What is promoted is the
+companion-kernel score identity:
+
+```text
+ℓτ(x,y) := (τ + ‖x-y‖) exp(-‖x-y‖/τ),
+∇ₓ ∫ ℓτ(x,y) dp(y) = τ⁻¹ ∫ exp(-‖x-y‖/τ) (y-x) dp(y).
+```
+
+This is the Laplace analogue of the Gaussian score identity, except the
+gradient potential and the normalizer are different smoothings. The module also
+proves that the raw Laplace mean-shift field is globally well-defined for
+arbitrary probability measures, with no moment hypotheses, because the
+displacement integrand is uniformly bounded. Zero raw Laplace drift is
+therefore reformulated as the exact cross-gradient equation
+
+```text
+Z_q(x) ∇L_p(x) = Z_p(x) ∇L_q(x)
+```
+
+and, under the critical exponential-moment hypothesis, bridges to equality of
+exponential-tilt centroids in every radial direction.
+
+Verification status: the new declarations are imported by the root module and
+registered in `scripts/AxiomAudit.ps1`; `lake build --wfail`,
+`scripts/Check.ps1`, and explicit `#print axioms` checks pass with only Lean
+foundations (`propext`, `Classical.choice`, `Quot.sound`). Remaining research
+objectives are Laplace smoothing injectivity/Dirac rigidity and the 1-d
+ODE/Wronskian program recorded in `LaplaceArbitraryConverse.md`.
+
 ## Conditional research modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` remain

@@ -1,8 +1,11 @@
 # Laplace-kernel converse for arbitrary targets: attack plan and research record
 
-**Status:** Stage 1 in progress (2026-07-09). This file records the plan and
-the mathematical findings BEFORE implementation, per project practice, so the
-track is resumable from this document alone.
+**Status:** Stage 1 completed and audited (2026-07-09). The companion-kernel
+score identity, global no-moment regularity package, cross-gradient
+reformulation, and tilt-centroid bridge are implemented in
+`DriftingIdentifiability/LaplaceCompanion.lean`, imported by the root module,
+and registered in the promoted axiom audit. The full arbitrary-target Laplace
+converse remains open.
 
 ## The problem
 
@@ -147,7 +150,7 @@ pursuing:
 
 ## Staged plan
 
-- **Stage 1 (THIS session, Lean, axiom-free, promoted):** new module
+- **Stage 1 (completed, Lean, axiom-free, promoted):** new module
   `DriftingIdentifiability/LaplaceCompanion.lean` in the audited main track:
   1. `laplaceCompanionKernel τ x y := (τ + ‖x-y‖) * laplaceKernel τ x y`;
   2. pointwise gradient: `HasFDerivAt (fun x => ℓτ(x,y))
@@ -166,8 +169,9 @@ pursuing:
   6. bridge to the tilt machinery: for measures with the critical exponential
      moment, `ZeroDrift → exponentialTiltCentroid p τ u = exponentialTiltCentroid q τ u`
      for every unit `u` (via the generic radial limit + uniqueness of limits).
-  Register in the default root + promoted axiom audit; full Check.ps1;
-  `#print axioms` foundations-only.
+  Registered in the default root and promoted axiom audit; full `Check.ps1`
+  passes, and `#print axioms` on the promoted companion declarations reports
+  only Lean foundations.
 - **Stage 2 (next): Laplace smoothing injectivity + Dirac rigidity.**
   Formalize `Z_p = Z_q → p = q` (via `charFun`/Fourier positivity of the
   Poisson profile, or in 1-d via the elliptic inversion) and the
