@@ -25,7 +25,8 @@ To inspect the trusted dependencies of a theorem without editing a Lean file:
 
 ## Project map
 
-- `papers/2602.04770v2.pdf` — source paper.
+- [*Generative Modeling via Drifting*](https://arxiv.org/abs/2602.04770) —
+  source paper.
 - `DriftingIdentifiability/Paperaxioms.lean` — reviewed paper definitions and
   axioms, frozen by a SHA-256 trust manifest.
 - `DriftingIdentifiability/TrustedBoundary.lean` — exact/asymptotic targets and
