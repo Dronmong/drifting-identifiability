@@ -786,4 +786,172 @@ end GaussianDomination
 
 end IntegralLimits
 
+/-! ## Part F: parameter recovery and the Gaussian-family converse
+
+The radial limit is affine in the probe direction.  If it vanishes in every
+unit direction, comparing `u` with `-u` recovers the means, and positive
+scaling recovers the covariance action on every vector, hence the matrices.
+No probability is involved in this stage: it is finite-dimensional algebra. -/
+
+section GaussianParameterRecovery
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- **Radial-limit parameter recovery.**  If the explicit Laplacian/Gaussian
+radial limit vanishes in every unit direction, both Gaussian parameter pairs
+coincide.  Directions `u` and `-u` isolate the mean difference; positive
+scaling then extends covariance-action vanishing from unit vectors to all
+vectors, and the matrix transfer map is injective. -/
+theorem gaussianRadialLimit_zero_imp_parameters_eq
+    (μp μq : EuclideanSpace ℝ ι) (Sp Sq : Matrix ι ι ℝ)
+    (τ : ℝ) (hτ : 0 < τ)
+    (h : ∀ u : EuclideanSpace ℝ ι, ‖u‖ = 1 →
+      (μp + (1 / τ) • (((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) Sp) u)) -
+        (μq + (1 / τ) • (((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) Sq) u)) = 0) :
+    μp = μq ∧ Sp = Sq := by
+  rcases isEmpty_or_nonempty ι with hempty | hne
+  · constructor
+    · ext j
+      exact hempty.elim j
+    · exact Matrix.ext fun j _ => hempty.elim j
+  · -- difference form of the hypothesis
+    have hdiff : ∀ u : EuclideanSpace ℝ ι, ‖u‖ = 1 →
+        (μp - μq) +
+          (1 / τ) • (((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq)) u) = 0 := by
+      intro u hu
+      have h0 := h u hu
+      have hAu :
+          ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq)) u =
+            ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) Sp) u -
+              ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) Sq) u := by
+        simp [map_sub]
+      rw [hAu, smul_sub, ← h0]
+      abel
+    obtain ⟨i⟩ := hne
+    have hu₀ : ‖(PiLp.single 2 i (1 : ℝ) : EuclideanSpace ℝ ι)‖ = 1 := by
+      rw [PiLp.norm_single, norm_one]
+    -- mean recovery from the directions `u₀` and `-u₀`
+    have h₁ := hdiff (PiLp.single 2 i (1 : ℝ)) hu₀
+    have h₂ := hdiff (-PiLp.single 2 i (1 : ℝ)) (by rw [norm_neg]; exact hu₀)
+    rw [map_neg, smul_neg] at h₂
+    have hmean : μp = μq := by
+      have hsum := congrArg₂ (· + ·) h₁ h₂
+      rw [add_zero] at hsum
+      have htwo : (2 : ℝ) • (μp - μq) = 0 := by
+        rw [two_smul, ← hsum]
+        abel
+      have := (smul_eq_zero.mp htwo).resolve_left (by norm_num)
+      exact sub_eq_zero.mp this
+    -- covariance recovery: the action vanishes on unit vectors, hence everywhere
+    have hunit : ∀ u : EuclideanSpace ℝ ι, ‖u‖ = 1 →
+        ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq)) u = 0 := by
+      intro u hu
+      have h0 := hdiff u hu
+      rw [hmean, sub_self, zero_add] at h0
+      exact (smul_eq_zero.mp h0).resolve_left (one_div_ne_zero (ne_of_gt hτ))
+    have hCLM : (Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq) = 0 := by
+      refine ContinuousLinearMap.ext fun v => ?_
+      rw [zero_apply]
+      rcases eq_or_ne v 0 with rfl | hv
+      · exact map_zero _
+      · have hnv : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv
+        have hvu : ‖(‖v‖⁻¹ • v : EuclideanSpace ℝ ι)‖ = 1 := by
+          rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ hnv]
+        have hsplit :
+            ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq)) v =
+              ‖v‖ • ((Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ)) (Sp - Sq)) (‖v‖⁻¹ • v) := by
+          rw [map_smul, smul_smul, mul_inv_cancel₀ hnv, one_smul]
+        rw [hsplit, hunit _ hvu, smul_zero]
+    have hS : Sp = Sq := by
+      have hinj := EquivLike.injective (Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ))
+      have := hinj (hCLM.trans (map_zero (Matrix.toEuclideanCLM (n := ι) (𝕜 := ℝ))).symm)
+      exact sub_eq_zero.mp this
+    exact ⟨hmean, hS⟩
+
+/-- The pair condition for the Laplacian/Gaussian converse: both laws are
+multivariate Gaussians with positive-semidefinite covariance.  Concrete,
+checkable, and independent of the identifiability conclusion. -/
+def BothMultivariateGaussian
+    (p q : Distribution (EuclideanSpace ℝ ι)) : Prop :=
+  (∃ μ : EuclideanSpace ℝ ι, ∃ S : Matrix ι ι ℝ,
+      S.PosSemidef ∧ p = multivariateGaussian μ S) ∧
+    ∃ μ : EuclideanSpace ℝ ι, ∃ S : Matrix ι ι ℝ,
+      S.PosSemidef ∧ q = multivariateGaussian μ S
+
+/-- **Laplacian-kernel converse for Gaussian targets** (the authors' rebuttal
+argument 2, made rigorous).  Pointwise zero raw Laplace-kernel mean-shift
+drift identifies multivariate Gaussian laws: every radial limit of the drift
+vanishes, so the means and covariance matrices coincide.  Gaussian-family and
+population/pointwise only; see `LaplacianGaussianConverse.md`. -/
+theorem laplaceGaussianMeanShiftDrift_identifiesAtZero
+    (τ : ℝ) (hτ : ValidBandwidth τ) :
+    IdentifiesAtZero (BothMultivariateGaussian (ι := ι))
+      (meanShiftDrift (laplaceKernel τ)) := by
+  have hτ0 : 0 < τ := hτ
+  rintro p q ⟨⟨μp, Sp, hSp, rfl⟩, ⟨μq, Sq, hSq, rfl⟩⟩ hzero
+  obtain ⟨hmean, hcov⟩ :=
+    gaussianRadialLimit_zero_imp_parameters_eq μp μq Sp Sq τ hτ0 (fun u hu => by
+      have hlim :=
+        multivariateGaussian_laplaceMeanShiftDrift_radial_tendsto
+          μp μq Sp Sq hSp hSq τ hτ0 u hu
+      have hfun :
+          (fun r : ℝ =>
+            meanShiftDrift (laplaceKernel τ)
+              (multivariateGaussian μp Sp)
+              (multivariateGaussian μq Sq) (r • u)) =
+            fun _ : ℝ => (0 : EuclideanSpace ℝ ι) :=
+        funext fun r => hzero (r • u)
+      rw [hfun] at hlim
+      exact tendsto_nhds_unique hlim tendsto_const_nhds)
+  rw [hmean, hcov]
+
+/-- The Gaussian-family condition admits a distinct pair before any zero-drift
+assumption: two unit-covariance Gaussians with different means.  Distinctness
+is witnessed by the first moment, which mathlib computes exactly. -/
+theorem bothMultivariateGaussian_allowsDistinctPair [Nonempty ι] :
+    ConditionAllowsDistinctPair (BothMultivariateGaussian (ι := ι)) := by
+  obtain ⟨i⟩ := (inferInstance : Nonempty ι)
+  refine ⟨multivariateGaussian 0 1,
+    multivariateGaussian (PiLp.single 2 i (1 : ℝ)) 1,
+    ⟨⟨0, 1, Matrix.PosSemidef.one, rfl⟩,
+      ⟨PiLp.single 2 i (1 : ℝ), 1, Matrix.PosSemidef.one, rfl⟩⟩, ?_⟩
+  intro hcontra
+  have hmeans : (0 : EuclideanSpace ℝ ι) = PiLp.single 2 i (1 : ℝ) := by
+    calc (0 : EuclideanSpace ℝ ι)
+        = ∫ y, y ∂(multivariateGaussian (0 : EuclideanSpace ℝ ι) 1) :=
+          integral_id_multivariateGaussian.symm
+      _ = ∫ y, y ∂(multivariateGaussian (PiLp.single 2 i (1 : ℝ)) 1) := by
+          rw [hcontra]
+      _ = PiLp.single 2 i (1 : ℝ) := integral_id_multivariateGaussian
+  have hnorm := congrArg (fun v : EuclideanSpace ℝ ι => ‖v‖) hmeans
+  simp at hnorm
+
+/-- Accepted candidate for the Laplacian-kernel Gaussian-family converse,
+following the project's `CandidateSpec` discipline. -/
+def laplaceGaussianCandidate : CandidateSpec (EuclideanSpace ℝ ι) where
+  name := "multivariate Gaussian family under the paper Laplace kernel"
+  condition := BothMultivariateGaussian
+  rationale :=
+    "Radial probes of the Laplace-kernel mean shift converge to exponential \
+      tilts; for Gaussian laws the tilt is affine in the probe direction, so \
+      pointwise zero drift recovers the mean and the covariance."
+
+/-- The candidate condition proves the canonical exact target for the paper's
+Laplace-kernel mean-shift field. -/
+theorem laplaceGaussianCandidate_identifiesAtZero
+    (τ : ℝ) (hτ : ValidBandwidth τ) :
+    IdentifiesAtZero (laplaceGaussianCandidate (ι := ι)).condition
+      (meanShiftDrift (laplaceKernel τ)) :=
+  laplaceGaussianMeanShiftDrift_identifiesAtZero τ hτ
+
+/-- In every nonempty dimension the candidate is legitimate: it is satisfiable
+and admits a distinct pair before the zero-drift hypothesis. -/
+theorem laplaceGaussianCandidate_isLegitimate [Nonempty ι] :
+    (laplaceGaussianCandidate (ι := ι)).IsLegitimate := by
+  obtain ⟨p, q, hcond, hne⟩ :=
+    bothMultivariateGaussian_allowsDistinctPair (ι := ι)
+  exact ⟨⟨p, q, hcond⟩, ⟨p, q, hcond, hne⟩⟩
+
+end GaussianParameterRecovery
+
 end DriftingIdentifiability

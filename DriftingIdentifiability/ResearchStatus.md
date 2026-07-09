@@ -994,6 +994,45 @@ Scope remains exact pointwise `V ≡ 0`; asymptotic `V → 0` and general
 non-Gaussian kernels remain separate problems. Full proof record:
 `RawFieldConverse.md`.
 
+## Laplacian-kernel converse for Gaussian targets
+
+`LaplacianGaussianConverse.lean` now proves the authors' reviewer-rebuttal
+argument 2 axiom-free, for the paper's exact Laplace kernel
+`exp (-‖x-y‖/τ)`. The promoted theorem
+`laplaceGaussianMeanShiftDrift_identifiesAtZero` states that pointwise zero
+raw Laplace-kernel mean-shift drift identifies two multivariate Gaussian laws
+(arbitrary means, arbitrary positive-semidefinite — including degenerate —
+covariances, any finite dimension).
+
+Mechanism, fully internal: along radial probes `r • u` the compensated kernel
+weight converges to an exponential tilt (rationalized radial identity +
+dominated convergence with a sharp `exp (‖y‖/τ)` dominator, discharged for
+Gaussians by Fernique); the Gaussian tilt centroid is computed exactly as
+`μ + τ⁻¹ S u` via mathlib's scalar Gaussian MGF and tilted-measure API; so the
+drift's radial limit is `(μp - μq) + τ⁻¹ (Sp - Sq) u`
+(`multivariateGaussian_laplaceMeanShiftDrift_radial_tendsto`). Zero drift
+forces every radial limit to vanish; directions `u` and `-u` recover the
+means, positive scaling recovers the covariance action, and the matrix
+transfer map is injective (`gaussianRadialLimit_zero_imp_parameters_eq`).
+
+The candidate discipline is complete: `BothMultivariateGaussian` is the pair
+condition, `laplaceGaussianCandidate` the registered `CandidateSpec`, with
+`laplaceGaussianCandidate_identifiesAtZero` and (for every nonempty dimension)
+`laplaceGaussianCandidate_isLegitimate` — the distinct pair is two
+unit-covariance Gaussians with different means, witnessed by the exact first
+moment, before any zero-drift assumption. `#print axioms` on all headline
+declarations reports only Lean foundations — no paper axiom is used anywhere
+in this route.
+
+Scope: Gaussian-family targets only (not arbitrary distributions), exact
+pointwise `V ≡ 0` only, ideal population field only; zero drift at finitely
+many probes would not feed the radial argument, and `τ ≤ 0` is excluded. Plan
+and proof record: `LaplacianGaussianConverse.md`. Both reviewer-rebuttal
+converses are therefore now machine-checked; the rebuttal's own "general
+converse for arbitrary fields" concession is answered for the Gaussian kernel
+(arbitrary targets) and for the Laplace kernel (Gaussian targets), while the
+Laplace-kernel arbitrary-target converse remains open.
+
 ## Conditional research modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` remain

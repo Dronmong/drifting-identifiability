@@ -93,7 +93,7 @@ in the picture. Three relevant pieces:
 | exact `V≡0 ⟹ p=q`, finite/structured basis | heuristic | — | **proved, axiom-free, quantitative** |
 | exact `V≡0 ⟹ p=q`, Gaussian, arbitrary target | — | arg 1 (informal) | **proved axiom-free for the raw field** |
 | asymptotic `V→0 ⟹ qₙ→p` | — | arg 1/2 (informal) | conditional, MMD discrepancy only |
-| Gaussian/Laplacian moment recovery (arg 2) | — | arg 2 (informal) | **in progress: explicit radial mean/covariance limit proved; parameter recovery/final converse remains** |
+| Gaussian/Laplacian moment recovery (arg 2) | — | arg 2 (informal) | **proved axiom-free and promoted** (`laplaceGaussianMeanShiftDrift_identifiesAtZero`; see `LaplacianGaussianConverse.md`) |
 | estimator-level finite-sample theory | — | — | **present (Algorithm 2 SNIS etc.)** |
 
 ### 5. The honest open problem (agreed by everyone)

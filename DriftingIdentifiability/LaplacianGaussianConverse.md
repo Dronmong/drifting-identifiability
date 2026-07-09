@@ -1,11 +1,16 @@
 # Laplacian-kernel converse for Gaussian targets: implementation plan
 
-**Status:** implementation in progress. Parts A–E now compile axiom-free in
-`LaplacianGaussianConverse.lean`: the generic radial limit, the exact
-multivariate Gaussian exponential-tilt centroid identity, and the explicit
-mean/covariance radial limit are proved. The remaining mathematical step is
-Part F: recover equality of means and covariance matrices from zero drift, then
-promote the final Gaussian-family converse.
+**Status: COMPLETE, AXIOM-FREE, PROMOTED (2026-07-09).** All parts A–F compile
+in `LaplacianGaussianConverse.lean`, imported by the default root and
+registered in the promoted axiom audit (176 declarations; Check.ps1 green:
+36 files, 15 paper + 5 conditional axioms — this route adds none and uses
+none). `#print axioms` on `laplaceGaussianMeanShiftDrift_identifiesAtZero`,
+`gaussianRadialLimit_zero_imp_parameters_eq`,
+`multivariateGaussian_laplaceMeanShiftDrift_radial_tendsto`, and
+`laplaceGaussianCandidate_isLegitimate` reports only
+`propext, Classical.choice, Quot.sound`. Both reviewer-rebuttal converses are
+now machine-checked (argument 1 in `GaussianScoreRecovery.lean`, argument 2
+here).
 
 ## Objective and exact scope
 
@@ -393,8 +398,27 @@ Completed in `LaplacianGaussianConverse.lean`:
 - [x] explicit Laplacian/Gaussian radial limit:
       `multivariateGaussian_laplaceMeanShiftDrift_radial_tendsto`.
 
-Still required:
+Completed in the Part F pass (2026-07-09):
 
-- [ ] recover equality of means and covariance matrices from zero drift;
-- [ ] prove candidate legitimacy, register the final theorem in the root and
-      axiom audit, update project status, and run the complete check.
+- [x] parameter recovery (`gaussianRadialLimit_zero_imp_parameters_eq`):
+      empty index type by extensionality; directions `u` and `-u` isolate the
+      mean difference (`2 • (μp - μq) = 0` in a real vector space); positive
+      scaling extends covariance-action vanishing from unit vectors to all
+      vectors; `Matrix.toEuclideanCLM` is injective, so `Sp = Sq`;
+- [x] final converse `laplaceGaussianMeanShiftDrift_identifiesAtZero`:
+      zero drift makes each radial function identically zero, so
+      `tendsto_nhds_unique` forces the explicit limit to vanish in every unit
+      direction; parameter recovery closes the measure equality;
+- [x] pair condition `BothMultivariateGaussian` (PSD covariances explicit),
+      registered candidate `laplaceGaussianCandidate`, and
+      `laplaceGaussianCandidate_identifiesAtZero`;
+- [x] legitimacy `bothMultivariateGaussian_allowsDistinctPair` /
+      `laplaceGaussianCandidate_isLegitimate` for every nonempty dimension:
+      two unit-covariance Gaussians with different means, distinguished by the
+      exact first moment (`integral_id_multivariateGaussian`), chosen before
+      any zero-drift assumption;
+- [x] registered in the default root and `scripts/AxiomAudit.ps1`
+      (7 new promoted declarations; audit reports 176, no conditional
+      dependencies); full `scripts/Check.ps1` green;
+- [x] `#print axioms`: Lean foundations only, on every headline declaration —
+      acceptance criteria 1–9 of this plan are all met.
