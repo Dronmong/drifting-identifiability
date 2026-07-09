@@ -975,6 +975,25 @@ an implementable model/kernel/probe design, a useful certified or empirically
 validated conditioning constant, a finite-sample bridge to the training
 estimator, and evidence that the restrictions do not destroy model quality.
 
+## Raw Gaussian general converse
+
+`GaussianScoreRecovery.lean` and `GaussianConvolutionInjectivity.lean` now
+prove the authors' reviewer-rebuttal argument 1 axiom-free. The promoted theorem
+`gaussianMeanShiftDrift_identifiesAtZero` states that pointwise zero raw
+Gaussian mean-shift drift identifies arbitrary probability measures on a
+finite-dimensional complete real inner-product Borel space.
+
+The proof establishes positivity and differentiability of the Gaussian
+normalizer, proves the Fréchet score identity
+`D log Zₚ = σ⁻²⟪meanShiftₚ,·⟫`, obtains proportional normalizers from equal
+mean-shift maps, fixes the scalar using probability mass, and applies
+Fourier/characteristic-function injectivity. Neither former raw-converse axiom
+remains in `Paperaxioms.lean`.
+
+Scope remains exact pointwise `V ≡ 0`; asymptotic `V → 0` and general
+non-Gaussian kernels remain separate problems. Full proof record:
+`RawFieldConverse.md`.
+
 ## Conditional research modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` remain
@@ -982,20 +1001,8 @@ available only through `DriftingIdentifiability.Conditional`. They depend on
 external Gaussian/RKHS axioms or a synthetic interaction construction and are
 not accepted project solutions.
 
-`CharacteristicIdentifiability.lean` now also carries
-`gaussianMeanShiftDrift_identifiesAtZero` (2026-07-08): the exact
-`V ≡ 0 ⟹ p = q` converse for the paper's **raw** Gaussian mean-shift field
-`meanShiftDrift (gaussianKernel σ)` and arbitrary probability measures. This is
-the rigorous form of the authors' reviewer rebuttal argument 1, and it closes
-the gap left by `gaussianMmd_identifiesAtZero` (which handled only the
-*unnormalized* MMD embedding field): the raw field is the difference of
-*normalized* mean-shift maps, a genuinely different injectivity with no
-reduction to the embedding case. It rests on a single new conditional external
-axiom `Paper.gaussianMeanShift_injective` (Gaussian score/convolution
-injectivity of the mean-shift map — a statement about the map, not the drift;
-Sriperumbudur et al. 2010), bringing the conditional-external axiom class to 6.
-`#print axioms` of the theorem shows only the three foundational axioms plus
-that one axiom. Scope: exact `V ≡ 0` only — the asymptotic `V → 0` version and
-non-characteristic kernels remain out of scope (a band-limited kernel is a
-counterexample to dropping the kernel condition). Full landscape and design
-record: `RawFieldConverse.md`.
+`CharacteristicIdentifiability.lean` still contains the conditional MMD/RKHS
+and weak-convergence reductions. `GaussianNondegeneracy.lean` still contains a
+synthetic interaction construction. These should not be conflated with the now
+promoted raw Gaussian mean-shift theorem. The conditional-external class
+contains 5 axioms.

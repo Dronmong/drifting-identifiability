@@ -311,6 +311,15 @@ as evidence about the paper's real encoder, and do not claim the real-feature
 evaluation has been run unless an actual feature tensor or checkpoint is
 present.
 
+The raw Gaussian population converse is now promoted:
+`gaussianMeanShiftDrift_identifiesAtZero` proves pointwise
+`meanShiftDrift (gaussianKernel σ) p q = 0 ⟹ p = q` for arbitrary probability
+measures in the stated finite-dimensional real inner-product setting.
+`GaussianScoreRecovery.lean` proves the score/normalizer step and
+`GaussianConvolutionInjectivity.lean` proves smoothing injectivity. Do not
+generalize this theorem to the paper's Laplace kernel, minibatch estimator,
+feature-space laws, or asymptotic convergence without separate hypotheses.
+
 ## Conditional modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` are
@@ -321,7 +330,7 @@ but cannot support a promoted success claim:
   to the desired implication for the MMD drift;
 - the Gaussian anti-symmetric extension is synthetic and is not proved equal
   to the paper's integral-induced interaction vectors;
-- all Gaussian/RKHS declarations remain explicitly classified external axioms.
+- remaining Gaussian/RKHS axioms are explicitly classified external.
 
 `scripts/AxiomAudit.ps1` rejects any promoted theorem that acquires one of
 these conditional dependencies.

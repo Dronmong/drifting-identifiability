@@ -16,6 +16,12 @@ open Paper
 
 universe u
 
+/-- The pair condition that both laws are probability measures. Concrete,
+checkable, and independent of any identifiability conclusion. -/
+def BothProbability {E : Type u} [MeasurableSpace E]
+    (p q : Distribution E) : Prop :=
+  IsProbabilityMeasure p ∧ IsProbabilityMeasure q
+
 /-- A condition proves exact identifiability for `V` when zero drift forces
 equality for every pair satisfying that condition.  This is a definition of
 the target, never an axiom. -/
@@ -78,6 +84,16 @@ def ConditionAllowsDistinctPair
     {E : Type u} [MeasurableSpace E]
     (condition : Distribution E → Distribution E → Prop) : Prop :=
   ∃ p q, condition p q ∧ p ≠ q
+
+/-- `BothProbability` is legitimate: two distinct Dirac laws satisfy it before
+any zero-drift hypothesis is imposed. -/
+theorem bothProbability_allowsDistinctPair
+    {E : Type u} [MeasurableSpace E]
+    [Nontrivial E] [MeasurableSpace.SeparatesPoints E] :
+    ConditionAllowsDistinctPair (BothProbability (E := E)) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  exact ⟨Measure.dirac a, Measure.dirac b, ⟨inferInstance, inferInstance⟩,
+    dirac_ne_dirac hab⟩
 
 /-- Minimal formal legitimacy check for a candidate condition. -/
 def IsLegitimateCondition

@@ -302,9 +302,12 @@ Progress (2026-07-08):
   call sites already carried the measurability fact and were threaded through;
   the caller-less `sampleMean_concentration` gained the matching hypothesis.
   Manifest regenerated; `Check.ps1` green.
-- **Beyond the audit** (user-approved; commit `cc465fe`): the raw-field Gaussian
-  converse `gaussianMeanShiftDrift_identifiesAtZero` (opt-in Conditional module,
-  one new conditional axiom `gaussianMeanShift_injective`) — the rigorous form
-  of the reviewer rebuttal's argument 1; see `DriftingIdentifiability/RawFieldConverse.md`.
+- **Beyond the audit** (user-approved): the raw-field Gaussian converse
+  `gaussianMeanShiftDrift_identifiesAtZero` is now promoted and axiom-free. The
+  original bundled `gaussianMeanShift_injective` axiom was removed as
+  equivalent to the target; the replacement separately proves Gaussian score
+  recovery in `GaussianScoreRecovery.lean` and kernel-normalizer injectivity in
+  `GaussianConvolutionInjectivity.lean`. See
+  `DriftingIdentifiability/RawFieldConverse.md`.
 - **Still open:** items 5 (reused-negative estimator — the main practical gap),
   6, 7 (beyond the cancellation record), 8 (asymptotic).

@@ -1,18 +1,14 @@
 # Raw-field general converse: landscape record + axiom-route plan
 
-**Status:** Part II **IMPLEMENTED 2026-07-08** (axiom route, user-approved).
-`Paper.gaussianMeanShift_injective` and the bridge theorem
-`gaussianMeanShiftDrift_identifiesAtZero` are in the tree; Check.ps1 green
-(33 files, 15 paper + 6 conditional axioms, 164 promoted declarations);
-`#print axioms` of the bridge theorem shows exactly `propext, Classical.choice,
-Quot.sound, Paper.gaussianMeanShift_injective` — the single cited external
-axiom, nothing else. Part I records where the identifiability question stands
-across the paper, the authors' reviewer rebuttal, and this project; Part II
-below is the (now completed) plan for the open piece — the general converse for
-the *raw* mean-shift drift field of arbitrary targets — using the **axiom
-route** (deliberate: this is a discovery/contribution project, not a
-formalize-everything project; well-known external facts are axiomatized with
-citations, per the standing project policy).
+**Status:** Part II **COMPLETED AXIOM-FREE 2026-07-08**.
+The promoted theorem `gaussianMeanShiftDrift_identifiesAtZero` proves the exact
+raw Gaussian converse for arbitrary probability measures in finite-dimensional
+real inner-product spaces. `GaussianScoreRecovery.lean` proves the Gaussian
+score identity and recovers equal scalar normalizers;
+`GaussianConvolutionInjectivity.lean` proves those normalizers determine the
+measure. `#print axioms` reports only Lean foundations. Part I records where
+the question stands across the paper, the authors' reviewer rebuttal, and this
+project; Part II records the now-completed staged proof.
 
 Main track (not the Sinkhorn extension). Follows the candidate discipline in
 `AGENTS.md` / `CandidateConditions.lean`: legitimacy check → counterexample
@@ -77,8 +73,8 @@ in the picture. Three relevant pieces:
 - **Conditional characteristic route (opt-in, `DriftingIdentifiability.
   Conditional`).** `characteristicKernel_identifiesAtZero` /
   `gaussianMmd_identifiesAtZero` (`CharacteristicIdentifiability.lean`) are
-  **rebuttal argument 1's mechanism, made rigorous modulo one cited axiom**.
-  BUT they are stated for the **MMD field** `mmdDrift kg p q x = ∫kg(x,·)dp −
+  conditional reductions of rebuttal argument 1 for the **MMD field**
+  `mmdDrift kg p q x = ∫kg(x,·)dp −
   ∫kg(x,·)dq` (an *unnormalized* embedding difference), not the raw normalized
   `meanShiftDrift`. They rest on `characteristic_gradientEmbedding_injective`
   and `gaussian_gradient_isCharacteristic` (Sriperumbudur et al. 2010,
@@ -95,9 +91,9 @@ in the picture. Three relevant pieces:
 | claim | paper | rebuttal | us |
 |---|---|---|---|
 | exact `V≡0 ⟹ p=q`, finite/structured basis | heuristic | — | **proved, axiom-free, quantitative** |
-| exact `V≡0 ⟹ p=q`, Gaussian, arbitrary target | — | arg 1 (informal) | **only for the MMD field, and conditional** — the raw-field version is the gap this plan closes |
+| exact `V≡0 ⟹ p=q`, Gaussian, arbitrary target | — | arg 1 (informal) | **proved axiom-free for the raw field** |
 | asymptotic `V→0 ⟹ qₙ→p` | — | arg 1/2 (informal) | conditional, MMD discrepancy only |
-| Gaussian/Laplacian moment recovery (arg 2) | — | arg 2 (informal) | **not present** |
+| Gaussian/Laplacian moment recovery (arg 2) | — | arg 2 (informal) | **in progress: explicit radial mean/covariance limit proved; parameter recovery/final converse remains** |
 | estimator-level finite-sample theory | — | — | **present (Algorithm 2 SNIS etc.)** |
 
 ### 5. The honest open problem (agreed by everyone)
@@ -105,11 +101,15 @@ in the picture. Three relevant pieces:
 The general converse for the **raw** drift field of **arbitrary** targets:
 `V ≡ 0 ⟹ p = q` for `meanShiftDrift k`, general `p, q`. Two facts frame it:
 
-- **A kernel condition is unavoidable.** For a band-limited kernel (Fourier
-  transform vanishing on a set) one can build `p ≠ q` with identical smoothed
-  fields, so `V ≡ 0` while `p ≠ q`. "Arbitrary target" is reachable; "arbitrary
-  kernel" is provably false. The realistic statement is *characteristic kernel,
-  arbitrary target*.
+- **Kernel structure is unavoidable.** The project's flat-kernel
+  counterexample already shows that distinct equal-mean laws can have zero raw
+  drift, so an arbitrary-kernel theorem is false. A band-limited
+  translation-invariant kernel also fails ordinary embedding characteristicness,
+  but transferring that failure to normalized mean shift needs a
+  kernel-specific numerator/score relation. Conversely, ordinary
+  characteristicness alone does not provide such a relation. The Gaussian
+  theorem uses both full-spectrum convolution injectivity and its special score
+  identity.
 - **The raw field is normalized, and that is the technical crux** (see Part II).
   The asymptotic (`V→0`) version is strictly harder and may be false as literally
   stated for the raw field: kernel smoothing kills high-frequency differences, so
@@ -121,13 +121,13 @@ The general converse for the **raw** drift field of **arbitrary** targets:
 
 ## Part II. Plan for the open piece (axiom route)
 
-**Goal.** A promoted (opt-in/conditional) theorem: for the Gaussian kernel and
+**Goal.** An opt-in conditional theorem: for the Gaussian kernel and
 **arbitrary** probability measures, `meanShiftDrift (gaussianKernel σ) ≡ 0 ⟹
-p = q`. This closes the gap between "what we proved (MMD field)" and "the raw
+p = q`. This bridges the gap between "what we proved (MMD field)" and "the raw
 mean-shift field the algorithm's population idealization actually uses," and
-makes rebuttal argument 1 rigorous **modulo one clearly-scoped, cited external
-axiom** — which is exactly the posture we want (stronger than the rebuttal,
-which leans on the same fact informally).
+formalizes the Lean composition of rebuttal argument 1 modulo two
+clearly-scoped, cited external analytic facts. It remains a conditional
+reduction, not a promoted project solution.
 
 ### The technical crux (why the existing axioms do NOT already give this)
 
@@ -152,70 +152,84 @@ embedding injectivity does not apply as-is; the raw converse needs injectivity o
 the **normalized conditional-mean map** `p ↦ meanShift k p`. For the Gaussian
 this is exactly the score/convolution-injectivity fact of rebuttal argument 1
 (the normalizer is the smoothed density, and `meanShift ∝ ∇log(p∗φ_σ)`), but as
-a statement it is one honest axiom, not a corollary of what we already have.
+a proof it has two conceptually separate stages.
 
-### The axiom (the one new external fact)
+### The two analytic stages
 
-Add to `Paperaxioms.lean`, in the conditional-external class (with the existing
-characteristic axioms; cite Sriperumbudur et al. 2010 for Gaussian
-characteristicness + the standard score-determines-density step):
+The score-recovery stage is the theorem
+`gaussianMeanShift_eq_imp_kernelNormalizer_eq` in
+`GaussianScoreRecovery.lean`:
 
 ```lean
-/-- Well-known consequence of Gaussian characteristicness (Sriperumbudur et al.
-2010) plus score-determines-density: the normalized Gaussian mean-shift map is
-injective on probability measures.  For the Gaussian kernel, `meanShift` is the
-score of the Gaussian-smoothed law (`∝ ∇log(p∗φ_σ)`); matching scores forces
-equal smoothed densities, and Gaussian convolution is injective, so `p = q`.
-This constrains the mean-shift map only; it does not mention a drifting field or
-its zeros. -/
-axiom gaussianMeanShift_injective
+theorem gaussianMeanShift_eq_imp_kernelNormalizer_eq
     {E : Type u} [MeasurableSpace E] [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [CompleteSpace E] [FiniteDimensional ℝ E]
     [BorelSpace E] [SecondCountableTopology E]
     (σ : ℝ) (hσ : ValidBandwidth σ)
     (p q : Distribution E) [IsProbabilityMeasure p] [IsProbabilityMeasure q]
     (h : ∀ x, meanShift (gaussianKernel σ) p x = meanShift (gaussianKernel σ) q x) :
-    p = q
+    ∀ x, kernelNormalizer (gaussianKernel σ) p x =
+      kernelNormalizer (gaussianKernel σ) q x
 ```
 
-Notes for whoever implements:
-- Keep the hypothesis about the **`meanShift` map**, not the drift — so the axiom
-  is manifestly *not* the identifiability conclusion in disguise (same discipline
-  as `characteristic_gradientEmbedding_injective`; the docstring must say so).
-- Prefer this single bundled axiom over trying to reuse `mmdDrift`: the
-  normalization mismatch above means there is no clean `meanShiftDrift ⟹ mmdDrift`
-  reduction, so reusing the MMD axioms would require inventing the missing bridge
-  anyway. One honest axiom is cleaner than a fake reduction.
+The first stage formalizes Tweedie's formula plus the
+score-determines-normalized-density step: equal mean-shift maps imply equal
+Gaussian-smoothed scalar functions. The second stage, ordinary Gaussian
+convolution/kernel-embedding injectivity, is now the proved theorem
+`DriftingIdentifiability.gaussianKernelNormalizer_injective`. It
+Fourier-transforms the scalar normalizer, factors it as the characteristic
+function of the measure times a nowhere-zero Gaussian transform, cancels that
+factor, and applies Mathlib's `Measure.ext_of_charFun`. The two stages have
+independently meaningful intermediate conclusions; neither is the raw drift
+converse under another name.
+
+Sources:
+
+- Bradley Efron, *Tweedie's Formula and Selection Bias*, JASA 106 (2011),
+  §1–2, for the Gaussian posterior-mean/score identity.
+- Sriperumbudur et al., *Hilbert Space Embeddings and Metrics on Probability
+  Measures*, JMLR 11 (2010), Theorem 9 and the Gaussian example, for Gaussian
+  characteristicness/injectivity.
+
+Notes:
+
+- The normalization mismatch means there is no direct
+  `meanShiftDrift ⟹ mmdDrift` rewrite. The score stage must first recover the
+  scalar normalizers.
 - If a more general-kernel statement is wanted later, mirror the existing
-  `IsCharacteristic` abstraction: introduce `MeanShiftCharacteristic k : Prop`
-  and an injectivity axiom parameterised by it, with the Gaussian as one
-  witnessing axiom. Secondary deliverable; do the Gaussian first.
+  abstraction only after identifying a concrete analogue of the Gaussian score
+  identity; ordinary kernel characteristicness alone does not imply normalized
+  mean-shift injectivity.
 
-### The theorem (one-line bridge, in the Conditional module)
+### The theorem (promoted two-stage bridge)
 
-Add to `CharacteristicIdentifiability.lean` (opt-in), reusing `BothProbability`:
+The final theorem is in `GaussianScoreRecovery.lean`, reusing
+`BothProbability`:
 
 ```lean
 /-- **Raw-field identifiability for the Gaussian mean-shift drift.**  Zero raw
 mean-shift drift (equation 10) between two probability measures forces equality.
 Closes the gap left by `gaussianMmd_identifiesAtZero`, which handled only the
-unnormalized MMD field.  Rests on the single external fact
-`gaussianMeanShift_injective`. -/
+unnormalized MMD field. Rests on score recovery followed by the proved Gaussian
+normalizer-injectivity theorem. -/
 theorem gaussianMeanShiftDrift_identifiesAtZero (σ : ℝ) (hσ : ValidBandwidth σ) :
     IdentifiesAtZero (BothProbability (E := E)) (meanShiftDrift (gaussianKernel σ)) := by
   rintro p q ⟨hp, hq⟩ hzero
   haveI := hp; haveI := hq
-  refine gaussianMeanShift_injective σ hσ p q ?_
-  intro x
-  -- meanShiftDrift = meanShift p − meanShift q, so zero drift ⟹ the maps agree
-  exact sub_eq_zero.mp (hzero x)
+  have hmeanShift : ∀ x,
+      meanShift (gaussianKernel σ) p x =
+        meanShift (gaussianKernel σ) q x :=
+    fun x => sub_eq_zero.mp (hzero x)
+  have hnormalizer :=
+    gaussianMeanShift_eq_imp_kernelNormalizer_eq σ hσ p q hmeanShift
+  exact gaussianKernelNormalizer_injective σ hσ p q hnormalizer
 ```
 
 `ZeroDrift V p q` unfolds to `∀ x, V p q x = 0`, and
 `meanShiftDrift k p q x = meanShift k p x − meanShift k q x` by definition, so
 `hzero x : meanShift … p x − meanShift … q x = 0` and `sub_eq_zero.mp` gives the
-hypothesis of the axiom. (If the definitional unfolding does not fire directly,
-`simp only [meanShiftDrift] at hzero` first.)
+first-stage hypothesis. The resulting normalizer equality is exactly the input
+to Gaussian convolution injectivity.
 
 ### Legitimacy obligation (mandatory, per `AGENTS.md`)
 
@@ -227,55 +241,55 @@ reviewer sees the condition is nonvacuous. Optionally add an
 `IsExactCounterexample` note recording the band-limited-kernel obstruction from
 Part I §5 (shows why the kernel hypothesis cannot be dropped).
 
-### Audit / build checklist — ALL DONE (2026-07-08)
+### Audit / build checklist
 
-- [x] `gaussianMeanShift_injective` added to `Paperaxioms.lean`, docstring states
-      it is about the map, not the drift; cites Sriperumbudur et al. 2010.
-- [x] `TrustAudit.ps1` conditional-external allowlist updated (5 → 6); manifest
-      `.trusted/Paperaxioms.sha256` regenerated (BOM-less, `Get-FileHash` method).
-      Check.ps1 banner now reads "15 paper axioms and 6 conditional external
-      axioms".
-- [x] `gaussianMeanShiftDrift_identifiesAtZero` added to the **opt-in**
-      `CharacteristicIdentifiability.lean` (NOT the trusted route). **Correction
-      to the original plan:** it is *not* registered in `AxiomAudit.ps1` — that
-      list is for *promoted* declarations, which must have no conditional
-      dependencies, and the audit imports only the root + `Extensions` (not
-      `Conditional`). The bridge theorem is conditional by design, so it stays
-      out of the promoted list, exactly like `gaussianMmd_identifiesAtZero`.
-- [x] `#print axioms gaussianMeanShiftDrift_identifiesAtZero` = `propext,
-      Classical.choice, Quot.sound, Paper.gaussianMeanShift_injective` — the
-      single cited axiom, nothing else (not even `equation_11`; the proof rides
-      on the definitional unfolding of `meanShiftDrift`). The promoted-route
-      audit still reports "no conditional Gaussian/RKHS dependencies" (164 decls).
-- [x] `scripts/Check.ps1` green.
-- [x] `ResearchStatus.md` conditional-modules section and this status line
-      updated.
+- [x] The bundled `gaussianMeanShift_injective` axiom was removed because it was
+      propositionally equivalent to the desired converse after unfolding
+      `meanShiftDrift`.
+- [x] `GaussianScoreRecovery.lean` proves positivity, Gaussian-weighted
+      integrability, differentiation under the integral, and
+      `D log Zₚ = σ⁻²⟪meanShiftₚ,·⟫`.
+- [x] Equal mean-shift maps give a constant `log Zₚ-log Z_q`, hence
+      proportional normalizers; probability normalization forces the constant
+      to one.
+- [x] The former `Paper.gaussianKernelNormalizer_injective` axiom was removed.
+      `GaussianConvolutionInjectivity.lean` proves the same conclusion by
+      Fourier calculation and characteristic-function uniqueness.
+- [x] `gaussianMeanShiftDrift_identifiesAtZero` is imported by the default root
+      and registered in `AxiomAudit.ps1`.
+- [x] `gaussianKernelNormalizer_injective` is imported by the default root and
+      registered in the promoted axiom audit.
+- [x] `#print axioms gaussianKernelNormalizer_injective` reports only
+      `propext`, `Classical.choice`, and `Quot.sound`.
+- [x] `#print axioms gaussianMeanShiftDrift_identifiesAtZero` reports only
+      `propext`, `Classical.choice`, and `Quot.sound` (not `equation_11` or any
+      conditional Gaussian/RKHS axiom).
 
-The proof compiled as written (`sub_eq_zero.mp (hzero x)` fired via defeq; no
-`simp only [meanShiftDrift]` fallback needed). The legitimacy obligation is met
-by the existing `bothProbability_allowsDistinctPair`; the band-limited-kernel
-`IsExactCounterexample` note remains an optional future addition.
+The legitimacy obligation is met by the existing
+`bothProbability_allowsDistinctPair`. A formal counterexample showing that an
+arbitrary kernel hypothesis is impossible remains an optional future addition;
+ordinary characteristicness should not be conflated with the additional
+score-recovery structure needed by normalized mean shift.
 
 ### Scope statement to carry into any write-up
 
-This deliverable proves the **exact** `V ≡ 0 ⟹ p = q` converse for the **raw**
-Gaussian mean-shift field and **arbitrary** targets, resting on one cited
-external injectivity axiom (`gaussianMeanShift_injective`). It is the rigorous
-form of the authors' rebuttal argument 1, upgraded from the MMD field to the
-actual mean-shift field. It deliberately does **not**: (a) discharge the
-injectivity from Fourier/Bochner (axiom route by choice); (b) address the
-asymptotic `V → 0` version (needs a metrizing discrepancy or tightness — see
-Part I §5); (c) cover non-characteristic kernels (provably false). Rebuttal
-argument 2 (Laplacian/Gaussian moment recovery) remains a separate, not-yet-
-attempted instance.
+This deliverable gives an **axiom-free Lean proof** of the exact
+`V ≡ 0 ⟹ p = q` converse for the **raw** Gaussian mean-shift field and
+arbitrary probability measures under the explicit finite-dimensional,
+Borel/second-countable, complete real inner-product assumptions. It
+deliberately does **not**: (a) address the asymptotic `V → 0` version; or
+(b) extend the conclusion to arbitrary kernels.
+Rebuttal argument 2 (Laplacian/Gaussian moment recovery) remains separate.
 
 ### Optional follow-ups (recorded, not in this deliverable)
 
-- Abstract `MeanShiftCharacteristic k` marker + general-kernel injectivity axiom;
-  Gaussian as a witness. Gives the general-kernel raw-field converse.
+- Investigate a general-kernel abstraction that includes both ordinary
+  embedding characteristicness and a concrete score/normalizer recovery law;
+  characteristicness by itself is insufficient for normalized mean shift.
 - Rebuttal argument 2 as a Lean instance: an asymptotic `x = ru, r→∞`
   moment-recovery theorem for the Gaussian family under the Laplacian kernel
-  (parametric family, not arbitrary targets).
+  (parametric family, not arbitrary targets). Detailed implementation plan:
+  `LaplacianGaussianConverse.md`.
 - The genuinely novel prize: a *quantitative* stability modulus `‖V‖ small ⟹
   D(p,q) small` for a characteristic kernel — beyond paper and rebuttal (both
   existence-only), in the spirit of our finite-basis `(2B/c)` bound. Obstruction:

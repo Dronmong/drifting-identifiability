@@ -518,3 +518,34 @@ so future agents do not repeat equivalent mistakes.
 - **Relevant Lean declarations/files:** `Paper.aggregateTemperatureDrift`,
   `Paper.normalizedDrift`, `Paper.normalizedFeatureLoss`,
   `Paperaxioms.lean`.
+
+---
+
+### 2026-07-08 — bundled Gaussian mean-shift injectivity axiom
+
+- **Exact condition:** Introduce
+  `gaussianMeanShift_injective : (∀x, meanShift k p x = meanShift k q x) → p=q`
+  and use it to prove zero of `meanShiftDrift k p q` identifies the measures.
+- **Intended mechanism:** Import the authors' Gaussian score/convolution
+  argument as one well-known external theorem.
+- **Precise obstruction:** By definition,
+  `meanShiftDrift k p q x = meanShift k p x - meanShift k q x`. Consequently
+  equality of the two mean-shift maps is propositionally equivalent to zero of
+  the raw drift. The bundled axiom therefore contained the entire desired
+  converse under a renamed hypothesis and violated the project's
+  anti-circularity rule, even though it was conditional.
+- **Repair:** Remove the bundled axiom. Split the analytic route into
+  `gaussianMeanShift_eq_imp_kernelNormalizer_eq` (Tweedie's formula, score
+  equality, and normalization recover equal Gaussian-smoothed scalar
+  functions) and `gaussianKernelNormalizer_injective` (Gaussian
+  convolution/characteristic-kernel injectivity). The Lean bridge now visibly
+  passes through normalizer equality before concluding measure equality.
+- **Status:** Fully repaired. `GaussianScoreRecovery.lean` proves the
+  score/normalizer stage by differentiation under the integral and the
+  derivative-zero-implies-constant theorem.
+  `GaussianConvolutionInjectivity.lean` proves normalizer injectivity by Fourier
+  transformation and characteristic-function uniqueness. The promoted raw
+  converse has no conditional project axiom.
+- **Relevant Lean declarations/files:** `Paperaxioms.lean`,
+  `GaussianConvolutionInjectivity.lean`,
+  `CharacteristicIdentifiability.lean`, `RawFieldConverse.md`.

@@ -6,6 +6,11 @@ if (-not (Test-Path -LiteralPath $lake)) { throw 'Unable to locate the active La
 $temporaryFile = Join-Path ([System.IO.Path]::GetTempPath()) 'DriftingIdentifiabilityPromotedAxiomAudit.lean'
 
 $declarations = @(
+  'DriftingIdentifiability.gaussianKernelNormalizer_injective',
+  'DriftingIdentifiability.gaussianKernelNormalizer_proportional_constant_eq_one',
+  'DriftingIdentifiability.hasFDerivAt_log_gaussianKernelNormalizer',
+  'DriftingIdentifiability.gaussianMeanShift_eq_imp_kernelNormalizer_eq',
+  'DriftingIdentifiability.gaussianMeanShiftDrift_identifiesAtZero',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finiteBasisDensitiesEqual',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies_of_probeZero',
