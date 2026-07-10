@@ -1075,9 +1075,36 @@ converse `laplaceZeroDrift_dirac_identifies_real`: if a probability law on
 Laplace result in the degenerate-opponent case, not the full arbitrary-pair
 converse.
 
-Remaining research objectives are the full arbitrary-target Laplace converse,
-higher-dimensional Laplace smoothing injectivity/Dirac rigidity, and the 1-d
-ODE/Wronskian program recorded in `LaplaceArbitraryConverse.md`.
+`LaplaceWronskian.lean` (Stage 3, 2026-07-10) makes the 1-d elliptic
+structure classical and proves the **alignment reduction** of the open
+converse. The displacement integrand `x ↦ kτ(x,y)(y-x)` is differentiable
+EVERYWHERE — the `sgn` singularity of `∂ₓkτ` is killed by the vanishing
+factor — with uniformly bounded derivative `(‖x-y‖/τ - 1)kτ`, so the
+mean-shift numerator satisfies the pointwise classical ODE
+
+```text
+D_p′ = τ⁻¹ L_p - 2 Z_p     (equivalently  τ² L_p″ = L_p - 2τ Z_p),
+```
+
+with no distribution theory anywhere
+(`hasDerivAt_laplaceDisplacementIntegral`). The headline
+`laplaceZeroDrift_imp_eq_of_companionAligned` then proves: zero raw Laplace
+drift between ARBITRARY probability measures on `ℝ` together with the
+companion-alignment identity `L_p·Z_q = L_q·Z_p` forces `p = q` — zero drift
+plus alignment kills the Wronskian `L_p′L_q - L_pL_q′`, so `L_p = c·L_q`;
+alignment converts this to `Z_p = c·Z_q`; smoothing injectivity against the
+scaled measure `c•q` and total mass force `c = 1`. **The open 1-d
+arbitrary-target converse is thereby reduced to the single scalar identity
+`K := L_p·Z_q - L_q·Z_p ≡ 0`.** All declarations are axiom-free
+(foundations only), imported by the root, and registered in the promoted
+axiom audit.
+
+Remaining research objectives are proving (or refuting) the alignment
+identity `K ≡ 0` from zero drift alone — the isolated remainder of the 1-d
+converse, with the distributional identity
+`K″ = -(2/τ)(L_p dq - L_q dp)` and a maximum-principle attack recorded in
+`LaplaceArbitraryConverse.md` — plus higher-dimensional Laplace smoothing
+injectivity/Dirac rigidity.
 
 ## Conditional research modules
 

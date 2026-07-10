@@ -16,3 +16,4 @@ import DriftingIdentifiability.GaussianScoreRecovery
 import DriftingIdentifiability.LaplacianGaussianConverse
 import DriftingIdentifiability.LaplaceCompanion
 import DriftingIdentifiability.LaplaceInjectivity
+import DriftingIdentifiability.LaplaceWronskian

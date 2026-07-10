@@ -1,11 +1,15 @@
 # Laplace-kernel converse for arbitrary targets: attack plan and research record
 
-**Status:** Stage 1 completed and audited (2026-07-09). The companion-kernel
-score identity, global no-moment regularity package, cross-gradient
-reformulation, and tilt-centroid bridge are implemented in
-`DriftingIdentifiability/LaplaceCompanion.lean`, imported by the root module,
-and registered in the promoted axiom audit. The full arbitrary-target Laplace
-converse remains open.
+**Status:** Stages 1–2 completed and audited (2026-07-09): the
+companion-kernel score identity, no-moment regularity, cross-gradient
+reformulation and tilt bridge (`LaplaceCompanion.lean`); real-line smoothing
+injectivity and Dirac rigidity (`LaplaceInjectivity.lean`).  Stage 3 first
+increment landed 2026-07-10 (`LaplaceWronskian.lean`): the 1-d elliptic
+structure is CLASSICAL (`D_p′ = L_p/τ - 2Z_p`, hence `τ²L_p″ = L_p - 2τZ_p`,
+no distributions), and the **alignment reduction** — zero drift plus
+`K := L_p·Z_q - L_q·Z_p ≡ 0` forces `p = q` — is machine-checked, reducing
+the open 1-d converse to the single scalar identity `K ≡ 0`.  All axiom-free.
+The full arbitrary-target Laplace converse remains open.
 
 ## The problem
 
@@ -212,10 +216,55 @@ pursuing:
   foundations.  What remains open is the full arbitrary-target converse and
   higher-dimensional Laplace smoothing injectivity/Dirac rigidity (the
   Bessel-transform route or an equivalent theorem).
-- **Stage 3 (research): the 1-d ODE/Wronskian program** recorded above, aiming
-  at the full 1-d arbitrary-target converse (or a counterexample — the
-  fundamental-system structure near zeros of `m` is where either a proof or a
-  construction will come from).
+- **Stage 3 (in progress 2026-07-10): the 1-d ODE/Wronskian program.**  Two
+  new findings (derived on paper this session, then formalized in
+  `DriftingIdentifiability/LaplaceWronskian.lean`):
+
+  1. *The elliptic structure is classical, not distributional.*  The 1-d
+     displacement integrand `x ↦ kτ(x,y)·(y-x)` is `C¹` EVERYWHERE — the
+     `sgn` singularity of `∂ₓkτ` is killed by the vanishing factor `(y-x)` —
+     with derivative `(|x-y|/τ - 1)·kτ(x,y)`, uniformly bounded by `2`.
+     Differentiating under the integral (constant dominator, the Stage-1
+     pattern), the mean-shift numerator `D_p` is `C¹` with
+
+     `D_p′ = M_p/τ - Z_p`,   where `M_p := ∫|x-y| kτ dp = L_p - τ Z_p`,
+
+     so the companion normalizer is `C²` with the POINTWISE ode
+
+     `τ² L_p″ = L_p - 2τ Z_p`    (equivalently `τ D_p′ = L_p - 2τ Z_p`).
+
+     The plan's distributional identity `(τ²∂²-1)Z_p = -2τp` is thereby
+     bypassed: everything the program needs lives at the level of classical
+     derivatives of smoothings, which Lean handles with the existing
+     machinery.  Bonus corollary: zero drift is equivalent to the Wronskian
+     identity `Wr(L_p, L_q) = τ²·Wr(L_p′, L_q′)` — the "two solutions of one
+     operator" structure, now classical.
+
+  2. *The Wronskian/alignment reduction.*  Define the **companion alignment**
+
+     `K(x) := L_p(x)·Z_q(x) - L_q(x)·Z_p(x)`.
+
+     Under zero drift, `K ≡ 0` forces `p = q`, by a chain that is now fully
+     certified on the line: zero drift gives `Z_q·D_p = Z_p·D_q` (Stage 1);
+     combined with alignment and `Z_p > 0` this kills the Wronskian
+     `L_p′L_q - L_pL_q′ ≡ 0`, so `L_p = c·L_q` (ratio has zero derivative);
+     alignment again turns this into `Z_p = c·Z_q`; Stage-2 smoothing
+     injectivity applied to `p` and `c•q` gives `p = c•q`, and total mass
+     forces `c = 1`.  **The open 1-d converse is therefore reduced to the
+     single scalar identity `K ≡ 0`** — one continuous function of one
+     variable, with `K → 0` at both ends and (research note, distributional)
+     `K″ = -(2/τ)(L_p dq - L_q dp)` as measures, so `K` is convex where
+     `v·dp - u·dq ≥ 0` and concave where `≤ 0`; a maximum-principle argument
+     at an interior extremum of `K` is the natural next attack, as is the
+     hierarchy of bilinear constraints from integrating test functions
+     against `K″` (the first one: `∬(x-y)ℓτ(x-y) dq(x)dp(y) = 0`).
+
+  Lean deliverables: `hasDerivAt` of the displacement kernel (two-case, the
+  quadratic bound `|h(1-e^{-|h|/τ})| ≤ h²/τ` at the base point), the `D_p′`
+  identity, the classical ODE, the Wronskian crosswalk, and the headline
+  conditional reduction `laplaceZeroDrift_imp_eq_of_companionAligned`.
+  Axiom-free; arbitrary probability measures on `ℝ`; no moment hypotheses.
+  Still open: proving (or refuting) `K ≡ 0` from zero drift alone.
 - **Stage 4 (research): general `d`** via subordination (mixture of Gaussian
   bandwidths) — can the Gaussian converse be applied bandwidth-wise under the
   mixture? The obstruction: zero MIXED drift does not obviously give zero
