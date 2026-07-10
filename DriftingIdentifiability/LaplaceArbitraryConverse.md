@@ -265,9 +265,12 @@ pursuing:
   conditional reduction `laplaceZeroDrift_imp_eq_of_companionAligned`.
   Axiom-free; arbitrary probability measures on `ℝ`; no moment hypotheses.
   Still open: proving (or refuting) `K ≡ 0` from zero drift alone.
-- **Stage 3b (RESOLVED on the finite class, 2026-07-10): the atomic
-  converse.**  THEOREM (new; numerically verified to 1e-17 at every step;
-  formalization in `LaplaceAtomicConverse.lean`):
+- **Stage 3b (RESOLVED on the finite class, 2026-07-10 — MACHINE-CHECKED):
+  the atomic converse.**  THEOREM (new; numerically verified to 1e-17 at
+  every step; formalized axiom-free in `LaplaceAtomicConverse.lean` as
+  `laplaceZeroDrift_atomic_identifies` / `laplaceZeroDrift_atomic_weights_eq`,
+  imported by the root and registered in the promoted axiom audit;
+  `#print axioms` reports Lean foundations only):
 
   > For every `τ > 0` and all finitely-supported probability measures
   > `p = Σ aᵢ δ_{zᵢ}`, `q = Σ bᵢ δ_{zᵢ}` on `ℝ` (common refined support

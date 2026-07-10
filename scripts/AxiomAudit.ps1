@@ -33,6 +33,8 @@ $declarations = @(
   'DriftingIdentifiability.hasDerivAt_laplaceCompanionNormalizer',
   'DriftingIdentifiability.hasDerivAt_laplaceDisplacementIntegral',
   'DriftingIdentifiability.laplaceZeroDrift_imp_eq_of_companionAligned',
+  'DriftingIdentifiability.laplaceZeroDrift_atomic_weights_eq',
+  'DriftingIdentifiability.laplaceZeroDrift_atomic_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finiteBasisDensitiesEqual',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies_of_probeZero',

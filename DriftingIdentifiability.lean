@@ -17,3 +17,4 @@ import DriftingIdentifiability.LaplacianGaussianConverse
 import DriftingIdentifiability.LaplaceCompanion
 import DriftingIdentifiability.LaplaceInjectivity
 import DriftingIdentifiability.LaplaceWronskian
+import DriftingIdentifiability.LaplaceAtomicConverse

@@ -1099,12 +1099,32 @@ arbitrary-target converse is thereby reduced to the single scalar identity
 (foundations only), imported by the root, and registered in the promoted
 axiom audit.
 
-Remaining research objectives are proving (or refuting) the alignment
-identity `K ≡ 0` from zero drift alone — the isolated remainder of the 1-d
-converse, with the distributional identity
-`K″ = -(2/τ)(L_p dq - L_q dp)` and a maximum-principle attack recorded in
-`LaplaceArbitraryConverse.md` — plus higher-dimensional Laplace smoothing
-injectivity/Dirac rigidity.
+`LaplaceAtomicConverse.lean` (Stage 3b, 2026-07-10) **resolves the open
+arbitrary-target converse on the finite-mixture class**: for the paper's
+Laplace kernel and every positive bandwidth, pointwise zero raw mean-shift
+drift between ANY two finitely-supported probability measures on the line
+forces the measures to be equal (`laplaceZeroDrift_atomic_identifies`) —
+arbitrary atoms, arbitrary support size, no frame conditions, probes,
+moments, or bandwidth restrictions. This is the first arbitrary-PAIR
+converse for the practical kernel, on exactly the finite representation
+class of the paper's own Appendix C, and it answers the authors' open
+"general converse" concession on that dense class. Mechanism (the
+moment-parallelism argument): between consecutive atoms the zero-drift
+bilinear identity is a quadratic in `exp(x/τ)²` with constant coefficients,
+so a polynomial-vanishing argument makes the truncated antisymmetric
+tilted-moment pairing `𝔞ₖ` vanish at every truncation; a strictly-signed-sum
+argument matches the bottom atoms and a telescoping induction forces the
+weight vectors proportional, with normalization pinning the constant to
+one. Axiom-free (`#print axioms`: Lean foundations only), imported by the
+root, registered in the promoted axiom audit; every step of the paper proof
+was verified numerically to `1e-17` before formalization.
+
+Remaining research objectives are extending the atomic converse to general
+measures (the sharpened question: does zero drift force the truncated
+pairing `𝔞(x) ≡ 0` beyond the atomic class? — recorded with the
+Stieltjes-derivative bridge identities in `LaplaceArbitraryConverse.md`),
+the alignment identity `K ≡ 0` route of Stage 3, and higher-dimensional
+Laplace smoothing injectivity/Dirac rigidity.
 
 ## Conditional research modules
 
