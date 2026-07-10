@@ -10,6 +10,11 @@ no distributions), and the **alignment reduction** — zero drift plus
 `K := L_p·Z_q - L_q·Z_p ≡ 0` forces `p = q` — is machine-checked, reducing
 the open 1-d converse to the single scalar identity `K ≡ 0`.  All axiom-free.
 The full arbitrary-target Laplace converse remains open.
+**Handoff roadmap for the general-measure push:**
+`LaplaceGeneralConverseRoadmap.md` (2026-07-10) — start there; it contains
+the milestone plan, the new bracket identities `𝔞 = Q·P⁻ − P·Q⁻`
+(numerically verified), the designed endgame `𝔞 ≡ 0 ⟹ p = q`, and the
+nowhere-dense-support upgrade.
 
 ## The problem
 
@@ -333,6 +338,12 @@ pursuing:
   Grönwall/uniqueness argument should close); whether zero drift forces
   `𝔞 ≡ 0` beyond the atomic class is the sharpened open question, alongside
   the alignment identity `K ≡ 0` of Stage 3.
+  **Update 2026-07-10:** the endgame `𝔞 ≡ 0 ⟹ p = q` is now fully designed
+  (no Grönwall needed — `𝔞` IS the Wronskian bracket `Q·P⁻ − P·Q⁻` of the
+  one-sided compensated moments, an unconditional identity verified to
+  1.1e-14), and the atomic engine generalizes for free to nowhere-dense
+  supports.  See `LaplaceGeneralConverseRoadmap.md` for the complete
+  milestone plan.
 
 - **Stage 4 (research): general `d`** via subordination (mixture of Gaussian
   bandwidths) — can the Gaussian converse be applied bandwidth-wise under the
