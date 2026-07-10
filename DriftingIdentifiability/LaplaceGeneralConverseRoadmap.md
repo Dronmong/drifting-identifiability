@@ -369,6 +369,29 @@ and q (5 atoms), 60 random probes in [−4,4]):
 - Endgame sanity: `q = 0.6·p` ⟹ `max|𝔞| = 8.7e-19`; multiplying one
   weight by 1.01 ⟹ `max|𝔞| ≈ 9.5e-4`.
 
+Continuation note (2026-07-10, Codex): before starting
+`LaplaceGeneralConverse.lean`, the Milestone-1 bracket formulas were
+rechecked in PowerShell on an independent atomic pair (`tau = 0.7`, 6 vs. 5
+atoms, 81 probes).  The lower bracket residual was `1.705e-13`; the upper
+bracket residual was `2.998e-15`.  Implementation begins with the one-sided
+transforms and algebraic bracket layer, leaving the full interval
+decomposition and right-continuity items as the next Milestone-1 subgoals.
+
+Lean continuation status (2026-07-10, Codex): `LaplaceGeneralConverse.lean`
+now contains the one-sided transforms
+`lowerExpMass`, `lowerCompensatedMoment`, `upperExpMass`,
+`upperCompensatedMoment`; bounded integrability lemmas for the one-sided
+kernels; the lower/upper bracket definitions `truncatedPairing` and
+`upperPairing`; product-integral identities
+`lowerBracketProductIntegral_eq_truncatedPairing` and
+`upperBracketProductIntegral_eq_upperPairing`; and the direct restricted
+double-integral identities
+`lowerTruncatedPairingIntegral_eq_truncatedPairing` and
+`upperTruncatedPairingIntegral_eq_upperPairing`.  The root import has been
+added.  Remaining Milestone-1 subgoals are the full four-region decomposition
+of the cross-displacement field, its zero-drift corollary, and the
+right-continuity/tail-limit regularity of `truncatedPairing`.
+
 Still to verify numerically before formalizing (Milestone 4/5 inputs):
 the unconditional `dΦ` decomposition, `d𝔞 = e^{x/τ}(Q dp − P dq)` in
 integrated form (`𝔞(t) − 𝔞(s) = ∫_{(s,t]} e^{x/τ}(Q dp − P dq)`), and the
