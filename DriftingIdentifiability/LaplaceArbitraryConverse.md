@@ -265,6 +265,72 @@ pursuing:
   conditional reduction `laplaceZeroDrift_imp_eq_of_companionAligned`.
   Axiom-free; arbitrary probability measures on `ℝ`; no moment hypotheses.
   Still open: proving (or refuting) `K ≡ 0` from zero drift alone.
+- **Stage 3b (RESOLVED on the finite class, 2026-07-10): the atomic
+  converse.**  THEOREM (new; numerically verified to 1e-17 at every step;
+  formalization in `LaplaceAtomicConverse.lean`):
+
+  > For every `τ > 0` and all finitely-supported probability measures
+  > `p = Σ aᵢ δ_{zᵢ}`, `q = Σ bᵢ δ_{zᵢ}` on `ℝ` (common refined support
+  > `z₁ < … < z_N`, arbitrary `N` and atoms), pointwise zero raw Laplace
+  > mean-shift drift forces `p = q`.
+
+  This is the first genuine arbitrary-PAIR converse content for the paper's
+  practical kernel (Dirac rigidity had one degenerate side), and it resolves
+  the authors' open question on the dense class of finite mixtures — exactly
+  the representation class of the paper's own Appendix-C heuristic, with NO
+  frame conditions, probe choices, or bandwidth restrictions.
+
+  *Proof (complete).*  Zero drift is the bilinear identity
+  `Φ(x) := Σᵢⱼ aᵢbⱼ(zᵢ-zⱼ)kτ(x,zᵢ)kτ(x,zⱼ) = 0` for all `x` (the certified
+  cross-displacement form).  On each open interval between consecutive atoms
+  (`z_k < x < z_{k+1}`, including the unbounded ends), each kernel factor is
+  a one-sided exponential, so with `u := e^{2x/τ}` and
+  `αᵢ := aᵢe^{zᵢ/τ}`, `βᵢ := bᵢe^{zᵢ/τ}`:
+
+  `Φ(x)·u = 𝔞ₖ + 𝔟ₖ·u + 𝔠ₖ·u²`,   `𝔞ₖ = Σ_{i,j≤k} αᵢβⱼ(zᵢ-zⱼ)`,
+
+  with constants `𝔞ₖ,𝔟ₖ,𝔠ₖ` depending only on the interval.  A quadratic
+  polynomial vanishing on a nondegenerate interval of `u`-values is zero, so
+  **`𝔞ₖ = 0` for every `k`** — a hierarchy of truncated antisymmetric moment
+  constraints ("moment parallelism": the truncated tilted moment vectors
+  `(Σ_{i≤k}αᵢzᵢ, Σ_{i≤k}αᵢ)` of `p` and `q` are parallel at every
+  truncation).  These constraints alone force `b = a`:
+
+  1. *Bottom atoms match.*  If `a` had no mass at the smallest atoms where
+     `b` does (or vice versa), the first nonvacuous `𝔞ₖ` would be a strictly
+     signed sum: `𝔞ₖ = αₖ Σ_{j<k} βⱼ(zₖ-zⱼ) > 0`.  So `a₁ > 0 ↔ b₁ > 0`,
+     and both hold (the refined support is the union).  Set `λ := β₁/α₁`.
+  2. *Telescoping induction.*  Assume `βₗ = λαₗ` for `l ≤ m`.  Substituting
+     into `𝔞_{m+1} = 0` and using the antisymmetry of the double sum in a
+     symmetric argument (`Σ_{j,l} αⱼαₗ(zⱼ-zₗ) = 0`),
+
+     `0 = 𝔞_{m+1} = (β_{m+1} - λα_{m+1}) · Σ_{j≤m+1} αⱼ(zⱼ - z_{m+1})`,
+
+     and the last factor is strictly negative (`α₁ > 0`, `zⱼ < z_{m+1}`), so
+     `β_{m+1} = λα_{m+1}`.
+  3. *Normalization.*  `bᵢ = λaᵢ` for all `i` and `Σb = Σa = 1` give
+     `λ = 1`, hence `b = a` and `p = q`.  ∎
+
+  Numerical verification (seed 7, `N = 5`, random atoms/weights): interval
+  decomposition residual `1.4e-17`; induction identity residual `2.1e-17`;
+  end-to-end reconstruction of `b` from the constraint family recovers `a`
+  to `5.6e-17`.
+
+- **Stage 3c (research, toward general measures):** en route to the atomic
+  theorem, two identities were derived for ARBITRARY measures under zero
+  drift by Stieltjes-differentiating the interval decomposition of
+  `Φ ≡ 0` (the `dp`/`dq` coefficients cancel identically):
+  `e^{-2x/τ}𝔞(x) = e^{2x/τ}𝔠(x)` for all `x` (with `𝔞(x)` the left-truncated
+  bilinear pairing `∬_{y,y′≤x}(y-y′)e^{(y+y′)/τ}dp(y)dq(y′)`), and the
+  measure identity `m·(Z_p dq - Z_q dp) = -(2/τ)𝔟 dx` (`m` the common mean
+  shift) — so on `{m ≠ 0}` the cross difference `Z_p dq - Z_q dp` is
+  absolutely continuous.  The general-measure analogue of the atomic proof
+  would follow from `𝔞 ≡ 0` (then `d𝔞 = 0` gives the measure identity
+  `Q(x)dp = P(x)dq` with `P,Q` the one-sided compensated moments, and a
+  Grönwall/uniqueness argument should close); whether zero drift forces
+  `𝔞 ≡ 0` beyond the atomic class is the sharpened open question, alongside
+  the alignment identity `K ≡ 0` of Stage 3.
+
 - **Stage 4 (research): general `d`** via subordination (mixture of Gaussian
   bandwidths) — can the Gaussian converse be applied bandwidth-wise under the
   mixture? The obstruction: zero MIXED drift does not obviously give zero
