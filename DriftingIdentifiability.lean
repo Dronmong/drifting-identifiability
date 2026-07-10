@@ -15,3 +15,4 @@ import DriftingIdentifiability.DenominatorTail
 import DriftingIdentifiability.GaussianScoreRecovery
 import DriftingIdentifiability.LaplacianGaussianConverse
 import DriftingIdentifiability.LaplaceCompanion
+import DriftingIdentifiability.LaplaceInjectivity

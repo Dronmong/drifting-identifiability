@@ -172,10 +172,46 @@ pursuing:
   Registered in the default root and promoted axiom audit; full `Check.ps1`
   passes, and `#print axioms` on the promoted companion declarations reports
   only Lean foundations.
-- **Stage 2 (next): Laplace smoothing injectivity + Dirac rigidity.**
-  Formalize `Z_p = Z_q → p = q` (via `charFun`/Fourier positivity of the
-  Poisson profile, or in 1-d via the elliptic inversion) and the
-  constant-conditional-mean ⟹ Dirac mini-theorem.
+- **Stage 2 (completed for the real line, 2026-07-09): Laplace smoothing
+  injectivity + Dirac rigidity.**  Implemented in
+  `DriftingIdentifiability/LaplaceInjectivity.lean`:
+  1. *1-d Fourier transform of the Laplace profile, by hand.*  Mathlib has no
+     Poisson/Cauchy-kernel transform, but it has everything needed to compute
+     it: split `ℝ = Iic 0 ∪ Ioi 0`; on each half-line the integrand is
+     `exp (c± x)` with `c± = ∓1/τ - 2πit`, whose antiderivative
+     `exp (c± x)/c±` decays (`‖exp (c± x)‖ = e^{∓x/τ}`), so
+     `integral_Ioi_of_hasDerivAt_of_tendsto'` /
+     `integral_Iic_of_hasDerivAt_of_tendsto'` evaluate both halves
+     (integrability from `exp_neg_integrableOn_Ioi` + reflection).  Result:
+     `𝓕(e^{-|·|/τ})(t) = (2/τ)/((1/τ)² + 4π²t²)` — real, positive, nowhere
+     zero.
+  2. *Injectivity on `ℝ`.*  Mirror the battle-tested skeleton of
+     `GaussianConvolutionInjectivity.lean` verbatim with the Laplace profile
+     (Fubini swap, `VectorFourier.fourierIntegral_comp_add_right`
+     translation, cancel the nowhere-zero transform, `Measure.ext_of_charFun`)
+     to get `laplaceKernelNormalizer_injective` for FINITE measures on `ℝ`:
+     equal Laplace smoothings force equal measures.  General `d` needs the
+     Bessel-type transform — recorded open.
+  3. *Reusable injectivity interface.*  `LaplaceSmoothingInjective E τ`
+     records the finite-measure smoothing-injectivity predicate without hiding
+     any mean-shift conclusion; `laplaceSmoothingInjective_real` instantiates
+     it on `ℝ`.
+  4. *Signed-moment bridge.*  If
+     `ZeroDrift (meanShiftDrift (laplaceKernel τ)) p (dirac c)`, then
+     `∫ kτ(x,y)(y-c) dp = 0` for every probe `x`.  The positive and negative
+     first-moment reweightings of `p` therefore have identical Laplace
+     smoothings (`laplaceMomentParts_eq_of_zeroDrift_dirac_real`).
+  5. *1-d Dirac rigidity:* `laplaceZeroDrift_dirac_identifies_real` proves
+     that a probability law on `ℝ` with finite first moment and zero raw
+     Laplace drift against `dirac c` must be exactly `dirac c`.  The proof uses
+     smoothing injectivity to identify the positive/negative moment measures,
+     their mutual singularity to make both vanish, and then the resulting
+     `p`-a.e. identity `y = c`.
+  Registered in the default root and promoted axiom audit; full `Check.ps1`
+  passes, and `#print axioms` on the Stage-2 declarations reports only Lean
+  foundations.  What remains open is the full arbitrary-target converse and
+  higher-dimensional Laplace smoothing injectivity/Dirac rigidity (the
+  Bessel-transform route or an equivalent theorem).
 - **Stage 3 (research): the 1-d ODE/Wronskian program** recorded above, aiming
   at the full 1-d arbitrary-target converse (or a counterexample — the
   fundamental-system structure near zeros of `m` is where either a proof or a

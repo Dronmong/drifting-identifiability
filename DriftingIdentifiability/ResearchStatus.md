@@ -1062,8 +1062,21 @@ exponential-tilt centroids in every radial direction.
 Verification status: the new declarations are imported by the root module and
 registered in `scripts/AxiomAudit.ps1`; `lake build --wfail`,
 `scripts/Check.ps1`, and explicit `#print axioms` checks pass with only Lean
-foundations (`propext`, `Classical.choice`, `Quot.sound`). Remaining research
-objectives are Laplace smoothing injectivity/Dirac rigidity and the 1-d
+foundations (`propext`, `Classical.choice`, `Quot.sound`).
+
+`LaplaceInjectivity.lean` then completes the real-line Stage-2 refinement:
+the two-sided exponential profile has an explicitly computed nonzero Fourier
+transform, yielding `laplaceKernelNormalizer_injective` for finite measures on
+`ℝ`. The file registers the reusable predicate `LaplaceSmoothingInjective`,
+proves `laplaceSmoothingInjective_real`, and proves the one-degenerate-side
+converse `laplaceZeroDrift_dirac_identifies_real`: if a probability law on
+`ℝ` has finite first moment and zero raw Laplace mean-shift drift against
+`dirac c`, then it is exactly `dirac c`. This is a genuine arbitrary-target
+Laplace result in the degenerate-opponent case, not the full arbitrary-pair
+converse.
+
+Remaining research objectives are the full arbitrary-target Laplace converse,
+higher-dimensional Laplace smoothing injectivity/Dirac rigidity, and the 1-d
 ODE/Wronskian program recorded in `LaplaceArbitraryConverse.md`.
 
 ## Conditional research modules
