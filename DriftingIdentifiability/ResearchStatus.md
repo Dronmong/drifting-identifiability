@@ -1143,12 +1143,15 @@ Milestone 4 has now started in `LaplaceGeneralConverseBalance.lean`.  The file
 defines the scaled coefficients
 `scaledLowerPairing = exp(-2x/τ)𝔞(x)`,
 `scaledUpperPairing = exp(2x/τ)𝔠(x)`, and their balance defect, proves the
-needed right-continuity infrastructure, and certifies the conditional bridge:
-if the unconditional derivative/weak-Fubini identity for
-`laplaceCrossDisplacementScalar` is supplied, then zero drift gives the
-pointwise balance identity `scaledLowerPairing = scaledUpperPairing`.  The
-remaining Milestone-4 mathematical gap is precisely that unconditional
-derivative/weak-Fubini identity for arbitrary probability measures.
+needed right-continuity infrastructure, and certifies the conditional bridge.
+The bridge has now been corrected to the mathematically right one-sided form:
+if the unconditional right-derivative / weak-Fubini identity for
+`laplaceCrossDisplacementScalar` is supplied as a `HasDerivWithinAt` statement
+on `Ici x`, then zero drift gives the pointwise balance identity
+`scaledLowerPairing = scaledUpperPairing`.  The stronger two-sided classical
+`HasDerivAt` identity is false at atoms in general; the remaining Milestone-4
+mathematical gap is precisely the right-derivative/weak-Stieltjes identity for
+arbitrary probability measures.
 
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the

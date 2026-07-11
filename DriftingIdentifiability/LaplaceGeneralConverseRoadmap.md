@@ -381,6 +381,14 @@ non-controversial Lean pieces:
    the pointwise balance identity.  The genuinely hard remaining item is the
    derivative/weak Fubini identity itself for arbitrary probability measures.
 
+Follow-up sanity check (2026-07-10, Codex): at atom locations the two-sided
+classical derivative of `Φ` generally does **not** exist (left/right finite
+differences on the same non-drift-free atomic pair had jumps up to `9.06e-2`).
+The **right** derivative still matched
+`(2/τ)(exp(2x/τ)𝔠-exp(-2x/τ)𝔞)` at all atom locations to about `2e-8`.
+Thus Milestone 4 must be formalized as a right-derivative or weak/Stieltjes
+identity; a global `HasDerivAt` theorem for arbitrary measures would be false.
+
 ### Milestone 5 — THE OPEN CORE: zero drift ⟹ `𝔞 ≡ 0` on interval supports
 
 After Milestone 3 the enemy is measures whose combined support has

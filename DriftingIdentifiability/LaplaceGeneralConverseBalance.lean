@@ -17,8 +17,13 @@ non-controversial infrastructure around that target:
 
 * scaled lower/upper pairings and the balance defect;
 * right-continuity of the upper pairing and of the balance defect;
-* a conditional bridge showing that the derivative identity immediately gives
+* conditional bridges showing that the derivative identity immediately gives
   the pointwise balance law under zero drift.
+
+Important: for arbitrary measures the two-sided classical derivative of the
+cross-displacement scalar can fail at atoms.  The mathematically correct target
+is the right-derivative/weak identity; the older `HasDerivAt` bridge is kept
+only as a convenient stronger conditional.
 -/
 
 open MeasureTheory Set Filter Topology
@@ -81,6 +86,52 @@ theorem laplaceBalanceDefect_continuousWithinAt_Ici
   unfold laplaceBalanceDefect
   exact (scaledUpperPairing_continuousWithinAt_Ici τ hτ p q x).sub
     (scaledLowerPairing_continuousWithinAt_Ici τ hτ p q x)
+
+/-- Correct one-sided Milestone-4 bridge.
+
+If the unconditional **right-derivative** identity
+
+`D⁺(laplaceCrossDisplacementScalar τ p q)(x) =
+  (2/τ) * laplaceBalanceDefect τ p q x`
+
+is available pointwise as a `HasDerivWithinAt` statement on `Ici x`, then zero
+drift forces the balance identity pointwise.  This is the socket the remaining
+weak/Stieltjes proof should target. -/
+theorem laplaceBalance_identity_of_hasDerivWithinAt_Ici_crossDisplacement
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hderiv : ∀ x : ℝ,
+      HasDerivWithinAt (fun t => laplaceCrossDisplacementScalar τ p q t)
+        ((2 / τ) * laplaceBalanceDefect τ p q x) (Set.Ici x) x) :
+    ∀ x : ℝ, scaledLowerPairing τ p q x = scaledUpperPairing τ p q x := by
+  intro x
+  have hscalar_zero : ∀ t : ℝ, laplaceCrossDisplacementScalar τ p q t = 0 := by
+    intro t
+    have hcross := (laplaceZeroDrift_iff_crossDisplacement τ hτ p q).mp hzero t
+    simp only [smul_eq_mul] at hcross
+    unfold laplaceCrossDisplacementScalar
+    exact sub_eq_zero.mpr hcross
+  have hconst :
+      (fun t => laplaceCrossDisplacementScalar τ p q t) = fun _ : ℝ => (0 : ℝ) := by
+    funext t
+    exact hscalar_zero t
+  have hzeroDeriv :
+      HasDerivWithinAt (fun t => laplaceCrossDisplacementScalar τ p q t) 0
+        (Set.Ici x) x := by
+    rw [hconst]
+    exact hasDerivWithinAt_const x (Set.Ici x) (0 : ℝ)
+  have h₁ := (hderiv x).derivWithin (uniqueDiffWithinAt_Ici x)
+  have h₂ := hzeroDeriv.derivWithin (uniqueDiffWithinAt_Ici x)
+  have huniq : (2 / τ) * laplaceBalanceDefect τ p q x = 0 := by
+    rw [← h₁, h₂]
+  have hfactor : (2 : ℝ) / τ ≠ 0 := div_ne_zero two_ne_zero hτ.ne'
+  have hdefect : laplaceBalanceDefect τ p q x = 0 := by
+    rcases mul_eq_zero.mp huniq with hbad | hgood
+    · exact absurd hbad hfactor
+    · exact hgood
+  unfold laplaceBalanceDefect at hdefect
+  exact (sub_eq_zero.mp hdefect).symm
 
 /-- Conditional Milestone-4 bridge.
 
