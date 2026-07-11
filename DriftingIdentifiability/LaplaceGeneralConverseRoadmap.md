@@ -392,6 +392,27 @@ added.  Remaining Milestone-1 subgoals are the full four-region decomposition
 of the cross-displacement field, its zero-drift corollary, and the
 right-continuity/tail-limit regularity of `truncatedPairing`.
 
+Second continuation status (2026-07-10, Codex): the four-region
+decomposition and zero-drift corollary are now formalized:
+`laplaceCrossDisplacementScalar_decomposition`,
+`laplaceCrossDisplacementScalar_decomposition_exp`,
+`laplaceZeroDrift_decomposition`, and
+`laplaceZeroDrift_decomposition_exp`.  The decomposition is proved by
+splitting the Laplace normalizer and displacement numerator into lower and
+upper one-sided transforms, then doing the exact algebra; the exponential
+version matches the roadmap's
+`exp(-2x/tau) * 𝔞 + 𝔟 + exp(2x/tau) * 𝔠` notation.  The file also contains
+the measure-tail lemma `tendsto_measure_Iic_atBot_zero` and the assembly
+lemmas
+`truncatedPairing_continuousWithinAt_of_lowerTransforms` and
+`truncatedPairing_tendsto_atBot_zero_of_lowerTransforms`, which reduce the
+remaining regularity part of Milestone 1 to the no-moment interval-shrinking
+proofs for the lower one-sided transforms themselves.  `lake build --wfail`,
+`scripts/Check.ps1`, and `#print axioms` for the new decomposition/assembly
+lemmas are clean (Lean foundations only).  The only unfinished Milestone-1
+item is the direct no-moment proof of those transform right-continuity/tail
+vanishing hypotheses.
+
 Still to verify numerically before formalizing (Milestone 4/5 inputs):
 the unconditional `dΦ` decomposition, `d𝔞 = e^{x/τ}(Q dp − P dq)` in
 integrated form (`𝔞(t) − 𝔞(s) = ∫_{(s,t]} e^{x/τ}(Q dp − P dq)`), and the

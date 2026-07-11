@@ -138,6 +138,97 @@ private lemma integrable_upperCompKernel
               (mul_exp_neg_le_general hτ hs) (Real.exp_pos _).le
     _ = τ * Real.exp (-x / τ) := by ring
 
+private lemma tendsto_measure_Iic_atBot_zero
+    (p : Measure ℝ) [IsFiniteMeasure p] :
+    Tendsto (fun x : ℝ => p (Set.Iic x)) atBot (𝓝 (0 : ENNReal)) := by
+  have hfin : ∃ i : ℝ, p (Set.Iic i) ≠ ⊤ := by
+    exact ⟨0, measure_ne_top p (Set.Iic 0)⟩
+  have hmain :
+      Tendsto (p ∘ fun x : ℝ => Set.Iic x) atBot
+        (𝓝 (p (⋂ x : ℝ, Set.Iic x))) :=
+    tendsto_measure_iInter_atBot (μ := p) (s := fun x : ℝ => Set.Iic x)
+      (fun _ => measurableSet_Iic.nullMeasurableSet) monotone_Iic hfin
+  have hInter : (⋂ x : ℝ, Set.Iic x) = ∅ := by
+    rw [iInter_Iic_eq_empty_iff]
+    exact not_bddBelow_iff.mpr (fun a => ⟨a - 1, by simp, by linarith⟩)
+  simpa [Function.comp_def, hInter] using hmain
+
+/-! ## One-sided formulas for the Laplace kernel and numerator -/
+
+private lemma laplaceKernel_left_of_le (τ x y : ℝ) (hy : y ≤ x) :
+    laplaceKernel τ x y = Real.exp (-x / τ) * Real.exp (y / τ) := by
+  unfold laplaceKernel
+  rw [Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hy)]
+  rw [show -(1 / τ) * (x - y) = -x / τ + y / τ by ring, Real.exp_add]
+
+private lemma laplaceKernel_right_of_lt (τ x y : ℝ) (hy : x < y) :
+    laplaceKernel τ x y = Real.exp (x / τ) * Real.exp (-y / τ) := by
+  unfold laplaceKernel
+  rw [Real.norm_eq_abs, abs_of_neg (sub_neg.mpr hy)]
+  rw [show -(1 / τ) * -(x - y) = x / τ + -y / τ by ring, Real.exp_add]
+
+private lemma laplaceWeightedDisplacement_left_of_le (τ x y : ℝ) (hy : y ≤ x) :
+    laplaceWeightedDisplacement τ x y =
+      -(Real.exp (-x / τ)) * ((x - y) * Real.exp (y / τ)) := by
+  unfold laplaceWeightedDisplacement
+  rw [laplaceKernel_left_of_le τ x y hy, smul_eq_mul]
+  ring
+
+private lemma laplaceWeightedDisplacement_right_of_lt (τ x y : ℝ) (hy : x < y) :
+    laplaceWeightedDisplacement τ x y =
+      Real.exp (x / τ) * ((y - x) * Real.exp (-y / τ)) := by
+  unfold laplaceWeightedDisplacement
+  rw [laplaceKernel_right_of_lt τ x y hy, smul_eq_mul]
+  ring
+
+theorem laplaceKernelNormalizer_eq_lower_upper
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
+    kernelNormalizer (laplaceKernel τ) p x =
+      Real.exp (-x / τ) * lowerExpMass τ p x +
+        Real.exp (x / τ) * upperExpMass τ p x := by
+  have hInt : Integrable (fun y => laplaceKernel τ x y) p :=
+    laplaceKernel_integrable p τ hτ x
+  unfold kernelNormalizer lowerExpMass upperExpMass
+  rw [← setIntegral_univ,
+    ← Iic_union_Ioi (a := x),
+    setIntegral_union (Iic_disjoint_Ioi le_rfl) measurableSet_Ioi
+      (hInt.integrableOn) (hInt.integrableOn)]
+  congr 1
+  · rw [← integral_const_mul]
+    apply setIntegral_congr_fun measurableSet_Iic
+    intro y hy
+    have hy' : y ≤ x := by simpa using hy
+    exact laplaceKernel_left_of_le τ x y hy'
+  · rw [← integral_const_mul]
+    apply setIntegral_congr_fun measurableSet_Ioi
+    intro y hy
+    have hy' : x < y := by simpa using hy
+    exact laplaceKernel_right_of_lt τ x y hy'
+
+theorem laplaceDisplacementIntegral_eq_lower_upper
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
+    (∫ y, laplaceWeightedDisplacement τ x y ∂p) =
+      -(Real.exp (-x / τ)) * lowerCompensatedMoment τ p x +
+        Real.exp (x / τ) * upperCompensatedMoment τ p x := by
+  have hInt : Integrable (fun y => laplaceWeightedDisplacement τ x y) p :=
+    laplaceWeightedDisplacement_integrable τ hτ p x
+  unfold lowerCompensatedMoment upperCompensatedMoment
+  rw [← setIntegral_univ,
+    ← Iic_union_Ioi (a := x),
+    setIntegral_union (Iic_disjoint_Ioi le_rfl) measurableSet_Ioi
+      (hInt.integrableOn) (hInt.integrableOn)]
+  congr 1
+  · rw [← integral_const_mul]
+    apply setIntegral_congr_fun measurableSet_Iic
+    intro y hy
+    have hy' : y ≤ x := by simpa using hy
+    exact laplaceWeightedDisplacement_left_of_le τ x y hy'
+  · rw [← integral_const_mul]
+    apply setIntegral_congr_fun measurableSet_Ioi
+    intro y hy
+    have hy' : x < y := by simpa using hy
+    exact laplaceWeightedDisplacement_right_of_lt τ x y hy'
+
 /-! ## Bracket pairings -/
 
 /-- The left-truncated pairing
@@ -153,6 +244,149 @@ noncomputable def truncatedPairing (τ : ℝ) (p q : Measure ℝ) (x : ℝ) : �
 noncomputable def upperPairing (τ : ℝ) (p q : Measure ℝ) (x : ℝ) : ℝ :=
   upperCompensatedMoment τ p x * upperExpMass τ q x -
     upperCompensatedMoment τ q x * upperExpMass τ p x
+
+/-- The mixed-region coefficient in the four-region decomposition. -/
+noncomputable def middlePairing (τ : ℝ) (p q : Measure ℝ) (x : ℝ) : ℝ :=
+  lowerExpMass τ q x * upperCompensatedMoment τ p x -
+    upperExpMass τ q x * lowerCompensatedMoment τ p x -
+      lowerExpMass τ p x * upperCompensatedMoment τ q x +
+        upperExpMass τ p x * lowerCompensatedMoment τ q x
+
+/-- Cross-displacement scalar
+`Z_q D_p - Z_p D_q`, the scalar version of the Stage-1 zero-drift
+cross-displacement equation on the real line. -/
+noncomputable def laplaceCrossDisplacementScalar
+    (τ : ℝ) (p q : Measure ℝ) (x : ℝ) : ℝ :=
+  kernelNormalizer (laplaceKernel τ) q x *
+      (∫ y, laplaceWeightedDisplacement τ x y ∂p) -
+    kernelNormalizer (laplaceKernel τ) p x *
+      (∫ y, laplaceWeightedDisplacement τ x y ∂q)
+
+/-- **Milestone-1 four-region decomposition.**  The cross-displacement scalar
+splits into the lower, mixed, and upper one-sided coefficients. -/
+theorem laplaceCrossDisplacementScalar_decomposition
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] (x : ℝ) :
+    laplaceCrossDisplacementScalar τ p q x =
+      (Real.exp (-x / τ)) ^ 2 * truncatedPairing τ p q x +
+        middlePairing τ p q x +
+          (Real.exp (x / τ)) ^ 2 * upperPairing τ p q x := by
+  unfold laplaceCrossDisplacementScalar
+  rw [laplaceKernelNormalizer_eq_lower_upper τ hτ q x,
+    laplaceKernelNormalizer_eq_lower_upper τ hτ p x,
+    laplaceDisplacementIntegral_eq_lower_upper τ hτ p x,
+    laplaceDisplacementIntegral_eq_lower_upper τ hτ q x]
+  unfold truncatedPairing upperPairing middlePairing
+  set em : ℝ := Real.exp (-x / τ)
+  set ep : ℝ := Real.exp (x / τ)
+  set Pm : ℝ := lowerExpMass τ p x
+  set Qm : ℝ := lowerExpMass τ q x
+  set P : ℝ := lowerCompensatedMoment τ p x
+  set Q : ℝ := lowerCompensatedMoment τ q x
+  set Pp : ℝ := upperExpMass τ p x
+  set Qp : ℝ := upperExpMass τ q x
+  set Ph : ℝ := upperCompensatedMoment τ p x
+  set Qh : ℝ := upperCompensatedMoment τ q x
+  have hcancel : em * ep = 1 := by
+    change Real.exp (-x / τ) * Real.exp (x / τ) = 1
+    rw [← Real.exp_add]
+    rw [show -x / τ + x / τ = 0 by ring, Real.exp_zero]
+  change (em * Qm + ep * Qp) * (-em * P + ep * Ph) -
+      (em * Pm + ep * Pp) * (-em * Q + ep * Qh) =
+    em ^ 2 * (Q * Pm - P * Qm) +
+      (Qm * Ph - Qp * P - Pm * Qh + Pp * Q) +
+        ep ^ 2 * (Ph * Qp - Qh * Pp)
+  calc
+    (em * Qm + ep * Qp) * (-em * P + ep * Ph) -
+        (em * Pm + ep * Pp) * (-em * Q + ep * Qh)
+        = em ^ 2 * (Q * Pm - P * Qm) +
+            (em * ep) * (Qm * Ph - Qp * P - Pm * Qh + Pp * Q) +
+              ep ^ 2 * (Ph * Qp - Qh * Pp) := by
+            ring
+    _ = em ^ 2 * (Q * Pm - P * Qm) +
+          (Qm * Ph - Qp * P - Pm * Qh + Pp * Q) +
+            ep ^ 2 * (Ph * Qp - Qh * Pp) := by
+          rw [hcancel, one_mul]
+
+/-- Same four-region decomposition, written in the roadmap's exponential
+notation. -/
+theorem laplaceCrossDisplacementScalar_decomposition_exp
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] (x : ℝ) :
+    laplaceCrossDisplacementScalar τ p q x =
+      Real.exp (-(2 * x) / τ) * truncatedPairing τ p q x +
+        middlePairing τ p q x +
+          Real.exp ((2 * x) / τ) * upperPairing τ p q x := by
+  rw [laplaceCrossDisplacementScalar_decomposition τ hτ p q x]
+  have hneg : (Real.exp (-x / τ)) ^ 2 = Real.exp (-(2 * x) / τ) := by
+    rw [sq, ← Real.exp_add]
+    congr 1
+    ring
+  have hpos : (Real.exp (x / τ)) ^ 2 = Real.exp ((2 * x) / τ) := by
+    rw [sq, ← Real.exp_add]
+    congr 1
+    ring
+  rw [hneg, hpos]
+
+/-- Zero drift implies the decomposed lower/mixed/upper coefficient identity. -/
+theorem laplaceZeroDrift_decomposition
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : ℝ) :
+      (Real.exp (-x / τ)) ^ 2 * truncatedPairing τ p q x +
+        middlePairing τ p q x +
+          (Real.exp (x / τ)) ^ 2 * upperPairing τ p q x = 0 := by
+  have hcross := (laplaceZeroDrift_iff_crossDisplacement τ hτ p q).mp hzero x
+  simp only [smul_eq_mul] at hcross
+  have hscalar : laplaceCrossDisplacementScalar τ p q x = 0 := by
+    unfold laplaceCrossDisplacementScalar
+    exact sub_eq_zero.mpr hcross
+  rw [laplaceCrossDisplacementScalar_decomposition τ hτ p q x] at hscalar
+  exact hscalar
+
+/-- Zero-drift coefficient identity in the roadmap's exponential notation. -/
+theorem laplaceZeroDrift_decomposition_exp
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : ℝ) :
+      Real.exp (-(2 * x) / τ) * truncatedPairing τ p q x +
+        middlePairing τ p q x +
+          Real.exp ((2 * x) / τ) * upperPairing τ p q x = 0 := by
+  have hcross := (laplaceZeroDrift_iff_crossDisplacement τ hτ p q).mp hzero x
+  simp only [smul_eq_mul] at hcross
+  have hscalar : laplaceCrossDisplacementScalar τ p q x = 0 := by
+    unfold laplaceCrossDisplacementScalar
+    exact sub_eq_zero.mpr hcross
+  rw [laplaceCrossDisplacementScalar_decomposition_exp τ hτ p q x] at hscalar
+  exact hscalar
+
+/-! ## Regularity assembly lemmas -/
+
+/-- Right-continuity of the four lower one-sided transforms implies
+right-continuity of the truncated pairing.  The remaining Milestone-1
+analytic work is to prove the four transform hypotheses without moment
+assumptions by interval-shrinking. -/
+theorem truncatedPairing_continuousWithinAt_of_lowerTransforms
+    (τ : ℝ) (p q : Measure ℝ) (x : ℝ)
+    (hPm : ContinuousWithinAt (fun t => lowerExpMass τ p t) (Set.Ici x) x)
+    (hQm : ContinuousWithinAt (fun t => lowerExpMass τ q t) (Set.Ici x) x)
+    (hP : ContinuousWithinAt (fun t => lowerCompensatedMoment τ p t) (Set.Ici x) x)
+    (hQ : ContinuousWithinAt (fun t => lowerCompensatedMoment τ q t) (Set.Ici x) x) :
+    ContinuousWithinAt (fun t => truncatedPairing τ p q t) (Set.Ici x) x := by
+  unfold truncatedPairing
+  exact (hQ.mul hPm).sub (hP.mul hQm)
+
+/-- If the lower one-sided transforms vanish at `-∞`, so does the truncated
+pairing. -/
+theorem truncatedPairing_tendsto_atBot_zero_of_lowerTransforms
+    (τ : ℝ) (p q : Measure ℝ)
+    (hPm : Tendsto (fun x => lowerExpMass τ p x) atBot (𝓝 0))
+    (hQm : Tendsto (fun x => lowerExpMass τ q x) atBot (𝓝 0))
+    (hP : Tendsto (fun x => lowerCompensatedMoment τ p x) atBot (𝓝 0))
+    (hQ : Tendsto (fun x => lowerCompensatedMoment τ q x) atBot (𝓝 0)) :
+    Tendsto (fun x => truncatedPairing τ p q x) atBot (𝓝 0) := by
+  unfold truncatedPairing
+  simpa using (hQ.mul hPm).sub (hP.mul hQm)
 
 /-- Product-integral form of the lower bracket after splitting the kernel
 algebra into separated products.  This is intentionally separated from the
