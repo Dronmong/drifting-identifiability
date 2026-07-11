@@ -101,7 +101,7 @@ lemma integrable_lowerCompKernel
               (mul_exp_neg_le_general hτ hs) (Real.exp_pos _).le
     _ = τ * Real.exp (x / τ) := by ring
 
-private lemma integrable_upperExpKernel
+lemma integrable_upperExpKernel
     (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     Integrable (fun y : ℝ => Real.exp (-y / τ)) (p.restrict (Set.Ioi x)) := by
   refine Integrable.of_bound (by fun_prop) (Real.exp (-x / τ)) ?_
@@ -111,7 +111,7 @@ private lemma integrable_upperExpKernel
   have hyle : x ≤ y := le_of_lt hy'
   exact Real.exp_le_exp.mpr (by gcongr)
 
-private lemma integrable_upperCompKernel
+lemma integrable_upperCompKernel
     (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     Integrable (fun y : ℝ => (y - x) * Real.exp (-y / τ))
       (p.restrict (Set.Ioi x)) := by

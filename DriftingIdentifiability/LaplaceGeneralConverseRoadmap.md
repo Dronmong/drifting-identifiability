@@ -277,7 +277,7 @@ endpoints via monotone-class on the `Ioc` π-system
 (`MeasureTheory.ext_of_generate_finite` with
 `Real.borel_eq_generateFrom_Ioc`-style generators).
 
-### Milestone 3 — free upgrade: the nowhere-dense-support converse (NEW THEOREM, LOW-MEDIUM RISK)
+### Milestone 3 — free upgrade: the nowhere-dense-support converse (✅ DONE 2026-07-10, machine-checked, axiom-free)
 
 The atomic proof's engine generalizes verbatim to any **gap** of the
 combined support.  Let `S := closure (support p ∪ support q)` (measure
@@ -305,6 +305,33 @@ Formalization notes: state the gap hypothesis concretely (e.g.
 `∀ x, ∀ ε > 0, ∃ u v, x < u ∧ u < v ∧ v < x + ε ∧ (p+q) (Ioo u v) = 0` —
 "right-dense gaps" — rather than topological nowhere-density, to keep the
 Lean statement assumption-checkable; then derive the topological corollary).
+
+Implementation continuation (2026-07-10, Codex, after Milestone 2 was
+cleared): implement Milestone 3 in a separate
+`LaplaceGeneralConverseNowhereDense.lean` module with two layers.  First,
+prove a reusable topology bridge: if a right-continuous function has zeros
+arbitrarily close from the right of every point, then it is identically zero.
+Applied to `truncatedPairing`, this immediately composes with the Milestone-2
+endgame.  Second, prove that zero drift plus a concrete zero-mass gap
+`(p+q)(Ioo u v)=0` supplies those right-dense zeros by freezing the three
+one-sided coefficients on the gap and using the quadratic-vanishing pattern
+from the atomic proof.  The final statement should use the explicit
+right-dense zero-mass gap hypothesis; a topological nowhere-dense-support
+corollary can be added later once the support-to-gap bridge is separately
+formalized.
+
+Status update (2026-07-10, Codex): implemented as planned in
+`LaplaceGeneralConverseNowhereDense.lean`.  The module proves the topological
+bridge `laplaceZeroDrift_identifies_of_rightDense_truncatedPairing_zeros`, the
+zero-mass gap extraction `truncatedPairing_eq_zero_on_gap`, the right-dense
+gap-to-zero theorem
+`rightDenseZeros_truncatedPairing_of_zeroDrift_rightDenseZeroMassGaps`, and the
+headline `laplaceZeroDrift_identifies_of_rightDense_zeroMassGaps` (plus the
+roadmap-name alias `laplaceZeroDrift_identifies_of_nowhereDense_support` whose
+formal hypothesis is still the explicit right-dense zero-mass gap condition).
+No support/topological corollary has been added yet; that is deliberately left
+as a separate support-bridge packaging task, not a theorem gap in the concrete
+right-dense-gap result.
 
 ### Milestone 4 — the balance identity `e^{−2x/τ}𝔞 = e^{2x/τ}𝔠` (RECORDED, NEEDS RE-VERIFICATION)
 

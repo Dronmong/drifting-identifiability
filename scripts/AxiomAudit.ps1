@@ -40,6 +40,7 @@ $declarations = @(
   'DriftingIdentifiability.hasDerivWithinAt_lowerCompensatedMoment',
   'DriftingIdentifiability.lowerCompensatedMoment_proportional',
   'DriftingIdentifiability.laplaceZeroDrift_identifies_of_truncatedPairing_eq_zero',
+  'DriftingIdentifiability.laplaceZeroDrift_identifies_of_rightDense_zeroMassGaps',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finiteBasisDensitiesEqual',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies_of_probeZero',

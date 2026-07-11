@@ -1119,12 +1119,32 @@ one. Axiom-free (`#print axioms`: Lean foundations only), imported by the
 root, registered in the promoted axiom audit; every step of the paper proof
 was verified numerically to `1e-17` before formalization.
 
-Remaining research objectives are extending the atomic converse to general
-measures (the sharpened question: does zero drift force the truncated
-pairing `𝔞(x) ≡ 0` beyond the atomic class? — recorded with the
-Stieltjes-derivative bridge identities in `LaplaceArbitraryConverse.md`),
-the alignment identity `K ≡ 0` route of Stage 3, and higher-dimensional
-Laplace smoothing injectivity/Dirac rigidity.
+`LaplaceGeneralConverseEndgame.lean` and
+`LaplaceGeneralConverseNowhereDense.lean` push this beyond finite mixtures.
+The Milestone-2 endgame proves that vanishing of the lower truncated pairing
+`𝔞(x) := truncatedPairing τ p q x` for all `x` already forces `p = q` for
+arbitrary probability measures on `ℝ`
+(`laplaceZeroDrift_identifies_of_truncatedPairing_eq_zero`).  Milestone 3 then
+proves a concrete nowhere-dense-support upgrade:
+if zero raw Laplace drift holds and the combined measure has right-dense
+zero-mass gaps,
+`∀ x ε>0, ∃ u<v, x<u ∧ v<x+ε ∧ (p+q)(Ioo u v)=0`, then `p = q`
+(`laplaceZeroDrift_identifies_of_rightDense_zeroMassGaps`, alias
+`laplaceZeroDrift_identifies_of_nowhereDense_support`).  Mechanism:
+on every zero-mass gap the three one-sided coefficients in the Laplace
+decomposition are constant; zero drift becomes a quadratic in
+`exp(x/τ)^2` on an infinite interval; polynomial vanishing forces
+`𝔞=0` on the gap, and right-continuity plus right-dense gaps make
+`𝔞≡0` globally.  This covers countable atomic supports with accumulation and
+Cantor-type singular supports under the explicit right-dense-gap hypothesis.
+The result is root-imported, promoted, and axiom-audited.
+
+Remaining research objectives are now narrower: the full arbitrary-target
+Laplace converse for measures whose combined support has interior (the
+sharpened question: does zero drift force `𝔞(x) ≡ 0` without gaps? —
+recorded with the Stieltjes-derivative bridge identities in
+`LaplaceArbitraryConverse.md`), the alignment identity `K ≡ 0` route of Stage
+3, and higher-dimensional Laplace smoothing injectivity/Dirac rigidity.
 
 ## Conditional research modules
 
