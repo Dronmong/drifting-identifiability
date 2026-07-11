@@ -493,6 +493,56 @@ coefficient reduction is certified.**
   unconditionally).  This is the R1 launch pad — the max-principle/Grönwall
   closure on `A` (with `A → 0` at ±∞, `A = C`) is the remaining open step.
 
+**Deeper reduction 2026-07-11 (Fable): the normalizer-Wronskian coordinate +
+the exact obstruction.**  A cleaner coordinate than `𝔞`.  Key identities
+(all numerically verified; `Z_p := kernelNormalizer (laplaceKernel τ) p`):
+
+* `(1 − τ²∂²)Z_p = 2τ·p` and `(1 − τ²∂²)D_p = 2τ²·Z_p′` (verified to 6e-10;
+  the second uses that the measure `y·dp` equals `x·dp`).
+* Since `m := D_p/Z_p` is *defined* by `D_p = m·Z_p`, `Z_p` satisfies the
+  **second-order linear ODE** `m·Z″ + 2(1+m′)Z′ + (m″ − m/τ²)Z = 0` (this is
+  algebraically *equivalent* to the `D_p` identity above via `mZ_p = D_p`).
+  Under zero drift `D_q = m·Z_q`, so **`Z_q` solves the SAME ODE** — `Z_p, Z_q`
+  are two solutions of one 2nd-order equation whose coefficients are built from
+  `p` alone.
+* The **normalizer Wronskian** `W := Z_p′Z_q − Z_pZ_q′` satisfies the
+  UNCONDITIONAL identity `W′ = −(2/τ)(Z_q dp − Z_p dq)` (verified: `W` is
+  constant on gaps, jumps at atoms of `p`/`q` by `∓(2/τ)Z_{q/p}(z)·mass`,
+  matched exactly).  From the joint ODE, `m·W′ + 2(1+m′)W = 0`.
+* **Tails.**  Outside `supp(p+q) ⊆ [−M,M]`, `Z_p = c_p^±e^{∓x/τ}` and
+  `m(x) = μ_± − x` (affine!), so `m·W′ + 2(1+m′)W = (μ_±−x)W′ = 0` and `W → 0`,
+  giving `W ≡ 0` on both tails.  (The `x>M` tail also re-derives
+  `𝔞 ≡ 0` there and the tilt-mean constraints `μ_+^p = μ_+^q`, `μ_-^p = μ_-^q`.)
+
+**Certified gate (`LaplaceGeneralConverseWronskian.lean`, axiom-free, promoted):**
+`laplaceKernelNormalizer_wronskian_zero_imp_eq` — **`W ≡ 0 ⟹ p = q`** for
+probability measures (ratio `Z_p/Z_q` constant via
+`constant_of_has_deriv_right_zero` + the Milestone-4 right derivative
+`laplaceKernelNormalizerRightDerivCoeff`; then `Z_p = c·Z_q` ⟹ injectivity ⟹
+mass ⟹ `c=1`).  Zero drift not needed.  Plus `continuous_laplaceKernelNormalizer`.
+
+**So Milestone 5 ⟺ `zero drift ⟹ W ≡ 0`, and `W` is globally regular** (a
+continuous BV function, `W′ = −(2/τ)·finite measure), unlike `𝔞`/`K`.  This is
+the recommended coordinate.
+
+**The EXACT obstruction (pinned down).**  Propagating `W ≡ 0` from the tails
+inward via `mW′ + 2(1+m′)W = 0` is a regular 1st-order ODE EXCEPT at the
+**zeros of the mean shift `m`**, where the leading coefficient `m` vanishes and
+the ODE is singular.  At a simple zero `z*` with `β := M_p/(τZ_p)|_{z*} =
+1+m′(z*) ∈ [0,∞)`, the Frobenius exponent is `α = 2β/(1−β)`; when `β < 1`
+(the typical case — `m` decreasing through its zero) `α > 0` and a nonzero
+BOUNDED solution `W ~ C|x−z*|^α` can cross the singularity, so uniqueness
+fails and the naive propagation stalls.  What excludes the resonant solution:
+`W = −(2/τ)∫_{(x,∞)}σ` with `σ = Z_q dp − Z_p dq` a FINITE measure — for a.c.
+`p,q`, `σ` is a.c., so `W` is `C¹` (integer regularity), and a fractional
+`α ∉ ℤ` forces `C = 0` ⟹ `W ≡ 0`.  Hence **the converse holds for a.c. `p,q`
+with non-resonant mean-shift zeros (α ∉ ℤ≥0), which is generic**; the resonant
+cases (`α` a non-negative integer, e.g. `β = 1/2 ⟹ α=1`, `β=2/3 ⟹ α=4`) and
+non-a.c. measures with mass exactly at mean-shift zeros are the genuine
+remaining gap.  This is a delicate ODE-regularity / Frobenius question, not
+clean to formalize as stated; a global (non-propagation) argument for `W ≡ 0`
+would be preferable and is the sharp open target.
+
 Attack routes, in recommended order:
 
 - **R1 (compact support first).**  Assume `supp(p+q) ⊆ [−M, M]`.  Then
