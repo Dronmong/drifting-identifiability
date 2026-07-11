@@ -1156,6 +1156,22 @@ identity `laplaceBalance_identity_of_zeroDrift`, valid for arbitrary
 probability measures on `ℝ`.  No new axiom, `sorry`, or distribution-theory
 import was introduced.
 
+Milestone 5 has a new concrete Wronskian coordinate in
+`LaplaceGeneralConverseWronskian.lean`.  The raw-normalizer Wronskian
+`laplaceKernelNormalizerWronskian` is now a named function and is proved equal
+to the determinant of upper/lower exponential masses:
+
+```text
+W(x) = (2/τ) * (P⁺(x) Q⁻(x) - P⁻(x) Q⁺(x)).
+```
+
+The promoted facts now include the determinant formula, a zero-Wronskian gate
+`W ≡ 0 -> p = q`, constancy of `W` across zero-mass gaps, and vanishing of
+`W` on one-sided tails under explicit support-side hypotheses.  This does not
+close the full arbitrary-support converse yet; it converts the remaining
+problem into a sharper scalar determinant-propagation question: prove from
+zero raw Laplace drift that this mass determinant vanishes at every cut.
+
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the
 sharpened question: does zero drift force `𝔞(x) ≡ 0` without gaps? —

@@ -525,6 +525,34 @@ mass ⟹ `c=1`).  Zero drift not needed.  Plus `continuous_laplaceKernelNormaliz
 continuous BV function, `W′ = −(2/τ)·finite measure), unlike `𝔞`/`K`.  This is
 the recommended coordinate.
 
+**Continuation plan 2026-07-11 (Codex): expose the mass-determinant form of
+`W`.**  Claude's Wronskian gate is the right coordinate, but the next Lean
+layer should make it concrete.  Using the Milestone-4 right derivative and the
+normalizer decomposition,
+
+```text
+W(x) = Z_p⁺(x)Z_q(x) - Z_p(x)Z_q⁺(x)
+     = (2/τ) · (P⁺(x)Q⁻(x) - P⁻(x)Q⁺(x)).
+```
+
+This determinant involves only the lower/upper exponential masses, not the
+compensated moments.  Immediate payoffs:
+
+1. state `laplaceKernelNormalizerWronskian` as a real function instead of only
+   an equation-shaped hypothesis;
+2. prove the determinant formula;
+3. prove `W` is constant on zero-mass gaps, reusing the already-certified
+   gap constancy of `P⁻,P⁺,Q⁻,Q⁺`;
+4. prove `W = 0` on left/right tails under explicit support-side hypotheses;
+5. add a clean gate `laplaceKernelNormalizer_wronskian_eq_zero_imp_eq` whose
+   hypothesis is `∀ x, laplaceKernelNormalizerWronskian τ p q x = 0`.
+
+This will not by itself close the global connection problem, but it converts
+the open core into a scalar determinant-propagation question:
+`zero drift ⟹ P⁺Q⁻ = P⁻Q⁺` for every cut.  That is a much more attackable
+version of the shooting problem and a good place to look for a monotonicity,
+total-positivity, or sign-variation argument.
+
 **The EXACT obstruction — CORRECTED 2026-07-11 (Fable).**  Propagating `W ≡ 0`
 (equiv. the doubly-decaying solution of the 2nd-order ODE is 1-dimensional)
 from the tails inward is a regular problem EXCEPT at the **zeros of the mean

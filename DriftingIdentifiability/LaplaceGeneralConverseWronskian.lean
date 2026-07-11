@@ -34,6 +34,47 @@ namespace DriftingIdentifiability
 
 open Paper
 
+/-- The raw-normalizer Wronskian
+`W = Z_p⁺·Z_q - Z_p·Z_q⁺`, where `Z⁺` denotes the Milestone-4 right derivative
+of the Laplace normalizer. -/
+noncomputable def laplaceKernelNormalizerWronskian
+    (τ : ℝ) (p q : Measure ℝ) (x : ℝ) : ℝ :=
+  laplaceKernelNormalizerRightDerivCoeff τ p x *
+      kernelNormalizer (laplaceKernel τ) q x -
+    kernelNormalizer (laplaceKernel τ) p x *
+      laplaceKernelNormalizerRightDerivCoeff τ q x
+
+/-- The raw-normalizer Wronskian is just the determinant of the lower/upper
+exponential mass split.  This is the concrete Milestone-5 coordinate:
+`W = (2/τ)(P⁺Q⁻ - P⁻Q⁺)`. -/
+theorem laplaceKernelNormalizerWronskian_eq_massDet
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] (x : ℝ) :
+    laplaceKernelNormalizerWronskian τ p q x =
+      (2 / τ) *
+        (upperExpMass τ p x * lowerExpMass τ q x -
+          lowerExpMass τ p x * upperExpMass τ q x) := by
+  unfold laplaceKernelNormalizerWronskian laplaceKernelNormalizerRightDerivCoeff
+  rw [laplaceKernelNormalizer_eq_lower_upper τ hτ p x,
+    laplaceKernelNormalizer_eq_lower_upper τ hτ q x]
+  have hcancel : Real.exp (-x / τ) * Real.exp (x / τ) = 1 := by
+    rw [← Real.exp_add]
+    rw [show -x / τ + x / τ = 0 by ring, Real.exp_zero]
+  have hcancel' : Real.exp (-(x * τ⁻¹)) * Real.exp (x * τ⁻¹) = 1 := by
+    simpa [div_eq_mul_inv] using hcancel
+  field_simp [hτ.ne']
+  ring_nf
+  have hterm :
+      Real.exp (-(x * τ⁻¹)) * lowerExpMass τ p x *
+            Real.exp (x * τ⁻¹) * upperExpMass τ q x * 2 =
+        lowerExpMass τ p x * upperExpMass τ q x * 2 := by
+    rw [show Real.exp (-(x * τ⁻¹)) * lowerExpMass τ p x *
+          Real.exp (x * τ⁻¹) * upperExpMass τ q x * 2 =
+        (Real.exp (-(x * τ⁻¹)) * Real.exp (x * τ⁻¹)) *
+          (lowerExpMass τ p x * upperExpMass τ q x * 2) by ring,
+      hcancel', one_mul]
+  rw [hterm, hcancel', one_mul]
+
 /-- The raw Laplace normalizer `Z_p(x) = ∫ kτ(x,y) dp` is continuous. -/
 lemma continuous_laplaceKernelNormalizer (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
     [IsFiniteMeasure p] : Continuous (fun x => kernelNormalizer (laplaceKernel τ) p x) := by
@@ -129,5 +170,81 @@ theorem laplaceKernelNormalizer_wronskian_zero_imp_eq
     rw [hpq', Measure.smul_apply, smul_eq_mul, measure_univ, mul_one] at h1
     exact h1
   rw [hpq', hmass, one_smul]
+
+/-- Same Wronskian gate, stated using the named Wronskian function. -/
+theorem laplaceKernelNormalizer_wronskian_eq_zero_imp_eq
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hW : ∀ x, laplaceKernelNormalizerWronskian τ p q x = 0) : p = q :=
+  laplaceKernelNormalizer_wronskian_zero_imp_eq τ hτ p q (fun x => by
+    have hx := hW x
+    unfold laplaceKernelNormalizerWronskian at hx
+    exact sub_eq_zero.mp hx)
+
+/-- On a zero-mass gap of `p+q`, the raw-normalizer Wronskian is constant.
+In mass-determinant form this is immediate from constancy of the four
+one-sided exponential masses. -/
+theorem laplaceKernelNormalizerWronskian_eq_of_sum_gap_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q]
+    {u v x : ℝ} (hgap : (p + q) (Set.Ioo u v) = 0)
+    (hux : u < x) (hxv : x < v) :
+    laplaceKernelNormalizerWronskian τ p q x =
+      laplaceKernelNormalizerWronskian τ p q u := by
+  have hpGap : p (Set.Ioo u v) = 0 :=
+    left_gap_measure_zero_of_sum_gap_zero hgap
+  have hqGap : q (Set.Ioo u v) = 0 :=
+    right_gap_measure_zero_of_sum_gap_zero hgap
+  rw [laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x,
+    laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q u]
+  have hPm : lowerExpMass τ p x = lowerExpMass τ p u :=
+    lowerExpMass_eq_of_gap_zero τ hτ p hpGap hux hxv
+  have hQm : lowerExpMass τ q x = lowerExpMass τ q u :=
+    lowerExpMass_eq_of_gap_zero τ hτ q hqGap hux hxv
+  have hPp : upperExpMass τ p x = upperExpMass τ p u :=
+    upperExpMass_eq_of_gap_zero τ hτ p hpGap hux hxv
+  have hQp : upperExpMass τ q x = upperExpMass τ q u :=
+    upperExpMass_eq_of_gap_zero τ hτ q hqGap hux hxv
+  rw [hPm, hQm, hPp, hQp]
+
+private lemma upperExpMass_eq_zero_of_right_tail
+    (τ : ℝ) (p : Measure ℝ) [IsFiniteMeasure p] {M x : ℝ}
+    (hp : p (Set.Ioi M) = 0) (hMx : M ≤ x) :
+    upperExpMass τ p x = 0 := by
+  unfold upperExpMass
+  exact setIntegral_eq_zero_of_measure_zero (fun y => Real.exp (-y / τ))
+    (measure_mono_null (fun y hy => lt_of_le_of_lt hMx hy) hp)
+
+private lemma lowerExpMass_eq_zero_of_left_tail
+    (τ : ℝ) (p : Measure ℝ) [IsFiniteMeasure p] {M x : ℝ}
+    (hp : p (Set.Iic M) = 0) (hxM : x ≤ M) :
+    lowerExpMass τ p x = 0 := by
+  unfold lowerExpMass
+  exact setIntegral_eq_zero_of_measure_zero (fun y => Real.exp (y / τ))
+    (measure_mono_null (fun y hy => hy.trans hxM) hp)
+
+/-- If both measures have no mass to the right of `M`, then the raw-normalizer
+Wronskian vanishes throughout the right tail. -/
+theorem laplaceKernelNormalizerWronskian_eq_zero_of_right_tail
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] {M x : ℝ}
+    (hp : p (Set.Ioi M) = 0) (hq : q (Set.Ioi M) = 0) (hMx : M ≤ x) :
+    laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  rw [laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x,
+    upperExpMass_eq_zero_of_right_tail τ p hp hMx,
+    upperExpMass_eq_zero_of_right_tail τ q hq hMx]
+  ring
+
+/-- If both measures have no mass to the left of or at `M`, then the
+raw-normalizer Wronskian vanishes throughout the left tail. -/
+theorem laplaceKernelNormalizerWronskian_eq_zero_of_left_tail
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] {M x : ℝ}
+    (hp : p (Set.Iic M) = 0) (hq : q (Set.Iic M) = 0) (hxM : x ≤ M) :
+    laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  rw [laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x,
+    lowerExpMass_eq_zero_of_left_tail τ p hp hxM,
+    lowerExpMass_eq_zero_of_left_tail τ q hq hxM]
+  ring
 
 end DriftingIdentifiability
