@@ -333,7 +333,7 @@ No support/topological corollary has been added yet; that is deliberately left
 as a separate support-bridge packaging task, not a theorem gap in the concrete
 right-dense-gap result.
 
-### Milestone 4 — the balance identity `e^{−2x/τ}𝔞 = e^{2x/τ}𝔠` (RECORDED, NEEDS RE-VERIFICATION)
+### Milestone 4 — the balance identity `e^{−2x/τ}𝔞 = e^{2x/τ}𝔠` (✅ DONE 2026-07-10, machine-checked, axiom-free)
 
 Stage 3c (see `LaplaceArbitraryConverse.md`) derived, by Stieltjes
 differentiation of the decomposition with cancellation of all `dp`/`dq`
@@ -421,6 +421,32 @@ exponential derivative coefficients, while the shrinking strip `(x,t]` is
 `O(t-x)` pointwise and its quotient vanishes by finite-measure continuity.
 No new axiom is intended here; it is the remaining weak/Stieltjes calculus
 lemma in concrete Lean form.
+
+Closure status (2026-07-10, Codex): **Milestone 4 is now DONE,
+machine-checked and axiom-free.**  The remaining normalizer derivative socket
+was proved as `hasDerivWithinAt_Ici_laplaceKernelNormalizer`.  The proof avoids
+distribution theory: for `t ≥ x`, the normalizer is decomposed exactly as a
+fixed-tail exponential part plus the shrinking-strip remainder
+`laplaceNormalizerRightRemainder`.  The fixed-tail part differentiates by
+ordinary exponential rules; the strip remainder has zero right derivative by
+dominated convergence, using the bound
+`|exp(-a)-exp(a)| ≤ 2 exp(B) a` and the fact that every fixed `y` eventually
+leaves `(x,t]` as `t ↓ x`.
+
+Consequences now certified in `LaplaceGeneralConverseBalance.lean`:
+
+```lean
+hasDerivWithinAt_Ici_laplaceKernelNormalizer
+hasDerivWithinAt_Ici_laplaceCrossDisplacement
+laplaceBalance_identity_of_zeroDrift
+```
+
+Thus zero raw 1-d Laplace drift for arbitrary probability measures implies the
+pointwise balance identity
+`scaledLowerPairing τ p q x = scaledUpperPairing τ p q x` for every `x`.
+Milestone 5 remains the separate open core: using this balance identity, plus
+the decomposition, to force `𝔞 ≡ 0` for measures whose combined support has
+interior.
 
 ### Milestone 5 — THE OPEN CORE: zero drift ⟹ `𝔞 ≡ 0` on interval supports
 
@@ -546,10 +572,11 @@ zero-drift corollary, bracket identities, and lower-pairing
 right-continuity/tail-limit regularity are all Lean-certified; the project
 can move to Milestone 2/3 without carrying a Milestone-1 regularity gap.
 
-Still to verify numerically before formalizing (Milestone 4/5 inputs):
-the unconditional `dΦ` decomposition, `d𝔞 = e^{x/τ}(Q dp − P dq)` in
-integrated form (`𝔞(t) − 𝔞(s) = ∫_{(s,t]} e^{x/τ}(Q dp − P dq)`), and the
-`K`-vs-`𝔞` relation of R2.
+Still to verify numerically before formalizing (Milestone 5 inputs):
+`d𝔞 = e^{x/τ}(Q dp − P dq)` in integrated form
+(`𝔞(t) − 𝔞(s) = ∫_{(s,t]} e^{x/τ}(Q dp − P dq)`) and the `K`-vs-`𝔞`
+relation of R2.  The unconditional right-derivative decomposition for `Φ`
+is now Lean-certified by Milestone 4.
 
 ## 4. What NOT to redo (exhausted / forbidden routes)
 

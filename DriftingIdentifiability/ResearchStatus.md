@@ -1139,34 +1139,22 @@ decomposition are constant; zero drift becomes a quadratic in
 Cantor-type singular supports under the explicit right-dense-gap hypothesis.
 The result is root-imported, promoted, and axiom-audited.
 
-Milestone 4 has now started in `LaplaceGeneralConverseBalance.lean`.  The file
+Milestone 4 is now closed in `LaplaceGeneralConverseBalance.lean`.  The file
 defines the scaled coefficients
 `scaledLowerPairing = exp(-2x/τ)𝔞(x)`,
 `scaledUpperPairing = exp(2x/τ)𝔠(x)`, and their balance defect, proves the
-needed right-continuity infrastructure, and certifies the conditional bridge.
-The bridge has now been corrected to the mathematically right one-sided form:
-if the unconditional right-derivative / weak-Fubini identity for
-`laplaceCrossDisplacementScalar` is supplied as a `HasDerivWithinAt` statement
-on `Ici x`, then zero drift gives the pointwise balance identity
-`scaledLowerPairing = scaledUpperPairing`.  The stronger two-sided classical
-`HasDerivAt` identity is false at atoms in general; the remaining Milestone-4
-mathematical gap is precisely the right-derivative/weak-Stieltjes identity for
-arbitrary probability measures.
-
-The latest Milestone-4 continuation narrows that gap further.  The project now
-has a named reduction
-`hasDerivWithinAt_Ici_crossDisplacement_of_kernelNormalizerRightDeriv` and the
-socket theorem `laplaceBalance_identity_of_kernelNormalizerRightDeriv`: it is
-enough to prove the one-sided derivative formula for the raw Laplace
-normalizer
-`t ↦ kernelNormalizer (laplaceKernel τ) r t` with derivative coefficient
-`laplaceKernelNormalizerRightDerivCoeff τ r x`.  The smooth displacement
-numerator side is already discharged via
-`laplaceDisplacementIntegral_derivCoeff_eq`, using the new companion
-decomposition `laplaceCompanionNormalizer_eq_lower_upper`.  Thus Milestone 4's
-remaining Lean work is a single concrete finite-measure shrinkage lemma for
-the strip `(x,t]`; no new axiom or broad distribution-theory import should be
-needed.
+needed right-continuity infrastructure, and certifies the mathematically
+correct one-sided derivative route.  The raw normalizer right-derivative socket has
+been proved as `hasDerivWithinAt_Ici_laplaceKernelNormalizer`: for `t ≥ x`,
+the normalizer is exactly a fixed-tail exponential part plus the shrinking
+strip remainder `laplaceNormalizerRightRemainder`; the fixed-tail part
+differentiates by ordinary exponential rules and the strip remainder has zero
+right derivative by dominated convergence.  This gives the unconditional
+cross-displacement derivative theorem
+`hasDerivWithinAt_Ici_laplaceCrossDisplacement` and the headline balance
+identity `laplaceBalance_identity_of_zeroDrift`, valid for arbitrary
+probability measures on `ℝ`.  No new axiom, `sorry`, or distribution-theory
+import was introduced.
 
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the
