@@ -54,6 +54,8 @@ $declarations = @(
   'DriftingIdentifiability.laplaceZeroDrift_identifies_of_middlePairing_eq_zero',
   'DriftingIdentifiability.continuous_laplaceKernelNormalizer',
   'DriftingIdentifiability.laplaceKernelNormalizer_wronskian_zero_imp_eq',
+  'DriftingIdentifiability.hasDerivAt_laplaceCompanionWronskian',
+  'DriftingIdentifiability.laplaceZeroDrift_imp_eq_of_companionWronskian_const',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finiteBasisDensitiesEqual',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finitePopulationMeanShift_identifies_of_probeZero',

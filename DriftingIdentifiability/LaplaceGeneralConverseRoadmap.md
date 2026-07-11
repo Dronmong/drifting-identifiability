@@ -525,23 +525,48 @@ mass ⟹ `c=1`).  Zero drift not needed.  Plus `continuous_laplaceKernelNormaliz
 continuous BV function, `W′ = −(2/τ)·finite measure), unlike `𝔞`/`K`.  This is
 the recommended coordinate.
 
-**The EXACT obstruction (pinned down).**  Propagating `W ≡ 0` from the tails
-inward via `mW′ + 2(1+m′)W = 0` is a regular 1st-order ODE EXCEPT at the
-**zeros of the mean shift `m`**, where the leading coefficient `m` vanishes and
-the ODE is singular.  At a simple zero `z*` with `β := M_p/(τZ_p)|_{z*} =
-1+m′(z*) ∈ [0,∞)`, the Frobenius exponent is `α = 2β/(1−β)`; when `β < 1`
-(the typical case — `m` decreasing through its zero) `α > 0` and a nonzero
-BOUNDED solution `W ~ C|x−z*|^α` can cross the singularity, so uniqueness
-fails and the naive propagation stalls.  What excludes the resonant solution:
-`W = −(2/τ)∫_{(x,∞)}σ` with `σ = Z_q dp − Z_p dq` a FINITE measure — for a.c.
-`p,q`, `σ` is a.c., so `W` is `C¹` (integer regularity), and a fractional
-`α ∉ ℤ` forces `C = 0` ⟹ `W ≡ 0`.  Hence **the converse holds for a.c. `p,q`
-with non-resonant mean-shift zeros (α ∉ ℤ≥0), which is generic**; the resonant
-cases (`α` a non-negative integer, e.g. `β = 1/2 ⟹ α=1`, `β=2/3 ⟹ α=4`) and
-non-a.c. measures with mass exactly at mean-shift zeros are the genuine
-remaining gap.  This is a delicate ODE-regularity / Frobenius question, not
-clean to formalize as stated; a global (non-propagation) argument for `W ≡ 0`
-would be preferable and is the sharp open target.
+**The EXACT obstruction — CORRECTED 2026-07-11 (Fable).**  Propagating `W ≡ 0`
+(equiv. the doubly-decaying solution of the 2nd-order ODE is 1-dimensional)
+from the tails inward is a regular problem EXCEPT at the **zeros of the mean
+shift `m`** (`m` runs `+` at `−∞` to `−` at `+∞`, so by IVT it ALWAYS has ≥1
+zero — the obstruction is unavoidable).  At a simple zero `z*`, writing
+`β := M_p/(τZ_p)|_{z*} = 1+m′(z*) ≥ 0`, the second Frobenius exponent of the
+`Z`-difference `ψ = Z_p−cZ_q` at `z*` is `r₂ = (β+1)/(1−β)` (the `W`-Wronskian
+exponent is `α = 2β/(1−β)`); the local resonant solution `ψ ~ C|x−z*|^{r₂}`
+is `C²`-admissible (so `C ≠ 0` is allowed) exactly when `r₂ ≥ 2 ⟺ β ≥ 1/3`.
+
+**Correction to the previous pass's claim.**  I earlier wrote "the obstruction
+is thin — only integer resonances — so the a.c. case is generic".  That is
+WRONG.  Numerically, `β` at the mean-shift zero of a Gaussian target is
+`0.18` for `σ/τ = 0.25`, `0.60` for `σ/τ = 1.25`, `0.90` for `σ/τ = 4`,
+`0.99` for `σ/τ = 10` — so **`β ≥ 1/3` (obstruction active) for the ENTIRE
+spread regime `σ/τ ≳ 1`, which is typical**, and `r₂` is then `≥ 2` and
+NON-integer (e.g. `3.98`, `19.96`), so local `C²`-regularity does NOT kill it.
+The local Frobenius freedom is real and common, not thin.
+
+**Yet there is no counterexample** (linearized injectivity is full-rank, and
+the atomic theorem is unconditional).  So the resonant local solution must be
+excluded **globally**, not locally: the two-sided-decay requirement (a
+codimension-1 "shoot from `+∞`, match decay at `−∞`" condition) forces the
+resonant coefficient to `0`.  Equivalently, the doubly-decaying solution space
+of the 2nd-order ODE — a priori ≤ 1-dim near each end but possibly enlarged by
+the singular connection — is in fact exactly 1-dim (spanned by `Z_p`).  Proving
+this is a **global connection/shooting argument** (the connection coefficient
+across `z*` is nonzero), NOT a local regularity argument, and NOT clean to
+formalize as an ODE statement.  **This is the sharp open target: a global
+argument that the doubly-decaying / `W ≡ 0` / `K ≡ 0` condition holds** — the
+per-point Frobenius analysis provably cannot close it.
+
+**New certified companion-side identity (`LaplaceGeneralConverseCompanionWronskian.lean`,
+axiom-free, promoted).**  `hasDerivAt_laplaceCompanionWronskian`: the companion
+Wronskian `V := L_p·L_q′ − L_p′·L_q` (classical, `C²`) satisfies
+`V′(x) = −(2/τ)·K(x)` UNCONDITIONALLY, where `K = L_p Z_q − L_q Z_p` is the
+alignment defect.  So `K` is a perfect derivative; `∫K = 0` (as `V → 0` at
+`±∞`); and `laplaceZeroDrift_imp_eq_of_companionWronskian_const`: `V ≡ const ⟹
+p = q` (the `C²` companion analogue of the raw-normalizer Wronskian gate).
+This packages the three interchangeable gates: `𝔞 ≡ 0` (M2), `W ≡ 0` (raw
+normalizer, globally regular), `V ≡ const ⟺ K ≡ 0` (companion, classical) —
+each reduces to the same global connection fact.
 
 Attack routes, in recommended order:
 
