@@ -509,6 +509,90 @@ gap in the library, not in the mathematics.  The certified gates
 gate; the paper proof above supplies the missing analytic step
 (`zero drift ⟹ W ≡ 0`) but cannot yet be discharged in Lean.
 
+**Safe conditional-axiom plan (2026-07-11, Codex).**  If we decide to
+axiomatize the missing analysis, keep the axiom boundary below the final
+identifiability statement.  Do **not** add an axiom of the form
+`ZeroDrift -> p = q`, and avoid even naming an axiom
+`zeroDrift_identifies`.  The safest useful options, from least to most
+aggressive, are:
+
+1. **Green's-function / distribution identities** — standard and least
+   controversial, but not enough alone:
+
+   ```text
+   (1 - τ²∂²) Z_μ = 2τ μ,
+   (1 - τ²∂²) D_μ = 2τ² Z_μ′
+   ```
+
+   for finite/a.c. measures with the required exponential first moment.  These
+   are classical properties of the 1-d Laplace Green kernel.  They are safe
+   because they do not mention zero drift, `p=q`, `W`, or identifiability.
+
+2. **Tail asymptotics for Laplace smoothing** — also standard, and directly
+   addresses the corrected sign issue:
+
+   ```text
+   e^{x/τ} Z_μ(x) -> ∫ e^{y/τ} dμ(y),
+   μ_tilt(x) -> (∫ y e^{y/τ} dμ)/(∫ e^{y/τ} dμ),
+   m_μ(x) = μ_tilt(x) - x ~ const - x
+   ```
+
+   with the mirrored `x -> -∞` statement.  This is mostly dominated
+   convergence under a two-sided exponential first-moment hypothesis.  It is
+   useful because it fixes the tail modes without asserting the theorem.
+
+3. **Abstract ODE asymptotic uniqueness / Abel bridge** — the best
+   usefulness/safety tradeoff.  State it for real functions, not measures:
+
+   ```text
+   If Z₁,Z₂ solve the same second-order ODE
+     m Z″ + 2 μ′ Z′ + (μ″ - m/τ²) Z = 0
+   on each component where m ≠ 0, both have Laplace-decaying tails
+   e^{-|x|/τ}, and the possible interior second-mode pieces are excluded by
+   the zero-mass normalization, then their normalizer Wronskian is identically
+   zero.
+   ```
+
+   This is essentially the Levinson/Abel/shooting theorem Claude's proof uses.
+   It is not equivalent to `p=q`; it is an analytic uniqueness theorem for an
+   ODE with specified asymptotics.  This is the recommended axiom if we want a
+   short conditional Lean theorem soon.
+
+4. **A.c. Wronskian bridge** — most aggressive but still safer than
+   `p=q`:
+
+   ```text
+   ACExpMoment p q τ ∧ ZeroDrift(meanShiftDrift(laplaceKernel τ)) p q
+     -> ∀ x, laplaceKernelNormalizerWronskian τ p q x = 0.
+   ```
+
+   This directly packages all missing analysis into the exact certified gate
+   already in Lean.  It should be marked **conditional external** and kept out
+   of the default paper-native promoted results unless/until we are comfortable
+   treating Claude's paper proof as an accepted external theorem.  It still
+   does not assert `p=q`; the already-checked theorem
+   `laplaceKernelNormalizer_wronskian_eq_zero_imp_eq` supplies that final step.
+
+Recommended implementation if axioms are introduced:
+
+- create an opt-in module such as `LaplaceACExternal.lean` or
+  `Conditional/LaplaceAC.lean`;
+- define a transparent predicate `ACExpMoment1D τ p` listing absolute
+  continuity and two-sided exponential first-moment hypotheses;
+- put any new axioms in an explicitly named `ExternalAnalytic` namespace;
+- prove only conditional theorems from those axioms, e.g.
+  `laplaceAC_zeroDrift_identifies_conditional`, by composing the external
+  Wronskian bridge with the existing certified gate;
+- register these as conditional/external in the trust audit, not as paper-native
+  promoted facts;
+- record in `ResearchStatus.md` that the theorem is conditional on external
+  asymptotic ODE analysis.
+
+My recommendation: start with option 3 if we want maximum mathematical
+integrity, or option 4 if the immediate goal is a compact conditional Lean
+statement for the a.c. exponential-moment case.  Option 1/2 are philosophically
+clean but would still leave a substantial Lean assembly burden.
+
 Older status (kept for the record):
 
 **Progress 2026-07-10 (Fable): the converse is (numerically) TRUE, and the

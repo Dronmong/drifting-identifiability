@@ -1030,8 +1030,11 @@ many probes would not feed the radial argument, and `τ ≤ 0` is excluded. Plan
 and proof record: `LaplacianGaussianConverse.md`. Both reviewer-rebuttal
 converses are therefore now machine-checked; the rebuttal's own "general
 converse for arbitrary fields" concession is answered for the Gaussian kernel
-(arbitrary targets) and for the Laplace kernel (Gaussian targets), while the
-Laplace-kernel arbitrary-target converse remains open.
+(arbitrary targets) and for the Laplace kernel (Gaussian targets).  The
+Laplace-kernel arbitrary-target converse has also advanced beyond the
+rebuttal: finite mixtures, nowhere-dense/right-dense-gap supports, and several
+Wronskian gates are machine-checked below, while the a.c.
+exponential-moment case is now resolved on paper but not yet Lean-certified.
 
 ## Laplacian-kernel arbitrary-target structural reduction
 
@@ -1180,12 +1183,32 @@ strictly two-sided version:
 Milestone-5 subproblem is to remove this nondegeneracy by formalizing the
 one-sided support/zero-coordinate cases.
 
-Remaining research objectives are now narrower: the full arbitrary-target
-Laplace converse for measures whose combined support has interior (the
-sharpened question: does zero drift force `𝔞(x) ≡ 0` without gaps? —
-recorded with the Stieltjes-derivative bridge identities in
-`LaplaceArbitraryConverse.md`), the alignment identity `K ≡ 0` route of Stage
-3, and higher-dimensional Laplace smoothing injectivity/Dirac rigidity.
+Claude/Fable's 2026-07-11 paper proof appears to resolve the remaining
+one-dimensional **absolutely continuous + exponential-moment** case: under zero
+drift, `Z_p` and `Z_q` solve the same second-order ODE, the corrected tail
+asymptotics make the non-`Z_p` solution grow at both ends, and the
+doubly-decaying solution space is therefore one-dimensional, so
+`Z_q = α Z_p` and smoothing injectivity plus mass gives `p = q`.  This is not
+currently a promoted Lean theorem: the missing ingredients are standard but
+substantial analytic facts about distributional Green's-function identities,
+tail asymptotics, and ODE asymptotic uniqueness/Abel theory.
+
+Remaining research objectives are now narrower and split by trust level:
+
+- Lean-native: remove the nondegeneracy from the gap-local `W = 0` theorem by
+  formalizing the one-sided support/zero-coordinate cases.
+- Conditional analytic track: introduce carefully scoped external axioms for
+  the a.c. exponential-moment proof, preferably below the final
+  `ZeroDrift -> p = q` conclusion.  The recommended boundary is recorded in
+  `LaplaceGeneralConverseRoadmap.md`: either an abstract ODE
+  asymptotic-uniqueness/Abel theorem, or, more aggressively, a conditional
+  external bridge `ZeroDrift -> W ≡ 0` for a.c. exponential-moment measures.
+  In both cases the final `p = q` step should remain the already-certified
+  Wronskian gate.
+- General-measure track: extend beyond a.c. + exponential moment and
+  nowhere-dense supports.
+- Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
+  any multidimensional analogue of the ODE argument.
 
 ## Conditional research modules
 

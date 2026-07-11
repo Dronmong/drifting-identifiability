@@ -9,7 +9,8 @@ structure is CLASSICAL (`D_p′ = L_p/τ - 2Z_p`, hence `τ²L_p″ = L_p - 2τZ
 no distributions), and the **alignment reduction** — zero drift plus
 `K := L_p·Z_q - L_q·Z_p ≡ 0` forces `p = q` — is machine-checked, reducing
 the open 1-d converse to the single scalar identity `K ≡ 0`.  All axiom-free.
-The full arbitrary-target Laplace converse remains open.
+The full arbitrary-target Laplace converse is not yet Lean-certified.
+
 **Update 2026-07-11 (Fable): the 1-d core is RESOLVED ON PAPER** for a.c.
 measures with an exponential moment — both `Z_p` and `Z_q` solve one 2nd-order
 ODE, whose second solution grows at BOTH ends (the tilted mean saturates so the
@@ -17,6 +18,14 @@ mean shift `m ~ const − x`; a prior sign error had hidden this), so the
 doubly-decaying space is 1-dim, `Z_q ∝ Z_p`, hence `p = q`.  Rigorous modulo
 Levinson-type asymptotic ODE integration, which Mathlib lacks — so NOT yet
 formalizable.  Full proof in `LaplaceGeneralConverseRoadmap.md` (Milestone 5).
+
+**Current trust boundary.**  The machine-checked main track proves conditional
+gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, and the finite/nowhere-dense
+classes.  The a.c. exponential-moment result is presently a paper proof, not a
+promoted Lean theorem.  If we axiomatize it, the axioms must be external
+analytic facts (Green's-function/distribution identities, tail asymptotics, or
+ODE asymptotic uniqueness), not the desired conclusion `ZeroDrift -> p = q`.
+
 **Handoff roadmap for the general-measure push:**
 `LaplaceGeneralConverseRoadmap.md` (2026-07-10) — start there; it contains
 the milestone plan, the new bracket identities `𝔞 = Q·P⁻ − P·Q⁻`
@@ -379,8 +388,9 @@ pursuing:
 
 ## Non-goals and honesty
 
-- No claim that the full converse is resolved: Stage 1 is a structural
-  reduction (new, load-bearing, machine-checked), not the identification.
+- No claim that the full arbitrary-measure converse is Lean-certified.  The
+  a.c. exponential-moment case now has a paper proof, but it still depends on
+  analytic ingredients not currently available in Mathlib.
 - The asymptotic `V → 0` question stays out of scope (see
   `RawFieldConverse.md` Part I §5).
 - Any failed proof route gets logged in `LoggedFailures.md` as usual.
