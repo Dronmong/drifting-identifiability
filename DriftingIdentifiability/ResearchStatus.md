@@ -1153,6 +1153,21 @@ on `Ici x`, then zero drift gives the pointwise balance identity
 mathematical gap is precisely the right-derivative/weak-Stieltjes identity for
 arbitrary probability measures.
 
+The latest Milestone-4 continuation narrows that gap further.  The project now
+has a named reduction
+`hasDerivWithinAt_Ici_crossDisplacement_of_kernelNormalizerRightDeriv` and the
+socket theorem `laplaceBalance_identity_of_kernelNormalizerRightDeriv`: it is
+enough to prove the one-sided derivative formula for the raw Laplace
+normalizer
+`t ↦ kernelNormalizer (laplaceKernel τ) r t` with derivative coefficient
+`laplaceKernelNormalizerRightDerivCoeff τ r x`.  The smooth displacement
+numerator side is already discharged via
+`laplaceDisplacementIntegral_derivCoeff_eq`, using the new companion
+decomposition `laplaceCompanionNormalizer_eq_lower_upper`.  Thus Milestone 4's
+remaining Lean work is a single concrete finite-measure shrinkage lemma for
+the strip `(x,t]`; no new axiom or broad distribution-theory import should be
+needed.
+
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the
 sharpened question: does zero drift force `𝔞(x) ≡ 0` without gaps? —

@@ -69,7 +69,7 @@ private lemma one_sub_exp_neg_le (u : ℝ) :
 
 /-! ## Positivity and integrability of the companion normalizer -/
 
-private lemma laplaceCompanionKernel_integrable'
+lemma laplaceCompanionKernel_integrable'
     (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     Integrable (fun y => laplaceCompanionKernel τ x y) p := by
   refine Integrable.of_bound ?_ (2 * τ) ?_

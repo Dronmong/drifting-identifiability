@@ -389,6 +389,39 @@ The **right** derivative still matched
 Thus Milestone 4 must be formalized as a right-derivative or weak/Stieltjes
 identity; a global `HasDerivAt` theorem for arbitrary measures would be false.
 
+Continuation status (2026-07-10, Codex): the algebraic/differentiable part of
+Milestone 4 is now machine-checked in
+`LaplaceGeneralConverseBalance.lean`.  New infrastructure:
+
+* `laplaceKernelNormalizerRightDerivCoeff`, the expected right derivative of
+  the nonsmooth Laplace normalizer;
+* `laplaceDisplacementIntegralDerivCoeff`, the already-certified derivative of
+  the smooth displacement numerator rewritten in one-sided coordinates;
+* `laplaceCompanionNormalizer_eq_lower_upper`, the companion normalizer
+  decomposition needed for that rewrite;
+* `hasDerivWithinAt_Ici_crossDisplacement_of_kernelNormalizerRightDeriv`, which
+  proves the cross-displacement right-derivative identity from the single raw
+  normalizer right-derivative formula;
+* `laplaceBalance_identity_of_kernelNormalizerRightDeriv`, the clean socket:
+  zero drift plus the raw normalizer right derivative implies
+  `scaledLowerPairing = scaledUpperPairing` pointwise.
+
+So the remaining Milestone-4 proof obligation has been narrowed to exactly:
+
+```lean
+∀ r : Measure ℝ, IsProbabilityMeasure r →
+  ∀ x : ℝ,
+    HasDerivWithinAt (fun t => kernelNormalizer (laplaceKernel τ) r t)
+      (laplaceKernelNormalizerRightDerivCoeff τ r x) (Set.Ici x) x
+```
+
+Mathematically, this should be proved by a one-sided split of
+`Z_r(t)-Z_r(x)` for `t > x`: lower-tail and upper-tail terms give the two
+exponential derivative coefficients, while the shrinking strip `(x,t]` is
+`O(t-x)` pointwise and its quotient vanishes by finite-measure continuity.
+No new axiom is intended here; it is the remaining weak/Stieltjes calculus
+lemma in concrete Lean form.
+
 ### Milestone 5 — THE OPEN CORE: zero drift ⟹ `𝔞 ≡ 0` on interval supports
 
 After Milestone 3 the enemy is measures whose combined support has

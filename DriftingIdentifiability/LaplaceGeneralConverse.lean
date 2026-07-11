@@ -525,6 +525,22 @@ private lemma laplaceWeightedDisplacement_right_of_lt (τ x y : ℝ) (hy : x < y
   rw [laplaceKernel_right_of_lt τ x y hy, smul_eq_mul]
   ring
 
+private lemma laplaceCompanionKernel_left_of_le (τ x y : ℝ) (hy : y ≤ x) :
+    laplaceCompanionKernel τ x y =
+      Real.exp (-x / τ) * (τ * Real.exp (y / τ) + (x - y) * Real.exp (y / τ)) := by
+  unfold laplaceCompanionKernel
+  rw [laplaceKernel_left_of_le τ x y hy]
+  rw [Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hy)]
+  ring
+
+private lemma laplaceCompanionKernel_right_of_lt (τ x y : ℝ) (hy : x < y) :
+    laplaceCompanionKernel τ x y =
+      Real.exp (x / τ) * (τ * Real.exp (-y / τ) + (y - x) * Real.exp (-y / τ)) := by
+  unfold laplaceCompanionKernel
+  rw [laplaceKernel_right_of_lt τ x y hy]
+  rw [Real.norm_eq_abs, abs_of_neg (sub_neg.mpr hy)]
+  ring
+
 theorem laplaceKernelNormalizer_eq_lower_upper
     (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     kernelNormalizer (laplaceKernel τ) p x =
@@ -572,6 +588,69 @@ theorem laplaceDisplacementIntegral_eq_lower_upper
     intro y hy
     have hy' : x < y := by simpa using hy
     exact laplaceWeightedDisplacement_right_of_lt τ x y hy'
+
+theorem laplaceCompanionNormalizer_eq_lower_upper
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
+    kernelNormalizer (laplaceCompanionKernel τ) p x =
+      Real.exp (-x / τ) *
+          (τ * lowerExpMass τ p x + lowerCompensatedMoment τ p x) +
+        Real.exp (x / τ) *
+          (τ * upperExpMass τ p x + upperCompensatedMoment τ p x) := by
+  have hInt : Integrable (fun y => laplaceCompanionKernel τ x y) p :=
+    laplaceCompanionKernel_integrable' τ hτ p x
+  unfold kernelNormalizer lowerExpMass lowerCompensatedMoment upperExpMass
+    upperCompensatedMoment
+  rw [← setIntegral_univ,
+    ← Iic_union_Ioi (a := x),
+    setIntegral_union (Iic_disjoint_Ioi le_rfl) measurableSet_Ioi
+      (hInt.integrableOn) (hInt.integrableOn)]
+  congr 1
+  · calc
+      ∫ y in Set.Iic x, laplaceCompanionKernel τ x y ∂p
+          = ∫ y in Set.Iic x,
+              Real.exp (-x / τ) *
+                (τ * Real.exp (y / τ) + (x - y) * Real.exp (y / τ)) ∂p := by
+              apply setIntegral_congr_fun measurableSet_Iic
+              intro y hy
+              have hy' : y ≤ x := by simpa using hy
+              exact laplaceCompanionKernel_left_of_le τ x y hy'
+      _ = Real.exp (-x / τ) *
+            ∫ y in Set.Iic x,
+              (τ * Real.exp (y / τ) + (x - y) * Real.exp (y / τ)) ∂p := by
+              rw [integral_const_mul]
+      _ = Real.exp (-x / τ) *
+            ((∫ y in Set.Iic x, τ * Real.exp (y / τ) ∂p) +
+              ∫ y in Set.Iic x, (x - y) * Real.exp (y / τ) ∂p) := by
+              rw [integral_add
+                ((integrable_lowerExpKernel τ hτ p x).const_mul τ)
+                (integrable_lowerCompKernel τ hτ p x)]
+      _ = Real.exp (-x / τ) *
+            (τ * (∫ y in Set.Iic x, Real.exp (y / τ) ∂p) +
+              ∫ y in Set.Iic x, (x - y) * Real.exp (y / τ) ∂p) := by
+              rw [integral_const_mul]
+  · calc
+      ∫ y in Set.Ioi x, laplaceCompanionKernel τ x y ∂p
+          = ∫ y in Set.Ioi x,
+              Real.exp (x / τ) *
+                (τ * Real.exp (-y / τ) + (y - x) * Real.exp (-y / τ)) ∂p := by
+              apply setIntegral_congr_fun measurableSet_Ioi
+              intro y hy
+              have hy' : x < y := by simpa using hy
+              exact laplaceCompanionKernel_right_of_lt τ x y hy'
+      _ = Real.exp (x / τ) *
+            ∫ y in Set.Ioi x,
+              (τ * Real.exp (-y / τ) + (y - x) * Real.exp (-y / τ)) ∂p := by
+              rw [integral_const_mul]
+      _ = Real.exp (x / τ) *
+            ((∫ y in Set.Ioi x, τ * Real.exp (-y / τ) ∂p) +
+              ∫ y in Set.Ioi x, (y - x) * Real.exp (-y / τ) ∂p) := by
+              rw [integral_add
+                ((integrable_upperExpKernel τ hτ p x).const_mul τ)
+                (integrable_upperCompKernel τ hτ p x)]
+      _ = Real.exp (x / τ) *
+            (τ * (∫ y in Set.Ioi x, Real.exp (-y / τ) ∂p) +
+              ∫ y in Set.Ioi x, (y - x) * Real.exp (-y / τ) ∂p) := by
+              rw [integral_const_mul]
 
 /-! ## Bracket pairings -/
 
