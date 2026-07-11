@@ -353,10 +353,17 @@ pursuing:
   promoted, `#print axioms` = Lean foundations only, `Check.ps1` green (42
   files, 198 promoted decls).  **The full 1-d Laplace converse is now reduced
   to the SINGLE open statement `ZeroDrift ⟹ 𝔞 ≡ 0` (Milestone 5); Milestone 3
-  discharges it for nowhere-dense supports (guaranteed-achievable new
-  theorem, not yet formalized).**  The right-derivative `P′ = P⁻` was proved
+  discharges it for right-dense zero-mass gaps / nowhere-dense-support-style
+  classes.**  The right-derivative `P′ = P⁻` was proved
   by a clean squeeze reusing Milestone-1 right-continuity (no distribution
   theory, no convexity, no measure-continuity lemma).
+  **Update 2026-07-10 (latest): Milestone 3 is now MACHINE-CHECKED** in
+  `LaplaceGeneralConverseNowhereDense.lean` as
+  `laplaceZeroDrift_identifies_of_rightDense_zeroMassGaps`, promoted and
+  audited.  Milestone 4 has started in `LaplaceGeneralConverseBalance.lean`:
+  scaled lower/upper pairings, the balance defect, right-continuity, and the
+  conditional derivative-identity bridge are formalized.  The remaining hard
+  Milestone-4 task is the unconditional derivative/weak-Fubini identity.
 
 - **Stage 4 (research): general `d`** via subordination (mixture of Gaussian
   bandwidths) — can the Gaussian converse be applied bandwidth-wise under the

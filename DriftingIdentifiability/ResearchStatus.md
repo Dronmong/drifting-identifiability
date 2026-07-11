@@ -1139,6 +1139,17 @@ decomposition are constant; zero drift becomes a quadratic in
 Cantor-type singular supports under the explicit right-dense-gap hypothesis.
 The result is root-imported, promoted, and axiom-audited.
 
+Milestone 4 has now started in `LaplaceGeneralConverseBalance.lean`.  The file
+defines the scaled coefficients
+`scaledLowerPairing = exp(-2x/τ)𝔞(x)`,
+`scaledUpperPairing = exp(2x/τ)𝔠(x)`, and their balance defect, proves the
+needed right-continuity infrastructure, and certifies the conditional bridge:
+if the unconditional derivative/weak-Fubini identity for
+`laplaceCrossDisplacementScalar` is supplied, then zero drift gives the
+pointwise balance identity `scaledLowerPairing = scaledUpperPairing`.  The
+remaining Milestone-4 mathematical gap is precisely that unconditional
+derivative/weak-Fubini identity for arbitrary probability measures.
+
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the
 sharpened question: does zero drift force `𝔞(x) ≡ 0` without gaps? —

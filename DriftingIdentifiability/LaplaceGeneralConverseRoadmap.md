@@ -361,6 +361,26 @@ result is the integrated balance identity, and right-continuity upgrades
 it to pointwise.  All Fubini + explicit antiderivatives; no measure
 derivatives anywhere.
 
+Milestone-4 start (2026-07-10, Codex): reverified the unconditional
+derivative decomposition numerically on a non-drift-free random atomic pair
+(`τ = 0.73`, 5 atoms vs. 4 atoms).  At nine probes away from atoms,
+`Φ'(x)` computed by direct term differentiation agreed with
+`(2/τ)·(exp(2x/τ)𝔠(x) - exp(-2x/τ)𝔞(x))` to max residual `4.857e-17`.
+The weak form across four intervals crossing atoms,
+`Φ(t)-Φ(s) = ∫_s^t (2/τ)(exp(2x/τ)𝔠-exp(-2x/τ)𝔞) dx`, was checked by
+midpoint quadrature with max residual `1.265e-5` (quadrature error scale;
+PowerShell only, no Python/Node).  Implementation begins with three
+non-controversial Lean pieces:
+
+1. prove right-continuity of the upper one-sided transforms and hence of the
+   scaled balance defect;
+2. define `scaledLowerPairing`, `scaledUpperPairing`, and the balance defect
+   `scaledUpper - scaledLower`;
+3. formalize the conditional bridge: if the unconditional derivative identity
+   for `laplaceCrossDisplacementScalar` is supplied, then zero drift implies
+   the pointwise balance identity.  The genuinely hard remaining item is the
+   derivative/weak Fubini identity itself for arbitrary probability measures.
+
 ### Milestone 5 — THE OPEN CORE: zero drift ⟹ `𝔞 ≡ 0` on interval supports
 
 After Milestone 3 the enemy is measures whose combined support has
