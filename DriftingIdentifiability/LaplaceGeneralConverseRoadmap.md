@@ -643,6 +643,19 @@ formalizing the support facts `P = 0 ↔ no p-mass strictly below the cut` and
 split.  Once that is done, zero drift should imply `W = 0` on every zero-mass
 gap without nondegeneracy assumptions.
 
+> ⚠ **SUPERSEDED 2026-07-11 by the "★ RESOLVED ON PAPER" proof at the top of
+> this Milestone-5 section.**  The analysis below (passes 2–4) treated the
+> mean-shift zeros as a hard "global connection/shooting" obstruction.  That
+> framing was a residue of the same tail sign error: it wrongly allowed the
+> second ODE solution to decay at one end (creating a phantom doubly-decaying
+> resonant mode).  In fact the second solution GROWS at BOTH ends, so on each
+> side of a mean-shift zero the decay condition alone kills it — no connection
+> coefficient is needed for a single zero; multiple zeros are handled by the
+> mass constraint (interior second-mode bumps have `∫ > 0`).  The Frobenius
+> exponents `r₂ = (β+1)/(1−β)` and the `β = 1/3` threshold below are correct as
+> local facts but are NOT an obstruction.  Kept for the record of how the
+> resolution was reached.
+
 **The EXACT obstruction — CORRECTED 2026-07-11 (Fable).**  Propagating `W ≡ 0`
 (equiv. the doubly-decaying solution of the 2nd-order ODE is 1-dimensional)
 from the tails inward is a regular problem EXCEPT at the **zeros of the mean
