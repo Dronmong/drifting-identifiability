@@ -553,6 +553,36 @@ the open core into a scalar determinant-propagation question:
 version of the shooting problem and a good place to look for a monotonicity,
 total-positivity, or sign-variation argument.
 
+**Continuation 2026-07-11 (Codex): nondegenerate gap propagation certified.**
+The next brick is now in Lean:
+
+```text
+laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection
+laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_twoSided
+```
+
+On a zero-mass gap of `p+q`, zero drift gives the three coefficient equations
+`𝔞 = 𝔟 = 𝔠 = 0`.  Algebraically, `𝔞 = 0` identifies the lower `q/p` ratio,
+`𝔠 = 0` identifies the upper `q/p` ratio, and `𝔟 = 0` forces those two ratios
+to agree whenever the `p`-side connection factor
+
+```text
+P⁻·P̂ + P⁺·P
+```
+
+is nonzero.  That agreement is exactly `P⁺Q⁻ - P⁻Q⁺ = 0`, hence `W = 0`.
+There is also an ergonomic two-sided version assuming the lower/upper
+exponential masses and compensated moments of `p` are all strictly positive at
+the cut.
+
+This is the first certified local propagation theorem for the new `W`
+coordinate.  The remaining gap-local work is the degenerate edge cases, where
+one of the compensated coordinates vanishes.  Those should be attacked by
+formalizing the support facts `P = 0 ↔ no p-mass strictly below the cut` and
+`P̂ = 0 ↔ no p-mass strictly above the cut`, then doing a finite algebraic case
+split.  Once that is done, zero drift should imply `W = 0` on every zero-mass
+gap without nondegeneracy assumptions.
+
 **The EXACT obstruction — CORRECTED 2026-07-11 (Fable).**  Propagating `W ≡ 0`
 (equiv. the doubly-decaying solution of the 2nd-order ODE is 1-dimensional)
 from the tails inward is a regular problem EXCEPT at the **zeros of the mean

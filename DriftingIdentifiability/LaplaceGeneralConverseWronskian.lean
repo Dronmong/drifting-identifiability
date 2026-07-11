@@ -1,4 +1,4 @@
-import DriftingIdentifiability.LaplaceGeneralConverseBalance
+import DriftingIdentifiability.LaplaceGeneralConverseReduction
 import DriftingIdentifiability.LaplaceInjectivity
 import Mathlib.Analysis.Calculus.MeanValue
 
@@ -33,6 +33,50 @@ open MeasureTheory Set Filter Topology
 namespace DriftingIdentifiability
 
 open Paper
+
+private lemma massDet_eq_zero_of_pairings_eq_zero_of_p_sides
+    {pm qm pp qp pc qc ph qh : ℝ}
+    (hpc : pc ≠ 0) (hph : ph ≠ 0)
+    (hfactor : pm * ph + pp * pc ≠ 0)
+    (hA : qc * pm - pc * qm = 0)
+    (hB : qm * ph - qp * pc - pm * qh + pp * qc = 0)
+    (hC : ph * qp - qh * pp = 0) :
+    pp * qm - pm * qp = 0 := by
+  let l : ℝ := qc / pc
+  let m : ℝ := qh / ph
+  have hqc : qc = l * pc := by
+    dsimp [l]
+    field_simp [hpc]
+  have hqh : qh = m * ph := by
+    dsimp [m]
+    field_simp [hph]
+  have hqm : qm = l * pm := by
+    have hA' : l * pc * pm - pc * qm = 0 := by
+      simpa [hqc] using hA
+    have hA'' : pc * (l * pm - qm) = 0 := by
+      nlinarith only [hA']
+    have hdiff : l * pm - qm = 0 :=
+      (mul_eq_zero.mp hA'').resolve_left hpc
+    linarith
+  have hqp : qp = m * pp := by
+    have hC' : ph * qp - m * ph * pp = 0 := by
+      simpa [hqh] using hC
+    have hC'' : ph * (qp - m * pp) = 0 := by
+      nlinarith only [hC']
+    have hdiff : qp - m * pp = 0 :=
+      (mul_eq_zero.mp hC'').resolve_left hph
+    linarith
+  have hB' : (l - m) * (pm * ph + pp * pc) = 0 := by
+    rw [hqm, hqp, hqh, hqc] at hB
+    ring_nf at hB
+    ring_nf
+    nlinarith only [hB]
+  have hlm : l = m := by
+    have hdiff : l - m = 0 :=
+      (mul_eq_zero.mp hB').resolve_right hfactor
+    linarith
+  rw [hqm, hqp, hlm]
+  ring
 
 /-- The raw-normalizer Wronskian
 `W = Z_p⁺·Z_q - Z_p·Z_q⁺`, where `Z⁺` denotes the Milestone-4 right derivative
@@ -206,6 +250,77 @@ theorem laplaceKernelNormalizerWronskian_eq_of_sum_gap_zero
   have hQp : upperExpMass τ q x = upperExpMass τ q u :=
     upperExpMass_eq_of_gap_zero τ hτ q hqGap hux hxv
   rw [hPm, hQm, hPp, hQp]
+
+/-- **Local Milestone-5 propagation brick.**  On a zero-mass gap of `p+q`,
+zero raw Laplace drift forces the raw-normalizer Wronskian to vanish at any
+cut where the `p`-side lower/upper compensated coordinates are genuinely
+connected.
+
+The proof is the algebraic core of the gap/shooting picture: on a gap the
+three zero-drift coefficients `𝔞, 𝔟, 𝔠` are all zero.  The equations
+`𝔞 = 0` and `𝔠 = 0` identify the lower and upper `q/p` ratios; `𝔟 = 0` forces
+those two ratios to agree whenever the displayed connection factor is nonzero.
+That agreement is exactly the mass determinant defining `W`. -/
+theorem laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {u v x : ℝ} (hgap : (p + q) (Set.Ioo u v) = 0)
+    (hux : u < x) (hxv : x < v)
+    (hpc : lowerCompensatedMoment τ p x ≠ 0)
+    (hph : upperCompensatedMoment τ p x ≠ 0)
+    (hfactor :
+      lowerExpMass τ p x * upperCompensatedMoment τ p x +
+        upperExpMass τ p x * lowerCompensatedMoment τ p x ≠ 0) :
+    laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  have hA : truncatedPairing τ p q x = 0 :=
+    truncatedPairing_eq_zero_on_gap τ hτ p q hzero hgap hux hxv
+  have hB : middlePairing τ p q x = 0 :=
+    (zeroDrift_truncatedPairing_eq_zero_iff_middlePairing τ hτ p q hzero x).mp hA
+  have hC : upperPairing τ p q x = 0 :=
+    (zeroDrift_truncatedPairing_eq_zero_iff_upperPairing τ hτ p q hzero x).mp hA
+  have hdet :
+      upperExpMass τ p x * lowerExpMass τ q x -
+          lowerExpMass τ p x * upperExpMass τ q x = 0 := by
+    exact massDet_eq_zero_of_pairings_eq_zero_of_p_sides
+      (pm := lowerExpMass τ p x)
+      (qm := lowerExpMass τ q x)
+      (pp := upperExpMass τ p x)
+      (qp := upperExpMass τ q x)
+      (pc := lowerCompensatedMoment τ p x)
+      (qc := lowerCompensatedMoment τ q x)
+      (ph := upperCompensatedMoment τ p x)
+      (qh := upperCompensatedMoment τ q x)
+      hpc hph hfactor
+      (by simpa [truncatedPairing] using hA)
+      (by simpa [middlePairing] using hB)
+      (by simpa [upperPairing] using hC)
+  rw [laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x, hdet, mul_zero]
+
+/-- A more ergonomic version of
+`laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection`: if the
+`p`-law has strictly positive lower and upper exponential masses and
+compensated moments at the cut, the connection factor is automatically
+nonzero. -/
+theorem laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_twoSided
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {u v x : ℝ} (hgap : (p + q) (Set.Ioo u v) = 0)
+    (hux : u < x) (hxv : x < v)
+    (hPm : 0 < lowerExpMass τ p x)
+    (hPp : 0 < upperExpMass τ p x)
+    (hPc : 0 < lowerCompensatedMoment τ p x)
+    (hPh : 0 < upperCompensatedMoment τ p x) :
+    laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  refine laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection
+    τ hτ p q hzero hgap hux hxv hPc.ne' hPh.ne' ?_
+  have hfactor_pos :
+      0 <
+        lowerExpMass τ p x * upperCompensatedMoment τ p x +
+          upperExpMass τ p x * lowerCompensatedMoment τ p x := by
+    nlinarith [mul_pos hPm hPh, mul_pos hPp hPc]
+  exact hfactor_pos.ne'
 
 private lemma upperExpMass_eq_zero_of_right_tail
     (τ : ℝ) (p : Measure ℝ) [IsFiniteMeasure p] {M x : ℝ}

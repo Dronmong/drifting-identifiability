@@ -57,6 +57,8 @@ $declarations = @(
   'DriftingIdentifiability.laplaceKernelNormalizer_wronskian_zero_imp_eq',
   'DriftingIdentifiability.laplaceKernelNormalizer_wronskian_eq_zero_imp_eq',
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_of_sum_gap_zero',
+  'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection',
+  'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_twoSided',
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_of_right_tail',
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_of_left_tail',
   'DriftingIdentifiability.hasDerivAt_laplaceCompanionWronskian',

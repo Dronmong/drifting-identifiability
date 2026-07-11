@@ -1171,6 +1171,14 @@ The promoted facts now include the determinant formula, a zero-Wronskian gate
 close the full arbitrary-support converse yet; it converts the remaining
 problem into a sharper scalar determinant-propagation question: prove from
 zero raw Laplace drift that this mass determinant vanishes at every cut.
+The first local propagation theorem for that determinant is now also certified:
+on a zero-mass gap, zero drift forces `W = 0` at any cut where the `p`-side
+lower/upper coordinates are connected
+(`laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_connection`; ergonomic
+strictly two-sided version:
+`laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_twoSided`).  The next
+Milestone-5 subproblem is to remove this nondegeneracy by formalizing the
+one-sided support/zero-coordinate cases.
 
 Remaining research objectives are now narrower: the full arbitrary-target
 Laplace converse for measures whose combined support has interior (the
