@@ -452,8 +452,48 @@ interior.
 
 After Milestone 3 the enemy is measures whose combined support has
 interior (e.g. absolutely continuous parts with full-interval support).
-Nobody knows this step yet — this is the research frontier.  Attack
-routes, in recommended order:
+This is the research frontier and remains OPEN.
+
+**Progress 2026-07-10 (Fable): the converse is (numerically) TRUE, and the
+coefficient reduction is certified.**
+
+* *Truth confirmed numerically (discharges R4).*  Linearized injectivity of
+  `q ↦ meanShift_q` at a generic `p`: the operator
+  `T[h](x) = ∫ kτ(x,y)(y − x − m(x)) h(y) dy` (`m = D_p/Z_p`) has TRIVIAL
+  kernel on `{∫h = 0}` — the constraint matrix `[T; 𝟙]` is full column rank
+  across bandwidths `τ ∈ {0.25, 0.5, 0.7, 1.0}` and Gaussian/bimodal/uniform
+  densities (grid 30–40, `Nx = 60–70`; Gaussian-elimination rank check).  So
+  there is NO local counterexample direction: the general converse is
+  genuinely true, not to be refuted.  Search R4 is closed.
+* *Single-coefficient reduction certified* (`LaplaceGeneralConverseReduction.lean`,
+  axiom-free, promoted).  Under zero drift, decomposition + balance give
+  `𝔟 = -2·e^{-2x/τ}𝔞` and the pointwise equivalences `𝔞(x)=0 ⟺ 𝔠(x)=0 ⟺ 𝔟(x)=0`.
+  Composed with the Milestone-2 endgame, this yields
+  `laplaceZeroDrift_identifies_of_upperPairing_eq_zero` and
+  `..._of_middlePairing_eq_zero`: **`𝔞 ≡ 0` may be replaced by `𝔠 ≡ 0` or
+  `𝔟 ≡ 0`** — attack whichever coefficient is most convenient.
+* *Clean measure identity for R1 (derived, numerically checked, NOT yet
+  formalized).*  Under zero drift, with `A(x) := e^{-2x/τ}𝔞(x) =
+  scaledLowerPairing`,
+
+  ```text
+  -(4/τ)·A(x) dx  =  D_q(x) dp(x) - D_p(x) dq(x)   as measures,
+                  =  m(x)·(Z_q dp - Z_p dq)         (since D_p = m Z_p, D_q = m Z_q).
+  ```
+
+  Derivation: `d𝔞 = e^{x/τ}(Q dp - P dq)` (from E1 `P' = P⁻`, `Q' = Q⁻` and
+  `dP⁻ = e^{x/τ}dp`); the mirror `d𝔠 = e^{-x/τ}(Q̂ dp - P̂ dq)`; differentiate
+  `A` and `C`, use `A = C` (balance) and the CERTIFIED one-sided identity
+  `e^{x/τ}Q̂ − e^{-x/τ}Q = D_q` (`laplaceDisplacementIntegral_eq_lower_upper`,
+  verified numerically to 1e-16).  All strip/`dx` terms cancel.  So `A dx`
+  (Lebesgue-a.c.) equals a measure carried by `p+q`: on any Lebesgue-null part
+  of `p+q` the RHS must vanish, and where `dp = f dx, dq = g dx` one gets the
+  pointwise ODE-source `-(4/τ)A = m(Z_q f − Z_p g)`.  Also, integrating
+  against `1`: `∫A dx = -(τ/2)∫D_q dp` (necessary condition; `∫D_q dp = -∫D_p dq`
+  unconditionally).  This is the R1 launch pad — the max-principle/Grönwall
+  closure on `A` (with `A → 0` at ±∞, `A = C`) is the remaining open step.
+
+Attack routes, in recommended order:
 
 - **R1 (compact support first).**  Assume `supp(p+q) ⊆ [−M, M]`.  Then
   `𝔞 = 0` on `(M, ∞)` and `(−∞, −M)` by Milestone 3's gap lemma —
