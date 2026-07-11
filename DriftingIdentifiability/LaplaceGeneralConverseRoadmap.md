@@ -173,9 +173,43 @@ Lemmas:
    along sequences + `tendsto_of_seq_tendsto`, or monotone-class), and the
    trivial limit `𝔞(x) → 0` as `x → −∞`.
 
-### Milestone 2 — the endgame: `𝔞 ≡ 0 ⟹ p = q` (DESIGNED; MEDIUM RISK)
+### Milestone 2 — the endgame: `𝔞 ≡ 0 ⟹ p = q` (✅ DONE 2026-07-10, machine-checked, axiom-free)
 
-Headline:
+**Status: COMPLETE.**  Implemented in
+`DriftingIdentifiability/LaplaceGeneralConverseEndgame.lean`, imported by the
+root, promoted in `scripts/AxiomAudit.ps1`; `Check.ps1` green (42 files, 198
+promoted decls); `#print axioms` on the headline reports only
+`propext, Classical.choice, Quot.sound`.  Headline:
+`laplaceZeroDrift_identifies_of_truncatedPairing_eq_zero`.  Key supporting
+theorems now certified: `hasDerivWithinAt_lowerCompensatedMoment` (E1),
+`lowerCompensatedMoment_proportional` (E2–E4), `restrict_eq_of_lowerExpMass_prop`
+(E6).  **The general-measure converse is now reduced to a single open
+statement — Milestone 5's `ZeroDrift ⟹ 𝔞 ≡ 0`** (Milestone 3 discharges it
+for nowhere-dense supports).
+
+Notes on how the formalization went vs. the plan below:
+* **E1 was proved by a clean squeeze, not distribution theory.**  For `x' > x₀`,
+  `P(x')-P(x₀) = (x'-x₀)P⁻(x₀) + R` with `0 ≤ R ≤ (x'-x₀)(P⁻(x')-P⁻(x₀))`, so
+  the difference quotient is squeezed between `P⁻(x₀)` and `P⁻(x')`.  The upper
+  bound `→ P⁻(x₀)` is exactly the Milestone-1 right-continuity
+  `lowerExpMass_continuousWithinAt_Ici` — **no measure-continuity lemma or
+  convexity was needed.**  (`hasDerivWithinAt_iff_tendsto_slope` +
+  `tendsto_of_tendsto_of_tendsto_of_le_of_le'`.)
+* **E4 (support match) was simpler than sketched.**  With `A := {P>0}` an
+  up-set, `s := sInf A` satisfies `P(s)=0` automatically (if `p(Iio s)>0` then
+  `p(Iio (s-1/(m+1)))>0` for some `m` by `measure_iUnion_null`, contradicting
+  `s = inf`); hence `A = Ioi s`, `Q = L·P` extends by continuity
+  (`Set.EqOn.closure`, `closure_Ioi`) to `Q(s)=L·P(s)=0`, so `q(Iio s)=0`, and
+  `q(Iio x)=0` for `x ≤ s`.  No atom-at-`s` case analysis or `N_q`/`N_p`
+  moment computation was necessary.
+* **E5** uses `derivWithin` uniqueness (`HasDerivWithinAt.derivWithin` +
+  `uniqueDiffWithinAt_Ici`), not `HasDerivWithinAt.unique`.
+* **E6** truncates to `Iic n`, weights by `withDensity (ofReal e^{y/τ})` (finite
+  on `Iic n`), applies `Measure.ext_of_Iic`, undoes the density with the
+  reciprocal `e^{-y/τ}` (`withDensity_mul` + `w·w' = 1`), then `n → ∞`
+  (`tendsto_measure_iUnion_atTop`).  `λ = 1` falls out of total mass.
+
+Original design (kept for reference):
 
 ```lean
 theorem laplaceZeroDrift_identifies_of_truncatedPairing_eq_zero

@@ -35,7 +35,7 @@ open Paper
 
 /-- The elementary bound `s * exp (-s/τ) ≤ τ` for `s ≥ 0`, used to make the
 compensated one-sided moments finite without moment assumptions. -/
-private lemma mul_exp_neg_le_general {τ : ℝ} (hτ : 0 < τ) {s : ℝ} (hs : 0 ≤ s) :
+lemma mul_exp_neg_le_general {τ : ℝ} (hτ : 0 < τ) {s : ℝ} (hs : 0 ≤ s) :
     s * Real.exp (-(1 / τ) * s) ≤ τ := by
   have h1 : s / τ + 1 ≤ Real.exp (s / τ) := Real.add_one_le_exp (s / τ)
   have h2 := mul_le_mul_of_nonneg_left h1 hτ.le
@@ -65,7 +65,7 @@ noncomputable def upperExpMass (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
 noncomputable def upperCompensatedMoment (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
   ∫ y in Set.Ioi x, (y - x) * Real.exp (-y / τ) ∂p
 
-private lemma integrable_lowerExpKernel
+lemma integrable_lowerExpKernel
     (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     Integrable (fun y : ℝ => Real.exp (y / τ)) (p.restrict (Set.Iic x)) := by
   refine Integrable.of_bound (by fun_prop) (Real.exp (x / τ)) ?_
@@ -74,7 +74,7 @@ private lemma integrable_lowerExpKernel
   have hy' : y ≤ x := by simpa using hy
   exact Real.exp_le_exp.mpr (by gcongr)
 
-private lemma integrable_lowerCompKernel
+lemma integrable_lowerCompKernel
     (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
     Integrable (fun y : ℝ => (x - y) * Real.exp (y / τ))
       (p.restrict (Set.Iic x)) := by

@@ -344,6 +344,19 @@ pursuing:
   1.1e-14), and the atomic engine generalizes for free to nowhere-dense
   supports.  See `LaplaceGeneralConverseRoadmap.md` for the complete
   milestone plan.
+  **Update 2026-07-10 (later): Milestones 1 AND 2 MACHINE-CHECKED, axiom-free.**
+  `LaplaceGeneralConverse.lean` (one-sided transforms, four-region
+  decomposition, bracket identities `𝔞 = Q·P⁻ − P·Q⁻`, right-continuity/tail
+  regularity) and `LaplaceGeneralConverseEndgame.lean` (the endgame
+  `laplaceZeroDrift_identifies_of_truncatedPairing_eq_zero`: `𝔞 ≡ 0 ⟹ p = q`
+  for arbitrary probability measures on ℝ, no moment hypotheses) are complete,
+  promoted, `#print axioms` = Lean foundations only, `Check.ps1` green (42
+  files, 198 promoted decls).  **The full 1-d Laplace converse is now reduced
+  to the SINGLE open statement `ZeroDrift ⟹ 𝔞 ≡ 0` (Milestone 5); Milestone 3
+  discharges it for nowhere-dense supports (guaranteed-achievable new
+  theorem, not yet formalized).**  The right-derivative `P′ = P⁻` was proved
+  by a clean squeeze reusing Milestone-1 right-continuity (no distribution
+  theory, no convexity, no measure-continuity lemma).
 
 - **Stage 4 (research): general `d`** via subordination (mixture of Gaussian
   bandwidths) — can the Gaussian converse be applied bandwidth-wise under the
