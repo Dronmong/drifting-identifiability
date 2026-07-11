@@ -626,6 +626,44 @@ This packages the three interchangeable gates: `𝔞 ≡ 0` (M2), `W ≡ 0` (raw
 normalizer, globally regular), `V ≡ const ⟺ K ≡ 0` (companion, classical) —
 each reduces to the same global connection fact.
 
+**Mass-determinant coordinate + gap/tail machinery (Codex, then Fable 2026-07-11;
+`LaplaceGeneralConverseWronskian.lean`, axiom-free, promoted).**  The raw
+normalizer Wronskian has the clean closed form
+`W = laplaceKernelNormalizerWronskian = (2/τ)·(P⁺Q⁻ − P⁻Q⁺)`
+(`laplaceKernelNormalizerWronskian_eq_massDet`) — `(2/τ)` times the determinant
+of the four one-sided exponential masses.  Certified consequences: `W` is
+constant on gaps of `p+q` (`…_eq_of_sum_gap_zero`); on a gap under zero drift
+`W = 0` provided the `p`-side is nondegenerate (straddles the gap):
+`…_eq_zero_on_gap_of_p_connection` / `…_of_p_twoSided` (the algebra
+`massDet_eq_zero_of_pairings_eq_zero_of_p_sides` turns `𝔞 = 𝔟 = 𝔠 = 0` into the
+mass determinant `= 0`); `W = 0` on both tails; and `W` is RIGHT-CONTINUOUS
+(`…_continuousWithinAt_Ici`, from the Milestone-1 right-continuity of the four
+exponential masses).
+
+**Coordinate trade-off (Fable synthesis 2026-07-11) — the sharp reason the
+interior is the wall.**  The two coordinates have OPPOSITE strengths:
+
+* `𝔞` (truncated pairing) vanishes on EVERY gap UNCONDITIONALLY
+  (`truncatedPairing_eq_zero_on_gap`, via the interval-quadratic argument), and
+  M3 uses exactly this to get the whole nowhere-dense / right-dense-gaps class
+  — but `𝔞`'s natural coordinates are singular/degenerate at the mean-shift
+  zeros.
+* `W` is globally right-continuous and BV (`W′ = −(2/τ)(Z_q dp − Z_p dq)`) — but
+  its gap-vanishing is CONDITIONAL on the `p`-side straddling the gap, so `W` is
+  NOT right-dense-zero for a general pair (near a support edge a gap can have
+  `p` one-sided and `W ≠ 0`).  Hence W does NOT re-prove the nowhere-dense class
+  as cleanly as `𝔞`; its only advantage is global regularity.
+
+So **neither coordinate helps the interval-support interior**: `𝔞` is nonzero
+there (it only vanishes on gaps), and `W`'s vanishing has no gap to leverage.
+The one pointwise bridge between them (derived, `σ`-based, not yet formalized)
+is `m·W′ = (8/τ²)·A` with `A = e^{−2x/τ}𝔞 = scaledLowerPairing` — i.e. on `{m ≠ 0}`
+the two coordinates' derivatives are proportional, and both vanish at the
+mean-shift zeros.  Forcing `W ≡ 0` (equiv. `𝔞 ≡ 0`, `K ≡ 0`) on an interval
+where `p, q` have density is the genuinely open core; it is the
+doubly-decaying-solution-is-1-dimensional / global-shooting fact, which the
+per-point analysis provably cannot reach.
+
 Attack routes, in recommended order:
 
 - **R1 (compact support first).**  Assume `supp(p+q) ⊆ [−M, M]`.  Then

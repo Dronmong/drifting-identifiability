@@ -61,6 +61,7 @@ $declarations = @(
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_on_gap_of_p_twoSided',
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_of_right_tail',
   'DriftingIdentifiability.laplaceKernelNormalizerWronskian_eq_zero_of_left_tail',
+  'DriftingIdentifiability.laplaceKernelNormalizerWronskian_continuousWithinAt_Ici',
   'DriftingIdentifiability.hasDerivAt_laplaceCompanionWronskian',
   'DriftingIdentifiability.laplaceZeroDrift_imp_eq_of_companionWronskian_const',
   'DriftingIdentifiability.PaperFiniteIdentifiability.finiteBasisDensitiesEqual',

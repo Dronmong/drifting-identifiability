@@ -362,4 +362,25 @@ theorem laplaceKernelNormalizerWronskian_eq_zero_of_left_tail
     lowerExpMass_eq_zero_of_left_tail τ q hq hxM]
   ring
 
+/-- **The raw-normalizer Wronskian is right-continuous.**  In mass-determinant
+form `W = (2/τ)(P⁺Q⁻ − P⁻Q⁺)`, and all four one-sided exponential masses are
+right-continuous (Milestone 1), with jumps only at atoms.  This is the key
+regularity of the `W`-coordinate — `W` is a globally-defined right-continuous
+(and, off the atoms of `p+q`, continuous) function, unlike the truncated
+pairing `𝔞`; it is what an interior/global argument for `W ≡ 0` builds on. -/
+theorem laplaceKernelNormalizerWronskian_continuousWithinAt_Ici
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] (x : ℝ) :
+    ContinuousWithinAt (fun t => laplaceKernelNormalizerWronskian τ p q t) (Set.Ici x) x := by
+  have heq : (fun t => laplaceKernelNormalizerWronskian τ p q t)
+      = fun t => (2 / τ) * (upperExpMass τ p t * lowerExpMass τ q t
+        - lowerExpMass τ p t * upperExpMass τ q t) := by
+    funext t; exact laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q t
+  rw [heq]
+  exact continuousWithinAt_const.mul
+    (((upperExpMass_continuousWithinAt_Ici τ hτ p x).mul
+        (lowerExpMass_continuousWithinAt_Ici τ hτ q x)).sub
+      ((lowerExpMass_continuousWithinAt_Ici τ hτ p x).mul
+        (upperExpMass_continuousWithinAt_Ici τ hτ q x)))
+
 end DriftingIdentifiability
