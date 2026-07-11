@@ -452,7 +452,67 @@ interior.
 
 After Milestone 3 the enemy is measures whose combined support has
 interior (e.g. absolutely continuous parts with full-interval support).
-This is the research frontier and remains OPEN.
+
+**★ RESOLVED ON PAPER 2026-07-11 (Fable) — a correct proof for a.c. measures
+with an exponential moment.  (Not yet formalizable: needs asymptotic ODE
+integration that Mathlib lacks.)**  The earlier "obstruction" writeups were
+wrong because of a sign error in the tail behaviour of the mean shift, now
+corrected and numerically verified.  Here is the proof.
+
+*Setup.*  Let `p, q` be a.c. with `∫ e^{|y|/τ}dp, dq < ∞`, and suppose zero
+drift.  Set `m := D_p/Z_p` (the common mean shift; `D_q = m Z_q` by zero drift)
+and `μ := μ_p = m + x` (the tilted-mean function `μ_p(x) = ∫y kτ(x,·)dp/Z_p`).
+Both `Z_p` and `Z_q` solve the SAME 2nd-order linear ODE
+`(⋆⋆) : m Z″ + 2μ′ Z′ + (μ″ − m/τ²) Z = 0`
+(`Z_p` because `m` is defined by `D_p = m Z_p`; `Z_q` because zero drift gives
+`D_q = m Z_q`; both via the certified `(1−τ²∂²)D = 2τ²Z′`, `(1−τ²∂²)Z = 2τ·(law)`).
+
+*Tail structure (the corrected key fact, numerically verified).*  As `x → +∞`
+the tilt `kτ(x,·)` is beaten by the light tail of `p`, so the tilted mean
+SATURATES: `μ_p(x) → σ²/τ`-type constant, hence `m(x) ~ (const) − x → −∞`,
+`μ′ → 0`, `μ″ → 0`.  (Verified for `N(0,1)`, `τ=0.5`: `μ_p→2`, `m~2−x`,
+`Z_p·e^{x/τ}→const≈7.4`.)  Dividing `(⋆⋆)` by `m`: at `+∞` it becomes
+`Z″ = Z/τ²`, whose modes are `e^{±x/τ}`.  `Z_p ~ c·e^{−x/τ}` is the DECAYING
+mode; the independent solution GROWS like `e^{x/τ}`.  Symmetrically at `−∞`.
+(This is where the earlier passes erred — I wrongly took `m → const`, which
+made the second solution decay at one end and produced a phantom obstruction.
+`m ~ −x` is correct, and the second solution grows at BOTH ends.)
+
+*Key lemma: decaying-at-`+∞` solutions are 1-dimensional.*  Let `z*` be the
+largest mean-shift zero (`m` runs `+` to `−`, so `m<0` on `(z*,∞)`, regular).
+Put `r := Z_q/Z_p` and `𝒲 := Z_p Z_q′ − Z_p′ Z_q`, so `r′ = 𝒲/Z_p²`.  Two
+solutions of `(⋆⋆)` have Wronskian obeying Abel's identity
+`m 𝒲′ + 2μ′ 𝒲 = 0`, hence `𝒲(x) = 𝒲(x₁)·exp(−∫_{x₁}^x 2μ′/m)`, and
+`∫^∞ 2μ′/m` CONVERGES (`μ′ → 0` super-fast, `m ~ −x`), so `𝒲(x) → L` finite.
+But `Z_p² → 0` while `r = Z_q/Z_p → const` (both `~ e^{−x/τ}`), so `r′ → 0`;
+since `𝒲 = r′·Z_p²`, `L = 0`, so `𝒲 ≡ 0` on `(z*,∞)`, i.e. `r` is constant:
+`Z_q = α₊·Z_p` on `(z*,∞)`.  Symmetrically `Z_q = α₋·Z_p` on `(−∞, z_first)`.
+
+*Conclusion.*  If `m` has a SINGLE zero (`z_first = z_last = z*`; holds when
+`p` is concentrated enough that `μ_p′ < 1`, e.g. many log-concave `p`),
+continuity at `z*` with `Z_p(z*) > 0` gives `α₊ = α₋ =: α`, so `Z_q ≡ α Z_p`.
+For MULTIPLE mean-shift zeros the outer intervals still give `∝ Z_p`; on an
+interior interval `(z_i, z_{i+1})` a solution may pick up the second (growing,
+`Z_2 = Z_p·∫ Z_p^{-2}e^{-∫2μ′/m}`) mode, but `Z_2 > 0` there (`v = ∫Z_p^{-2}e^{…}`
+is increasing from `0`), so `∫Z_2 > 0`; since `∫Z_{q−p} = 2τ·∫d(q−p) = 0` (mass),
+the interior mode's coefficient must vanish.  Either way `Z_q ≡ α Z_p`.  Then
+`(1−τ²∂²)Z_q = 2τ q` and `= α·2τ p` give `q = α p`, and total mass forces
+`α = 1`, so `p = q`.  ∎
+
+*Rigor / formalization.*  The proof is rigorous modulo standard asymptotic
+integration (Abel + the limit `𝒲 → L`, and `Z_p ~ c e^{−x/τ}`, both from the
+exponential moment via Levinson-type asymptotics).  Mathlib has none of this
+(no asymptotic ODE theory, no distributional elliptic identities for the
+normalizers), so a Lean proof is NOT currently attainable; this is a genuine
+gap in the library, not in the mathematics.  The certified gates
+(`W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, `V ≡ const ⟹ p = q`) are the Lean-side
+gate; the paper proof above supplies the missing analytic step
+(`zero drift ⟹ W ≡ 0`) but cannot yet be discharged in Lean.
+
+Older status (kept for the record):
+
+**Progress 2026-07-10 (Fable): the converse is (numerically) TRUE, and the
+coefficient reduction is certified.**
 
 **Progress 2026-07-10 (Fable): the converse is (numerically) TRUE, and the
 coefficient reduction is certified.**

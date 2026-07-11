@@ -10,6 +10,13 @@ no distributions), and the **alignment reduction** — zero drift plus
 `K := L_p·Z_q - L_q·Z_p ≡ 0` forces `p = q` — is machine-checked, reducing
 the open 1-d converse to the single scalar identity `K ≡ 0`.  All axiom-free.
 The full arbitrary-target Laplace converse remains open.
+**Update 2026-07-11 (Fable): the 1-d core is RESOLVED ON PAPER** for a.c.
+measures with an exponential moment — both `Z_p` and `Z_q` solve one 2nd-order
+ODE, whose second solution grows at BOTH ends (the tilted mean saturates so the
+mean shift `m ~ const − x`; a prior sign error had hidden this), so the
+doubly-decaying space is 1-dim, `Z_q ∝ Z_p`, hence `p = q`.  Rigorous modulo
+Levinson-type asymptotic ODE integration, which Mathlib lacks — so NOT yet
+formalizable.  Full proof in `LaplaceGeneralConverseRoadmap.md` (Milestone 5).
 **Handoff roadmap for the general-measure push:**
 `LaplaceGeneralConverseRoadmap.md` (2026-07-10) — start there; it contains
 the milestone plan, the new bracket identities `𝔞 = Q·P⁻ − P·Q⁻`
