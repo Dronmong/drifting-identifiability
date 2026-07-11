@@ -19,10 +19,10 @@ The first formalized identities are the algebraic bracket formulas
 
 `𝔞(x) = Q(x) P⁻(x) - P(x) Q⁻(x)`
 
-and its upper-tail mirror.  The direct double-integral and four-region
-decomposition of the cross-displacement field are the next Milestone-1
-subgoals; this file deliberately does not pretend those analytic bookkeeping
-steps are already done.
+and its upper-tail mirror.  The file now also contains the full four-region
+decomposition of the cross-displacement field and the no-moment
+right-continuity/tail-limit regularity needed for the lower truncated
+pairing.
 -/
 
 open MeasureTheory Set Filter Topology
@@ -152,6 +152,230 @@ private lemma tendsto_measure_Iic_atBot_zero
     rw [iInter_Iic_eq_empty_iff]
     exact not_bddBelow_iff.mpr (fun a => ⟨a - 1, by simp, by linarith⟩)
   simpa [Function.comp_def, hInter] using hmain
+
+/-! ## No-moment regularity of the lower transforms -/
+
+theorem lowerExpMass_continuousWithinAt_Ici
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
+    ContinuousWithinAt (fun t => lowerExpMass τ p t) (Set.Ici x) x := by
+  unfold ContinuousWithinAt lowerExpMass
+  simp_rw [← integral_indicator measurableSet_Iic]
+  refine tendsto_integral_filter_of_norm_le_const (μ := p) ?h_meas ?h_bound ?h_lim
+  · exact Eventually.of_forall fun t =>
+      ((by fun_prop :
+        AEStronglyMeasurable (fun y : ℝ => Real.exp (y / τ)) p).indicator measurableSet_Iic)
+  · refine ⟨Real.exp ((x + 1) / τ), ?_⟩
+    filter_upwards [nhdsWithin_le_nhds (Iio_mem_nhds (show x < x + 1 by linarith))]
+      with t ht
+    exact ae_of_all p fun y => by
+      by_cases hy : y ≤ t
+      · rw [Set.indicator_of_mem (show y ∈ Set.Iic t by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ)),
+          Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+        exact Real.exp_le_exp.mpr
+          (div_le_div_of_nonneg_right (hy.trans (le_of_lt ht)) hτ.le)
+      · rw [Set.indicator_of_notMem (show y ∉ Set.Iic t by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ)),
+          norm_zero]
+        exact Real.exp_pos _ |>.le
+  · exact ae_of_all p fun y => by
+      by_cases hy : y ≤ x
+      · have htarget :
+            (Set.Iic x).indicator (fun y : ℝ => Real.exp (y / τ)) y =
+              Real.exp (y / τ) := by
+          rw [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ))]
+        rw [htarget]
+        refine tendsto_const_nhds.congr' ?_
+        filter_upwards [self_mem_nhdsWithin] with t ht
+        rw [Set.indicator_of_mem (show y ∈ Set.Iic t by simpa using hy.trans ht)
+          (fun y : ℝ => Real.exp (y / τ))]
+      · have hxy : x < y := lt_of_not_ge hy
+        have htarget :
+            (Set.Iic x).indicator (fun y : ℝ => Real.exp (y / τ)) y = 0 := by
+          rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ))]
+        rw [htarget]
+        refine tendsto_const_nhds.congr' ?_
+        filter_upwards [nhdsWithin_le_nhds (Iio_mem_nhds hxy)] with t ht
+        have hyt : ¬ y ≤ t := not_le.mpr ht
+        rw [Set.indicator_of_notMem (show y ∉ Set.Iic t by simpa using hyt)
+          (fun y : ℝ => Real.exp (y / τ))]
+
+theorem lowerCompensatedMoment_continuousWithinAt_Ici
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ) :
+    ContinuousWithinAt (fun t => lowerCompensatedMoment τ p t) (Set.Ici x) x := by
+  unfold ContinuousWithinAt lowerCompensatedMoment
+  simp_rw [← integral_indicator measurableSet_Iic]
+  refine tendsto_integral_filter_of_norm_le_const (μ := p) ?h_meas ?h_bound ?h_lim
+  · refine Eventually.of_forall fun t => ?_
+    exact ((by fun_prop :
+      AEStronglyMeasurable (fun y : ℝ => (t - y) * Real.exp (y / τ)) p).indicator
+        measurableSet_Iic)
+  · refine ⟨τ * Real.exp ((x + 1) / τ), ?_⟩
+    filter_upwards [nhdsWithin_le_nhds (Iio_mem_nhds (show x < x + 1 by linarith))]
+      with t ht
+    exact ae_of_all p fun y => by
+      by_cases hy : y ≤ t
+      · have hs : 0 ≤ t - y := sub_nonneg.mpr hy
+        have hnonneg : 0 ≤ (t - y) * Real.exp (y / τ) :=
+          mul_nonneg hs (Real.exp_pos _).le
+        rw [Set.indicator_of_mem (show y ∈ Set.Iic t by simpa using hy)
+              (fun y : ℝ => (t - y) * Real.exp (y / τ)),
+            Real.norm_eq_abs, abs_of_nonneg hnonneg]
+        have hbasic :
+            (t - y) * Real.exp (y / τ) ≤ τ * Real.exp (t / τ) := by
+          have hexp : Real.exp (y / τ) =
+              Real.exp (t / τ) * Real.exp (-(1 / τ) * (t - y)) := by
+            rw [← Real.exp_add]
+            congr 1
+            field_simp [hτ.ne']
+            ring
+          calc
+            (t - y) * Real.exp (y / τ)
+                = Real.exp (t / τ) *
+                    ((t - y) * Real.exp (-(1 / τ) * (t - y))) := by
+                    rw [hexp]
+                    ring
+            _ ≤ Real.exp (t / τ) * τ := by
+                    exact mul_le_mul_of_nonneg_left
+                      (mul_exp_neg_le_general hτ hs) (Real.exp_pos _).le
+            _ = τ * Real.exp (t / τ) := by ring
+        exact hbasic.trans (by
+          have ht' : t ≤ x + 1 := le_of_lt ht
+          exact mul_le_mul_of_nonneg_left
+            (Real.exp_le_exp.mpr (div_le_div_of_nonneg_right ht' hτ.le)) hτ.le)
+      · rw [Set.indicator_of_notMem (show y ∉ Set.Iic t by simpa using hy)
+              (fun y : ℝ => (t - y) * Real.exp (y / τ)),
+            norm_zero]
+        exact mul_nonneg hτ.le (Real.exp_pos _).le
+  · exact ae_of_all p fun y => by
+      by_cases hy : y ≤ x
+      · have hcont :
+            Tendsto (fun t : ℝ => (t - y) * Real.exp (y / τ))
+              (nhdsWithin x (Set.Ici x))
+              (𝓝 ((x - y) * Real.exp (y / τ))) := by
+          exact ((tendsto_id'.2 nhdsWithin_le_nhds).sub tendsto_const_nhds).mul
+            tendsto_const_nhds
+        simpa [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hy)
+              (fun y : ℝ => (x - y) * Real.exp (y / τ))] using
+          hcont.congr' (by
+            filter_upwards [self_mem_nhdsWithin] with t ht
+            rw [Set.indicator_of_mem (show y ∈ Set.Iic t by simpa using hy.trans ht)
+                  (fun y : ℝ => (t - y) * Real.exp (y / τ))])
+      · have hxy : x < y := lt_of_not_ge hy
+        have htarget :
+            (Set.Iic x).indicator (fun y : ℝ => (x - y) * Real.exp (y / τ)) y = 0 := by
+          rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hy)
+            (fun y : ℝ => (x - y) * Real.exp (y / τ))]
+        rw [htarget]
+        refine tendsto_const_nhds.congr' ?_
+        filter_upwards [nhdsWithin_le_nhds (Iio_mem_nhds hxy)] with t ht
+        have hyt : ¬ y ≤ t := not_le.mpr ht
+        rw [Set.indicator_of_notMem (show y ∉ Set.Iic t by simpa using hyt)
+          (fun y : ℝ => (t - y) * Real.exp (y / τ))]
+
+theorem lowerExpMass_tendsto_atBot_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] :
+    Tendsto (fun x => lowerExpMass τ p x) atBot (𝓝 0) := by
+  unfold lowerExpMass
+  simp_rw [← integral_indicator measurableSet_Iic]
+  have h_event : ∀ᶠ x : ℝ in atBot, x ≤ 0 := Iic_mem_atBot 0
+  have hDCT :
+      Tendsto
+        (fun x => ∫ y, (Set.Iic x).indicator (fun y : ℝ => Real.exp (y / τ)) y ∂p)
+        atBot (𝓝 (∫ _ : ℝ, (0 : ℝ) ∂p)) := by
+    refine tendsto_integral_filter_of_norm_le_const (μ := p) (l := (atBot : Filter ℝ))
+      (G := ℝ) (f := fun _ : ℝ => (0 : ℝ)) ?h_meas ?h_bound ?h_lim
+    · exact Eventually.of_forall fun x =>
+        ((by fun_prop :
+          AEStronglyMeasurable (fun y : ℝ => Real.exp (y / τ)) p).indicator measurableSet_Iic)
+    · refine ⟨1, ?_⟩
+      filter_upwards [h_event] with x hx
+      exact ae_of_all p fun y => by
+        by_cases hy : y ≤ x
+        · have hy0 : y ≤ 0 := hy.trans hx
+          rw [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hy)
+                (fun y : ℝ => Real.exp (y / τ)),
+              Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+          calc
+            Real.exp (y / τ) ≤ Real.exp (0 / τ) := by
+              exact Real.exp_le_exp.mpr (div_le_div_of_nonneg_right hy0 hτ.le)
+            _ = 1 := by simp
+        · rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hy)
+                (fun y : ℝ => Real.exp (y / τ)),
+              norm_zero]
+          exact zero_le_one
+    · exact ae_of_all p fun y => by
+        refine tendsto_nhds_of_eventually_eq ?_
+        filter_upwards [(Iio_mem_atBot y : Set.Iio y ∈ (atBot : Filter ℝ))] with x hx
+        have hyx : ¬ y ≤ x := not_le.mpr hx
+        rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hyx)
+          (fun y : ℝ => Real.exp (y / τ))]
+  simpa using hDCT
+
+theorem lowerCompensatedMoment_tendsto_atBot_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] :
+    Tendsto (fun x => lowerCompensatedMoment τ p x) atBot (𝓝 0) := by
+  unfold lowerCompensatedMoment
+  simp_rw [← integral_indicator measurableSet_Iic]
+  have h_event : ∀ᶠ x : ℝ in atBot, x ≤ 0 := Iic_mem_atBot 0
+  have hDCT :
+      Tendsto
+        (fun x => ∫ y,
+          (Set.Iic x).indicator (fun y : ℝ => (x - y) * Real.exp (y / τ)) y ∂p)
+        atBot (𝓝 (∫ _ : ℝ, (0 : ℝ) ∂p)) := by
+    refine tendsto_integral_filter_of_norm_le_const (μ := p) (l := (atBot : Filter ℝ))
+      (G := ℝ) (f := fun _ : ℝ => (0 : ℝ)) ?h_meas ?h_bound ?h_lim
+    · refine Eventually.of_forall fun x => ?_
+      exact ((by fun_prop :
+        AEStronglyMeasurable (fun y : ℝ => (x - y) * Real.exp (y / τ)) p).indicator
+          measurableSet_Iic)
+    · refine ⟨τ, ?_⟩
+      filter_upwards [h_event] with x hx
+      exact ae_of_all p fun y => by
+        by_cases hy : y ≤ x
+        · have hs : 0 ≤ x - y := sub_nonneg.mpr hy
+          have hnonneg : 0 ≤ (x - y) * Real.exp (y / τ) :=
+            mul_nonneg hs (Real.exp_pos _).le
+          rw [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hy)
+                (fun y : ℝ => (x - y) * Real.exp (y / τ)),
+              Real.norm_eq_abs, abs_of_nonneg hnonneg]
+          have hbasic :
+              (x - y) * Real.exp (y / τ) ≤ τ * Real.exp (x / τ) := by
+            have hexp : Real.exp (y / τ) =
+                Real.exp (x / τ) * Real.exp (-(1 / τ) * (x - y)) := by
+              rw [← Real.exp_add]
+              congr 1
+              field_simp [hτ.ne']
+              ring
+            calc
+              (x - y) * Real.exp (y / τ)
+                  = Real.exp (x / τ) *
+                      ((x - y) * Real.exp (-(1 / τ) * (x - y))) := by
+                      rw [hexp]
+                      ring
+              _ ≤ Real.exp (x / τ) * τ := by
+                      exact mul_le_mul_of_nonneg_left
+                        (mul_exp_neg_le_general hτ hs) (Real.exp_pos _).le
+              _ = τ * Real.exp (x / τ) := by ring
+          exact hbasic.trans (by
+            calc
+              τ * Real.exp (x / τ) ≤ τ * Real.exp (0 / τ) := by
+                exact mul_le_mul_of_nonneg_left
+                  (Real.exp_le_exp.mpr (div_le_div_of_nonneg_right hx hτ.le)) hτ.le
+              _ = τ := by simp)
+        · rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hy)
+                (fun y : ℝ => (x - y) * Real.exp (y / τ)),
+              norm_zero]
+          exact hτ.le
+    · exact ae_of_all p fun y => by
+        refine tendsto_nhds_of_eventually_eq ?_
+        filter_upwards [(Iio_mem_atBot y : Set.Iio y ∈ (atBot : Filter ℝ))] with x hx
+        have hyx : ¬ y ≤ x := not_le.mpr hx
+        rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hyx)
+          (fun y : ℝ => (x - y) * Real.exp (y / τ))]
+  simpa using hDCT
 
 /-! ## One-sided formulas for the Laplace kernel and numerator -/
 
@@ -387,6 +611,26 @@ theorem truncatedPairing_tendsto_atBot_zero_of_lowerTransforms
     Tendsto (fun x => truncatedPairing τ p q x) atBot (𝓝 0) := by
   unfold truncatedPairing
   simpa using (hQ.mul hPm).sub (hP.mul hQm)
+
+theorem truncatedPairing_continuousWithinAt_Ici
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] (x : ℝ) :
+    ContinuousWithinAt (fun t => truncatedPairing τ p q t) (Set.Ici x) x :=
+  truncatedPairing_continuousWithinAt_of_lowerTransforms τ p q x
+    (lowerExpMass_continuousWithinAt_Ici τ hτ p x)
+    (lowerExpMass_continuousWithinAt_Ici τ hτ q x)
+    (lowerCompensatedMoment_continuousWithinAt_Ici τ hτ p x)
+    (lowerCompensatedMoment_continuousWithinAt_Ici τ hτ q x)
+
+theorem truncatedPairing_tendsto_atBot_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q] :
+    Tendsto (fun x => truncatedPairing τ p q x) atBot (𝓝 0) :=
+  truncatedPairing_tendsto_atBot_zero_of_lowerTransforms τ p q
+    (lowerExpMass_tendsto_atBot_zero τ hτ p)
+    (lowerExpMass_tendsto_atBot_zero τ hτ q)
+    (lowerCompensatedMoment_tendsto_atBot_zero τ hτ p)
+    (lowerCompensatedMoment_tendsto_atBot_zero τ hτ q)
 
 /-- Product-integral form of the lower bracket after splitting the kernel
 algebra into separated products.  This is intentionally separated from the

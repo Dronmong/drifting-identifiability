@@ -388,9 +388,8 @@ kernels; the lower/upper bracket definitions `truncatedPairing` and
 double-integral identities
 `lowerTruncatedPairingIntegral_eq_truncatedPairing` and
 `upperTruncatedPairingIntegral_eq_upperPairing`.  The root import has been
-added.  Remaining Milestone-1 subgoals are the full four-region decomposition
-of the cross-displacement field, its zero-drift corollary, and the
-right-continuity/tail-limit regularity of `truncatedPairing`.
+added.  These were the first bracket/product pieces; later continuation
+passes closed the four-region decomposition and lower-pairing regularity.
 
 Second continuation status (2026-07-10, Codex): the four-region
 decomposition and zero-drift corollary are now formalized:
@@ -409,9 +408,21 @@ lemmas
 remaining regularity part of Milestone 1 to the no-moment interval-shrinking
 proofs for the lower one-sided transforms themselves.  `lake build --wfail`,
 `scripts/Check.ps1`, and `#print axioms` for the new decomposition/assembly
-lemmas are clean (Lean foundations only).  The only unfinished Milestone-1
-item is the direct no-moment proof of those transform right-continuity/tail
-vanishing hypotheses.
+lemmas are clean (Lean foundations only).
+
+Third continuation status (2026-07-10, Codex): Milestone 1 is now closed.
+The direct no-moment lower-transform regularity has been formalized via
+filter dominated convergence:
+`lowerExpMass_continuousWithinAt_Ici`,
+`lowerCompensatedMoment_continuousWithinAt_Ici`,
+`lowerExpMass_tendsto_atBot_zero`, and
+`lowerCompensatedMoment_tendsto_atBot_zero`.  The advertised pairing-level
+corollaries are now unconditional finite-measure theorems:
+`truncatedPairing_continuousWithinAt_Ici` and
+`truncatedPairing_tendsto_atBot_zero`.  Thus the four-region decomposition,
+zero-drift corollary, bracket identities, and lower-pairing
+right-continuity/tail-limit regularity are all Lean-certified; the project
+can move to Milestone 2/3 without carrying a Milestone-1 regularity gap.
 
 Still to verify numerically before formalizing (Milestone 4/5 inputs):
 the unconditional `dΦ` decomposition, `d𝔞 = e^{x/τ}(Q dp − P dq)` in
