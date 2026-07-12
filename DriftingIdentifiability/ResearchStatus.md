@@ -1207,7 +1207,12 @@ Remaining research objectives are now narrower and split by trust level:
   integral for 3A; boundedness-vs-blow-up at upward mean-shift crossings for
   3B).  Live plan: `LaplaceACDerivation.md`.  The conditional-axiom route
   (`LaplaceACConditionalAxiomPlan.md`) is retained only as an explicit FALLBACK.
-  First lemma landed axiom-free (`upperExpMass_tendsto_atTop_zero`).
+  Current Lean progress is axiom-free: L2's upper-tail building block,
+  L3 monotone tilted mean, L7 strict right-derivative at straddling points, and
+  the L5 scalar/algebraic core (`LaplaceACAbel.lean`: first-order algebra to the
+  common ODE plus pointwise Abel Wronskian identity).  The remaining L5 gap is the
+  analytic/a.e. wrapper that instantiates those scalar lemmas for actual a.c.
+  Laplace normalizers.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
