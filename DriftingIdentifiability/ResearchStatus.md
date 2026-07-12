@@ -1209,10 +1209,12 @@ Remaining research objectives are now narrower and split by trust level:
   (`LaplaceACConditionalAxiomPlan.md`) is retained only as an explicit FALLBACK.
   Current Lean progress is axiom-free: L2's upper-tail building block,
   L3 monotone tilted mean, L7 strict right-derivative at straddling points, and
-  the L5 scalar/algebraic core (`LaplaceACAbel.lean`: first-order algebra to the
-  common ODE plus pointwise Abel Wronskian identity).  The remaining L5 gap is the
-  analytic/a.e. wrapper that instantiates those scalar lemmas for actual a.c.
-  Laplace normalizers.
+  the L5 zero-drift ODE/Abel bridge (`LaplaceACAbel.lean`).  L5 now proves that
+  zero drift gives the common ratio `m = D_p/Z_p`, derives the shared ODE from
+  explicit differentiability data, and packages both pointwise and a.e. Abel
+  identities for the named normalizer Wronskian.  What remains upstream is the
+  analytic regularity theorem deriving those differentiability/second-derivative
+  hypotheses from the a.c. exponential-moment assumptions.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and

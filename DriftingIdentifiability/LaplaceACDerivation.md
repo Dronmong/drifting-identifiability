@@ -104,7 +104,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L2 | Tail `W -> 0` at `+-inf` (`upperExpMass_tendsto_atTop_zero` + boundedness) | `upperExpMass` limit DONE; assembly TODO (easy) |
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
-| L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | SCALAR CORE DONE in `LaplaceACAbel.lean`: first-order algebra to common ODE plus pointwise Abel Wronskian identity; remaining work is the AC/a.e. instantiation for the actual normalizers |
+| L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | ODE/ABEL BRIDGE DONE in `LaplaceACAbel.lean`: zero drift gives the common ratio `m = D_p/Z_p`; from explicit differentiability data the actual normalizer Wronskian satisfies Abel pointwise, and an a.e. wrapper is proved. Remaining analytic work is to derive those differentiability/second-derivative hypotheses from the a.c. exp-moment assumptions |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | TODO; elementary given L3,L4 (FINISHES 3A) |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | KEY new lemma; elementary (integrating factor + divergent integral) |
@@ -151,11 +151,14 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   the law has positive mass on both sides of `x`; the usual tilted mean is
   bridged to this displacement form by `laplaceTiltedMean_eq_fromDisplacement`.
   Later L8 can wrap this into whatever two-sided/classical-AC language it needs.
-- L5 (ODE + Abel from first-order data): the scalar/algebraic heart is now
-  RESOLVED in `LaplaceACAbel.lean`.  The remaining risk is not the sign/algebra:
-  it is the AC-level instantiation for the actual Laplace normalizers, i.e. feeding
-  the certified first-order identities and a.e. derivatives into the pointwise
-  common-ODE/Abel lemmas.
+- L5 (ODE + Abel from first-order data): RESOLVED as a Lean bridge in
+  `LaplaceACAbel.lean`.  The file proves the actual zero-drift common-ratio
+  reduction (`m = D_p/Z_p` also satisfies `D_q = m Z_q`), derives the shared
+  second-order ODE from the certified first-order identities and explicit
+  differentiability data, proves the named normalizer-Wronskian Abel equation
+  pointwise, and packages the a.e. version.  The remaining task is now upstream
+  regularity, not L5 algebra: prove the required differentiability/second
+  derivative data from the a.c. exponential-moment hypotheses.
 - L8 (blow-up): elementary (integrating factor + divergent integral, boundedness
   contradiction); the crux new analytic lemma, but self-contained.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
@@ -219,5 +222,15 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   companion relation plus `L' = mZ/tau` into
   `m Z'' + 2(m' + 1)Z' + (m'' - m/tau^2)Z = 0`;
   `hasDerivAt_wronskian_of_laplace_commonODE` proves Abel's pointwise identity
-  `W' = -(2mu'/m)W` for two solutions of the shared ODE.  Full L5 still needs the
-  analytic/a.e. wrapper for actual a.c. normalizers.
+  `W' = -(2mu'/m)W` for two solutions of the shared ODE.  At this checkpoint,
+  the project-native zero-drift/a.e. wrapper was still missing; see the next log
+  entry for its completion.
+- 2026-07-11: FINISHED the L5 zero-drift bridge layer. Added
+  `laplaceMeanShiftRatio`, proved zero drift makes it a common ratio for both
+  laws (`laplaceMeanShiftRatio_common_self`,
+  `laplaceMeanShiftRatio_common_of_zeroDrift`), proved the project-native
+  pointwise Abel theorem
+  `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift`, and proved the
+  a.e. wrapper `ae_hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift`.
+  L5 no longer has a sign/algebra/zero-drift gap; the next work is deriving the
+  explicit differentiability hypotheses from a.c. exp-moment regularity.

@@ -1,4 +1,5 @@
 import DriftingIdentifiability.LaplaceTiltedMeanMonotone
+import DriftingIdentifiability.LaplaceGeneralConverseWronskian
 
 /-!
 # L5: common-ODE Abel calculus for the a.c. Laplace converse
@@ -182,5 +183,292 @@ theorem hasDerivAt_wronskian_of_laplace_commonODE
     hasDerivAt_wronskian_of_common_secondOrder
       m (fun t => 2 * mu' t) b f f' g g' x
       hf hf' hg hg' hm hodef hodeg
+
+/-! ## Project-native L5 wrapper for the Laplace normalizer Wronskian -/
+
+/-- The project-native common mean-shift scalar in the 1-d Laplace converse:
+`m_p = D_p/Z_p`, where `D_p` is the mean-shift numerator and `Z_p` the raw
+Laplace normalizer.  Under zero drift, this same scalar also satisfies
+`D_q = m_p Z_q`. -/
+noncomputable def laplaceMeanShiftRatio
+    (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
+  (∫ y, laplaceWeightedDisplacement τ x y ∂p) /
+    kernelNormalizer (laplaceKernel τ) p x
+
+theorem laplaceMeanShiftRatio_common_self
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (x : ℝ) :
+    (∫ y, laplaceWeightedDisplacement τ x y ∂p) =
+      laplaceMeanShiftRatio τ p x *
+        kernelNormalizer (laplaceKernel τ) p x := by
+  have hZ : kernelNormalizer (laplaceKernel τ) p x ≠ 0 :=
+    (laplaceKernelNormalizer_pos p τ hτ x).ne'
+  unfold laplaceMeanShiftRatio
+  field_simp [hZ]
+
+theorem laplaceMeanShiftRatio_common_of_zeroDrift
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : ℝ) :
+    (∫ y, laplaceWeightedDisplacement τ x y ∂q) =
+      laplaceMeanShiftRatio τ p x *
+        kernelNormalizer (laplaceKernel τ) q x := by
+  have hZp : kernelNormalizer (laplaceKernel τ) p x ≠ 0 :=
+    (laplaceKernelNormalizer_pos p τ hτ x).ne'
+  have hcross := (laplaceZeroDrift_iff_crossDisplacement τ hτ p q).mp hzero x
+  simp only [smul_eq_mul] at hcross
+  unfold laplaceMeanShiftRatio
+  calc
+    (∫ y, laplaceWeightedDisplacement τ x y ∂q)
+        = (kernelNormalizer (laplaceKernel τ) p x *
+            (∫ y, laplaceWeightedDisplacement τ x y ∂q)) /
+            kernelNormalizer (laplaceKernel τ) p x := by
+          field_simp [hZp]
+    _ = (kernelNormalizer (laplaceKernel τ) q x *
+            (∫ y, laplaceWeightedDisplacement τ x y ∂p)) /
+            kernelNormalizer (laplaceKernel τ) p x := by
+          rw [← hcross]
+    _ = ((∫ y, laplaceWeightedDisplacement τ x y ∂p) /
+            kernelNormalizer (laplaceKernel τ) p x) *
+          kernelNormalizer (laplaceKernel τ) q x := by
+          ring
+
+private theorem laplaceCompanion_value_of_commonMeanShift_at
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (m m' : ℝ → ℝ) (x : ℝ)
+    (hm : HasDerivAt m (m' x) x)
+    (hZ : HasDerivAt (fun t => kernelNormalizer (laplaceKernel τ) p t)
+      (laplaceKernelNormalizerRightDerivCoeff τ p x) x)
+    (hcommon :
+      ∀ t : ℝ, (∫ y, laplaceWeightedDisplacement τ t y ∂p) =
+        m t * kernelNormalizer (laplaceKernel τ) p t) :
+    kernelNormalizer (laplaceCompanionKernel τ) p x =
+      τ * ((m' x + 2) * kernelNormalizer (laplaceKernel τ) p x +
+        m x * laplaceKernelNormalizerRightDerivCoeff τ p x) := by
+  have hprod := hm.mul hZ
+  have hDcommon :
+      HasDerivAt (fun t : ℝ => ∫ y, laplaceWeightedDisplacement τ t y ∂p)
+        (m' x * kernelNormalizer (laplaceKernel τ) p x +
+          m x * laplaceKernelNormalizerRightDerivCoeff τ p x) x := by
+    refine hprod.congr_of_eventuallyEq ?_
+    exact Eventually.of_forall fun t => by
+      simpa [Pi.mul_apply] using hcommon t
+  have hDcert := hasDerivAt_laplaceDisplacementIntegral τ hτ p x
+  have hDvalue :
+      m' x * kernelNormalizer (laplaceKernel τ) p x +
+          m x * laplaceKernelNormalizerRightDerivCoeff τ p x =
+        (1 / τ) * kernelNormalizer (laplaceCompanionKernel τ) p x -
+          2 * kernelNormalizer (laplaceKernel τ) p x :=
+    hDcommon.unique hDcert
+  exact laplaceCommonODE_companion_value_of_firstOrder hτ.ne' (by
+    rw [hDvalue]
+    ring)
+
+private theorem hasDerivAt_laplaceCompanion_formula
+    (τ : ℝ) (p : Measure ℝ) (m m' m'' : ℝ → ℝ) (Z'' : ℝ → ℝ) (x : ℝ)
+    (hm : HasDerivAt m (m' x) x)
+    (hm' : HasDerivAt m' (m'' x) x)
+    (hZ : HasDerivAt (fun t => kernelNormalizer (laplaceKernel τ) p t)
+      (laplaceKernelNormalizerRightDerivCoeff τ p x) x)
+    (hZ' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ p) (Z'' x) x) :
+    HasDerivAt
+      (fun t : ℝ =>
+        τ * ((m' t + 2) * kernelNormalizer (laplaceKernel τ) p t +
+          m t * laplaceKernelNormalizerRightDerivCoeff τ p t))
+      (τ * (m'' x * kernelNormalizer (laplaceKernel τ) p x +
+        2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+          m x * Z'' x)) x := by
+  have hmd_plus : HasDerivAt (fun t : ℝ => m' t + 2) (m'' x) x := by
+    simpa using hm'.add_const 2
+  have hterm₁ := hmd_plus.mul hZ
+  have hterm₂ := hm.mul hZ'
+  have hsum := hterm₁.add hterm₂
+  have hmul := hsum.const_mul τ
+  have hderiv :
+      τ * ((m'' x * kernelNormalizer (laplaceKernel τ) p x +
+              (m' x + 2) * laplaceKernelNormalizerRightDerivCoeff τ p x) +
+            (m' x * laplaceKernelNormalizerRightDerivCoeff τ p x +
+              m x * Z'' x)) =
+        τ * (m'' x * kernelNormalizer (laplaceKernel τ) p x +
+          2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+            m x * Z'' x) := by
+    ring
+  simpa [Pi.mul_apply, Pi.add_apply, hderiv] using hmul
+
+private theorem laplaceCommonODE_of_commonMeanShift_at
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (m m' m'' : ℝ → ℝ) (Z'' : ℝ → ℝ) (x : ℝ)
+    (hm_all : ∀ t : ℝ, HasDerivAt m (m' t) t)
+    (hm' : HasDerivAt m' (m'' x) x)
+    (hZ_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) p s)
+        (laplaceKernelNormalizerRightDerivCoeff τ p t) t)
+    (hZ' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ p) (Z'' x) x)
+    (hcommon :
+      ∀ t : ℝ, (∫ y, laplaceWeightedDisplacement τ t y ∂p) =
+        m t * kernelNormalizer (laplaceKernel τ) p t) :
+    m x * Z'' x +
+        2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+      (m'' x - m x / τ ^ 2) * kernelNormalizer (laplaceKernel τ) p x = 0 := by
+  have hLformula : ∀ t : ℝ,
+      kernelNormalizer (laplaceCompanionKernel τ) p t =
+        τ * ((m' t + 2) * kernelNormalizer (laplaceKernel τ) p t +
+          m t * laplaceKernelNormalizerRightDerivCoeff τ p t) := by
+    intro t
+    exact laplaceCompanion_value_of_commonMeanShift_at τ hτ p m m' t
+      (hm_all t) (hZ_all t) hcommon
+  have hFormulaDeriv :=
+    hasDerivAt_laplaceCompanion_formula τ p m m' m'' Z'' x
+      (hm_all x) hm' (hZ_all x) hZ'
+  have hLderiv_formula :
+      HasDerivAt (fun t => kernelNormalizer (laplaceCompanionKernel τ) p t)
+        (τ * (m'' x * kernelNormalizer (laplaceKernel τ) p x +
+          2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+            m x * Z'' x)) x := by
+    refine hFormulaDeriv.congr_of_eventuallyEq ?_
+    exact Eventually.of_forall fun t => by
+      simpa using hLformula t
+  have hLcert₀ := hasDerivAt_laplaceCompanionNormalizer τ hτ p x
+  have hLcert :
+      HasDerivAt (fun t => kernelNormalizer (laplaceCompanionKernel τ) p t)
+        (m x * kernelNormalizer (laplaceKernel τ) p x / τ) x := by
+    convert hLcert₀ using 1
+    rw [hcommon x]
+    ring
+  have hLvalue :
+      τ * (m'' x * kernelNormalizer (laplaceKernel τ) p x +
+          2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+            m x * Z'' x) =
+        m x * kernelNormalizer (laplaceKernel τ) p x / τ :=
+    hLderiv_formula.unique hLcert
+  exact laplaceCommonODE_value_of_companion_derivative
+    (τ := τ) (m := m x) (m' := m' x) (m'' := m'' x)
+    (Z := kernelNormalizer (laplaceKernel τ) p x)
+    (Z' := laplaceKernelNormalizerRightDerivCoeff τ p x)
+    (Z'' := Z'' x)
+    (L' := τ * (m'' x * kernelNormalizer (laplaceKernel τ) p x +
+          2 * (m' x + 1) * laplaceKernelNormalizerRightDerivCoeff τ p x +
+            m x * Z'' x))
+    hτ.ne' rfl hLvalue
+
+/-- **L5 project-native wrapper.**  Suppose the common mean-shift relation
+`D_p = m Z_p`, `D_q = m Z_q` holds and the raw Laplace normalizers have the
+classical first/second derivative data needed at `x`.  Then the named
+normalizer Wronskian satisfies the Abel equation
+
+`W' = -(2 (m' + 1) / m) W`
+
+at every point where `m x ≠ 0`.
+
+This closes the L5 *ODE/Abel derivation* from explicit regularity data.  The
+separate analytic task for the a.c. theorem is to prove that the hypotheses
+below hold a.e. for absolutely-continuous laws with the required exponential
+moments. -/
+theorem hasDerivAt_laplaceKernelNormalizerWronskian_of_commonMeanShift
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (m m' m'' Zp'' Zq'' : ℝ → ℝ) (x : ℝ)
+    (hm_all : ∀ t : ℝ, HasDerivAt m (m' t) t)
+    (hm' : HasDerivAt m' (m'' x) x)
+    (hZp_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) p s)
+        (laplaceKernelNormalizerRightDerivCoeff τ p t) t)
+    (hZq_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) q s)
+        (laplaceKernelNormalizerRightDerivCoeff τ q t) t)
+    (hZp' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ p) (Zp'' x) x)
+    (hZq' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ q) (Zq'' x) x)
+    (hpcommon :
+      ∀ t : ℝ, (∫ y, laplaceWeightedDisplacement τ t y ∂p) =
+        m t * kernelNormalizer (laplaceKernel τ) p t)
+    (hqcommon :
+      ∀ t : ℝ, (∫ y, laplaceWeightedDisplacement τ t y ∂q) =
+        m t * kernelNormalizer (laplaceKernel τ) q t)
+    (hmx : m x ≠ 0) :
+    HasDerivAt (fun t => laplaceKernelNormalizerWronskian τ p q t)
+      (-(2 * (m' x + 1) / m x) *
+        laplaceKernelNormalizerWronskian τ p q x) x := by
+  have hODEp := laplaceCommonODE_of_commonMeanShift_at τ hτ p m m' m'' Zp'' x
+    hm_all hm' hZp_all hZp' hpcommon
+  have hODEq := laplaceCommonODE_of_commonMeanShift_at τ hτ q m m' m'' Zq'' x
+    hm_all hm' hZq_all hZq' hqcommon
+  have hW := hasDerivAt_wronskian_of_laplace_commonODE
+    (m := m) (mu' := fun t => m' t + 1)
+    (b := fun t => m'' t - m t / τ ^ 2)
+    (f := fun t => kernelNormalizer (laplaceKernel τ) p t)
+    (f' := laplaceKernelNormalizerRightDerivCoeff τ p)
+    (g := fun t => kernelNormalizer (laplaceKernel τ) q t)
+    (g' := laplaceKernelNormalizerRightDerivCoeff τ q)
+    (x := x)
+    (f'' := Zp'' x) (g'' := Zq'' x)
+    (hZp_all x) hZp' (hZq_all x) hZq' hmx
+    (by simpa [mul_assoc] using hODEp)
+    (by simpa [mul_assoc] using hODEq)
+  simpa [scalarWronskian, laplaceKernelNormalizerWronskian, mul_div_assoc] using hW
+
+/-- **L5 zero-drift form.**  Under zero raw Laplace drift, use the natural common
+mean-shift ratio `m = D_p/Z_p`.  If this ratio and the raw normalizers have the
+classical derivative data required at `x`, then the named normalizer Wronskian
+obeys Abel's equation there:
+
+`W' = -(2 (m' + 1) / m) W`.
+
+This is the form meant to be fed by the later a.c. regularity wrapper. -/
+theorem hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (m' m'' Zp'' Zq'' : ℝ → ℝ) (x : ℝ)
+    (hm_all : ∀ t : ℝ, HasDerivAt (laplaceMeanShiftRatio τ p) (m' t) t)
+    (hm' : HasDerivAt m' (m'' x) x)
+    (hZp_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) p s)
+        (laplaceKernelNormalizerRightDerivCoeff τ p t) t)
+    (hZq_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) q s)
+        (laplaceKernelNormalizerRightDerivCoeff τ q t) t)
+    (hZp' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ p) (Zp'' x) x)
+    (hZq' : HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ q) (Zq'' x) x)
+    (hmx : laplaceMeanShiftRatio τ p x ≠ 0) :
+    HasDerivAt (fun t => laplaceKernelNormalizerWronskian τ p q t)
+      (-(2 * (m' x + 1) / laplaceMeanShiftRatio τ p x) *
+        laplaceKernelNormalizerWronskian τ p q x) x := by
+  refine hasDerivAt_laplaceKernelNormalizerWronskian_of_commonMeanShift
+    τ hτ p q (laplaceMeanShiftRatio τ p) m' m'' Zp'' Zq'' x
+    hm_all hm' hZp_all hZq_all hZp' hZq' ?_ ?_ hmx
+  · intro t
+    exact laplaceMeanShiftRatio_common_self τ hτ p t
+  · intro t
+    exact laplaceMeanShiftRatio_common_of_zeroDrift τ hτ p q hzero t
+
+/-- A.e. L5 wrapper.  Once the remaining a.c. regularity work supplies the
+second-derivative data almost everywhere, the zero-drift Abel identity follows
+almost everywhere on the nonzero-mean-shift locus. -/
+theorem ae_hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (μ : Measure ℝ) (m' m'' Zp'' Zq'' : ℝ → ℝ)
+    (hm_all : ∀ t : ℝ, HasDerivAt (laplaceMeanShiftRatio τ p) (m' t) t)
+    (hZp_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) p s)
+        (laplaceKernelNormalizerRightDerivCoeff τ p t) t)
+    (hZq_all : ∀ t : ℝ,
+      HasDerivAt (fun s => kernelNormalizer (laplaceKernel τ) q s)
+        (laplaceKernelNormalizerRightDerivCoeff τ q t) t)
+    (hsecond : ∀ᵐ x ∂μ,
+      HasDerivAt m' (m'' x) x ∧
+        HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ p) (Zp'' x) x ∧
+          HasDerivAt (laplaceKernelNormalizerRightDerivCoeff τ q) (Zq'' x) x) :
+    ∀ᵐ x ∂μ,
+      laplaceMeanShiftRatio τ p x ≠ 0 →
+        HasDerivAt (fun t => laplaceKernelNormalizerWronskian τ p q t)
+          (-(2 * (m' x + 1) / laplaceMeanShiftRatio τ p x) *
+            laplaceKernelNormalizerWronskian τ p q x) x := by
+  filter_upwards [hsecond] with x hx hmx
+  rcases hx with ⟨hm', hZp', hZq'⟩
+  exact hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift
+    τ hτ p q hzero m' m'' Zp'' Zq'' x
+    hm_all hm' hZp_all hZq_all hZp' hZq' hmx
 
 end DriftingIdentifiability
