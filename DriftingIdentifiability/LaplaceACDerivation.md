@@ -230,9 +230,17 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `δ,L` witnesses at upward crossings from the chosen regularity hypotheses,
   instantiate the finite alternating breakpoint list, and feed the closed
   L6/L8/L9 packages into the certified gate.
+- Final gate assembly: `LaplaceACFinal.lean` now provides the endgame socket.
+  `laplaceAC_wronskian_eq_zero_of_finalAssembly` turns a concrete
+  `LaplaceACFinalAssembly` certificate into `W ≡ 0`, and
+  `laplaceAC_identifies_of_finalAssembly` feeds this into the certified
+  Wronskian injectivity gate to conclude `p = q`.  Convenience constructors
+  cover the single-downward-crossing case and the first nontrivial
+  `[down, up, down]` parity case.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
-  The remaining Lean work is final theorem assembly, not a new analytic identity
-  or a new L9 combinatorial lemma.
+  The remaining Lean work is upstream witness construction for the concrete
+  finite breakpoint list, not a new analytic identity, final gate, or L9
+  combinatorial lemma.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -417,3 +425,10 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `continuous_eq_zero_of_alternatingUpwardPairs`.  A finite alternating
   `[down, up, down, ...]` cover now directly feeds the existing ordered-gap and
   continuity gluing theorem, with no new axioms.
+- 2026-07-12: ADDED FINAL ASSEMBLY SOCKET.  `LaplaceACFinal.lean` defines
+  `LaplaceACFinalAssembly` for the actual normalizer Wronskian, proves
+  `laplaceAC_wronskian_eq_zero_of_finalAssembly`, and composes with the
+  certified gate as `laplaceAC_identifies_of_finalAssembly`.  This closes the
+  formal L9-to-`p=q` composition.  The remaining upstream work is now sharply
+  localized: construct the concrete final-assembly certificate from the chosen
+  zero/sign-change hypotheses and local crossing regularity.

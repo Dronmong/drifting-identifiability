@@ -1210,22 +1210,24 @@ Remaining research objectives are now narrower and split by trust level:
   Current Lean progress is axiom-free: L2's full Wronskian tail assembly under
   explicit two-sided exponential moments, L3 monotone tilted mean, L7 strict
   right-derivative at straddling points, and the L5 zero-drift ODE/Abel bridge
-  (`LaplaceACAbel.lean`).  The L6/L8/L9 deterministic certificate layer is also
-  now formalized in `LaplaceACPropagation.lean`: finite-interval
-  integrating-factor constancy, right/left outer-ray vanishing from a primitive
-  with finite tail limit, right/left upward-crossing interval vanishing from
-  primitive divergence `A -> -∞` plus bounded `W`, and finite-breakpoint
-  continuity gluing.
-  L2 now proves `W -> 0` at both tails via
-  dominated-convergence moment limits and the mass-determinant formula.  L5 now proves that
-  zero drift gives the common ratio `m = D_p/Z_p`, derives the shared ODE from
-  explicit differentiability data, and packages both pointwise and a.e. Abel
-  identities for the named normalizer Wronskian.  What remains upstream is:
-  derive the L5 differentiability/second-derivative hypotheses from the a.c.
-  exponential-moment assumptions; construct the primitive `A' = 2μ'/m` and its
-  finite/divergent limiting behavior from the BV and upward-crossing hypotheses;
-  and instantiate the finite sign-change parity cover that supplies vanishing
-  off the finite breakpoint set.
+  (`LaplaceACAbel.lean`).  L5's regularity discharge is now also formalized:
+  `LaplaceACRegularity.lean` packages the no-leftover-`HasDerivAt` Abel theorem
+  under `LaplaceC2NormalizerRegular`, and `LaplaceACDensityRegularity.lean`
+  proves continuous nonnegative density representations imply that certificate.
+  The L6/L8/L9 deterministic certificate layer is formalized in
+  `LaplaceACPropagation.lean`: primitive-free outer-ray vanishing, concrete
+  logarithmic-singularity upward-crossing vanishing, ordered-gap continuity
+  gluing, and alternating parity-cover gluing.  `LaplaceACFinal.lean` now
+  supplies the final socket: a concrete `LaplaceACFinalAssembly` certificate
+  gives `W ≡ 0`, and `laplaceAC_identifies_of_finalAssembly` feeds this into
+  the certified Wronskian gate to conclude `p = q`.
+
+  What remains upstream is sharply localized: construct the concrete
+  `LaplaceACFinalAssembly` certificate from the chosen finite zero/sign-change
+  hypotheses.  In practice this means proving/providing global Wronskian
+  continuity, deriving the local `δ,L` witnesses at upward crossings from the
+  selected smoothness/strict-crossing hypotheses, and instantiating the finite
+  alternating breakpoint list.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
