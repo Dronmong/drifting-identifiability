@@ -33,12 +33,17 @@ instance and needs strictly less than 3B. Building 3A is therefore never wasted.
 2. The asymptotic step needs neither Levinson nor Frobenius: bounded-variation
    Abel integral on the outer intervals, and an elementary boundedness-vs-blow-up
    argument at upward crossings on the interior.
-3. NO density-continuity hypothesis. The whole argument runs at the
-   absolutely-continuous (AC) function level, driven by the CERTIFIED first-order
-   identities. This is the main tightening over the earlier draft (which assumed
-   continuous density for a classical `C^2` ODE). See next section.
+3. Density-continuity question settled for the current Abel route: the
+   pointwise common-ODE/Abel theorem needs classical C² normalizers. In Lean this
+   is now an explicit `LaplaceC2NormalizerRegular` certificate
+   (`LaplaceACRegularity.lean`). Continuous nonnegative density representations
+   now imply that certificate in Lean
+   (`laplaceC2NormalizerRegular_of_continuousDensity`,
+   `LaplaceACDensityRegularity.lean`) via the classical identity
+   `Z'' = (Z - 2 tau f)/tau^2`. The earlier "AC alone / no density continuity"
+   wording was too optimistic and should not be used as a claim.
 
-## The common ODE and Abel, from certified first-order data (no density)
+## The common ODE and Abel, from certified first-order data plus C² normalizers
 
 Under zero drift `D_p = m Z_p`, `D_q = m Z_q` (common `m`). Differentiate
 `D_p = m Z_p`: `D_p' = m' Z_p + m Z_p'`. Certified `D_p' = L_p/tau - 2 Z_p`, so
@@ -52,17 +57,25 @@ m Z_p'' + 2 mu' Z_p' + (mu'' - m/tau^2) Z_p = 0        (**)
 (using `mu' = m'+1`, `mu'' = m''`). The coefficients `m, 2 mu', mu'' - m/tau^2`
 depend ONLY on `m` and `mu = m + x`, which are COMMON to `p` and `q` under zero
 drift, so `Z_q` solves the identical `(**)`. The derivation uses only the two
-certified first-order identities plus `D = m Z`; no density, no distributions.
+certified first-order identities plus `D = m Z`, once the normalizer derivatives
+`Z'` and `Z''` are supplied by the regularity certificate.
 
 Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
-- `W` is ABSOLUTELY CONTINUOUS: `Z_p', Z_q'` are AC because the one-sided masses
-  `P^-(x) = int_{y<=x} e^{y/tau} dp`, `P^+(x) = int_{y>x} e^{-y/tau} dp` are AC for
-  a.c. `p` (integrals of `L^1_loc` densities). [This is where a.c. is used.]
-- Abel: from `(**)` for both solutions, `W' = -(2 mu'/m) W` holds a.e. on
-  `{m != 0}`. (`Z_p'', Z_q''` exist a.e. — density defined a.e.; the identity is
-  the standard two-solution Wronskian computation, needing only common `m, 2mu'`.)
-- `W` is BOUNDED and CONTINUOUS everywhere (from `Z_p, Z_q in C^1`, `Z_p'`
-  continuous for atomless `p`).
+- `W` is differentiable pointwise under `LaplaceC2NormalizerRegular` for both
+  laws; the theorem
+  `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` constructs
+  all needed `m'`, `m''`, `Z'`, and `Z''` facts and has no exposed `HasDerivAt`
+  hypotheses.
+- Abel: from `(**)` for both solutions, `W' = -(2 mu'/m) W` holds at every point
+  where `m != 0`, under that C²-normalizer certificate.
+- The density-level sufficient condition for this local regularity piece is now
+  formalized: a continuous nonnegative density representation gives
+  `LaplaceC2NormalizerRegular`. Exponential moments are not needed for this
+  local differentiability theorem; they remain part of the separate tail and
+  compactness hypotheses.
+- `W` is BOUNDED and CONTINUOUS everywhere once the same regularity/atomlessness
+  packaging is supplied; the propagation layer consumes continuity as an
+  explicit deterministic hypothesis.
 
 ## Zero structure (from the tilted-mean linchpin)
 
@@ -106,7 +119,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L2 | Tail `W -> 0` at `+-inf` (`upperExpMass_tendsto_atTop_zero` + boundedness) | DONE under explicit two-sided exponential moments: `lowerExpMass_tendsto_atTop_integral`, `upperExpMass_tendsto_atBot_integral`, `laplaceKernelNormalizerWronskian_tendsto_atTop_zero`, `laplaceKernelNormalizerWronskian_tendsto_atBot_zero` |
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
-| L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | ODE/ABEL BRIDGE DONE in `LaplaceACAbel.lean`: zero drift gives the common ratio `m = D_p/Z_p`; from explicit differentiability data the actual normalizer Wronskian satisfies Abel pointwise, and an a.e. wrapper is proved. Remaining analytic work is to derive those differentiability/second-derivative hypotheses from the a.c. exp-moment assumptions |
+| L5 | common ODE `(**)` for `Z_p, Z_q`; Abel `W'=-(2mu'/m)W` | BRIDGE + REGULARITY DISCHARGE DONE under an explicit C²-normalizer certificate. `LaplaceACAbel.lean` proves the Abel algebra from derivative data; `LaplaceACRegularity.lean` defines `LaplaceC2NormalizerRegular`, derives the `m'`/`m''` data from certified first-order identities, and proves `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` with no exposed `HasDerivAt` hypotheses. `LaplaceACDensityRegularity.lean` now proves continuous nonnegative densities imply `LaplaceC2NormalizerRegular` |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` / left version prove vanishing on outer rays from Abel + a primitive `A' = 2mu'/m` with finite tail limit. Remaining upstream AC work: construct that primitive and finite limit from the BV estimate supplied by L3/L4 |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`. Remaining upstream AC work: derive this divergence from L7 + sign-change geometry |
@@ -119,14 +132,21 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 Needed:
 - `p, q` absolutely continuous with two-sided exponential moment
   (`int e^{+-y/tau} d(p,q) < inf`, and the first-moment weighted versions).
+- For the current pointwise Abel route, `p` and `q` must additionally satisfy
+  `LaplaceC2NormalizerRegular tau p/q`. This is now generated in Lean from a
+  continuous nonnegative density representation
+  `p = volume.withDensity (fun x => ENNReal.ofReal (rho x))` by
+  `laplaceC2NormalizerRegular_of_continuousDensity`. The exponential moments
+  above are not needed for that local C² implication; they are still needed for
+  the tail/boundedness parts of the a.c. converse.
 - `m` has FINITELY MANY sign changes. All its zeros already lie in the compact
   `[mu_-, mu_+]` (L4), so this is finiteness on a bounded interval; it is
   AUTOMATIC for real-analytic densities, and a mild explicit hypothesis otherwise.
 - `mu'(a_k) > 0` at each crossing (L7); holds when `a_k` is interior to `supp p`,
   which every mean-shift zero is (`a_k = mu(a_k)` is a tilted average).
 
-NOT needed (removed by the tightening):
-- continuous density / `Z in C^2` — the argument is AC-level (discovery 3);
+NOT needed:
+- axiomatized Green identities or project-owned converse assumptions;
 - SIMPLE zeros `m'(a_k) != 0` — L8 needs only a sign change + `mu' > 0`, valid for
   any `C^1` `m` (the divergence `int 1/|m| = inf` holds for any `C^1` zero);
 - Levinson / Frobenius / distribution theory.
@@ -156,13 +176,13 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   bridged to this displacement form by `laplaceTiltedMean_eq_fromDisplacement`.
   Later L8 can wrap this into whatever two-sided/classical-AC language it needs.
 - L5 (ODE + Abel from first-order data): RESOLVED as a Lean bridge in
-  `LaplaceACAbel.lean`.  The file proves the actual zero-drift common-ratio
-  reduction (`m = D_p/Z_p` also satisfies `D_q = m Z_q`), derives the shared
-  second-order ODE from the certified first-order identities and explicit
-  differentiability data, proves the named normalizer-Wronskian Abel equation
-  pointwise, and packages the a.e. version.  The remaining task is now upstream
-  regularity, not L5 algebra: prove the required differentiability/second
-  derivative data from the a.c. exponential-moment hypotheses.
+  `LaplaceACAbel.lean` and discharged under explicit C²-normalizer regularity in
+  `LaplaceACRegularity.lean`.  The new regularity theorem proves the actual
+  zero-drift Wronskian Abel equation without caller-supplied derivative
+  hypotheses.  The upstream density calculus is now also discharged:
+  `LaplaceACDensityRegularity.lean` proves continuous nonnegative density
+  representations imply `LaplaceC2NormalizerRegular`.  The moment hypotheses are
+  still separate inputs for tails and boundedness, not for this local certificate.
 - L6/L8/L9 certificate layer: the deterministic ODE/continuity endgame is now
   formalized in `LaplaceACPropagation.lean` without axioms.  L6 consumes a
   primitive `A' = 2mu'/m` with finite tail limit; L8 consumes primitive
@@ -202,10 +222,11 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   needs NO correlation-inequality axiom (the one piece I feared was external).
   Wired into the root build; full project green; trust audit green (no new axioms).
   Next: L7 (strict at zeros), then L5 (Abel) and L2 (tail assembly).
-- 2026-07-11: TIGHTENED and UNIFIED 3A+3B. Key improvements: (a) removed the
-  density-continuity hypothesis — the ODE and Abel come from the certified
-  first-order identities at the AC level; (b) weakened simple-zeros to mere
-  sign-changes in L8; (c) all mean-shift zeros pinned to the compact `[mu_-,mu_+]`,
+- 2026-07-11: TIGHTENED and UNIFIED 3A+3B. Key improvements then identified:
+  (a) avoid project-owned analytic axioms by deriving the ODE/Abel bridge from
+  certified first-order identities plus explicit regularity data; (b) weakened
+  simple-zeros to mere sign-changes in L8; (c) all mean-shift zeros pinned to the
+  compact `[mu_-,mu_+]`,
   reducing L9 to finiteness on a bounded interval (automatic for analytic
   densities). Next Lean target: L2 assembly (`W -> 0`), then L3 (monotone tilted
   mean) as the decisive feasibility test.
@@ -275,3 +296,20 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   work is no longer the propagation/gluing logic itself; it is constructing the
   finite-limit/divergence/finite-cover certificates from the raw a.c.
   mean-shift hypotheses.
+- 2026-07-11: discharged the L5 Abel bridge's exposed regularity hypotheses
+  under an explicit C²-normalizer certificate. Added
+  `LaplaceACRegularity.lean`, defining `LaplaceC2NormalizerRegular`, deriving
+  `laplaceMeanShiftRatioDeriv` and `laplaceMeanShiftRatioSecondDeriv` from the
+  certified first-order Laplace identities plus the normalizer certificate, and
+  proving
+  `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular`.  The new
+  theorem has no leftover `HasDerivAt` assumptions in its statement.
+- 2026-07-11: closed the continuous-density regularity bridge. Added
+  `LaplaceACDensityRegularity.lean`, proving the interval-FTC derivatives for
+  `lowerExpMass` and `upperExpMass`, assembling
+  `Z' = laplaceKernelNormalizerRightDerivCoeff`, proving
+  `Z'' = (Z - 2 tau rho)/tau^2`, and packaging the result as
+  `laplaceC2NormalizerRegular_of_continuousDensity`.  This is axiom-free and
+  requires only finite measure plus a continuous nonnegative density
+  representation; exponential moments remain separate tail/compactness
+  hypotheses.
