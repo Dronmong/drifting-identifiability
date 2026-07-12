@@ -100,11 +100,13 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
   statement at `-inf`).  This is now certified as L2:
   `laplaceKernelNormalizerWronskian_tendsto_atTop_zero` and
   `laplaceKernelNormalizerWronskian_tendsto_atBot_zero`.
-- OUTER (BV): on `[x_0, inf)` inside the outer interval, `|m| >= |m(x_0)| > 0`, and
-  `int_{x_0}^inf |2 mu'/m| <= (1/|m(x_0)|) 2 int mu' = (2/|m(x_0)|)(mu_+ - mu(x_0))
-  < inf` (since `mu' >= 0`, bounded). So `W = W(x_0) exp(-int 2 mu'/m)` tends to a
-  nonzero multiple of `W(x_0)`; but `W -> 0`, so `W(x_0) = 0`, i.e. `W ≡ 0` on the
-  outer interval. Symmetric at `-inf`. (This alone finishes `M = 1` = 3A.)
+- OUTER (sign-square): on the right outer interval, L4 gives `m < 0` and L3 gives
+  `mu' >= 0`, hence `c = 2mu'/m <= 0`. From Abel `W' = -cW`, the derivative of
+  `W^2` is `-2cW^2 >= 0`, so `W^2` is nondecreasing to the right. Since L2 gives
+  `W -> 0` at `+inf`, every right-outer value must be zero. Symmetrically, on
+  the left outer interval `m > 0`, hence `c >= 0`, `W^2` is nonincreasing to the
+  right, and `W -> 0` at `-inf` forces `W ≡ 0` on the left ray. This alone
+  finishes `M = 1` = 3A.
 - INTERIOR (blow-up): near an UPWARD crossing `a_k`, `m -> 0` with a sign change
   and `mu'(a_k) > 0` (strict linchpin), so `|2 mu'/m| >= 2 delta/|m|` with `|m(x)|
   <= L|x - a_k|`, giving `int 2 mu'/m` DIVERGENT and thus `|W| -> inf` on both
@@ -124,7 +126,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | DONE under explicit two-sided exponential first moments (`LaplaceACAsymptotics.lean`).  Proves the positive/negative tilted-mean tail limits, the `mu(x)-x -> -∞/+∞` consequences, and compact zero pinning via `exists_bounds_for_laplaceMeanShiftRatio_zeros` |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; Abel `W'=-(2mu'/m)W` | BRIDGE + REGULARITY DISCHARGE DONE under an explicit C²-normalizer certificate. `LaplaceACAbel.lean` proves the Abel algebra from derivative data; `LaplaceACRegularity.lean` defines `LaplaceC2NormalizerRegular`, derives the `m'`/`m''` data from certified first-order identities, and proves `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` with no exposed `HasDerivAt` hypotheses. `LaplaceACDensityRegularity.lean` now proves continuous nonnegative densities imply `LaplaceC2NormalizerRegular` |
-| L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | CERTIFICATE + BV-LIMIT PACKAGING DONE in `LaplaceACPropagation.lean`: `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` / left version prove vanishing on outer rays from Abel + a primitive `A' = 2mu'/m` with finite tail limit, and `abel_right_outer_zero_of_tail_bvPrimitive` / left version now construct that finite primitive tail limit from a tail-BV oscillation bound `‖A y - A x‖ <= G x`, `G -> 0`. Remaining upstream AC work: construct the concrete primitive `A` and prove the required tail-BV estimate from L3/L4 |
+| L6 | OUTER rays: `W ≡ 0` on the two semi-infinite sign intervals | DONE in `LaplaceACPropagation.lean` by a primitive-free sign argument. `abel_right_outer_zero_of_nonpos_coeff` and `abel_left_outer_zero_of_nonneg_coeff` show that if `W' = -cW`, `W -> 0` at the relevant tail, and `c` has the outer-ray sign, then `W` vanishes on the ray. The concrete wrappers `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` and `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos` consume exactly the Laplace coefficient `c = 2 mu'/m`: L3 gives `mu' >= 0`, while L4/outer sign geometry gives `m < 0` on the right outer ray and `m > 0` on the left. The older primitive/BV packages remain available but are no longer needed for L6. |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE + BARRIER PACKAGING DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`, and `abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier` / left version now derive this divergence from an eventually larger upper barrier `B` with `B -> -∞`. Remaining upstream AC work: construct the concrete barrier from L7 strictness plus sign-change geometry |
 | L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | GLUING + ORDERED-GAP PACKAGING DONE in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set, and `continuous_eq_zero_of_vanishesOnOrderedGaps` now packages the common finite-breakpoint cover: left ray, adjacent open gaps, and right ray. Remaining upstream combinatorics: construct the `VanishesOnOrderedGaps` witness from the alternating sign-change/parity cover |
@@ -171,9 +173,12 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `laplaceTiltedMean_sub_tendsto_atTop_atBot`,
   `laplaceTiltedMean_sub_tendsto_atBot_atTop`, and compact zero pinning for
   `laplaceMeanShiftRatio`.
-- L6: the deterministic BV-to-tail-limit packaging is now formalized; the
-  remaining nontrivial part is deriving the concrete tail-BV estimate for
-  `A' = 2mu'/m` from monotonicity plus the L4 outer sign geometry.
+- L6: RESOLVED. The earlier BV primitive route has been superseded by the
+  primitive-free square-monotonicity sign package. On the right outer ray
+  `m < 0` and `mu' >= 0`, so `c = 2mu'/m <= 0` and `W^2` is nondecreasing;
+  since `W -> 0` at `+inf`, `W` must vanish on the ray. The left ray is the
+  symmetric `m > 0`, `c >= 0`, `W -> 0` at `-inf` argument. No concrete tail-BV
+  estimate remains for L6.
 - L8: the deterministic barrier-to-divergence packaging is now formalized; the
   remaining nontrivial part is deriving an explicit barrier `B -> -inf` for the
   primitive near an upward crossing from L7 strictness and local sign geometry.
@@ -202,10 +207,13 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   representations imply `LaplaceC2NormalizerRegular`.  The moment hypotheses are
   still separate inputs for tails and boundedness, not for this local certificate.
 - L6/L8/L9 certificate layer: the deterministic ODE/continuity endgame is now
-  formalized in `LaplaceACPropagation.lean` without axioms.  L6 now has both
-  the primitive-tail-limit version and the upstream tail-BV version: a gauge
-  estimate `‖A y - A x‖ <= G x`, `G -> 0`, gives a finite limit for `A` by a
-  Cauchy-filter argument and then kills the whole outer ray.  L8 now has both
+  formalized in `LaplaceACPropagation.lean` without axioms.  L6 is now closed
+  by the primitive-free sign package: the wrappers
+  `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` and
+  `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos` combine the Abel equation,
+  L3 monotonicity, the L4 outer sign geometry, and the L2 tail limit to kill both
+  outer rays.  The older primitive-tail-limit and tail-BV packages remain as
+  reusable backup tools but are not part of the required L6 route.  L8 now has both
   the primitive-divergence version and the upstream atBot-barrier version: an
   eventual upper bound `A <= B` with `B -> -inf` gives the required
   `A -> -inf` and then kills the flank.  L9 now has both the finite-set
@@ -350,9 +358,8 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `exists_tendsto_atTop_of_tail_norm_sub_le`, and the left-tail analogue, then
   wrapped the existing outer-ray Abel certificate as
   `abel_right_outer_zero_of_tail_bvPrimitive` / left version.  This closes the
-  abstract "BV estimate gives finite primitive tail limit" step without axioms;
-  the next L6 task is to derive the concrete BV gauge for
-  `A' = 2mu'/m` from the Laplace tilted-mean hypotheses.
+  abstract "BV estimate gives finite primitive tail limit" step without axioms.
+  This route is now backup infrastructure rather than the main L6 route.
 - 2026-07-12: advanced L8 upstream packaging.  Added the order squeeze
   `tendsto_atBot_of_eventually_le_of_tendsto_atBot` and wrapped the existing
   upward-crossing certificates as
@@ -372,3 +379,12 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   list, continuity glues the breakpoint values.  The next L9 task is to build
   that ordered-gap witness from the actual alternating sign-change/parity
   structure.
+- 2026-07-12: FULLY CLOSED L6 by replacing the remaining concrete BV estimate
+  with a primitive-free sign argument.  Added
+  `abel_square_left_le_right_of_nonpos_coeff`,
+  `abel_square_right_le_left_of_nonneg_coeff`, the tail-zero square squeeze
+  lemmas, and the outer-ray theorems
+  `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` /
+  `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos`.  The proof uses only
+  `W' = -(2mu'/m)W`, `mu' >= 0`, the L4 outer signs of `m`, and `W -> 0` at the
+  corresponding tail.  No primitive, BV estimate, or new axiom is needed.

@@ -205,6 +205,217 @@ theorem exp_comp_tendsto_zero_of_tendsto_atBot
     Tendsto (fun x => Real.exp (A x)) l (𝓝 0) :=
   Real.tendsto_exp_atBot.comp hA
 
+/-! ## Primitive-free L6 sign packages -/
+
+/-- On a finite interval, an Abel solution with nonpositive coefficient has
+nondecreasing square.  This is the primitive-free form of the right outer L6
+argument: if `W' = -cW` and `c ≤ 0`, then `(W^2)' ≥ 0`. -/
+theorem abel_square_left_le_right_of_nonpos_coeff
+    {W c : ℝ → ℝ} {x y : ℝ}
+    (hxy : x ≤ y)
+    (hcont : ContinuousOn W (Icc x y))
+    (hW : ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hc : ∀ t ∈ Ico x y, c t ≤ 0) :
+    W x ^ 2 ≤ W y ^ 2 := by
+  let F : ℝ → ℝ := W * W
+  have hFcont : ContinuousOn F (Icc x y) := by
+    simpa [F] using hcont.mul hcont
+  have hFderiv : ∀ t ∈ Ico x y,
+      HasDerivWithinAt F
+        ((-(c t) * W t) * W t + W t * (-(c t) * W t)) (Ici t) t := by
+    intro t ht
+    simpa [F] using (hW t ht).mul (hW t ht)
+  have hconst_deriv : ∀ t ∈ Ico x y,
+      HasDerivWithinAt (fun _ : ℝ => W x ^ 2) 0 (Ici t) t := by
+    intro t _; exact (hasDerivAt_const t (W x ^ 2)).hasDerivWithinAt
+  have hconst_cont : ContinuousOn (fun _ : ℝ => W x ^ 2) (Icc x y) :=
+    continuousOn_const
+  have hbase : (fun _ : ℝ => W x ^ 2) x ≤ F x := by
+    simp [F, pow_two]
+  have hbound : ∀ t ∈ Ico x y,
+      (fun _ : ℝ => 0) t ≤
+        (fun t : ℝ => (-(c t) * W t) * W t + W t * (-(c t) * W t)) t := by
+    intro t ht
+    have hcneg : 0 ≤ -c t := neg_nonneg.mpr (hc t ht)
+    have hs : 0 ≤ W t * W t := mul_self_nonneg (W t)
+    have hnonneg : 0 ≤ 2 * (-c t) * (W t * W t) :=
+      mul_nonneg (mul_nonneg (by norm_num) hcneg) hs
+    calc
+      0 ≤ 2 * (-c t) * (W t * W t) := hnonneg
+      _ = (-(c t) * W t) * W t + W t * (-(c t) * W t) := by ring
+  have hmono : ∀ z, z ∈ Icc x y → (fun _ : ℝ => W x ^ 2) z ≤ F z :=
+    image_le_of_deriv_right_le_deriv_boundary
+      (a := x) (b := y)
+      (f := fun _ : ℝ => W x ^ 2) (f' := fun _ : ℝ => 0)
+      (B := F)
+      (B' := fun t : ℝ => (-(c t) * W t) * W t + W t * (-(c t) * W t))
+      hconst_cont hconst_deriv hbase hFcont hFderiv hbound
+  simpa [F, pow_two] using hmono y ⟨hxy, le_rfl⟩
+
+/-- On a finite interval, an Abel solution with nonnegative coefficient has
+nonincreasing square.  This is the primitive-free form of the left outer L6
+argument. -/
+theorem abel_square_right_le_left_of_nonneg_coeff
+    {W c : ℝ → ℝ} {x y : ℝ}
+    (hxy : x ≤ y)
+    (hcont : ContinuousOn W (Icc x y))
+    (hW : ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hc : ∀ t ∈ Ico x y, 0 ≤ c t) :
+    W y ^ 2 ≤ W x ^ 2 := by
+  let F : ℝ → ℝ := W * W
+  have hFcont : ContinuousOn F (Icc x y) := by
+    simpa [F] using hcont.mul hcont
+  have hFderiv : ∀ t ∈ Ico x y,
+      HasDerivWithinAt F
+        ((-(c t) * W t) * W t + W t * (-(c t) * W t)) (Ici t) t := by
+    intro t ht
+    simpa [F] using (hW t ht).mul (hW t ht)
+  have hconst_deriv : ∀ t ∈ Ico x y,
+      HasDerivWithinAt (fun _ : ℝ => W x ^ 2) 0 (Ici t) t := by
+    intro t _; exact (hasDerivAt_const t (W x ^ 2)).hasDerivWithinAt
+  have hconst_cont : ContinuousOn (fun _ : ℝ => W x ^ 2) (Icc x y) :=
+    continuousOn_const
+  have hbase : F x ≤ (fun _ : ℝ => W x ^ 2) x := by
+    simp [F, pow_two]
+  have hbound : ∀ t ∈ Ico x y,
+      (fun t : ℝ => (-(c t) * W t) * W t + W t * (-(c t) * W t)) t ≤
+        (fun _ : ℝ => 0) t := by
+    intro t ht
+    have hcpos : 0 ≤ c t := hc t ht
+    have hs : 0 ≤ W t * W t := mul_self_nonneg (W t)
+    have hnonneg : 0 ≤ 2 * c t * (W t * W t) :=
+      mul_nonneg (mul_nonneg (by norm_num) hcpos) hs
+    calc
+      (-(c t) * W t) * W t + W t * (-(c t) * W t)
+          = -(2 * c t * (W t * W t)) := by ring
+      _ ≤ 0 := neg_nonpos.mpr hnonneg
+  have hmono : ∀ z, z ∈ Icc x y → F z ≤ (fun _ : ℝ => W x ^ 2) z :=
+    image_le_of_deriv_right_le_deriv_boundary
+      (a := x) (b := y)
+      (f := F)
+      (f' := fun t : ℝ => (-(c t) * W t) * W t + W t * (-(c t) * W t))
+      (B := fun _ : ℝ => W x ^ 2) (B' := fun _ : ℝ => 0)
+      hFcont hFderiv hbase hconst_cont hconst_deriv hbound
+  simpa [F, pow_two] using hmono y ⟨hxy, le_rfl⟩
+
+theorem sq_eq_zero_of_nonneg_of_forall_le_of_tendsto_zero_atTop
+    {W : ℝ → ℝ} {x : ℝ}
+    (hmono : ∀ y : ℝ, x ≤ y → W x ^ 2 ≤ W y ^ 2)
+    (hWtail : Tendsto W atTop (𝓝 0)) :
+    W x = 0 := by
+  by_contra hx
+  have hxpos : 0 < W x ^ 2 := sq_pos_of_ne_zero hx
+  have hFtail : Tendsto (fun y : ℝ => W y ^ 2) atTop (𝓝 0) := by
+    simpa [pow_two] using hWtail.mul hWtail
+  have hsmall : ∀ᶠ y in atTop, W y ^ 2 < W x ^ 2 :=
+    hFtail.eventually (Iio_mem_nhds hxpos)
+  have hlarge : ∀ᶠ y in atTop, x ≤ y := eventually_ge_atTop x
+  rcases (hsmall.and hlarge).exists with ⟨y, hy_small, hy_large⟩
+  exact not_lt_of_ge (hmono y hy_large) hy_small
+
+theorem sq_eq_zero_of_nonneg_of_forall_le_of_tendsto_zero_atBot
+    {W : ℝ → ℝ} {x : ℝ}
+    (hmono : ∀ y : ℝ, y ≤ x → W x ^ 2 ≤ W y ^ 2)
+    (hWtail : Tendsto W atBot (𝓝 0)) :
+    W x = 0 := by
+  by_contra hx
+  have hxpos : 0 < W x ^ 2 := sq_pos_of_ne_zero hx
+  have hFtail : Tendsto (fun y : ℝ => W y ^ 2) atBot (𝓝 0) := by
+    simpa [pow_two] using hWtail.mul hWtail
+  have hsmall : ∀ᶠ y in atBot, W y ^ 2 < W x ^ 2 :=
+    hFtail.eventually (Iio_mem_nhds hxpos)
+  have hlarge : ∀ᶠ y in atBot, y ≤ x := eventually_le_atBot x
+  rcases (hsmall.and hlarge).exists with ⟨y, hy_small, hy_large⟩
+  exact not_lt_of_ge (hmono y hy_large) hy_small
+
+/-- **L6 right outer ray, primitive-free sign form.**
+
+If `W' = -cW`, `c ≤ 0` on the right outer ray, and `W → 0` at `+∞`, then
+`W` vanishes throughout the ray.  This is the concrete outer-ray mechanism for
+the Laplace AC route: on the right of the last zero, `m = μ - x < 0` while
+`μ' ≥ 0`, hence `c = 2μ'/m ≤ 0`. -/
+theorem abel_right_outer_zero_of_nonpos_coeff
+    {W c : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ x b : ℝ, a ≤ x → x ≤ b → ContinuousOn W (Icc x b))
+    (hW : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hc : ∀ t : ℝ, a ≤ t → c t ≤ 0)
+    (hWtail : Tendsto W atTop (𝓝 0)) :
+    ∀ x : ℝ, a ≤ x → W x = 0 := by
+  intro x hax
+  refine sq_eq_zero_of_nonneg_of_forall_le_of_tendsto_zero_atTop ?_ hWtail
+  intro y hxy
+  exact abel_square_left_le_right_of_nonpos_coeff hxy
+    (hcont x y hax hxy) (hW x y hax hxy)
+    (fun t ht => hc t (le_trans hax ht.1))
+
+/-- **L6 left outer ray, primitive-free sign form.**
+
+If `W' = -cW`, `0 ≤ c` on the left outer ray, and `W → 0` at `-∞`, then
+`W` vanishes throughout the ray.  In the Laplace AC route this corresponds to
+the left of the first zero, where `m = μ - x > 0` and `μ' ≥ 0`. -/
+theorem abel_left_outer_zero_of_nonneg_coeff
+    {W c : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ b x : ℝ, b ≤ x → x ≤ a → ContinuousOn W (Icc b x))
+    (hW : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hc : ∀ t : ℝ, t ≤ a → 0 ≤ c t)
+    (hWtail : Tendsto W atBot (𝓝 0)) :
+    ∀ x : ℝ, x ≤ a → W x = 0 := by
+  intro x hxa
+  refine sq_eq_zero_of_nonneg_of_forall_le_of_tendsto_zero_atBot ?_ hWtail
+  intro y hyx
+  exact abel_square_right_le_left_of_nonneg_coeff hyx
+    (hcont y x hyx hxa) (hW y x hyx hxa)
+    (fun t ht => hc t (le_trans ht.2.le hxa))
+
+/-- **L6 right outer ray for the actual Laplace Abel coefficient.**
+
+This is the concrete sign-specialized wrapper used by the a.c. converse.  On a
+right outer ray, monotonicity gives `0 ≤ μ'` and the outer sign geometry gives
+`m < 0`; hence the Abel coefficient `(2 * μ') / m` is nonpositive, so the
+primitive-free right outer package kills `W` from the tail limit `W → 0`. -/
+theorem abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg
+    {W muDeriv m : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ x b : ℝ, a ≤ x → x ≤ b → ContinuousOn W (Icc x b))
+    (hW : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b,
+        HasDerivWithinAt W (-(((2 : ℝ) * muDeriv t) / m t) * W t) (Ici t) t)
+    (hmu : ∀ t : ℝ, a ≤ t → 0 ≤ muDeriv t)
+    (hm : ∀ t : ℝ, a ≤ t → m t < 0)
+    (hWtail : Tendsto W atTop (𝓝 0)) :
+    ∀ x : ℝ, a ≤ x → W x = 0 := by
+  refine abel_right_outer_zero_of_nonpos_coeff
+    (W := W) (c := fun t : ℝ => ((2 : ℝ) * muDeriv t) / m t) (a := a)
+    hcont ?_ ?_ hWtail
+  · simpa using hW
+  · intro t ht
+    exact div_nonpos_of_nonneg_of_nonpos
+      (mul_nonneg (by norm_num) (hmu t ht)) (le_of_lt (hm t ht))
+
+/-- **L6 left outer ray for the actual Laplace Abel coefficient.**
+
+On a left outer ray, monotonicity gives `0 ≤ μ'` and the outer sign geometry
+gives `0 < m`; hence `(2 * μ') / m` is nonnegative, so the primitive-free left
+outer package kills `W` from the tail limit `W → 0` at `-∞`. -/
+theorem abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos
+    {W muDeriv m : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ b x : ℝ, b ≤ x → x ≤ a → ContinuousOn W (Icc b x))
+    (hW : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x,
+        HasDerivWithinAt W (-(((2 : ℝ) * muDeriv t) / m t) * W t) (Ici t) t)
+    (hmu : ∀ t : ℝ, t ≤ a → 0 ≤ muDeriv t)
+    (hm : ∀ t : ℝ, t ≤ a → 0 < m t)
+    (hWtail : Tendsto W atBot (𝓝 0)) :
+    ∀ x : ℝ, x ≤ a → W x = 0 := by
+  refine abel_left_outer_zero_of_nonneg_coeff
+    (W := W) (c := fun t : ℝ => ((2 : ℝ) * muDeriv t) / m t) (a := a)
+    hcont ?_ ?_ hWtail
+  · simpa using hW
+  · intro t ht
+    exact div_nonneg
+      (mul_nonneg (by norm_num) (hmu t ht)) (le_of_lt (hm t ht))
+
 /-! ## L8 divergence packages -/
 
 /-- Order-squeeze into `atBot`.
