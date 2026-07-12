@@ -107,10 +107,10 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | ODE/ABEL BRIDGE DONE in `LaplaceACAbel.lean`: zero drift gives the common ratio `m = D_p/Z_p`; from explicit differentiability data the actual normalizer Wronskian satisfies Abel pointwise, and an a.e. wrapper is proved. Remaining analytic work is to derive those differentiability/second-derivative hypotheses from the a.c. exp-moment assumptions |
-| L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | TODO; elementary given L3,L4 (FINISHES 3A) |
+| L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | PROPAGATION CORE DONE in `LaplaceACPropagation.lean`: integrating-factor constancy plus right/left tail squeezes. Remaining: construct the primitive `A' = 2mu'/m` from the BV data and prove `exp A` has the required finite tail limit from L3/L4 |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
-| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | KEY new lemma; elementary (integrating factor + divergent integral) |
-| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | TODO; L9-cover combinatorial (easy); finiteness = hypothesis (see below) |
+| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | PROPAGATION CORE DONE in `LaplaceACPropagation.lean`: boundedness squeeze says an eventually constant `W·exp(A)` has zero constant when `W` is bounded and `exp(A) -> 0`. Remaining: prove the upward-crossing divergence input `exp(A)->0` from L7 + sign-change geometry |
+| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | PARTIAL: finite-interval zero continuation is proved (`abel_zero_propagates_Icc`). Remaining: formal finite sign-change cover/parity bookkeeping and continuity gluing at the crossings |
 
 3A needs L0-L6. 3B additionally needs L7-L9.
 
@@ -163,9 +163,13 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   pointwise, and packages the a.e. version.  The remaining task is now upstream
   regularity, not L5 algebra: prove the required differentiability/second
   derivative data from the a.c. exponential-moment hypotheses.
-- L8 (blow-up): elementary (integrating factor + divergent integral, boundedness
-  contradiction); the crux new analytic lemma, but self-contained.
+- L6/L8 propagation: the deterministic ODE layer is now formalized in
+  `LaplaceACPropagation.lean` without axioms.  What remains is the real-analysis
+  packaging that turns the AC/BV/sign-change hypotheses into the primitive
+  limits consumed by those lemmas.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
+  The remaining Lean work is combinatorial coverage and continuity gluing, not a
+  new analytic identity.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -245,3 +249,13 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   moments:
   `laplaceKernelNormalizerWronskian_tendsto_atTop_zero` and
   `laplaceKernelNormalizerWronskian_tendsto_atBot_zero`.
+- 2026-07-11: advanced L6/L8/L9 by adding `LaplaceACPropagation.lean`,
+  axiom-free.  New deterministic propagation tools:
+  `abel_integratingFactor_const_Icc`, right/left tail squeezes
+  (`abel_right_tail_zero_of_integratingFactor`,
+  `abel_left_tail_zero_of_integratingFactor`), the L8 boundedness squeeze
+  (`bounded_integratingFactor_const_zero_of_factor_tendsto_zero`), and finite
+  interval zero continuation (`abel_zero_propagates_Icc`).  These close the
+  reusable Abel-propagation core; remaining work is to derive the primitive
+  finite-limit / zero-limit inputs from the AC sign-change hypotheses and then
+  formalize the finite parity cover.
