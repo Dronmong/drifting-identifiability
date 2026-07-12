@@ -643,6 +643,63 @@ theorem abel_left_interval_zero_of_upwardCrossing_of_atBotBarrier
 
 /-! ## L9: finite breakpoint gluing -/
 
+/-- Vanishing data on all open gaps to the right of a fixed left breakpoint.
+
+For a list `[b₁, b₂, ...]`, this records vanishing on `(left,b₁)`,
+`(b₁,b₂)`, ..., and finally on the right ray after the last breakpoint.  The
+list is intended to be ordered in applications, but the lemma below only needs
+the data itself. -/
+def VanishesOnOrderedGapsFrom (W : ℝ → ℝ) (left : ℝ) : List ℝ → Prop
+  | [] => ∀ x : ℝ, left < x → W x = 0
+  | right :: rest =>
+      (∀ x : ℝ, left < x → x < right → W x = 0) ∧
+        VanishesOnOrderedGapsFrom W right rest
+
+/-- Vanishing data on the left ray, all adjacent open gaps, and the right ray
+associated to a finite breakpoint list. -/
+def VanishesOnOrderedGaps (W : ℝ → ℝ) : List ℝ → Prop
+  | [] => ∀ x : ℝ, W x = 0
+  | first :: rest =>
+      (∀ x : ℝ, x < first → W x = 0) ∧
+        VanishesOnOrderedGapsFrom W first rest
+
+/-- The gap data to the right of a fixed breakpoint implies vanishing away from
+the remaining breakpoints. -/
+theorem VanishesOnOrderedGapsFrom.eq_zero_of_not_mem
+    {W : ℝ → ℝ} {left : ℝ} :
+    ∀ {breaks : List ℝ}, VanishesOnOrderedGapsFrom W left breaks →
+      ∀ {x : ℝ}, left < x → x ∉ breaks → W x = 0
+  | [], hvan, x, hxleft, _ => hvan x hxleft
+  | right :: rest, hvan, x, hxleft, hxnot => by
+      rcases hvan with ⟨hgap, htail⟩
+      have hxne : x ≠ right := by
+        intro hx
+        exact hxnot (by simp [hx])
+      rcases lt_trichotomy x right with hlt | heq | hgt
+      · exact hgap x hxleft hlt
+      · exact (hxne heq).elim
+      · exact VanishesOnOrderedGapsFrom.eq_zero_of_not_mem htail hgt (by
+          intro hxmem
+          exact hxnot (by simp [hxmem]))
+
+/-- Finite ordered-gap data implies vanishing away from the listed breakpoints. -/
+theorem VanishesOnOrderedGaps.eq_zero_of_not_mem
+    {W : ℝ → ℝ} :
+    ∀ {breaks : List ℝ}, VanishesOnOrderedGaps W breaks →
+      ∀ {x : ℝ}, x ∉ breaks → W x = 0
+  | [], hvan, x, _ => hvan x
+  | first :: rest, hvan, x, hxnot => by
+      rcases hvan with ⟨hleft, htail⟩
+      have hxne : x ≠ first := by
+        intro hx
+        exact hxnot (by simp [hx])
+      rcases lt_trichotomy x first with hlt | heq | hgt
+      · exact hleft x hlt
+      · exact (hxne heq).elim
+      · exact VanishesOnOrderedGapsFrom.eq_zero_of_not_mem htail hgt (by
+          intro hxmem
+          exact hxnot (by simp [hxmem]))
+
 /-- If a continuous real-valued function vanishes on a dense set, it vanishes
 everywhere. -/
 theorem continuous_eq_zero_of_dense_zeroSet
@@ -673,5 +730,23 @@ theorem continuous_eq_zero_of_zero_off_finset
   have hdense_zero : Dense {x : ℝ | W x = 0} :=
     hdense_compl.mono fun x hx => hzero x hx
   exact continuous_eq_zero_of_dense_zeroSet hcont hdense_zero
+
+/-- **L9 ordered-breakpoint cover.**  If `W` is continuous and vanishes on the
+left ray, every adjacent open gap, and the right ray determined by a finite
+breakpoint list, then `W` vanishes everywhere.
+
+This is the upstream combinatorial package used after L6 kills the outer gaps
+and L8 kills the interior flanks.  Continuity handles the breakpoints
+themselves. -/
+theorem continuous_eq_zero_of_vanishesOnOrderedGaps
+    {W : ℝ → ℝ} (breaks : List ℝ)
+    (hcont : Continuous W)
+    (hvan : VanishesOnOrderedGaps W breaks) :
+    ∀ x : ℝ, W x = 0 := by
+  refine continuous_eq_zero_of_zero_off_finset (breaks.toFinset) hcont ?_
+  intro x hx
+  exact VanishesOnOrderedGaps.eq_zero_of_not_mem hvan (by
+    intro hxmem
+    exact hx (by simpa using hxmem))
 
 end DriftingIdentifiability
