@@ -84,7 +84,11 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 - `mu` is bounded: `mu -> mu_+ := (int y e^{y/tau}dp)/(int e^{y/tau}dp)` at `+inf`
   and `mu -> mu_-` at `-inf` (finite by the exponential moment). Hence
   `range(mu) ⊆ [mu_-, mu_+]`, and every zero of `m` (where `mu(x)=x`) lies in the
-  BOUNDED interval `[mu_-, mu_+]`.
+  BOUNDED interval `[mu_-, mu_+]`.  This is now certified as L4 in
+  `LaplaceACAsymptotics.lean`: the theorem
+  `exists_bounds_for_laplaceMeanShiftRatio_zeros` gives explicit finite bounds
+  for all zeros of `m = laplaceMeanShiftRatio tau p` under two-sided exponential
+  first moments.
 - Tail: `m = mu - x -> -inf` at `+inf` and `+inf` at `-inf`. So `m>0` left of
   `a_1`, `m<0` right of `a_M`, and `M` is ODD. Sign changes alternate: DOWNWARD
   (`+ -> -`) at `a_1,a_3,...`; UPWARD (`- -> +`) at `a_2,a_4,...,a_{M-1}`.
@@ -118,7 +122,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L1 | First-order identities `L_p'=D_p/tau`, `D_p'=L_p/tau-2Z_p` | DONE (certified, classical) |
 | L2 | Tail `W -> 0` at `+-inf` (`upperExpMass_tendsto_atTop_zero` + boundedness) | DONE under explicit two-sided exponential moments: `lowerExpMass_tendsto_atTop_integral`, `upperExpMass_tendsto_atBot_integral`, `laplaceKernelNormalizerWronskian_tendsto_atTop_zero`, `laplaceKernelNormalizerWronskian_tendsto_atBot_zero` |
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
-| L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
+| L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | DONE under explicit two-sided exponential first moments (`LaplaceACAsymptotics.lean`).  Proves the positive/negative tilted-mean tail limits, the `mu(x)-x -> -∞/+∞` consequences, and compact zero pinning via `exists_bounds_for_laplaceMeanShiftRatio_zeros` |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; Abel `W'=-(2mu'/m)W` | BRIDGE + REGULARITY DISCHARGE DONE under an explicit C²-normalizer certificate. `LaplaceACAbel.lean` proves the Abel algebra from derivative data; `LaplaceACRegularity.lean` defines `LaplaceC2NormalizerRegular`, derives the `m'`/`m''` data from certified first-order identities, and proves `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` with no exposed `HasDerivAt` hypotheses. `LaplaceACDensityRegularity.lean` now proves continuous nonnegative densities imply `LaplaceC2NormalizerRegular` |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` / left version prove vanishing on outer rays from Abel + a primitive `A' = 2mu'/m` with finite tail limit. Remaining upstream AC work: construct that primitive and finite limit from the BV estimate supplied by L3/L4 |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
@@ -160,7 +164,14 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
 ## Risk / feasibility (honest)
 
 - L2: RESOLVED under the explicit exponential-moment hypotheses used by the
-  a.c. theorem.  L4, L6, L9-cover: standard real analysis; expected to go
+  a.c. theorem.
+- L4: RESOLVED under the explicit two-sided exponential first-moment package.
+  `LaplaceACAsymptotics.lean` proves the DCT cutoff limits, scaled wrong-side
+  tail vanishing, `laplaceTiltedMean_tendsto_atTop/atBot`,
+  `laplaceTiltedMean_sub_tendsto_atTop_atBot`,
+  `laplaceTiltedMean_sub_tendsto_atBot_atTop`, and compact zero pinning for
+  `laplaceMeanShiftRatio`.
+- L6 and L9-cover: standard real analysis/combinatorics; expected to go
   through.
 - L3 (tilted-mean monotonicity): **RESOLVED, AXIOM-FREE (this session).** This was
   THE decisive test of whether the route needs an external axiom. It does not:
@@ -313,3 +324,11 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   requires only finite measure plus a continuous nonnegative density
   representation; exponential moments remain separate tail/compactness
   hypotheses.
+- 2026-07-12: FINISHED L4 under explicit two-sided exponential first moments.
+  Added `LaplaceACAsymptotics.lean`, defining the moment package
+  `LaplaceTwoSidedExpFirstMoment`, the two tilted-mean tail limits, DCT cutoff
+  limits for `∫ y e^{±y/tau}`, scaled wrong-side tail vanishing, scaled formulae
+  for the tilted mean, and the compact zero-pinning theorem
+  `exists_bounds_for_laplaceMeanShiftRatio_zeros`.  This proves that all zeros
+  of `m = D/Z` lie in a bounded interval once the moment hypotheses hold.  No
+  new axioms.
