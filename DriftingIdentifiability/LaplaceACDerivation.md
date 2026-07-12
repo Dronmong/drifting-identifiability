@@ -106,7 +106,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | TODO; mechanical from L1 + `D=mZ` |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | TODO; elementary given L3,L4 (FINISHES 3A) |
-| L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | pointwise strict Monge/TP2 engine DONE (`abs_monge_strict_of_overlap`, `laplaceKernel_tp2_strict_of_overlap`, `laplace_symmetrized_pos_of_overlap`, `laplace_symmetrized_pos_of_straddles`); measure/derivative assembly TODO |
+| L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | KEY new lemma; elementary (integrating factor + divergent integral) |
 | L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | TODO; L9-cover combinatorial (easy); finiteness = hypothesis (see below) |
 
@@ -145,10 +145,12 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   symmetrization of the double integral (`integral_prod_mul` + `integral_prod_swap`);
   `#print axioms` = `propext, Classical.choice, Quot.sound` only. No
   correlation-inequality library, no Levinson, no Frobenius, no project axiom.
-- L7 (STRICT `mu' > 0` at mean-shift zeros): the remaining refinement for 3B's
-  blow-up. The strict pointwise Monge/TP2 engine is now machine-checked; what
-  remains is the measure-level derivative/covariance assembly, strict when the
-  tilted law straddles the zero (true at zeros interior to `supp p`).
+- L7 (STRICT `mu' > 0` at mean-shift zeros): RESOLVED in the right-derivative
+  formulation already used by the normalizer-Wronskian infrastructure.  The
+  shifted tilted mean `x + D/Z` has a strictly positive right derivative whenever
+  the law has positive mass on both sides of `x`; the usual tilted mean is
+  bridged to this displacement form by `laplaceTiltedMean_eq_fromDisplacement`.
+  Later L8 can wrap this into whatever two-sided/classical-AC language it needs.
 - L5 (ODE + Abel from first-order data): mechanical but tedious; the AC-level
   Wronskian ODE and the a.e. Abel identity need care.
 - L8 (blow-up): elementary (integrating factor + divergent integral, boundedness
@@ -196,5 +198,13 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   (`laplaceKernel_tp2_strict_of_overlap`), and strict symmetrized positivity
   (`laplace_symmetrized_pos_of_overlap`,
   `laplace_symmetrized_pos_of_straddles`). Full project build and trust audit
-  are green. Remaining L7 work is the measure-level derivative/covariance
-  assembly from positive tilted mass on both sides of a zero.
+  are green. This is the pointwise precursor to the full L7 derivative package.
+- 2026-07-11: FINISHED L7 in the project-native right-derivative form. Added
+  `laplaceTiltedMeanFromDisplacement`, proved
+  `laplaceTiltedMean_eq_fromDisplacement`, proved the right-derivative formula
+  `hasDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement`, and proved strict
+  positivity under two-sided mass:
+  `hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`.
+  The key algebra is the positive one-sided formula
+  `mu'_+ * Z^2 = (2/tau) * (lowerComp * upperExp + upperComp * lowerExp)`.
+  Full project build and trust audit are green; no new axioms.

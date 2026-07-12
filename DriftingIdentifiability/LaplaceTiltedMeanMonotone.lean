@@ -1,4 +1,4 @@
-import DriftingIdentifiability.LaplaceGeneralConverse
+import DriftingIdentifiability.LaplaceGeneralConverseBalance
 
 /-!
 # Monotonicity of the Laplace tilted mean (linchpin lemma L3/L7)
@@ -126,6 +126,231 @@ lemma laplace_symmetrized_pos_of_straddles {τ : ℝ} (hτ : 0 < τ)
 /-- The Laplace **tilted mean** `μ_p(x) = (∫ y·k(x,y) dp)/(∫ k(x,y) dp)`. -/
 noncomputable def laplaceTiltedMean (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
   (∫ y, laplaceKernel τ x y * y ∂p) / kernelNormalizer (laplaceKernel τ) p x
+
+/-- The same tilted mean, written in the displacement form `x + D/Z` used by
+the mean-shift field.  This avoids differentiating `∫ y·k(x,y)` directly and
+connects L7 to the certified first-order identities for `D` and `Z`. -/
+noncomputable def laplaceTiltedMeanFromDisplacement
+    (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
+  x + (∫ y, laplaceWeightedDisplacement τ x y ∂p) /
+    kernelNormalizer (laplaceKernel τ) p x
+
+/-- The integral definition of the tilted mean agrees with the displacement
+form `x + D/Z`.  This bridge lets later L7/L8 work use the derivative theorem
+for `laplaceTiltedMeanFromDisplacement` as a theorem about the usual tilted
+mean. -/
+theorem laplaceTiltedMean_eq_fromDisplacement
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (x : ℝ) :
+    laplaceTiltedMean τ p x = laplaceTiltedMeanFromDisplacement τ p x := by
+  have hZpos : 0 < kernelNormalizer (laplaceKernel τ) p x :=
+    laplaceKernelNormalizer_pos p τ hτ x
+  have hDint : Integrable (fun y => laplaceWeightedDisplacement τ x y) p :=
+    laplaceWeightedDisplacement_integrable τ hτ p x
+  have hKint : Integrable (fun y => laplaceKernel τ x y) p :=
+    laplaceKernel_integrable p τ hτ x
+  have hXKint : Integrable (fun y => x * laplaceKernel τ x y) p :=
+    hKint.const_mul x
+  have hpoint :
+      (fun y : ℝ => laplaceKernel τ x y * y) =
+        fun y : ℝ => laplaceWeightedDisplacement τ x y + x * laplaceKernel τ x y := by
+    funext y
+    unfold laplaceWeightedDisplacement
+    rw [smul_eq_mul]
+    ring
+  unfold laplaceTiltedMean laplaceTiltedMeanFromDisplacement
+  rw [hpoint, integral_add hDint hXKint, integral_const_mul]
+  field_simp [hZpos.ne']
+  unfold kernelNormalizer
+  ring
+
+/-- Upper one-sided exponential mass is nonnegative. -/
+lemma upperExpMass_nonneg (τ : ℝ) (p : Measure ℝ) (x : ℝ) :
+    0 ≤ upperExpMass τ p x :=
+  setIntegral_nonneg measurableSet_Ioi (fun _ _ => (Real.exp_pos _).le)
+
+/-- Upper compensated moment is nonnegative. -/
+lemma upperCompensatedMoment_nonneg (τ : ℝ) (p : Measure ℝ) (x : ℝ) :
+    0 ≤ upperCompensatedMoment τ p x :=
+  setIntegral_nonneg measurableSet_Ioi
+    (fun _ hy => mul_nonneg (sub_nonneg.mpr (le_of_lt (Set.mem_Ioi.mp hy)))
+      (Real.exp_pos _).le)
+
+/-- Strict positivity of the upper exponential mass from positive right-tail
+mass. -/
+lemma upperExpMass_pos_of_measure_Ioi_pos
+    (τ : ℝ) (hτ : 0 < τ) (p : Measure ℝ) [IsFiniteMeasure p] (x : ℝ)
+    (hp : 0 < p (Set.Ioi x)) :
+    0 < upperExpMass τ p x := by
+  have hset :
+      Function.support (fun y : ℝ => Real.exp (-y / τ)) ∩ Set.Ioi x = Set.Ioi x := by
+    ext y
+    constructor
+    · intro hy
+      exact hy.2
+    · intro hy
+      exact ⟨(Real.exp_pos _).ne', hy⟩
+  unfold upperExpMass
+  rw [setIntegral_pos_iff_support_of_nonneg_ae
+      (by filter_upwards [ae_restrict_mem measurableSet_Ioi] with _ hy
+          exact (Real.exp_pos _).le)
+      (integrable_upperExpKernel τ hτ p x), hset]
+  exact hp
+
+/-- The right-derivative coefficient for the displacement-form tilted mean.
+
+The algebraic content is
+
+`mu'_+ * Z^2 =
+  (2/tau) * (e^- lowerComp * e^+ upperMass
+    + e^+ upperComp * e^- lowerMass)`,
+
+so positivity follows immediately when the tilted law has mass on both sides of
+`x`. -/
+noncomputable def laplaceTiltedMeanRightDerivCoeff
+    (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
+  ((2 / τ) *
+      (lowerCompensatedMoment τ p x * upperExpMass τ p x +
+        upperCompensatedMoment τ p x * lowerExpMass τ p x)) /
+    (kernelNormalizer (laplaceKernel τ) p x) ^ 2
+
+private lemma laplaceTiltedMean_rightDeriv_algebra
+    {tau A B lm um lc uc Z : ℝ} (htau : tau ≠ 0) (hZne : Z ≠ 0)
+    (hZ : Z = A * lm + B * um) (hAB : A * B = 1) :
+    (1 : ℝ) +
+        ((((1 / tau) * (A * lc + B * uc) - (A * lm + B * um)) * Z -
+            (-(A) * lc + B * uc) * ((1 / tau) * (-(A) * lm + B * um))) /
+          Z ^ 2) =
+      ((2 / tau) * (lc * um + uc * lm)) / Z ^ 2 := by
+  subst Z
+  have hZsq : (A * lm + B * um) ^ 2 ≠ 0 := pow_ne_zero 2 hZne
+  field_simp [htau, hZne, hZsq]
+  ring_nf
+  have h1 : A * lm * B * uc * 2 = lm * uc * 2 := by
+    calc
+      A * lm * B * uc * 2 = (A * B) * (lm * uc * 2) := by ring
+      _ = lm * uc * 2 := by rw [hAB]; ring
+  have h2 : A * B * um * lc * 2 = um * lc * 2 := by
+    calc
+      A * B * um * lc * 2 = (A * B) * (um * lc * 2) := by ring
+      _ = um * lc * 2 := by rw [hAB]; ring
+  nlinarith
+
+/-- **L7 derivative formula, right-derivative form.**  The displacement-form
+tilted mean has a right derivative whose coefficient is the positive one-sided
+mass expression above.  This uses only certified first-order data:
+`D' = L/tau - 2Z`, the one-sided formula for `D`, and the certified right
+derivative of `Z`. -/
+theorem hasDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (x : ℝ) :
+    HasDerivWithinAt (fun t => laplaceTiltedMeanFromDisplacement τ p t)
+      (laplaceTiltedMeanRightDerivCoeff τ p x) (Set.Ici x) x := by
+  have hZpos : 0 < kernelNormalizer (laplaceKernel τ) p x :=
+    laplaceKernelNormalizer_pos p τ hτ x
+  have hD₀ :=
+    (hasDerivAt_laplaceDisplacementIntegral τ hτ p x).hasDerivWithinAt
+      (s := Set.Ici x)
+  have hD : HasDerivWithinAt
+      (fun t : ℝ => ∫ y, laplaceWeightedDisplacement τ t y ∂p)
+      (laplaceDisplacementIntegralDerivCoeff τ p x) (Set.Ici x) x := by
+    rw [← laplaceDisplacementIntegral_derivCoeff_eq τ hτ p x]
+    exact hD₀
+  have hZ := hasDerivWithinAt_Ici_laplaceKernelNormalizer τ hτ p x
+  have hquot := hD.div hZ (ne_of_gt hZpos)
+  have hid : HasDerivWithinAt (fun t : ℝ => t) 1 (Set.Ici x) x :=
+    (hasDerivAt_id x).hasDerivWithinAt
+  have hsum := hid.add hquot
+  have hcoeff :
+      (1 : ℝ) +
+          (laplaceDisplacementIntegralDerivCoeff τ p x *
+                kernelNormalizer (laplaceKernel τ) p x -
+              (∫ y, laplaceWeightedDisplacement τ x y ∂p) *
+                laplaceKernelNormalizerRightDerivCoeff τ p x) /
+            (kernelNormalizer (laplaceKernel τ) p x) ^ 2 =
+        laplaceTiltedMeanRightDerivCoeff τ p x := by
+    let A : ℝ := Real.exp (-x / τ)
+    let B : ℝ := Real.exp (x / τ)
+    let lm : ℝ := lowerExpMass τ p x
+    let um : ℝ := upperExpMass τ p x
+    let lc : ℝ := lowerCompensatedMoment τ p x
+    let uc : ℝ := upperCompensatedMoment τ p x
+    have hZval : kernelNormalizer (laplaceKernel τ) p x = A * lm + B * um := by
+      dsimp [A, B, lm, um]
+      exact laplaceKernelNormalizer_eq_lower_upper τ hτ p x
+    have hAB : A * B = 1 := by
+      dsimp [A, B]
+      rw [← Real.exp_add]
+      have harg : -x / τ + x / τ = 0 := by
+        field_simp [hτ.ne']
+        ring
+      rw [harg, Real.exp_zero]
+    have halg := laplaceTiltedMean_rightDeriv_algebra
+      (tau := τ) (A := A) (B := B) (lm := lm) (um := um) (lc := lc) (uc := uc)
+      (Z := kernelNormalizer (laplaceKernel τ) p x) hτ.ne' (ne_of_gt hZpos)
+      hZval hAB
+    simpa [laplaceTiltedMeanRightDerivCoeff, laplaceKernelNormalizerRightDerivCoeff,
+      laplaceDisplacementIntegralDerivCoeff, A, B, lm, um, lc, uc,
+      laplaceDisplacementIntegral_eq_lower_upper τ hτ p x] using halg
+  change HasDerivWithinAt
+    ((fun t : ℝ => t) +
+      ((fun t : ℝ => ∫ y, laplaceWeightedDisplacement τ t y ∂p) /
+        fun t : ℝ => kernelNormalizer (laplaceKernel τ) p t))
+    (laplaceTiltedMeanRightDerivCoeff τ p x) (Set.Ici x) x
+  simpa [hcoeff] using hsum
+
+/-- **L7 strictness.**  If the law has positive mass strictly below and strictly
+above `x`, then the right-derivative coefficient of the shifted tilted mean is
+strictly positive at `x`.  This is the formal straddling condition used at
+mean-shift zeros in the a.c. converse plan. -/
+theorem laplaceTiltedMeanRightDerivCoeff_pos_of_twoSidedMass
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (x : ℝ)
+    (hleft : 0 < p (Set.Iio x)) (hright : 0 < p (Set.Ioi x)) :
+    0 < laplaceTiltedMeanRightDerivCoeff τ p x := by
+  have hZpos : 0 < kernelNormalizer (laplaceKernel τ) p x :=
+    laplaceKernelNormalizer_pos p τ hτ x
+  have hLowerCompPos : 0 < lowerCompensatedMoment τ p x :=
+    (lowerCompensatedMoment_pos_iff τ hτ p x).mpr hleft
+  have hUpperExpPos : 0 < upperExpMass τ p x :=
+    upperExpMass_pos_of_measure_Ioi_pos τ hτ p x hright
+  have hUpperCompNonneg : 0 ≤ upperCompensatedMoment τ p x :=
+    upperCompensatedMoment_nonneg τ p x
+  have hLowerExpNonneg : 0 ≤ lowerExpMass τ p x :=
+    lowerExpMass_nonneg τ p x
+  have hterm₁ :
+      0 < lowerCompensatedMoment τ p x * upperExpMass τ p x := by
+    exact mul_pos hLowerCompPos hUpperExpPos
+  have hterm₂ :
+      0 ≤ upperCompensatedMoment τ p x * lowerExpMass τ p x := by
+    exact mul_nonneg hUpperCompNonneg hLowerExpNonneg
+  have hsum :
+      0 < lowerCompensatedMoment τ p x * upperExpMass τ p x +
+          upperCompensatedMoment τ p x * lowerExpMass τ p x :=
+    add_pos_of_pos_of_nonneg hterm₁ hterm₂
+  have hscale : 0 < 2 / τ := div_pos (by norm_num) hτ
+  have hnum :
+      0 < (2 / τ) *
+        (lowerCompensatedMoment τ p x * upperExpMass τ p x +
+          upperCompensatedMoment τ p x * lowerExpMass τ p x) :=
+    mul_pos hscale hsum
+  have hden : 0 < (kernelNormalizer (laplaceKernel τ) p x) ^ 2 :=
+    sq_pos_of_pos hZpos
+  unfold laplaceTiltedMeanRightDerivCoeff
+  exact div_pos hnum hden
+
+/-- Combined L7 package: under two-sided mass, the shifted tilted mean has a
+strictly positive right derivative at `x`. -/
+theorem hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (x : ℝ)
+    (hleft : 0 < p (Set.Iio x)) (hright : 0 < p (Set.Ioi x)) :
+    ∃ c : ℝ, 0 < c ∧
+      HasDerivWithinAt (fun t => laplaceTiltedMeanFromDisplacement τ p t)
+        c (Set.Ici x) x := by
+  refine ⟨laplaceTiltedMeanRightDerivCoeff τ p x,
+    laplaceTiltedMeanRightDerivCoeff_pos_of_twoSidedMass τ hτ p x hleft hright,
+    hasDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement τ hτ p x⟩
 
 /-- **The linchpin (L3): the Laplace tilted mean is monotone.**  Proved from the
 Monge/TP2 property of the kernel plus a symmetrization of the double integral —
