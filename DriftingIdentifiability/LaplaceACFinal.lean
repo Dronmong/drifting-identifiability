@@ -1,5 +1,6 @@
 import DriftingIdentifiability.LaplaceACAsymptotics
 import DriftingIdentifiability.LaplaceACPropagation
+import Mathlib.Analysis.Calculus.DSlope
 
 /-!
 # Final assembly for the absolutely-continuous Laplace converse
@@ -128,6 +129,147 @@ private theorem laplaceWronskian_isBoundedUnder_nhdsGT_of_regular
   have hWcont : Continuous (fun y : ℝ => laplaceKernelNormalizerWronskian τ p q y) :=
     continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
   exact (hWcont.continuousAt.norm.isBoundedUnder_le).mono nhdsWithin_le_nhds
+
+/-! ## Local simple-zero helpers -/
+
+/-- A continuous scalar function that is strictly positive at `a` is bounded
+below by half its value on a two-sided neighborhood of `a`. -/
+private theorem exists_Ioo_lower_bound_half_of_continuous_pos
+    {g : ℝ → ℝ} {a lower upper : ℝ}
+    (hg : Continuous g) (hlower : lower < a) (hupper : a < upper)
+    (hga : 0 < g a) :
+    ∃ l r δ : ℝ, lower < l ∧ l < a ∧ a < r ∧ r < upper ∧ 0 < δ ∧
+      (∀ t : ℝ, l < t → t < r → δ ≤ g t) := by
+  let δ : ℝ := g a / 2
+  have hδpos : 0 < δ := by
+    dsimp [δ]
+    linarith
+  have hδlt : δ < g a := by
+    dsimp [δ]
+    linarith
+  have hnear : ∀ᶠ t in 𝓝 a, δ ≤ g t :=
+    hg.continuousAt.eventually_const_le hδlt
+  have hinterval : ∀ᶠ t in 𝓝 a, t ∈ Ioo lower upper :=
+    Ioo_mem_nhds hlower hupper
+  rcases (hnear.and hinterval).exists_Ioo_subset with ⟨l₀, r₀, ha₀, hsub⟩
+  let l : ℝ := (max lower l₀ + a) / 2
+  let r : ℝ := (a + min upper r₀) / 2
+  have hmax_lt : max lower l₀ < a := max_lt hlower ha₀.1
+  have hmin_gt : a < min upper r₀ := lt_min hupper ha₀.2
+  have hlower_l : lower < l := by
+    dsimp [l]
+    have : lower ≤ max lower l₀ := le_max_left _ _
+    linarith
+  have hl₀_l : l₀ < l := by
+    dsimp [l]
+    have : l₀ ≤ max lower l₀ := le_max_right _ _
+    linarith
+  have hl_a : l < a := by
+    dsimp [l]
+    linarith
+  have ha_r : a < r := by
+    dsimp [r]
+    linarith
+  have hr_upper : r < upper := by
+    dsimp [r]
+    have : min upper r₀ ≤ upper := min_le_left _ _
+    linarith
+  have hr_r₀ : r < r₀ := by
+    dsimp [r]
+    have : min upper r₀ ≤ r₀ := min_le_right _ _
+    linarith
+  exact ⟨l, r, δ, hlower_l, hl_a, ha_r, hr_upper, hδpos,
+    fun t hlt htr => (hsub ⟨lt_trans hl₀_l hlt, lt_trans htr hr_r₀⟩).1⟩
+
+/-- A differentiable function vanishing at `a` has a local linear bound on both
+sides of `a`.
+
+This is the slope/MVT-style local regularity step used by the simple-zero
+constructor.  It uses `dslope`: continuity of `dslope f a` at `a` follows from
+differentiability, and `(t-a) * dslope f a t = f t - f a`. -/
+private theorem exists_Ioo_linear_bound_of_hasDerivAt_zero
+    {f : ℝ → ℝ} {a lower upper : ℝ} {D : ℝ}
+    (hlower : lower < a) (hupper : a < upper)
+    (hf : HasDerivAt f D a) (hfa : f a = 0) :
+    ∃ l r L : ℝ, lower < l ∧ l < a ∧ a < r ∧ r < upper ∧ 0 < L ∧
+      (∀ t : ℝ, l ≤ t → t < a → -(L * (a - t)) ≤ f t) ∧
+      (∀ t : ℝ, a < t → t ≤ r → f t ≤ L * (t - a)) := by
+  let L : ℝ := ‖dslope f a a‖ + 1
+  have hLpos : 0 < L := by
+    dsimp [L]
+    positivity
+  have hdsCont : ContinuousAt (dslope f a) a :=
+    (continuousAt_dslope_same (f := f) (a := a)).2 hf.differentiableAt
+  have hnorm_lt_L : ‖dslope f a a‖ < L := by
+    dsimp [L]
+    linarith [norm_nonneg (dslope f a a)]
+  have hnear : ∀ᶠ t in 𝓝 a, ‖dslope f a t‖ ≤ L :=
+    hdsCont.norm.eventually_le_const hnorm_lt_L
+  have hinterval : ∀ᶠ t in 𝓝 a, t ∈ Ioo lower upper :=
+    Ioo_mem_nhds hlower hupper
+  rcases (hnear.and hinterval).exists_Ioo_subset with ⟨l₀, r₀, ha₀, hsub⟩
+  let l : ℝ := (max lower l₀ + a) / 2
+  let r : ℝ := (a + min upper r₀) / 2
+  have hmax_lt : max lower l₀ < a := max_lt hlower ha₀.1
+  have hmin_gt : a < min upper r₀ := lt_min hupper ha₀.2
+  have hlower_l : lower < l := by
+    dsimp [l]
+    have : lower ≤ max lower l₀ := le_max_left _ _
+    linarith
+  have hl₀_l : l₀ < l := by
+    dsimp [l]
+    have : l₀ ≤ max lower l₀ := le_max_right _ _
+    linarith
+  have hl_a : l < a := by
+    dsimp [l]
+    linarith
+  have ha_r : a < r := by
+    dsimp [r]
+    linarith
+  have hr_upper : r < upper := by
+    dsimp [r]
+    have : min upper r₀ ≤ upper := min_le_left _ _
+    linarith
+  have hr_r₀ : r < r₀ := by
+    dsimp [r]
+    have : min upper r₀ ≤ r₀ := min_le_right _ _
+    linarith
+  have hbound : ∀ t : ℝ, l ≤ t → t ≤ r → ‖dslope f a t‖ ≤ L := fun t hlt htr =>
+    (hsub ⟨lt_of_lt_of_le hl₀_l hlt, lt_of_le_of_lt htr hr_r₀⟩).1
+  refine ⟨l, r, L, hlower_l, hl_a, ha_r, hr_upper, hLpos, ?_, ?_⟩
+  · intro t hlt hta
+    have hmul : (t - a) * dslope f a t = f t := by
+      simpa [hfa, smul_eq_mul] using sub_smul_dslope f a t
+    have hnorm_bound : ‖f t‖ ≤ L * (a - t) := by
+      have hnonneg : 0 ≤ ‖t - a‖ := norm_nonneg _
+      calc
+        ‖f t‖ = ‖(t - a) * dslope f a t‖ := by rw [← hmul]
+        _ = ‖t - a‖ * ‖dslope f a t‖ := norm_mul _ _
+        _ ≤ ‖t - a‖ * L :=
+          mul_le_mul_of_nonneg_left (hbound t hlt (le_of_lt (lt_trans hta ha_r))) hnonneg
+        _ = L * (a - t) := by
+          have hta_le : t ≤ a := le_of_lt hta
+          rw [Real.norm_eq_abs, abs_of_nonpos (sub_nonpos.mpr hta_le)]
+          ring
+    have habs : |f t| ≤ L * (a - t) := by
+      simpa [Real.norm_eq_abs] using hnorm_bound
+    exact (abs_le.mp habs).1
+  · intro t hat htr
+    have hmul : (t - a) * dslope f a t = f t := by
+      simpa [hfa, smul_eq_mul] using sub_smul_dslope f a t
+    have hnorm_bound : ‖f t‖ ≤ L * (t - a) := by
+      have hnonneg : 0 ≤ ‖t - a‖ := norm_nonneg _
+      calc
+        ‖f t‖ = ‖(t - a) * dslope f a t‖ := by rw [← hmul]
+        _ = ‖t - a‖ * ‖dslope f a t‖ := norm_mul _ _
+        _ ≤ ‖t - a‖ * L :=
+          mul_le_mul_of_nonneg_left (hbound t (le_of_lt (lt_trans hl_a hat)) htr) hnonneg
+        _ = L * (t - a) := by
+          rw [Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hat.le)]
+          ring
+    have habs : |f t| ≤ L * (t - a) := by
+      simpa [Real.norm_eq_abs] using hnorm_bound
+    exact (abs_le.mp habs).2
 
 /-- Final deterministic certificate for the a.c. Laplace Wronskian endgame.
 
@@ -604,7 +746,7 @@ Those are derived here from `LaplaceC2NormalizerRegular`, continuity of the
 coefficient away from the zero, and the interval-integral FTC.  The remaining
 inputs are the genuinely local crossing facts: sign on the two adjacent gaps,
 positive lower bounds for `μ'`, and one-sided linear bounds for `m`. -/
-noncomputable def LaplaceACUpwardCrossingCertificate.of_regular
+noncomputable def LaplaceACUpwardCrossingCertificate.of_regular_withLocalBounds
     (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
     [IsProbabilityMeasure p] [IsProbabilityMeasure q]
     (hp : LaplaceC2NormalizerRegular τ p)
@@ -719,6 +861,119 @@ noncomputable def LaplaceACUpwardCrossingCertificate.of_regular
         hc_right ⟨h_up_r, h_r_right⟩ hxGap hyGap
   · exact laplaceWronskian_isBoundedUnder_nhdsLT_of_regular τ hτ p q hp hq up
   · exact laplaceWronskian_isBoundedUnder_nhdsGT_of_regular τ hτ p q hp hq up
+
+/-- Fully automatic upward-crossing certificate from the regularity layer and a
+genuine sign-changing zero.
+
+This is the local constructor promised by the L8 upstream plan.  Given adjacent
+downward crossings `leftDown < up < rightDown`, sign geometry
+`m < 0` on the left gap and `m > 0` on the right gap, and the zero
+`m up = 0`, it constructs all auxiliary L8 data:
+
+* the primitive functions `AL`, `AR` by interval integration / FTC;
+* local Wronskian boundedness from Wronskian continuity;
+* a positive lower bound for `μ'` from L7 plus continuity;
+* one-sided linear bounds for `m` from differentiability at the zero.
+
+The two-sided mass hypotheses are exactly the L7 strictness input. -/
+noncomputable def LaplaceACUpwardCrossingCertificate.of_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    {leftDown up rightDown : ℝ}
+    (h_left_up : leftDown < up)
+    (h_up_right : up < rightDown)
+    (hm_left_neg : ∀ t : ℝ, leftDown < t → t < up →
+      laplaceMeanShiftRatio τ p t < 0)
+    (hm_right_pos : ∀ t : ℝ, up < t → t < rightDown →
+      0 < laplaceMeanShiftRatio τ p t)
+    (hm_up : laplaceMeanShiftRatio τ p up = 0)
+    (hmass_left : 0 < p (Set.Iio up))
+    (hmass_right : 0 < p (Set.Ioi up)) :
+    LaplaceACUpwardCrossingCertificate τ p q leftDown up rightDown := by
+  let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
+  let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  have hμ_cont : Continuous μDeriv := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    change ContinuousAt (laplaceMeanShiftRatioDeriv τ p + fun _ : ℝ => (1 : ℝ)) x
+    exact
+      (hasDerivAt_laplaceMeanShiftRatioDeriv_regular τ hτ p hp x).continuousAt.add
+        continuousAt_const
+  have hμ_up_pos : 0 < μDeriv up := by
+    simpa [μDeriv] using
+      laplaceMeanShiftRatioDeriv_add_one_pos_of_twoSidedMass_regular
+        τ hτ p hp up hmass_left hmass_right
+  have hμExists := exists_Ioo_lower_bound_half_of_continuous_pos
+      (g := μDeriv) (a := up) (lower := leftDown) (upper := rightDown)
+      hμ_cont h_left_up h_up_right hμ_up_pos
+  let μLeft : ℝ := Classical.choose hμExists
+  let hμExists₁ := Classical.choose_spec hμExists
+  let μRight : ℝ := Classical.choose hμExists₁
+  let hμExists₂ := Classical.choose_spec hμExists₁
+  let δ : ℝ := Classical.choose hμExists₂
+  have hμData :
+      leftDown < μLeft ∧ μLeft < up ∧ up < μRight ∧ μRight < rightDown ∧
+        0 < δ ∧ ∀ t : ℝ, μLeft < t → t < μRight → δ ≤ μDeriv t := by
+    simpa [μLeft, μRight, δ] using Classical.choose_spec hμExists₂
+  have h_left_μLeft : leftDown < μLeft := hμData.1
+  have h_μLeft_up : μLeft < up := hμData.2.1
+  have h_up_μRight : up < μRight := hμData.2.2.1
+  have h_μRight_right : μRight < rightDown := hμData.2.2.2.1
+  have hδ : 0 < δ := hμData.2.2.2.2.1
+  have hμ_near :
+      ∀ t : ℝ, μLeft < t → t < μRight → δ ≤ μDeriv t :=
+    hμData.2.2.2.2.2
+  have hLinearExists := exists_Ioo_linear_bound_of_hasDerivAt_zero
+      (f := m) (a := up) (lower := μLeft) (upper := μRight)
+      h_μLeft_up h_up_μRight
+      (by
+        simpa [m] using
+          hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp up)
+      (by simpa [m] using hm_up)
+  let leftNear : ℝ := Classical.choose hLinearExists
+  let hLinearExists₁ := Classical.choose_spec hLinearExists
+  let rightNear : ℝ := Classical.choose hLinearExists₁
+  let hLinearExists₂ := Classical.choose_spec hLinearExists₁
+  let L : ℝ := Classical.choose hLinearExists₂
+  have hLinearData :
+      μLeft < leftNear ∧ leftNear < up ∧ up < rightNear ∧ rightNear < μRight ∧
+        0 < L ∧
+        (∀ t : ℝ, leftNear ≤ t → t < up → -(L * (up - t)) ≤ m t) ∧
+        (∀ t : ℝ, up < t → t ≤ rightNear → m t ≤ L * (t - up)) := by
+    simpa [leftNear, rightNear, L] using Classical.choose_spec hLinearExists₂
+  have h_μLeft_leftNear : μLeft < leftNear := hLinearData.1
+  have h_leftNear_up : leftNear < up := hLinearData.2.1
+  have h_up_rightNear : up < rightNear := hLinearData.2.2.1
+  have h_rightNear_μRight : rightNear < μRight := hLinearData.2.2.2.1
+  have hL : 0 < L := hLinearData.2.2.2.2.1
+  have hm_linear_left :
+      ∀ t : ℝ, leftNear ≤ t → t < up → -(L * (up - t)) ≤ m t :=
+    hLinearData.2.2.2.2.2.1
+  have hm_linear_right :
+      ∀ t : ℝ, up < t → t ≤ rightNear → m t ≤ L * (t - up) :=
+    hLinearData.2.2.2.2.2.2
+  exact
+    LaplaceACUpwardCrossingCertificate.of_regular_withLocalBounds
+      τ hτ p q hp hq
+      h_left_up h_up_right
+      (lt_trans h_left_μLeft h_μLeft_leftNear)
+      h_leftNear_up
+      h_up_rightNear
+      (lt_trans h_rightNear_μRight h_μRight_right)
+      hδ hδ hL hL
+      hm_left_neg hm_right_pos
+      (fun t hleft htup =>
+        hμ_near t (lt_of_lt_of_le h_μLeft_leftNear hleft)
+          (lt_trans htup h_up_μRight))
+      (fun t hleft htup =>
+        hm_linear_left t hleft htup)
+      (fun t hupt htright =>
+        hμ_near t (lt_trans h_μLeft_up hupt)
+          (lt_trans htright h_rightNear_μRight))
+      (fun t hupt htright =>
+        hm_linear_right t hupt (le_of_lt htright))
 
 /-- One local upward-crossing certificate kills both adjacent gaps. -/
 theorem LaplaceACUpwardCrossingCertificate.vanishes
@@ -862,10 +1117,40 @@ noncomputable def LaplaceACAlternatingChain.cons_regular
     (tail : LaplaceACAlternatingChain τ p q rightDown rest) :
     LaplaceACAlternatingChain τ p q leftDown (up :: rightDown :: rest) :=
   LaplaceACAlternatingChain.cons
-    (LaplaceACUpwardCrossingCertificate.of_regular τ hτ p q hp hq
+    (LaplaceACUpwardCrossingCertificate.of_regular_withLocalBounds τ hτ p q hp hq
       h_left_up h_up_right h_left_l h_l_up h_up_r h_r_right
       hδL hδR hLL hLR hm_left_neg hm_right_pos
       hμ_left hm_left_lower hμ_right hm_right_upper)
+    tail
+
+/-- Convenience constructor adding one upward crossing from a genuine
+sign-changing zero.
+
+This is the recursive-chain wrapper around
+`LaplaceACUpwardCrossingCertificate.of_regular`: all primitive, boundedness,
+strict-`μ'`, and linear-control witnesses are synthesized from regularity,
+two-sided mass at the zero, and the adjacent sign geometry. -/
+noncomputable def LaplaceACAlternatingChain.cons_regular_simpleZero
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    {leftDown up rightDown : ℝ} {rest : List ℝ}
+    (h_left_up : leftDown < up)
+    (h_up_right : up < rightDown)
+    (hm_left_neg : ∀ t : ℝ, leftDown < t → t < up →
+      laplaceMeanShiftRatio τ p t < 0)
+    (hm_right_pos : ∀ t : ℝ, up < t → t < rightDown →
+      0 < laplaceMeanShiftRatio τ p t)
+    (hm_up : laplaceMeanShiftRatio τ p up = 0)
+    (hmass_left : 0 < p (Set.Iio up))
+    (hmass_right : 0 < p (Set.Ioi up))
+    (tail : LaplaceACAlternatingChain τ p q rightDown rest) :
+    LaplaceACAlternatingChain τ p q leftDown (up :: rightDown :: rest) :=
+  LaplaceACAlternatingChain.cons
+    (LaplaceACUpwardCrossingCertificate.of_regular τ hτ p q hp hq
+      h_left_up h_up_right hm_left_neg hm_right_pos hm_up
+      hmass_left hmass_right)
     tail
 
 /-- The recursive chain produces the L9 alternating-cover tail. -/
