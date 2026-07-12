@@ -1220,14 +1220,18 @@ Remaining research objectives are now narrower and split by trust level:
   gluing, and alternating parity-cover gluing.  `LaplaceACFinal.lean` now
   supplies the final socket: a concrete `LaplaceACFinalAssembly` certificate
   gives `W ≡ 0`, and `laplaceAC_identifies_of_finalAssembly` feeds this into
-  the certified Wronskian gate to conclude `p = q`.
+  the certified Wronskian gate to conclude `p = q`.  It also proves Wronskian
+  continuity from `LaplaceC2NormalizerRegular`, a concrete 3A
+  single-downward-crossing assembly theorem, and the first nontrivial 3B
+  `[down, up, down]` assembly theorem.
 
   What remains upstream is sharply localized: construct the concrete
-  `LaplaceACFinalAssembly` certificate from the chosen finite zero/sign-change
-  hypotheses.  In practice this means proving/providing global Wronskian
-  continuity, deriving the local `δ,L` witnesses at upward crossings from the
-  selected smoothness/strict-crossing hypotheses, and instantiating the finite
-  alternating breakpoint list.
+  `LaplaceACFinalAssembly` certificate for arbitrary-length finite
+  zero/sign-change lists.  In practice this means deriving the local `δ,L`
+  witnesses at each upward crossing from the selected
+  smoothness/strict-crossing hypotheses, and instantiating/inducting over the
+  finite alternating breakpoint list.  The single-crossing and
+  `[down, up, down]` patterns are now packaged.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and

@@ -236,11 +236,15 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `laplaceAC_identifies_of_finalAssembly` feeds this into the certified
   Wronskian injectivity gate to conclude `p = q`.  Convenience constructors
   cover the single-downward-crossing case and the first nontrivial
-  `[down, up, down]` parity case.
+  `[down, up, down]` parity case.  The same file now proves global Wronskian
+  continuity from `LaplaceC2NormalizerRegular`, a concrete 3A/single-downward
+  assembly theorem from L2+L5+L6, and a concrete first-3B
+  `[down, up, down]` assembly theorem from L2+L5+L6+L8+L9.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
   The remaining Lean work is upstream witness construction for the concrete
-  finite breakpoint list, not a new analytic identity, final gate, or L9
-  combinatorial lemma.
+  arbitrary-length finite breakpoint list, plus automatic derivation of the
+  local `δ,L` crossing witnesses from the chosen smoothness hypotheses.  It is
+  not a new analytic identity, final gate, or L9 combinatorial lemma.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -432,3 +436,16 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   formal L9-to-`p=q` composition.  The remaining upstream work is now sharply
   localized: construct the concrete final-assembly certificate from the chosen
   zero/sign-change hypotheses and local crossing regularity.
+- 2026-07-12: ADVANCED FINAL ASSEMBLY UPSTREAM.  Added
+  `continuous_laplaceKernelNormalizerWronskian_of_regular`, discharging the
+  global continuity field of `LaplaceACFinalAssembly` from the same C²
+  regularity certificate used by L5.  Added
+  `laplaceACFinalAssembly_singleDown_of_outerSigns` and
+  `laplaceAC_identifies_singleDown_of_outerSigns`, which assemble the full 3A
+  single-crossing route from L2 tails, the L5 Abel equation, L6 outer rays, and
+  the certified Wronskian gate.  Added
+  `laplaceACFinalAssembly_downUpDown_of_outerSigns_of_upwardCrossing` and
+  `laplaceAC_identifies_downUpDown_of_outerSigns_of_upwardCrossing`, packaging
+  the first nontrivial 3B pattern `[down, up, down]` via L6 outer rays and L8
+  flank blow-up.  Remaining work is now the arbitrary-length parity-list
+  induction and automatic production of local `δ,L` witnesses.
