@@ -509,7 +509,17 @@ gap in the library, not in the mathematics.  The certified gates
 gate; the paper proof above supplies the missing analytic step
 (`zero drift ⟹ W ≡ 0`) but cannot yet be discharged in Lean.
 
-**Safe conditional-axiom plan (2026-07-11, Codex).**  If we decide to
+> **DECISION 2026-07-11: DERIVE 3A/3B, do NOT axiomatize.**  Because the a.c.
+> bridges `ZeroDrift ⟹ W ≡ 0` are non-trivial project-own facts (not well-known
+> theorems), the plan is now to PROVE them in Lean, not axiomatize them.  The
+> elliptic identity is already certified classically (`LaplaceWronskian.lean`),
+> and the asymptotic step needs neither Levinson nor Frobenius (bounded-variation
+> Abel integral for the single-crossing case; a boundedness-vs-blow-up argument at
+> upward mean-shift crossings for the multiple-zero case).  Live plan:
+> `LaplaceACDerivation.md`.  The conditional-axiom plan below is retained ONLY as
+> a fallback if a derivation step proves infeasible.
+
+**Safe conditional-axiom plan (2026-07-11, Codex) — FALLBACK ONLY.**  If we decide to
 axiomatize the missing analysis, keep the axiom boundary below the final
 identifiability statement.  Do **not** add an axiom of the form
 `ZeroDrift -> p = q`, and avoid even naming an axiom

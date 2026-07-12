@@ -1197,14 +1197,17 @@ Remaining research objectives are now narrower and split by trust level:
 
 - Lean-native: remove the nondegeneracy from the gap-local `W = 0` theorem by
   formalizing the one-sided support/zero-coordinate cases.
-- Conditional analytic track: introduce carefully scoped external axioms for
-  the a.c. exponential-moment proof, preferably below the final
-  `ZeroDrift -> p = q` conclusion.  The recommended boundary is recorded in
-  `LaplaceGeneralConverseRoadmap.md`: either an abstract ODE
-  asymptotic-uniqueness/Abel theorem, or, more aggressively, a conditional
-  external bridge `ZeroDrift -> W ≡ 0` for a.c. exponential-moment measures.
-  In both cases the final `p = q` step should remain the already-certified
-  Wronskian gate.
+- Derivation track (DECISION 2026-07-11 — do NOT axiomatize): the a.c.
+  single-crossing (3A) and multiple-zero (3B) bridges `ZeroDrift -> W ≡ 0` are
+  non-trivial project-own facts, not well-known theorems, so they are being
+  PROVED in Lean rather than asserted as axioms; the final `p = q` step remains
+  the already-certified Wronskian gate.  Two enabling discoveries: the elliptic
+  identity is already certified classically (`LaplaceWronskian.lean`), and the
+  asymptotic step needs neither Levinson nor Frobenius (bounded-variation Abel
+  integral for 3A; boundedness-vs-blow-up at upward mean-shift crossings for
+  3B).  Live plan: `LaplaceACDerivation.md`.  The conditional-axiom route
+  (`LaplaceACConditionalAxiomPlan.md`) is retained only as an explicit FALLBACK.
+  First lemma landed axiom-free (`upperExpMass_tendsto_atTop_zero`).
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and

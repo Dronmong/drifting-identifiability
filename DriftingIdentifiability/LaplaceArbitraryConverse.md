@@ -22,9 +22,17 @@ formalizable.  Full proof in `LaplaceGeneralConverseRoadmap.md` (Milestone 5).
 **Current trust boundary.**  The machine-checked main track proves conditional
 gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, and the finite/nowhere-dense
 classes.  The a.c. exponential-moment result is presently a paper proof, not a
-promoted Lean theorem.  If we axiomatize it, the axioms must be external
-analytic facts (Green's-function/distribution identities, tail asymptotics, or
-ODE asymptotic uniqueness), not the desired conclusion `ZeroDrift -> p = q`.
+promoted Lean theorem.
+
+**Decision 2026-07-11: DERIVE the a.c. case, do NOT axiomatize it.**  The a.c.
+single-crossing (3A) and multiple-zero (3B) bridges `ZeroDrift ⟹ W ≡ 0` are
+non-trivial project-own facts, not well-known theorems, so they will be PROVED
+in Lean (reducing to the already-certified `W ≡ 0 ⟹ p = q` gate) rather than
+asserted as axioms.  The live derivation plan is
+[`LaplaceACDerivation.md`](LaplaceACDerivation.md); the conditional-axiom route
+in [`LaplaceACConditionalAxiomPlan.md`](LaplaceACConditionalAxiomPlan.md) is
+retained only as an explicitly-marked FALLBACK if a derivation step proves
+infeasible.  No `ZeroDrift -> p = q` (or a.c. bridge) axiom is being added.
 
 **Handoff roadmap for the general-measure push:**
 `LaplaceGeneralConverseRoadmap.md` (2026-07-10) — start there; it contains

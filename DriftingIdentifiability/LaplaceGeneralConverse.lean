@@ -434,6 +434,47 @@ theorem lowerExpMass_tendsto_atBot_zero
           (fun y : ℝ => Real.exp (y / τ))]
   simpa using hDCT
 
+/-- Symmetric tail limit: the upper exponential mass `P⁺(x) = ∫_{y>x} e^{-y/τ} dp`
+tends to `0` as `x → +∞`.  Mirror of `lowerExpMass_tendsto_atBot_zero`; no moment
+hypothesis is needed (the integrand is bounded by `1` for `x ≥ 0`).  This is a
+building block for `W → 0` at `+∞` in the a.c. Wronskian derivation. -/
+theorem upperExpMass_tendsto_atTop_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] :
+    Tendsto (fun x => upperExpMass τ p x) atTop (𝓝 0) := by
+  unfold upperExpMass
+  simp_rw [← integral_indicator measurableSet_Ioi]
+  have h_event : ∀ᶠ x : ℝ in atTop, (0 : ℝ) ≤ x := Ici_mem_atTop 0
+  have hDCT :
+      Tendsto
+        (fun x => ∫ y, (Set.Ioi x).indicator (fun y : ℝ => Real.exp (-y / τ)) y ∂p)
+        atTop (𝓝 (∫ _ : ℝ, (0 : ℝ) ∂p)) := by
+    refine tendsto_integral_filter_of_norm_le_const (μ := p) (l := (atTop : Filter ℝ))
+      (G := ℝ) (f := fun _ : ℝ => (0 : ℝ)) ?h_meas ?h_bound ?h_lim
+    · exact Eventually.of_forall fun x =>
+        ((by fun_prop :
+          AEStronglyMeasurable (fun y : ℝ => Real.exp (-y / τ)) p).indicator measurableSet_Ioi)
+    · refine ⟨1, ?_⟩
+      filter_upwards [h_event] with x hx
+      exact ae_of_all p fun y => by
+        by_cases hy : x < y
+        · have hy0 : (0 : ℝ) ≤ y := le_of_lt (lt_of_le_of_lt hx hy)
+          rw [Set.indicator_of_mem (show y ∈ Set.Ioi x by simpa using hy)
+                (fun y : ℝ => Real.exp (-y / τ)),
+              Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+          exact Real.exp_le_one_iff.mpr
+            (by rw [neg_div]; exact neg_nonpos.mpr (div_nonneg hy0 hτ.le))
+        · rw [Set.indicator_of_notMem (show y ∉ Set.Ioi x by simpa using hy)
+                (fun y : ℝ => Real.exp (-y / τ)),
+              norm_zero]
+          exact zero_le_one
+    · exact ae_of_all p fun y => by
+        refine tendsto_nhds_of_eventually_eq ?_
+        filter_upwards [(Ioi_mem_atTop y : Set.Ioi y ∈ (atTop : Filter ℝ))] with x hx
+        have hyx : ¬ x < y := not_lt.mpr (le_of_lt hx)
+        rw [Set.indicator_of_notMem (show y ∉ Set.Ioi x by simpa using hyx)
+          (fun y : ℝ => Real.exp (-y / τ))]
+  simpa using hDCT
+
 theorem lowerCompensatedMoment_tendsto_atBot_zero
     (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] :
     Tendsto (fun x => lowerCompensatedMoment τ p x) atBot (𝓝 0) := by
