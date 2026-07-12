@@ -475,6 +475,68 @@ theorem upperExpMass_tendsto_atTop_zero
           (fun y : ℝ => Real.exp (-y / τ))]
   simpa using hDCT
 
+/-- With the positive exponential moment available, the lower exponential mass
+converges to the full `e^{y/τ}` moment as the cutoff goes to `+∞`. -/
+theorem lowerExpMass_tendsto_atTop_integral
+    (τ : ℝ) (p : Measure ℝ)
+    (hInt : Integrable (fun y : ℝ => Real.exp (y / τ)) p) :
+    Tendsto (fun x => lowerExpMass τ p x) atTop
+      (𝓝 (∫ y, Real.exp (y / τ) ∂p)) := by
+  unfold lowerExpMass
+  simp_rw [← integral_indicator measurableSet_Iic]
+  refine tendsto_integral_filter_of_dominated_convergence
+    (μ := p) (l := (atTop : Filter ℝ))
+    (bound := fun y : ℝ => Real.exp (y / τ))
+    ?h_meas ?h_bound hInt ?h_lim
+  · exact Eventually.of_forall fun x =>
+      ((by fun_prop :
+        AEStronglyMeasurable (fun y : ℝ => Real.exp (y / τ)) p).indicator measurableSet_Iic)
+  · exact Eventually.of_forall fun x => ae_of_all p fun y => by
+      by_cases hy : y ≤ x
+      · rw [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ)),
+          Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+      · rw [Set.indicator_of_notMem (show y ∉ Set.Iic x by simpa using hy)
+            (fun y : ℝ => Real.exp (y / τ)),
+          norm_zero]
+        exact (Real.exp_pos _).le
+  · exact ae_of_all p fun y => by
+      refine tendsto_const_nhds.congr' ?_
+      filter_upwards [(Ici_mem_atTop y : Set.Ici y ∈ (atTop : Filter ℝ))] with x hx
+      rw [Set.indicator_of_mem (show y ∈ Set.Iic x by simpa using hx)
+        (fun y : ℝ => Real.exp (y / τ))]
+
+/-- With the negative exponential moment available, the upper exponential mass
+converges to the full `e^{-y/τ}` moment as the cutoff goes to `-∞`. -/
+theorem upperExpMass_tendsto_atBot_integral
+    (τ : ℝ) (p : Measure ℝ)
+    (hInt : Integrable (fun y : ℝ => Real.exp (-y / τ)) p) :
+    Tendsto (fun x => upperExpMass τ p x) atBot
+      (𝓝 (∫ y, Real.exp (-y / τ) ∂p)) := by
+  unfold upperExpMass
+  simp_rw [← integral_indicator measurableSet_Ioi]
+  refine tendsto_integral_filter_of_dominated_convergence
+    (μ := p) (l := (atBot : Filter ℝ))
+    (bound := fun y : ℝ => Real.exp (-y / τ))
+    ?h_meas ?h_bound hInt ?h_lim
+  · exact Eventually.of_forall fun x =>
+      ((by fun_prop :
+        AEStronglyMeasurable (fun y : ℝ => Real.exp (-y / τ)) p).indicator measurableSet_Ioi)
+  · exact Eventually.of_forall fun x => ae_of_all p fun y => by
+      by_cases hy : x < y
+      · rw [Set.indicator_of_mem (show y ∈ Set.Ioi x by simpa using hy)
+            (fun y : ℝ => Real.exp (-y / τ)),
+          Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+      · rw [Set.indicator_of_notMem (show y ∉ Set.Ioi x by simpa using hy)
+            (fun y : ℝ => Real.exp (-y / τ)),
+          norm_zero]
+        exact (Real.exp_pos _).le
+  · exact ae_of_all p fun y => by
+      refine tendsto_const_nhds.congr' ?_
+      filter_upwards [(Iio_mem_atBot y : Set.Iio y ∈ (atBot : Filter ℝ))] with x hx
+      rw [Set.indicator_of_mem (show y ∈ Set.Ioi x by simpa using hx)
+        (fun y : ℝ => Real.exp (-y / τ))]
+
 theorem lowerCompensatedMoment_tendsto_atBot_zero
     (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ) [IsFiniteMeasure p] :
     Tendsto (fun x => lowerCompensatedMoment τ p x) atBot (𝓝 0) := by

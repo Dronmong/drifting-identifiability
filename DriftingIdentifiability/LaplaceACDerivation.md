@@ -79,8 +79,10 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 ## Three sub-arguments giving W ≡ 0
 
 - TAIL: `W -> 0` at `+-inf` (DCT on the one-sided masses; `P^+ -> 0` at `+inf`,
-  `P^-` bounded by the exp moment, etc.). Lemma `upperExpMass_tendsto_atTop_zero`
-  DONE this session; `lowerExpMass_tendsto_atBot_zero` already certified.
+  `P^-` converges to the finite positive exponential moment, and the mirror
+  statement at `-inf`).  This is now certified as L2:
+  `laplaceKernelNormalizerWronskian_tendsto_atTop_zero` and
+  `laplaceKernelNormalizerWronskian_tendsto_atBot_zero`.
 - OUTER (BV): on `[x_0, inf)` inside the outer interval, `|m| >= |m(x_0)| > 0`, and
   `int_{x_0}^inf |2 mu'/m| <= (1/|m(x_0)|) 2 int mu' = (2/|m(x_0)|)(mu_+ - mu(x_0))
   < inf` (since `mu' >= 0`, bounded). So `W = W(x_0) exp(-int 2 mu'/m)` tends to a
@@ -101,7 +103,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 |---|---|---|
 | L0 | Gate `W ≡ 0 => p = q` | DONE (certified) |
 | L1 | First-order identities `L_p'=D_p/tau`, `D_p'=L_p/tau-2Z_p` | DONE (certified, classical) |
-| L2 | Tail `W -> 0` at `+-inf` (`upperExpMass_tendsto_atTop_zero` + boundedness) | `upperExpMass` limit DONE; assembly TODO (easy) |
+| L2 | Tail `W -> 0` at `+-inf` (`upperExpMass_tendsto_atTop_zero` + boundedness) | DONE under explicit two-sided exponential moments: `lowerExpMass_tendsto_atTop_integral`, `upperExpMass_tendsto_atBot_integral`, `laplaceKernelNormalizerWronskian_tendsto_atTop_zero`, `laplaceKernelNormalizerWronskian_tendsto_atBot_zero` |
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | ODE/ABEL BRIDGE DONE in `LaplaceACAbel.lean`: zero drift gives the common ratio `m = D_p/Z_p`; from explicit differentiability data the actual normalizer Wronskian satisfies Abel pointwise, and an a.e. wrapper is proved. Remaining analytic work is to derive those differentiability/second-derivative hypotheses from the a.c. exp-moment assumptions |
@@ -137,7 +139,9 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
 
 ## Risk / feasibility (honest)
 
-- L2, L4, L6, L9-cover: standard real analysis; expected to go through.
+- L2: RESOLVED under the explicit exponential-moment hypotheses used by the
+  a.c. theorem.  L4, L6, L9-cover: standard real analysis; expected to go
+  through.
 - L3 (tilted-mean monotonicity): **RESOLVED, AXIOM-FREE (this session).** This was
   THE decisive test of whether the route needs an external axiom. It does not:
   `laplaceTiltedMean_monotone` (`LaplaceTiltedMeanMonotone.lean`) proves `mu_p`
@@ -234,3 +238,10 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   a.e. wrapper `ae_hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift`.
   L5 no longer has a sign/algebra/zero-drift gap; the next work is deriving the
   explicit differentiability hypotheses from a.c. exp-moment regularity.
+- 2026-07-11: FINISHED L2 tail assembly. Added dominated-convergence moment
+  limits `lowerExpMass_tendsto_atTop_integral` and
+  `upperExpMass_tendsto_atBot_integral`, then proved the named normalizer
+  Wronskian satisfies `W -> 0` at both tails under the matching exponential
+  moments:
+  `laplaceKernelNormalizerWronskian_tendsto_atTop_zero` and
+  `laplaceKernelNormalizerWronskian_tendsto_atBot_zero`.

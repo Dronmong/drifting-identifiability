@@ -383,4 +383,75 @@ theorem laplaceKernelNormalizerWronskian_continuousWithinAt_Ici
       ((lowerExpMass_continuousWithinAt_Ici τ hτ p x).mul
         (upperExpMass_continuousWithinAt_Ici τ hτ q x)))
 
+/-! ## L2 tail assembly for the a.c. Wronskian route -/
+
+/-- **L2 right-tail assembly.**  If both laws have the positive exponential
+moment, then the raw-normalizer Wronskian tends to `0` as `x → +∞`.
+
+In mass-determinant form
+`W = (2/τ)(P⁺Q⁻ - P⁻Q⁺)`: the upper masses `P⁺, Q⁺` tend to zero at `+∞`,
+while the lower masses converge to finite exponential moments. -/
+theorem laplaceKernelNormalizerWronskian_tendsto_atTop_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q]
+    (hpExp : Integrable (fun y : ℝ => Real.exp (y / τ)) p)
+    (hqExp : Integrable (fun y : ℝ => Real.exp (y / τ)) q) :
+    Tendsto (fun x => laplaceKernelNormalizerWronskian τ p q x) atTop (𝓝 0) := by
+  have hPm := lowerExpMass_tendsto_atTop_integral τ p hpExp
+  have hQm := lowerExpMass_tendsto_atTop_integral τ q hqExp
+  have hPp := upperExpMass_tendsto_atTop_zero τ hτ p
+  have hQp := upperExpMass_tendsto_atTop_zero τ hτ q
+  have hdet :
+      Tendsto
+        (fun x =>
+          upperExpMass τ p x * lowerExpMass τ q x -
+            lowerExpMass τ p x * upperExpMass τ q x)
+        atTop (𝓝 0) := by
+    have hprod₁ := hPp.mul hQm
+    have hprod₂ := hPm.mul hQp
+    simpa using hprod₁.sub hprod₂
+  have heq : (fun x => laplaceKernelNormalizerWronskian τ p q x)
+      = fun x =>
+        (2 / τ) *
+          (upperExpMass τ p x * lowerExpMass τ q x -
+            lowerExpMass τ p x * upperExpMass τ q x) := by
+    funext x
+    exact laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x
+  rw [heq]
+  simpa using hdet.const_mul (2 / τ)
+
+/-- **L2 left-tail assembly.**  If both laws have the negative exponential
+moment, then the raw-normalizer Wronskian tends to `0` as `x → -∞`.
+
+Here the lower masses `P⁻, Q⁻` tend to zero at `-∞`, while the upper masses
+converge to finite negative exponential moments. -/
+theorem laplaceKernelNormalizerWronskian_tendsto_atBot_zero
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsFiniteMeasure p] [IsFiniteMeasure q]
+    (hpExp : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
+    (hqExp : Integrable (fun y : ℝ => Real.exp (-y / τ)) q) :
+    Tendsto (fun x => laplaceKernelNormalizerWronskian τ p q x) atBot (𝓝 0) := by
+  have hPm := lowerExpMass_tendsto_atBot_zero τ hτ p
+  have hQm := lowerExpMass_tendsto_atBot_zero τ hτ q
+  have hPp := upperExpMass_tendsto_atBot_integral τ p hpExp
+  have hQp := upperExpMass_tendsto_atBot_integral τ q hqExp
+  have hdet :
+      Tendsto
+        (fun x =>
+          upperExpMass τ p x * lowerExpMass τ q x -
+            lowerExpMass τ p x * upperExpMass τ q x)
+        atBot (𝓝 0) := by
+    have hprod₁ := hPp.mul hQm
+    have hprod₂ := hPm.mul hQp
+    simpa using hprod₁.sub hprod₂
+  have heq : (fun x => laplaceKernelNormalizerWronskian τ p q x)
+      = fun x =>
+        (2 / τ) *
+          (upperExpMass τ p x * lowerExpMass τ q x -
+            lowerExpMass τ p x * upperExpMass τ q x) := by
+    funext x
+    exact laplaceKernelNormalizerWronskian_eq_massDet τ hτ p q x
+  rw [heq]
+  simpa using hdet.const_mul (2 / τ)
+
 end DriftingIdentifiability

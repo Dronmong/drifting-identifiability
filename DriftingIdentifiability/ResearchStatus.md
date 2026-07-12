@@ -1207,9 +1207,11 @@ Remaining research objectives are now narrower and split by trust level:
   integral for 3A; boundedness-vs-blow-up at upward mean-shift crossings for
   3B).  Live plan: `LaplaceACDerivation.md`.  The conditional-axiom route
   (`LaplaceACConditionalAxiomPlan.md`) is retained only as an explicit FALLBACK.
-  Current Lean progress is axiom-free: L2's upper-tail building block,
-  L3 monotone tilted mean, L7 strict right-derivative at straddling points, and
-  the L5 zero-drift ODE/Abel bridge (`LaplaceACAbel.lean`).  L5 now proves that
+  Current Lean progress is axiom-free: L2's full Wronskian tail assembly under
+  explicit two-sided exponential moments, L3 monotone tilted mean, L7 strict
+  right-derivative at straddling points, and the L5 zero-drift ODE/Abel bridge
+  (`LaplaceACAbel.lean`).  L2 now proves `W -> 0` at both tails via
+  dominated-convergence moment limits and the mass-determinant formula.  L5 now proves that
   zero drift gives the common ratio `m = D_p/Z_p`, derives the shared ODE from
   explicit differentiability data, and packages both pointwise and a.e. Abel
   identities for the named normalizer Wronskian.  What remains upstream is the
