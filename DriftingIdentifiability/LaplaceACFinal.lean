@@ -1,4 +1,4 @@
-import DriftingIdentifiability.LaplaceACRegularity
+import DriftingIdentifiability.LaplaceACAsymptotics
 import DriftingIdentifiability.LaplaceACPropagation
 
 /-!
@@ -21,10 +21,72 @@ certificates to the chosen finite breakpoint list.
 -/
 
 open MeasureTheory Set Filter Topology
+open scoped intervalIntegral
 
 namespace DriftingIdentifiability
 
 open Paper
+
+/-! ## Small FTC/local-boundedness helpers for certificate constructors -/
+
+private lemma uIcc_subset_Ioo_of_endpoints_mem_Ioo
+    {a b x y : ℝ} (hx : x ∈ Ioo a b) (hy : y ∈ Ioo a b) :
+    uIcc x y ⊆ Ioo a b := by
+  intro z hz
+  rcases le_total x y with hxy | hyx
+  · rw [uIcc_of_le hxy] at hz
+    exact ⟨lt_of_lt_of_le hx.1 hz.1, lt_of_le_of_lt hz.2 hy.2⟩
+  · rw [uIcc_of_ge hyx] at hz
+    exact ⟨lt_of_lt_of_le hy.1 hz.1, lt_of_le_of_lt hz.2 hx.2⟩
+
+/-- Primitive-by-FTC helper used by upward-crossing certificates.  If a scalar
+coefficient is continuous on an open gap, then `z ↦ ∫ s in base..z, c s` has
+the expected right derivative at every point of that gap. -/
+private theorem intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+    {c : ℝ → ℝ} {a b base t : ℝ}
+    (hcont : ContinuousOn c (Ioo a b))
+    (hbase : base ∈ Ioo a b) (ht : t ∈ Ioo a b) :
+    HasDerivWithinAt (fun z : ℝ => ∫ s in base..z, c s) (c t) (Ici t) t := by
+  have hint : IntervalIntegrable c volume base t := by
+    exact (hcont.mono (uIcc_subset_Ioo_of_endpoints_mem_Ioo hbase ht)).intervalIntegrable
+  let mid : ℝ := (t + b) / 2
+  have ht_mid : t < mid := by
+    dsimp [mid]
+    linarith [ht.2]
+  have hmid_b : mid < b := by
+    dsimp [mid]
+    linarith [ht.2]
+  let J : Set ℝ := Icc t mid
+  have hJsubset : J ⊆ Ioo a b := by
+    intro z hz
+    exact ⟨lt_of_lt_of_le ht.1 hz.1, lt_of_le_of_lt hz.2 hmid_b⟩
+  have hcontJ : ContinuousOn c J := hcont.mono hJsubset
+  have hmeasJ : StronglyMeasurableAtFilter c (𝓝[J] t) volume :=
+    hcontJ.stronglyMeasurableAtFilter_nhdsWithin measurableSet_Icc t
+  have htJ : t ∈ J := ⟨le_rfl, ht_mid.le⟩
+  haveI : Fact (t ∈ J) := ⟨htJ⟩
+  have hderivJ : HasDerivWithinAt (fun z : ℝ => ∫ s in base..z, c s)
+      (c t) J t :=
+    intervalIntegral.integral_hasDerivWithinAt_right
+      hint hmeasJ (hcontJ t htJ)
+  exact hderivJ.mono_of_mem_nhdsWithin (Icc_mem_nhdsGE ht_mid)
+
+/-- Continuity of the same FTC primitive on compact subintervals of the gap. -/
+private theorem intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+    {c : ℝ → ℝ} {a b base x y : ℝ}
+    (hcont : ContinuousOn c (Ioo a b))
+    (hbase : base ∈ Ioo a b) (hx : x ∈ Ioo a b) (hy : y ∈ Ioo a b) :
+    ContinuousOn (fun z : ℝ => ∫ s in base..z, c s) (Icc x y) := by
+  refine continuousOn_of_forall_continuousAt ?_
+  intro z hz
+  have hzGap : z ∈ Ioo a b :=
+    ⟨lt_of_lt_of_le hx.1 hz.1, lt_of_le_of_lt hz.2 hy.2⟩
+  have hcz : ContinuousAt c z :=
+    hcont.continuousAt (Ioo_mem_nhds hzGap.1 hzGap.2)
+  have hint : IntervalIntegrable c volume base z := by
+    exact (hcont.mono (uIcc_subset_Ioo_of_endpoints_mem_Ioo hbase hzGap)).intervalIntegrable
+  exact (intervalIntegral.integral_hasDerivAt_right
+    hint (ContinuousOn.stronglyMeasurableAtFilter isOpen_Ioo hcont z hzGap) hcz).continuousAt
 
 /-- The normalizer-Wronskian is continuous once both normalizers have the C²
 certificate used by the Abel bridge.  The certificate gives continuity of the
@@ -44,6 +106,28 @@ theorem continuous_laplaceKernelNormalizerWronskian_of_regular
         ((continuous_laplaceKernelNormalizer τ hτ q).continuousAt)).sub
       (((continuous_laplaceKernelNormalizer τ hτ p).continuousAt).mul
         (hq.hasDerivAt_rightDerivCoeff x).continuousAt)
+
+private theorem laplaceWronskian_isBoundedUnder_nhdsLT_of_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q) (x : ℝ) :
+    IsBoundedUnder (· ≤ ·) (𝓝[<] x)
+      (norm ∘ fun y : ℝ => laplaceKernelNormalizerWronskian τ p q y) := by
+  have hWcont : Continuous (fun y : ℝ => laplaceKernelNormalizerWronskian τ p q y) :=
+    continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  exact (hWcont.continuousAt.norm.isBoundedUnder_le).mono nhdsWithin_le_nhds
+
+private theorem laplaceWronskian_isBoundedUnder_nhdsGT_of_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q) (x : ℝ) :
+    IsBoundedUnder (· ≤ ·) (𝓝[>] x)
+      (norm ∘ fun y : ℝ => laplaceKernelNormalizerWronskian τ p q y) := by
+  have hWcont : Continuous (fun y : ℝ => laplaceKernelNormalizerWronskian τ p q y) :=
+    continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  exact (hWcont.continuousAt.norm.isBoundedUnder_le).mono nhdsWithin_le_nhds
 
 /-- Final deterministic certificate for the a.c. Laplace Wronskian endgame.
 
@@ -115,7 +199,7 @@ crossing case.  The hypotheses are intentionally explicit:
 
 * C²-normalizer regularity gives Wronskian continuity and the Abel equation;
 * two-sided exponential moments give the Wronskian tail limits;
-* `0 ≤ μ'` is the monotonicity input for the tilted mean;
+* integrability of `y` under `p` lets L3 supply `0 ≤ μ'`;
 * `m > 0` to the left and `m < 0` to the right encode the single downward
   crossing sign geometry.
 
@@ -132,13 +216,15 @@ noncomputable def laplaceACFinalAssembly_singleDown_of_outerSigns
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
     (hm_right : ∀ t : ℝ, a < t → laplaceMeanShiftRatio τ p t < 0) :
     LaplaceACFinalAssembly τ p q := by
   let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
   let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
   let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  have hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1 :=
+    laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular τ hτ p hp hpMoment
   have hWcont : Continuous W := by
     simpa [W] using
       continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
@@ -207,13 +293,13 @@ theorem laplaceAC_identifies_singleDown_of_outerSigns
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
     (hm_right : ∀ t : ℝ, a < t → laplaceMeanShiftRatio τ p t < 0) :
     p = q :=
   laplaceAC_identifies_of_finalAssembly τ hτ p q
     (laplaceACFinalAssembly_singleDown_of_outerSigns τ hτ p q hp hq hzero
-      hpExpPos hqExpPos hpExpNeg hqExpNeg hμ_nonneg hm_left hm_right)
+      hpExpPos hqExpPos hpExpNeg hqExpNeg hpMoment hm_left hm_right)
 
 /-! ## Concrete three-crossing / first 3B assembly -/
 
@@ -242,7 +328,7 @@ noncomputable def laplaceACFinalAssembly_downUpDown_of_outerSigns_of_upwardCross
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
     (hm_ab_neg : ∀ t : ℝ, a < t → t < b → laplaceMeanShiftRatio τ p t < 0)
     (hm_bc_pos : ∀ t : ℝ, b < t → t < c → 0 < laplaceMeanShiftRatio τ p t)
@@ -277,6 +363,8 @@ noncomputable def laplaceACFinalAssembly_downUpDown_of_outerSigns_of_upwardCross
   let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
   let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
   let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  have hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1 :=
+    laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular τ hτ p hp hpMoment
   have hWcont : Continuous W := by
     simpa [W] using
       continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
@@ -401,7 +489,7 @@ theorem laplaceAC_identifies_downUpDown_of_outerSigns_of_upwardCrossing
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
     (hm_ab_neg : ∀ t : ℝ, a < t → t < b → laplaceMeanShiftRatio τ p t < 0)
     (hm_bc_pos : ∀ t : ℝ, b < t → t < c → 0 < laplaceMeanShiftRatio τ p t)
@@ -436,7 +524,7 @@ theorem laplaceAC_identifies_downUpDown_of_outerSigns_of_upwardCrossing
   laplaceAC_identifies_of_finalAssembly τ hτ p q
     (laplaceACFinalAssembly_downUpDown_of_outerSigns_of_upwardCrossing
       τ hτ p q hp hq hzero hab hbc hal hlb hbr hrc hδL hδR hLL hLR
-      hpExpPos hqExpPos hpExpNeg hqExpNeg hμ_nonneg
+      hpExpPos hqExpPos hpExpNeg hqExpNeg hpMoment
       hm_left hm_ab_neg hm_bc_pos hm_right hAL hALcont hAR hARcont
       hWboundedLeft hWboundedRight hμ_left hm_left_lower hμ_right hm_right_upper)
 
@@ -500,6 +588,137 @@ structure LaplaceACUpwardCrossingCertificate
     δR ≤ laplaceMeanShiftRatioDeriv τ p t + 1
   hm_right_upper : ∀ t : ℝ, up < t → t < rightNear →
     laplaceMeanShiftRatio τ p t ≤ LR * (t - up)
+
+/-- Constructor for an upward-crossing certificate from the regularity layer
+plus local crossing inequalities.
+
+This is the main upstream convenience constructor for L8.  Compared with the
+raw certificate, callers no longer provide:
+
+* the primitive functions `AL`, `AR`;
+* FTC proofs that those primitives differentiate to `2 μ' / m`;
+* continuity of the primitives on compact subintervals;
+* boundedness of the Wronskian near the crossing.
+
+Those are derived here from `LaplaceC2NormalizerRegular`, continuity of the
+coefficient away from the zero, and the interval-integral FTC.  The remaining
+inputs are the genuinely local crossing facts: sign on the two adjacent gaps,
+positive lower bounds for `μ'`, and one-sided linear bounds for `m`. -/
+noncomputable def LaplaceACUpwardCrossingCertificate.of_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    {leftDown up rightDown leftNear rightNear δL δR LL LR : ℝ}
+    (h_left_up : leftDown < up)
+    (h_up_right : up < rightDown)
+    (h_left_l : leftDown < leftNear)
+    (h_l_up : leftNear < up)
+    (h_up_r : up < rightNear)
+    (h_r_right : rightNear < rightDown)
+    (hδL : 0 < δL) (hδR : 0 < δR)
+    (hLL : 0 < LL) (hLR : 0 < LR)
+    (hm_left_neg : ∀ t : ℝ, leftDown < t → t < up →
+      laplaceMeanShiftRatio τ p t < 0)
+    (hm_right_pos : ∀ t : ℝ, up < t → t < rightDown →
+      0 < laplaceMeanShiftRatio τ p t)
+    (hμ_left : ∀ t : ℝ, leftNear ≤ t → t < up →
+      δL ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hm_left_lower : ∀ t : ℝ, leftNear ≤ t → t < up →
+      -(LL * (up - t)) ≤ laplaceMeanShiftRatio τ p t)
+    (hμ_right : ∀ t : ℝ, up < t → t < rightNear →
+      δR ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hm_right_upper : ∀ t : ℝ, up < t → t < rightNear →
+      laplaceMeanShiftRatio τ p t ≤ LR * (t - up)) :
+    LaplaceACUpwardCrossingCertificate τ p q leftDown up rightDown := by
+  let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
+  let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  let c : ℝ → ℝ := fun x => ((2 : ℝ) * μDeriv x) / m x
+  have hm_cont : Continuous m := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    simpa [m] using
+      (hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp x).continuousAt
+  have hμ_cont : Continuous μDeriv := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    change ContinuousAt (laplaceMeanShiftRatioDeriv τ p + fun _ : ℝ => (1 : ℝ)) x
+    exact
+      (hasDerivAt_laplaceMeanShiftRatioDeriv_regular τ hτ p hp x).continuousAt.add
+        continuousAt_const
+  have hc_left : ContinuousOn c (Ioo leftDown up) := by
+    dsimp [c]
+    exact ((continuous_const.mul hμ_cont).continuousOn).div hm_cont.continuousOn
+      (fun t ht => (hm_left_neg t ht.1 ht.2).ne)
+  have hc_right : ContinuousOn c (Ioo up rightDown) := by
+    dsimp [c]
+    exact ((continuous_const.mul hμ_cont).continuousOn).div hm_cont.continuousOn
+      (fun t ht => (hm_right_pos t ht.1 ht.2).ne')
+  refine
+    { leftNear := leftNear
+      rightNear := rightNear
+      δL := δL
+      δR := δR
+      LL := LL
+      LR := LR
+      AL := fun z : ℝ => ∫ s in leftNear..z, c s
+      AR := fun z : ℝ => ∫ s in rightNear..z, c s
+      h_left_up := h_left_up
+      h_up_right := h_up_right
+      h_left_l := h_left_l
+      h_l_up := h_l_up
+      h_up_r := h_up_r
+      h_r_right := h_r_right
+      hδL := hδL
+      hδR := hδR
+      hLL := hLL
+      hLR := hLR
+      hm_left_neg := hm_left_neg
+      hm_right_pos := hm_right_pos
+      hAL := ?_
+      hALcont := ?_
+      hAR := ?_
+      hARcont := ?_
+      hWboundedLeft := ?_
+      hWboundedRight := ?_
+      hμ_left := hμ_left
+      hm_left_lower := hm_left_lower
+      hμ_right := hμ_right
+      hm_right_upper := hm_right_upper }
+  · intro x y hleftx hxy hyup t ht
+    have htGap : t ∈ Ioo leftDown up :=
+      ⟨lt_of_lt_of_le hleftx ht.1, lt_trans ht.2 hyup⟩
+    simpa [c, μDeriv, m] using
+      intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+        (c := c) (a := leftDown) (b := up) (base := leftNear) (t := t)
+        hc_left ⟨h_left_l, h_l_up⟩ htGap
+  · intro x y hleftx hxy hyup
+    have hxGap : x ∈ Ioo leftDown up :=
+      ⟨hleftx, lt_of_le_of_lt hxy hyup⟩
+    have hyGap : y ∈ Ioo leftDown up :=
+      ⟨lt_of_lt_of_le hleftx hxy, hyup⟩
+    simpa [c, μDeriv, m] using
+      intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := leftDown) (b := up) (base := leftNear) (x := x) (y := y)
+        hc_left ⟨h_left_l, h_l_up⟩ hxGap hyGap
+  · intro x y hupx hxy hyright t ht
+    have htGap : t ∈ Ioo up rightDown :=
+      ⟨lt_of_lt_of_le hupx ht.1, lt_trans ht.2 hyright⟩
+    simpa [c, μDeriv, m] using
+      intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+        (c := c) (a := up) (b := rightDown) (base := rightNear) (t := t)
+        hc_right ⟨h_up_r, h_r_right⟩ htGap
+  · intro x y hupx hxy hyright
+    have hxGap : x ∈ Ioo up rightDown :=
+      ⟨hupx, lt_of_le_of_lt hxy hyright⟩
+    have hyGap : y ∈ Ioo up rightDown :=
+      ⟨lt_of_lt_of_le hupx hxy, hyright⟩
+    simpa [c, μDeriv, m] using
+      intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := up) (b := rightDown) (base := rightNear) (x := x) (y := y)
+        hc_right ⟨h_up_r, h_r_right⟩ hxGap hyGap
+  · exact laplaceWronskian_isBoundedUnder_nhdsLT_of_regular τ hτ p q hp hq up
+  · exact laplaceWronskian_isBoundedUnder_nhdsGT_of_regular τ hτ p q hp hq up
 
 /-- One local upward-crossing certificate kills both adjacent gaps. -/
 theorem LaplaceACUpwardCrossingCertificate.vanishes
@@ -607,6 +826,48 @@ def LaplaceACAlternatingChain.cons
     LaplaceACAlternatingChain τ p q leftDown (up :: rightDown :: rest) :=
   (cert, tail)
 
+/-- Convenience constructor adding one upward crossing using the regularity
+constructor for the local L8 certificate.
+
+This removes the primitive/FTC/W-boundedness obligations from recursive chain
+construction.  The remaining arguments are the genuine local crossing
+inequalities: signs on the two adjacent gaps, positive lower bounds for `μ'`,
+and one-sided linear control of `m` near the upward crossing. -/
+noncomputable def LaplaceACAlternatingChain.cons_regular
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    {leftDown up rightDown leftNear rightNear δL δR LL LR : ℝ} {rest : List ℝ}
+    (h_left_up : leftDown < up)
+    (h_up_right : up < rightDown)
+    (h_left_l : leftDown < leftNear)
+    (h_l_up : leftNear < up)
+    (h_up_r : up < rightNear)
+    (h_r_right : rightNear < rightDown)
+    (hδL : 0 < δL) (hδR : 0 < δR)
+    (hLL : 0 < LL) (hLR : 0 < LR)
+    (hm_left_neg : ∀ t : ℝ, leftDown < t → t < up →
+      laplaceMeanShiftRatio τ p t < 0)
+    (hm_right_pos : ∀ t : ℝ, up < t → t < rightDown →
+      0 < laplaceMeanShiftRatio τ p t)
+    (hμ_left : ∀ t : ℝ, leftNear ≤ t → t < up →
+      δL ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hm_left_lower : ∀ t : ℝ, leftNear ≤ t → t < up →
+      -(LL * (up - t)) ≤ laplaceMeanShiftRatio τ p t)
+    (hμ_right : ∀ t : ℝ, up < t → t < rightNear →
+      δR ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hm_right_upper : ∀ t : ℝ, up < t → t < rightNear →
+      laplaceMeanShiftRatio τ p t ≤ LR * (t - up))
+    (tail : LaplaceACAlternatingChain τ p q rightDown rest) :
+    LaplaceACAlternatingChain τ p q leftDown (up :: rightDown :: rest) :=
+  LaplaceACAlternatingChain.cons
+    (LaplaceACUpwardCrossingCertificate.of_regular τ hτ p q hp hq
+      h_left_up h_up_right h_left_l h_l_up h_up_r h_r_right
+      hδL hδR hLL hLR hm_left_neg hm_right_pos
+      hμ_left hm_left_lower hμ_right hm_right_upper)
+    tail
+
 /-- The recursive chain produces the L9 alternating-cover tail. -/
 theorem LaplaceACAlternatingChain.to_vanishesFrom
     {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
@@ -616,7 +877,7 @@ theorem LaplaceACAlternatingChain.to_vanishesFrom
     (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
     (hpExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) p)
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1) :
+    (hpMoment : Integrable (fun y : ℝ => y) p) :
     ∀ {leftDown : ℝ} {rest : List ℝ},
       LaplaceACAlternatingChain τ p q leftDown rest →
         VanishesOnAlternatingUpwardPairsFrom
@@ -625,6 +886,8 @@ theorem LaplaceACAlternatingChain.to_vanishesFrom
       let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
       let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
       let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+      have hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1 :=
+        laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular τ hτ p hp hpMoment
       have hWcont : Continuous W := by
         simpa [W] using
           continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
@@ -652,7 +915,7 @@ theorem LaplaceACAlternatingChain.to_vanishesFrom
       rcases cert.vanishes hτ hp hq hzero with ⟨hleftGap, hrightGap⟩
       exact ⟨hleftGap, hrightGap,
         LaplaceACAlternatingChain.to_vanishesFrom
-          hτ hp hq hzero hpExpPos hqExpPos hμ_nonneg htail⟩
+          hτ hp hq hzero hpExpPos hqExpPos hpMoment htail⟩
 
 /-- Arbitrary finite alternating final assembly.
 
@@ -671,13 +934,15 @@ noncomputable def laplaceACFinalAssembly_of_alternatingChain
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < firstDown → 0 < laplaceMeanShiftRatio τ p t)
     (hchain : LaplaceACAlternatingChain τ p q firstDown rest) :
     LaplaceACFinalAssembly τ p q := by
   let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
   let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
   let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  have hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1 :=
+    laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular τ hτ p hp hpMoment
   have hWcont : Continuous W := by
     simpa [W] using
       continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
@@ -706,7 +971,7 @@ noncomputable def laplaceACFinalAssembly_of_alternatingChain
       alternating_cover :=
         ⟨hleft,
           LaplaceACAlternatingChain.to_vanishesFrom
-            hτ hp hq hzero hpExpPos hqExpPos hμ_nonneg hchain⟩ }
+            hτ hp hq hzero hpExpPos hqExpPos hpMoment hchain⟩ }
 
 /-- Identification theorem for an arbitrary finite alternating chain. -/
 theorem laplaceAC_identifies_of_alternatingChain
@@ -720,12 +985,114 @@ theorem laplaceAC_identifies_of_alternatingChain
     (hqExpPos : Integrable (fun y : ℝ => Real.exp (y / τ)) q)
     (hpExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) p)
     (hqExpNeg : Integrable (fun y : ℝ => Real.exp (-y / τ)) q)
-    (hμ_nonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hpMoment : Integrable (fun y : ℝ => y) p)
     (hm_left : ∀ t : ℝ, t < firstDown → 0 < laplaceMeanShiftRatio τ p t)
     (hchain : LaplaceACAlternatingChain τ p q firstDown rest) :
     p = q :=
   laplaceAC_identifies_of_finalAssembly τ hτ p q
     (laplaceACFinalAssembly_of_alternatingChain τ hτ p q hp hq hzero
-      hpExpPos hqExpPos hpExpNeg hqExpNeg hμ_nonneg hm_left hchain)
+      hpExpPos hqExpPos hpExpNeg hqExpNeg hpMoment hm_left hchain)
+
+/-! ## Continuous-density end-to-end wrapper -/
+
+/-- User-facing finite-alternating a.c. certificate.
+
+This is the honest end-to-end hypothesis package for the current one-dimensional
+Laplace theorem.  It says:
+
+* both laws have continuous nonnegative Lebesgue densities, so the C²-normalizer
+  regularity used by Abel is derived internally;
+* both laws have the two-sided exponential denominator moments used by the tail
+  Wronskian limits;
+* `p` has the ordinary first moment used by the tilted-mean monotonicity theorem;
+* the mean-shift ratio of `p` has a finite alternating sign-change cover,
+  represented by a first downward crossing, a left outer sign, and a recursive
+  chain of regular upward-crossing certificates ending in the right outer sign.
+
+The last bullet is the formal version of "finitely many sign-changing zeros" at
+the current level of automation: future zero-enumeration lemmas can construct
+this certificate from more syntactic assumptions such as analytic density plus
+simple zeros. -/
+structure LaplaceACContinuousDensityFiniteAlternating
+    (τ : ℝ) (p q : Measure ℝ) where
+  ρp : ℝ → ℝ
+  ρq : ℝ → ℝ
+  hpρ : ContinuousDensityMeasure p ρp
+  hqρ : ContinuousDensityMeasure q ρq
+  hpMoment : LaplaceTwoSidedExpFirstMoment τ p
+  hqMoment : LaplaceTwoSidedExpFirstMoment τ q
+  hpFirstMoment : Integrable (fun y : ℝ => y) p
+  firstDown : ℝ
+  rest : List ℝ
+  hm_left : ∀ t : ℝ, t < firstDown → 0 < laplaceMeanShiftRatio τ p t
+  chain : LaplaceACAlternatingChain τ p q firstDown rest
+
+/-- The regularity certificate for `p` extracted from a continuous-density
+finite-alternating package. -/
+noncomputable def LaplaceACContinuousDensityFiniteAlternating.regularP
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsFiniteMeasure p]
+    (h : LaplaceACContinuousDensityFiniteAlternating τ p q) :
+    LaplaceC2NormalizerRegular τ p :=
+  laplaceC2NormalizerRegular_of_continuousDensity τ hτ p h.ρp h.hpρ
+
+/-- The regularity certificate for `q` extracted from a continuous-density
+finite-alternating package. -/
+noncomputable def LaplaceACContinuousDensityFiniteAlternating.regularQ
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsFiniteMeasure q]
+    (h : LaplaceACContinuousDensityFiniteAlternating τ p q) :
+    LaplaceC2NormalizerRegular τ q :=
+  laplaceC2NormalizerRegular_of_continuousDensity τ hτ q h.ρq h.hqρ
+
+/-- **End-to-end one-dimensional a.c. Laplace theorem, finite-alternating
+continuous-density form.**
+
+Under zero raw Laplace drift, continuous density regularity, exponential tails,
+and a finite alternating sign-change certificate for the mean-shift ratio, the
+target and training laws are equal.  No C²-normalizer or `HasDerivAt` hypotheses
+are exposed: they are generated from the continuous-density fields. -/
+theorem laplaceAC_identifies_of_continuousDensity_finiteAlternating
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (h : LaplaceACContinuousDensityFiniteAlternating τ p q) :
+    p = q := by
+  have hpReg : LaplaceC2NormalizerRegular τ p :=
+    h.regularP hτ
+  have hqReg : LaplaceC2NormalizerRegular τ q :=
+    h.regularQ hτ
+  exact
+    laplaceAC_identifies_of_alternatingChain τ hτ p q hpReg hqReg hzero
+      h.hpMoment.exp_pos h.hqMoment.exp_pos
+      h.hpMoment.exp_neg h.hqMoment.exp_neg
+      h.hpFirstMoment h.hm_left h.chain
+
+/-- Single-downward-crossing constructor for the continuous-density
+finite-alternating package.  This is the `M = 1` / 3A instance of the general
+finite-alternating theorem. -/
+def LaplaceACContinuousDensityFiniteAlternating.singleDown
+    {τ : ℝ} {p q : Measure ℝ}
+    (ρp ρq : ℝ → ℝ)
+    (hpρ : ContinuousDensityMeasure p ρp)
+    (hqρ : ContinuousDensityMeasure q ρq)
+    (hpMoment : LaplaceTwoSidedExpFirstMoment τ p)
+    (hqMoment : LaplaceTwoSidedExpFirstMoment τ q)
+    (hpFirstMoment : Integrable (fun y : ℝ => y) p)
+    {a : ℝ}
+    (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
+    (hm_right : ∀ t : ℝ, a < t → laplaceMeanShiftRatio τ p t < 0) :
+    LaplaceACContinuousDensityFiniteAlternating τ p q :=
+  { ρp := ρp
+    ρq := ρq
+    hpρ := hpρ
+    hqρ := hqρ
+    hpMoment := hpMoment
+    hqMoment := hqMoment
+    hpFirstMoment := hpFirstMoment
+    firstDown := a
+    rest := []
+    hm_left := hm_left
+    chain := LaplaceACAlternatingChain.rightOuter hm_right }
 
 end DriftingIdentifiability

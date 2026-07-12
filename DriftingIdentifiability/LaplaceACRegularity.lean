@@ -173,6 +173,86 @@ theorem hasDerivAt_laplaceMeanShiftRatio_regular
   simpa [laplaceMeanShiftRatioDeriv, laplaceMeanShiftRatioDerivNumerator,
     laplaceMeanShiftRatioDerivDenominator, laplaceMeanShiftNumerator] using hdiv
 
+/-- Derivative formula for the usual tilted mean, derived from the C²
+normalizer certificate and the identity
+`laplaceTiltedMean = x + laplaceMeanShiftRatio`.
+
+This is the small L3 wiring lemma needed by the final a.c. assemblies: the
+derivative of the tilted mean is exactly `m' + 1`, where
+`m = laplaceMeanShiftRatio`. -/
+theorem hasDerivAt_laplaceTiltedMean_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (hp : LaplaceC2NormalizerRegular τ p) (x : ℝ) :
+    HasDerivAt (laplaceTiltedMean τ p)
+      (laplaceMeanShiftRatioDeriv τ p x + 1) x := by
+  have hratio := hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp x
+  have hdisp : HasDerivAt (laplaceTiltedMeanFromDisplacement τ p)
+      (1 + laplaceMeanShiftRatioDeriv τ p x) x := by
+    have hsum : HasDerivAt (fun t : ℝ => t + laplaceMeanShiftRatio τ p t)
+        (1 + laplaceMeanShiftRatioDeriv τ p x) x :=
+      (hasDerivAt_id x).add hratio
+    change HasDerivAt
+      (fun t : ℝ => t + (∫ y, laplaceWeightedDisplacement τ t y ∂p) /
+        kernelNormalizer (laplaceKernel τ) p t)
+      (1 + laplaceMeanShiftRatioDeriv τ p x) x
+    simpa [laplaceMeanShiftRatio] using hsum
+  have heq : laplaceTiltedMean τ p = laplaceTiltedMeanFromDisplacement τ p := by
+    funext y
+    exact laplaceTiltedMean_eq_fromDisplacement τ hτ p y
+  simpa [heq, add_comm] using hdisp
+
+/-- **L3 bridge for final assembly.**  The already-certified monotonicity of the
+Laplace tilted mean implies the nonnegativity hypothesis consumed by the L6/L8
+assembly theorems.
+
+The extra integrability assumption is exactly the one used by
+`laplaceTiltedMean_monotone`; smooth density / exponential-moment callers can
+discharge it upstream. -/
+theorem laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (hp : LaplaceC2NormalizerRegular τ p)
+    (hint : Integrable (fun y : ℝ => y) p) :
+    ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1 := by
+  intro t
+  exact (hasDerivAt_laplaceTiltedMean_regular τ hτ p hp t).nonneg_of_monotone
+    (laplaceTiltedMean_monotone hτ p hint)
+
+/-- **Strict L7 bridge.**  At a point where the law has positive mass on both
+sides, the C² regularity derivative of the usual tilted mean,
+`laplaceMeanShiftRatioDeriv + 1`, is strictly positive.
+
+This converts the already-proved right-derivative/two-sided-mass L7 theorem into
+the exact coefficient used by the Abel propagation layer. -/
+theorem laplaceMeanShiftRatioDeriv_add_one_pos_of_twoSidedMass_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (hp : LaplaceC2NormalizerRegular τ p) (x : ℝ)
+    (hleft : 0 < p (Set.Iio x)) (hright : 0 < p (Set.Ioi x)) :
+    0 < laplaceMeanShiftRatioDeriv τ p x + 1 := by
+  have hcoeff_pos :
+      0 < laplaceTiltedMeanRightDerivCoeff τ p x :=
+    laplaceTiltedMeanRightDerivCoeff_pos_of_twoSidedMass τ hτ p x hleft hright
+  have hregular :
+      HasDerivWithinAt (laplaceTiltedMean τ p)
+        (laplaceMeanShiftRatioDeriv τ p x + 1) (Set.Ici x) x :=
+    (hasDerivAt_laplaceTiltedMean_regular τ hτ p hp x).hasDerivWithinAt
+  have hrightDeriv :
+      HasDerivWithinAt (laplaceTiltedMean τ p)
+        (laplaceTiltedMeanRightDerivCoeff τ p x) (Set.Ici x) x := by
+    have hdisp :=
+      hasDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement τ hτ p x
+    have heq : laplaceTiltedMean τ p = laplaceTiltedMeanFromDisplacement τ p := by
+      funext y
+      exact laplaceTiltedMean_eq_fromDisplacement τ hτ p y
+    simpa [heq] using hdisp
+  have hEq :
+      laplaceMeanShiftRatioDeriv τ p x + 1 =
+        laplaceTiltedMeanRightDerivCoeff τ p x :=
+    by
+      have h₁ := hregular.derivWithin (uniqueDiffWithinAt_Ici x)
+      have h₂ := hrightDeriv.derivWithin (uniqueDiffWithinAt_Ici x)
+      exact h₁.symm.trans h₂
+  rwa [hEq]
+
 theorem hasDerivAt_laplaceMeanShiftRatioDeriv_regular
     (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
     [IsProbabilityMeasure p] (hp : LaplaceC2NormalizerRegular τ p) (x : ℝ) :
