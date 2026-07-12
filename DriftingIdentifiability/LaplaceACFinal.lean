@@ -1,6 +1,7 @@
 import DriftingIdentifiability.LaplaceACAsymptotics
 import DriftingIdentifiability.LaplaceACPropagation
 import Mathlib.Analysis.Calculus.DSlope
+import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-!
 # Final assembly for the absolutely-continuous Laplace converse
@@ -21,8 +22,8 @@ That cover is exactly the output expected from applying the L6 and L8
 certificates to the chosen finite breakpoint list.
 -/
 
-open MeasureTheory Set Filter Topology
-open scoped intervalIntegral
+open MeasureTheory Set Filter Topology ProbabilityTheory
+open scoped intervalIntegral ENNReal NNReal
 
 namespace DriftingIdentifiability
 
@@ -1278,6 +1279,80 @@ theorem laplaceAC_identifies_of_alternatingChain
     (laplaceACFinalAssembly_of_alternatingChain τ hτ p q hp hq hzero
       hpExpPos hqExpPos hpExpNeg hqExpNeg hpMoment hm_left hchain)
 
+/-! ## Simple sign-changing zero lists -/
+
+/-- A syntactic simple zero of the one-dimensional Laplace mean-shift ratio.
+
+The downstream L8 proof only needs the zero and the adjacent sign geometry, but
+recording `m' ≠ 0` keeps the user-facing hypothesis aligned with the usual
+"simple sign-changing zero" language. -/
+structure LaplaceACSimpleZero (τ : ℝ) (p : Measure ℝ) (a : ℝ) : Type where
+  zero : laplaceMeanShiftRatio τ p a = 0
+  simple : laplaceMeanShiftRatioDeriv τ p a ≠ 0
+
+/-- A local upward sign-changing zero, bracketed by two downward zeros.
+
+This is the exact local input needed to synthesize an L8 certificate from the
+regularity layer: signs on the two adjacent gaps, the upward zero, and the
+two-sided mass condition used by L7.  The neighboring downward zeros are
+recorded so the whole list deserves the name "finite simple zero list", although
+the proof uses them only for bookkeeping/sign-cover semantics. -/
+structure LaplaceACSimpleUpwardCrossing
+    (τ : ℝ) (p : Measure ℝ) (leftDown up rightDown : ℝ) : Type where
+  left_zero : LaplaceACSimpleZero τ p leftDown
+  up_zero : LaplaceACSimpleZero τ p up
+  right_zero : LaplaceACSimpleZero τ p rightDown
+  h_left_up : leftDown < up
+  h_up_right : up < rightDown
+  hm_left_neg : ∀ t : ℝ, leftDown < t → t < up →
+    laplaceMeanShiftRatio τ p t < 0
+  hm_right_pos : ∀ t : ℝ, up < t → t < rightDown →
+    0 < laplaceMeanShiftRatio τ p t
+  hmass_left : 0 < p (Set.Iio up)
+  hmass_right : 0 < p (Set.Ioi up)
+
+/-- Final right-tail sign data after the last downward zero. -/
+structure LaplaceACSimpleRightTail
+    (τ : ℝ) (p : Measure ℝ) (lastDown : ℝ) : Type where
+  down_zero : LaplaceACSimpleZero τ p lastDown
+  hm_right : ∀ t : ℝ, lastDown < t → laplaceMeanShiftRatio τ p t < 0
+
+/-- Recursive finite alternating simple-zero list.
+
+Starting at a downward zero, the tail is either a final right tail, or an upward
+zero followed by the next downward zero and another tail.  Singleton tails are
+impossible, matching `LaplaceACAlternatingChain`. -/
+def LaplaceACSimpleAlternatingZeros
+    (τ : ℝ) (p : Measure ℝ) (leftDown : ℝ) : List ℝ → Type
+  | [] => LaplaceACSimpleRightTail τ p leftDown
+  | [_up] => ULift (PLift False)
+  | up :: rightDown :: rest =>
+      LaplaceACSimpleUpwardCrossing τ p leftDown up rightDown ×
+        LaplaceACSimpleAlternatingZeros τ p rightDown rest
+
+/-- Convert a simple sign-changing zero list into the L8/L9 alternating-chain
+certificate consumed by the final assembly theorem. -/
+noncomputable def LaplaceACSimpleAlternatingZeros.toAlternatingChain
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q) :
+    ∀ {leftDown : ℝ} {rest : List ℝ},
+      LaplaceACSimpleAlternatingZeros τ p leftDown rest →
+        LaplaceACAlternatingChain τ p q leftDown rest
+  | _leftDown, [], htail =>
+      LaplaceACAlternatingChain.rightOuter htail.hm_right
+  | _leftDown, [_up], hbad =>
+      False.elim hbad.down.down
+  | _leftDown, _up :: _rightDown :: _rest, hchain =>
+      LaplaceACAlternatingChain.cons_regular_simpleZero hτ hp hq
+        hchain.1.h_left_up hchain.1.h_up_right
+        hchain.1.hm_left_neg hchain.1.hm_right_pos
+        hchain.1.up_zero.zero
+        hchain.1.hmass_left hchain.1.hmass_right
+        (LaplaceACSimpleAlternatingZeros.toAlternatingChain
+          hτ hp hq hchain.2)
+
 /-! ## Continuous-density end-to-end wrapper -/
 
 /-- User-facing finite-alternating a.c. certificate.
@@ -1379,5 +1454,237 @@ def LaplaceACContinuousDensityFiniteAlternating.singleDown
     rest := []
     hm_left := hm_left
     chain := LaplaceACAlternatingChain.rightOuter hm_right }
+
+/-- User-facing finite-simple-zero a.c. certificate.
+
+This is the cleaned-up version of
+`LaplaceACContinuousDensityFiniteAlternating`: instead of asking callers to
+provide already-built L8 certificates, it asks for a finite alternating list of
+simple sign-changing zeros.  The local certificate data are synthesized by
+`LaplaceACSimpleAlternatingZeros.toAlternatingChain`. -/
+structure LaplaceACContinuousDensityFiniteSimpleZeros
+    (τ : ℝ) (p q : Measure ℝ) where
+  ρp : ℝ → ℝ
+  ρq : ℝ → ℝ
+  hpρ : ContinuousDensityMeasure p ρp
+  hqρ : ContinuousDensityMeasure q ρq
+  hpMoment : LaplaceTwoSidedExpFirstMoment τ p
+  hqMoment : LaplaceTwoSidedExpFirstMoment τ q
+  hpFirstMoment : Integrable (fun y : ℝ => y) p
+  firstDown : ℝ
+  rest : List ℝ
+  hm_left : ∀ t : ℝ, t < firstDown → 0 < laplaceMeanShiftRatio τ p t
+  zeros : LaplaceACSimpleAlternatingZeros τ p firstDown rest
+
+/-- Convert the finite-simple-zero package to the lower-level finite-alternating
+package by deriving every local upward-crossing certificate from regularity and
+the simple zero/sign data. -/
+noncomputable def LaplaceACContinuousDensityFiniteSimpleZeros.toFiniteAlternating
+    {τ : ℝ} (hτ : ValidBandwidth τ) {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : LaplaceACContinuousDensityFiniteSimpleZeros τ p q) :
+    LaplaceACContinuousDensityFiniteAlternating τ p q := by
+  have hpReg : LaplaceC2NormalizerRegular τ p :=
+    laplaceC2NormalizerRegular_of_continuousDensity τ hτ p h.ρp h.hpρ
+  have hqReg : LaplaceC2NormalizerRegular τ q :=
+    laplaceC2NormalizerRegular_of_continuousDensity τ hτ q h.ρq h.hqρ
+  exact
+    { ρp := h.ρp
+      ρq := h.ρq
+      hpρ := h.hpρ
+      hqρ := h.hqρ
+      hpMoment := h.hpMoment
+      hqMoment := h.hqMoment
+      hpFirstMoment := h.hpFirstMoment
+      firstDown := h.firstDown
+      rest := h.rest
+      hm_left := h.hm_left
+      chain :=
+        LaplaceACSimpleAlternatingZeros.toAlternatingChain
+          hτ hpReg hqReg h.zeros }
+
+/-- **Clean end-to-end one-dimensional a.c. Laplace theorem, finite simple
+sign-changing zero form.**
+
+For probability laws with continuous Lebesgue densities and the stated
+two-sided exponential moments, if the `p`-mean-shift ratio has a finite
+alternating list of simple sign-changing zeros and the raw Laplace drift from
+`p` to `q` is zero everywhere, then `p = q`.
+
+No primitive functions, local `δ/L` witnesses, Wronskian hypotheses, C²
+certificates, or exposed derivative facts remain in the statement. -/
+theorem laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (h : LaplaceACContinuousDensityFiniteSimpleZeros τ p q) :
+    p = q :=
+  laplaceAC_identifies_of_continuousDensity_finiteAlternating τ hτ p q hzero
+    (h.toFiniteAlternating hτ)
+
+/-- Condition form of the finite-simple-zero a.c. theorem.
+
+The probability assumptions are included explicitly so this can be fed to the
+project's `IdentifiesAtZero` interface. -/
+def LaplaceACContinuousDensityFiniteSimpleZerosCondition
+    (τ : ℝ) (p q : Measure ℝ) : Prop :=
+  IsProbabilityMeasure p ∧ IsProbabilityMeasure q ∧
+    Nonempty (LaplaceACContinuousDensityFiniteSimpleZeros τ p q)
+
+/-- `IdentifiesAtZero` wrapper for the finite-simple-zero a.c. Laplace
+condition. -/
+theorem laplaceAC_identifiesAtZero_of_continuousDensity_finiteSimpleZeros
+    (τ : ℝ) (hτ : ValidBandwidth τ) :
+    IdentifiesAtZero
+      (LaplaceACContinuousDensityFiniteSimpleZerosCondition τ)
+      (meanShiftDrift (laplaceKernel τ)) := by
+  intro p q hcond hzero
+  rcases hcond with ⟨hpProb, hqProb, ⟨h⟩⟩
+  letI : IsProbabilityMeasure p := hpProb
+  letI : IsProbabilityMeasure q := hqProb
+  exact laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros
+    τ hτ p q hzero h
+
+/-- Any explicit finite-simple-zero package is a witness for the condition. -/
+theorem laplaceACFiniteSimpleZerosCondition_of_package
+    {τ : ℝ} {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : LaplaceACContinuousDensityFiniteSimpleZeros τ p q) :
+    LaplaceACContinuousDensityFiniteSimpleZerosCondition τ p q :=
+  ⟨inferInstance, inferInstance, ⟨h⟩⟩
+
+/-- Non-vacuity guard for the finite-simple-zero condition.
+
+If a concrete pair of distinct laws is exhibited together with the
+finite-simple-zero package, then the condition satisfies the project's
+`ConditionAllowsDistinctPair` check.  This theorem deliberately does not pretend
+to manufacture a Gaussian zero-list; it records the exact proof obligation a
+named concrete family must discharge. -/
+theorem laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_package
+    {τ : ℝ} {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : LaplaceACContinuousDensityFiniteSimpleZeros τ p q)
+    (hpq : p ≠ q) :
+    ConditionAllowsDistinctPair
+      (LaplaceACContinuousDensityFiniteSimpleZerosCondition τ) :=
+  ⟨p, q, laplaceACFiniteSimpleZerosCondition_of_package h, hpq⟩
+
+/-- Single-downward-zero constructor for the finite-simple-zero package.  This
+is the one-zero / 3A specialization of the clean theorem. -/
+def LaplaceACContinuousDensityFiniteSimpleZeros.singleDown
+    {τ : ℝ} {p q : Measure ℝ}
+    (ρp ρq : ℝ → ℝ)
+    (hpρ : ContinuousDensityMeasure p ρp)
+    (hqρ : ContinuousDensityMeasure q ρq)
+    (hpMoment : LaplaceTwoSidedExpFirstMoment τ p)
+    (hqMoment : LaplaceTwoSidedExpFirstMoment τ q)
+    (hpFirstMoment : Integrable (fun y : ℝ => y) p)
+    {a : ℝ}
+    (ha : LaplaceACSimpleZero τ p a)
+    (hm_left : ∀ t : ℝ, t < a → 0 < laplaceMeanShiftRatio τ p t)
+    (hm_right : ∀ t : ℝ, a < t → laplaceMeanShiftRatio τ p t < 0) :
+    LaplaceACContinuousDensityFiniteSimpleZeros τ p q :=
+  { ρp := ρp
+    ρq := ρq
+    hpρ := hpρ
+    hqρ := hqρ
+    hpMoment := hpMoment
+    hqMoment := hqMoment
+    hpFirstMoment := hpFirstMoment
+    firstDown := a
+    rest := []
+    hm_left := hm_left
+    zeros := { down_zero := ha, hm_right := hm_right } }
+
+/-! ## Gaussian regularity and certified concrete hooks -/
+
+/-- A real Gaussian with nonzero variance has the expected continuous Lebesgue
+density representation. -/
+theorem continuousDensityMeasure_gaussianReal
+    (m : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    ContinuousDensityMeasure (gaussianReal m v) (gaussianPDFReal m v) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x
+    exact gaussianPDFReal_nonneg m v x
+  · unfold gaussianPDFReal
+    fun_prop
+  · rw [gaussianReal_of_var_ne_zero m hv, gaussianPDF_def]
+
+/-- Real Gaussians have the two-sided exponential first moments needed by the
+Laplace a.c. theorem. -/
+theorem laplaceTwoSidedExpFirstMoment_gaussianReal
+    (τ m : ℝ) (v : NNReal) :
+    LaplaceTwoSidedExpFirstMoment τ (gaussianReal m v) where
+  exp_pos := by
+    simpa [div_eq_mul_inv, mul_comm] using
+      (integrable_exp_mul_gaussianReal (μ := m) (v := v) (τ⁻¹))
+  exp_neg := by
+    simpa [div_eq_mul_inv, mul_comm] using
+      (integrable_exp_mul_gaussianReal (μ := m) (v := v) (-τ⁻¹))
+  first_pos := by
+    simpa [div_eq_mul_inv, mul_comm, pow_one] using
+      (integrable_pow_mul_exp_of_mem_interior_integrableExpSet
+        (X := id) (μ := gaussianReal m v)
+        (by simp : (τ⁻¹ : ℝ) ∈ interior (integrableExpSet id (gaussianReal m v)))
+        1)
+  first_neg := by
+    simpa [div_eq_mul_inv, mul_comm, pow_one] using
+      (integrable_pow_mul_exp_of_mem_interior_integrableExpSet
+        (X := id) (μ := gaussianReal m v)
+        (by simp : (-τ⁻¹ : ℝ) ∈ interior (integrableExpSet id (gaussianReal m v)))
+        1)
+
+/-- Real Gaussians have a finite ordinary first moment. -/
+theorem integrable_id_gaussianReal_as_fun (m : ℝ) (v : NNReal) :
+    Integrable (fun y : ℝ => y) (gaussianReal m v) :=
+  (memLp_id_gaussianReal (μ := m) (v := v) 1).integrable
+    (by norm_num : 1 ≤ (1 : ℝ≥0∞))
+
+/-- The standard Gaussian and unit-variance Gaussian shifted by one are
+distinct. -/
+theorem gaussianReal_zero_ne_one_unitVariance :
+    gaussianReal 0 (1 : NNReal) ≠ gaussianReal 1 (1 : NNReal) := by
+  intro h
+  have hm : (0 : ℝ) = 1 := (gaussianReal_ext_iff.mp h).1
+  norm_num at hm
+
+/-- Explicit sign certificate for the standard Gaussian one-crossing hook.
+
+This structure is intentionally small and honest: the density and moment parts
+of the Gaussian example are proved above, while the genuinely analytic remaining
+fact is the Laplace mean-shift sign pattern for the standard Gaussian.  Once
+that sign certificate is supplied, the example below constructs a concrete
+finite-simple-zero package for a distinct Gaussian pair. -/
+structure StandardGaussianLaplaceSingleDownCertificate (τ : ℝ) : Type where
+  zero : LaplaceACSimpleZero τ (gaussianReal 0 (1 : NNReal)) 0
+  hm_left : ∀ t : ℝ, t < 0 →
+    0 < laplaceMeanShiftRatio τ (gaussianReal 0 (1 : NNReal)) t
+  hm_right : ∀ t : ℝ, 0 < t →
+    laplaceMeanShiftRatio τ (gaussianReal 0 (1 : NNReal)) t < 0
+
+/-- Concrete standard-vs-shifted Gaussian finite-simple-zero package, once the
+standard Gaussian one-crossing sign certificate is available. -/
+noncomputable def standardGaussian_vs_shiftedGaussian_finiteSimpleZeros
+    (τ : ℝ) (cert : StandardGaussianLaplaceSingleDownCertificate τ) :
+    LaplaceACContinuousDensityFiniteSimpleZeros τ
+      (gaussianReal 0 (1 : NNReal)) (gaussianReal 1 (1 : NNReal)) :=
+  LaplaceACContinuousDensityFiniteSimpleZeros.singleDown
+    (gaussianPDFReal 0 (1 : NNReal)) (gaussianPDFReal 1 (1 : NNReal))
+    (continuousDensityMeasure_gaussianReal 0 (by norm_num : (1 : NNReal) ≠ 0))
+    (continuousDensityMeasure_gaussianReal 1 (by norm_num : (1 : NNReal) ≠ 0))
+    (laplaceTwoSidedExpFirstMoment_gaussianReal τ 0 (1 : NNReal))
+    (laplaceTwoSidedExpFirstMoment_gaussianReal τ 1 (1 : NNReal))
+    (integrable_id_gaussianReal_as_fun 0 (1 : NNReal))
+    cert.zero cert.hm_left cert.hm_right
+
+/-- The finite-simple-zero condition admits a concrete distinct Gaussian pair
+as soon as the standard-Gaussian one-crossing sign certificate is supplied. -/
+theorem laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_standardGaussianCertificate
+    (τ : ℝ) (cert : StandardGaussianLaplaceSingleDownCertificate τ) :
+    ConditionAllowsDistinctPair
+      (LaplaceACContinuousDensityFiniteSimpleZerosCondition τ) :=
+  laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_package
+    (standardGaussian_vs_shiftedGaussian_finiteSimpleZeros τ cert)
+    gaussianReal_zero_ne_one_unitVariance
 
 end DriftingIdentifiability

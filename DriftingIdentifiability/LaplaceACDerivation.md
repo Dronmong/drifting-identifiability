@@ -248,6 +248,11 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   nonnegative density representations and exposes the current theorem in its
   clean a.c. form: continuous densities + exponential moments + a finite
   alternating crossing certificate + zero drift imply `p = q`.
+  The still-cleaner wrapper
+  `laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros` replaces those
+  local crossing certificates by a finite alternating list of simple
+  sign-changing zeros; the chain is converted automatically through
+  `LaplaceACSimpleAlternatingZeros.toAlternatingChain`.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
   The arbitrary finite breakpoint induction is now formalized.  The lower-level
   constructor `LaplaceACUpwardCrossingCertificate.of_regular_withLocalBounds`
@@ -257,10 +262,10 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   estimates from a genuine upward sign-changing zero: adjacent signs, `m(up)=0`,
   two-sided mass for L7, continuity of `mu'`, and differentiability of `m`.
   `LaplaceACAlternatingChain.cons_regular_simpleZero` wires that constructor
-  into the recursive chain.  What remains at this layer is not local calculus
-  around an upward crossing; it is the higher-level extraction of a finite
-  alternating zero list/sign-cover from a concrete density class such as
-  analytic densities.
+  into the recursive chain.  The finite-simple-zero theorem now consumes a
+  supplied finite zero/sign cover directly.  What remains beyond this theorem is
+  the analytic extraction of such a zero/sign cover from a named concrete family
+  such as a Gaussian mixture or a general analytic density class.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -503,3 +508,17 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   feeds those witnesses into the existing primitive/FTC/W-boundedness
   constructor.  Added `LaplaceACAlternatingChain.cons_regular_simpleZero` so
   finite alternating chains can consume these zeros directly.
+- 2026-07-12: CLOSED THE CLEAN FINITE-SIMPLE-ZERO THEOREM SURFACE.  Added
+  `LaplaceACSimpleZero`, `LaplaceACSimpleUpwardCrossing`,
+  `LaplaceACSimpleAlternatingZeros`, and the conversion
+  `LaplaceACSimpleAlternatingZeros.toAlternatingChain`.  Added
+  `LaplaceACContinuousDensityFiniteSimpleZeros` and the end-to-end theorem
+  `laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`, plus the
+  `IdentifiesAtZero` wrapper
+  `laplaceAC_identifiesAtZero_of_continuousDensity_finiteSimpleZeros`.
+  Also added Gaussian density/moment lemmas and a concrete distinct pair hook:
+  `standardGaussian_vs_shiftedGaussian_finiteSimpleZeros` constructs the
+  standard-vs-shifted Gaussian package once the explicit standard-Gaussian
+  Laplace single-crossing sign certificate is supplied.  The density/moment and
+  distinctness parts are proved in Lean; the Gaussian sign-pattern certificate
+  remains the honest concrete-family analytic task.
