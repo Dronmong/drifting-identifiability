@@ -106,7 +106,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | TODO; mechanical from L1 + `D=mZ` |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | TODO; elementary given L3,L4 (FINISHES 3A) |
-| L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | TODO; strengthen L3; moderate |
+| L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | pointwise strict Monge/TP2 engine DONE (`abs_monge_strict_of_overlap`, `laplaceKernel_tp2_strict_of_overlap`, `laplace_symmetrized_pos_of_overlap`, `laplace_symmetrized_pos_of_straddles`); measure/derivative assembly TODO |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | KEY new lemma; elementary (integrating factor + divergent integral) |
 | L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | TODO; L9-cover combinatorial (easy); finiteness = hypothesis (see below) |
 
@@ -146,8 +146,9 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `#print axioms` = `propext, Classical.choice, Quot.sound` only. No
   correlation-inequality library, no Levinson, no Frobenius, no project axiom.
 - L7 (STRICT `mu' > 0` at mean-shift zeros): the remaining refinement for 3B's
-  blow-up. Same Monge/TP2 engine, strict when the tilted law straddles the zero
-  (true at zeros interior to `supp p`); expected elementary now that L3 is done.
+  blow-up. The strict pointwise Monge/TP2 engine is now machine-checked; what
+  remains is the measure-level derivative/covariance assembly, strict when the
+  tilted law straddles the zero (true at zeros interior to `supp p`).
 - L5 (ODE + Abel from first-order data): mechanical but tedious; the AC-level
   Wronskian ODE and the a.e. Abel identity need care.
 - L8 (blow-up): elementary (integrating factor + divergent integral, boundedness
@@ -189,3 +190,11 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   reducing L9 to finiteness on a bounded interval (automatic for analytic
   densities). Next Lean target: L2 assembly (`W -> 0`), then L3 (monotone tilted
   mean) as the decisive feasibility test.
+- 2026-07-11: advanced L7 by proving the strict pointwise engine in
+  `LaplaceTiltedMeanMonotone.lean`: strict Monge overlap
+  (`abs_monge_strict_of_overlap`), strict TP2 overlap
+  (`laplaceKernel_tp2_strict_of_overlap`), and strict symmetrized positivity
+  (`laplace_symmetrized_pos_of_overlap`,
+  `laplace_symmetrized_pos_of_straddles`). Full project build and trust audit
+  are green. Remaining L7 work is the measure-level derivative/covariance
+  assembly from positive tilted mass on both sides of a zero.

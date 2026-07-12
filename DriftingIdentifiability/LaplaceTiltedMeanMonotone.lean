@@ -32,6 +32,19 @@ lemma abs_monge {x₁ x₂ y₁ y₂ : ℝ} (hx : x₁ ≤ x₂) (hy : y₁ ≤ 
     rcases abs_cases (x₂ - y₁) with ⟨h4, s4⟩ | ⟨h4, s4⟩ <;>
     rw [h1, h2, h3, h4] <;> linarith
 
+/-- Strict form of `abs_monge` on the overlap region.  For two ordered
+intervals `[x₁,x₂]` and `[v,u]`, the Monge inequality is strict exactly when the
+intervals overlap with positive length.  The hypotheses `v < x₂` and `x₁ < u`
+record that overlap. -/
+lemma abs_monge_strict_of_overlap {x₁ x₂ v u : ℝ} (hx : x₁ < x₂) (hvu : v < u)
+    (hvx : v < x₂) (hxu : x₁ < u) :
+    |x₁ - v| + |x₂ - u| < |x₁ - u| + |x₂ - v| := by
+  rcases abs_cases (x₁ - v) with ⟨h1, s1⟩ | ⟨h1, s1⟩ <;>
+    rcases abs_cases (x₂ - u) with ⟨h2, s2⟩ | ⟨h2, s2⟩ <;>
+    rcases abs_cases (x₁ - u) with ⟨h3, s3⟩ | ⟨h3, s3⟩ <;>
+    rcases abs_cases (x₂ - v) with ⟨h4, s4⟩ | ⟨h4, s4⟩ <;>
+    rw [h1, h2, h3, h4] <;> linarith
+
 /-- The Laplace kernel on `ℝ` as an explicit exponential of `|·|`. -/
 lemma laplaceKernel_real (τ x y : ℝ) :
     laplaceKernel τ x y = Real.exp (-(1 / τ) * |x - y|) := by
@@ -48,6 +61,21 @@ lemma laplaceKernel_tp2 {τ : ℝ} (hτ : 0 < τ) {x₁ x₂ v u : ℝ}
   have key : |x₁ - v| + |x₂ - u| ≤ |x₁ - u| + |x₂ - v| := abs_monge hx hvu
   have h1τ : (0 : ℝ) ≤ 1 / τ := by positivity
   nlinarith [mul_le_mul_of_nonneg_left key h1τ]
+
+/-- Strict TP2 on the overlap region.  This is the strict pointwise ingredient
+needed for L7: once the tilted law puts positive mass on both sides of a
+candidate zero, the symmetrized covariance integrand is positive on a product
+set of positive mass. -/
+lemma laplaceKernel_tp2_strict_of_overlap {τ : ℝ} (hτ : 0 < τ) {x₁ x₂ v u : ℝ}
+    (hx : x₁ < x₂) (hvu : v < u) (hvx : v < x₂) (hxu : x₁ < u) :
+    laplaceKernel τ x₁ u * laplaceKernel τ x₂ v
+      < laplaceKernel τ x₁ v * laplaceKernel τ x₂ u := by
+  rw [laplaceKernel_real, laplaceKernel_real, laplaceKernel_real, laplaceKernel_real,
+    ← Real.exp_add, ← Real.exp_add, Real.exp_lt_exp]
+  have key : |x₁ - v| + |x₂ - u| < |x₁ - u| + |x₂ - v| :=
+    abs_monge_strict_of_overlap hx hvu hvx hxu
+  have h1τ : (0 : ℝ) < 1 / τ := by positivity
+  nlinarith [mul_lt_mul_of_pos_left key h1τ]
 
 /-- The **symmetrized integrand is pointwise nonnegative**: for `x₁ ≤ x₂`,
 `(u - v)·(k(x₁,v)k(x₂,u) - k(x₁,u)k(x₂,v)) ≥ 0`.  This is the pointwise engine of
@@ -68,6 +96,32 @@ lemma laplace_symmetrized_nonneg {τ : ℝ} (hτ : 0 < τ) {x₁ x₂ : ℝ}
           - laplaceKernel τ x₁ v * laplaceKernel τ x₂ u) := by ring
     rw [hEq]
     exact mul_nonneg (by linarith) (by linarith)
+
+/-- Strict version of `laplace_symmetrized_nonneg` on the overlap region.  This
+is the local L7 brick: strict positivity is available whenever the two probe
+locations are ordered, the two sample locations are ordered, and the intervals
+overlap.  The later measure-level L7 lemma should combine this pointwise
+strictness with positive tilted mass on both sides of a mean-shift zero. -/
+lemma laplace_symmetrized_pos_of_overlap {τ : ℝ} (hτ : 0 < τ) {x₁ x₂ v u : ℝ}
+    (hx : x₁ < x₂) (hvu : v < u) (hvx : v < x₂) (hxu : x₁ < u) :
+    0 < (u - v) *
+      (laplaceKernel τ x₁ v * laplaceKernel τ x₂ u
+        - laplaceKernel τ x₁ u * laplaceKernel τ x₂ v) := by
+  have htp := laplaceKernel_tp2_strict_of_overlap hτ hx hvu hvx hxu
+  exact mul_pos (sub_pos.mpr hvu) (sub_pos.mpr htp)
+
+/-- Straddling form of `laplace_symmetrized_pos_of_overlap`.  This is the
+version intended for the strict-at-zero L7 argument: if a candidate zero `x` is
+surrounded by probe points `x₁ < x < x₂` and the tilted law has one sample below
+`x` and one sample above `x`, then the pointwise symmetrized integrand is
+strictly positive on that pair. -/
+lemma laplace_symmetrized_pos_of_straddles {τ : ℝ} (hτ : 0 < τ)
+    {x₁ x₂ x v u : ℝ} (hx₁ : x₁ < x) (hx₂ : x < x₂) (hv : v < x) (hu : x < u) :
+    0 < (u - v) *
+      (laplaceKernel τ x₁ v * laplaceKernel τ x₂ u
+        - laplaceKernel τ x₁ u * laplaceKernel τ x₂ v) := by
+  exact laplace_symmetrized_pos_of_overlap hτ (lt_trans hx₁ hx₂) (lt_trans hv hu)
+    (lt_trans hv hx₂) (lt_trans hx₁ hu)
 
 /-- The Laplace **tilted mean** `μ_p(x) = (∫ y·k(x,y) dp)/(∫ k(x,y) dp)`. -/
 noncomputable def laplaceTiltedMean (τ : ℝ) (p : Measure ℝ) (x : ℝ) : ℝ :=
