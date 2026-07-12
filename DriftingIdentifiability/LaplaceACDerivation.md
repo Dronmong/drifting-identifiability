@@ -128,7 +128,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L5 | common ODE `(**)` for `Z_p, Z_q`; Abel `W'=-(2mu'/m)W` | BRIDGE + REGULARITY DISCHARGE DONE under an explicit C²-normalizer certificate. `LaplaceACAbel.lean` proves the Abel algebra from derivative data; `LaplaceACRegularity.lean` defines `LaplaceC2NormalizerRegular`, derives the `m'`/`m''` data from certified first-order identities, and proves `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` with no exposed `HasDerivAt` hypotheses. `LaplaceACDensityRegularity.lean` now proves continuous nonnegative densities imply `LaplaceC2NormalizerRegular` |
 | L6 | OUTER rays: `W ≡ 0` on the two semi-infinite sign intervals | DONE in `LaplaceACPropagation.lean` by a primitive-free sign argument. `abel_right_outer_zero_of_nonpos_coeff` and `abel_left_outer_zero_of_nonneg_coeff` show that if `W' = -cW`, `W -> 0` at the relevant tail, and `c` has the outer-ray sign, then `W` vanishes on the ray. The concrete wrappers `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` and `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos` consume exactly the Laplace coefficient `c = 2 mu'/m`: L3 gives `mu' >= 0`, while L4/outer sign geometry gives `m < 0` on the right outer ray and `m > 0` on the left. The older primitive/BV packages remain available but are no longer needed for L6. |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
-| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE + BARRIER PACKAGING DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`, and `abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier` / left version now derive this divergence from an eventually larger upper barrier `B` with `B -> -∞`. Remaining upstream AC work: construct the concrete barrier from L7 strictness plus sign-change geometry |
+| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | DONE in `LaplaceACPropagation.lean`. The previous abstract barrier package remains, but the main route is now concrete: `primitive_tendsto_atBot_of_right_log_singularity` / left version prove `A -> -∞` from a logarithmic singular coefficient, and `abel_right_interval_zero_of_upwardCrossing_of_logSingularity` / left version feed that into the bounded Abel squeeze. The actual Laplace-coefficient wrappers `abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper` and `abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower` derive the log singularity from local `mu' >= δ > 0` plus one-sided linear control of `m` at the upward crossing. |
 | L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | GLUING + ORDERED-GAP PACKAGING DONE in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set, and `continuous_eq_zero_of_vanishesOnOrderedGaps` now packages the common finite-breakpoint cover: left ray, adjacent open gaps, and right ray. Remaining upstream combinatorics: construct the `VanishesOnOrderedGaps` witness from the alternating sign-change/parity cover |
 
 3A needs L0-L6. 3B additionally needs L7-L9.
@@ -179,9 +179,14 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   since `W -> 0` at `+inf`, `W` must vanish on the ray. The left ray is the
   symmetric `m > 0`, `c >= 0`, `W -> 0` at `-inf` argument. No concrete tail-BV
   estimate remains for L6.
-- L8: the deterministic barrier-to-divergence packaging is now formalized; the
-  remaining nontrivial part is deriving an explicit barrier `B -> -inf` for the
-  primitive near an upward crossing from L7 strictness and local sign geometry.
+- L8: RESOLVED as a deterministic package. The concrete logarithmic barrier is
+  now formalized: right side uses `mu' >= δ > 0` and `0 < m <= L(t-a)` to get
+  `(2mu'/m) >= (2δ/L)/(t-a)`; left side uses `mu' >= δ > 0` and
+  `-L(b-t) <= m < 0` to get `(2mu'/m) <= -(2δ/L)/(b-t)`. These singular bounds
+  force the Abel primitive to tend to `-inf`, and boundedness of `W` kills both
+  flanks. What remains for the final theorem is to supply these local `δ,L`
+  witnesses from the selected crossing/regularity hypotheses, not to prove the
+  L8 propagation/barrier mechanism.
 - L9-cover: the deterministic ordered-gap cover package is now formalized; the
   remaining combinatorial task is to assemble its `VanishesOnOrderedGaps`
   witness from the actual alternating sign-change/parity proof.
@@ -213,15 +218,15 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos` combine the Abel equation,
   L3 monotonicity, the L4 outer sign geometry, and the L2 tail limit to kill both
   outer rays.  The older primitive-tail-limit and tail-BV packages remain as
-  reusable backup tools but are not part of the required L6 route.  L8 now has both
-  the primitive-divergence version and the upstream atBot-barrier version: an
-  eventual upper bound `A <= B` with `B -> -inf` gives the required
-  `A -> -inf` and then kills the flank.  L9 now has both the finite-set
+  reusable backup tools but are not part of the required L6 route.  L8 is now
+  also closed at the deterministic level: concrete logarithmic singularity
+  packages construct `A -> -inf`, and the actual `2mu'/m` wrappers derive those
+  singularities from `mu' >= δ` plus one-sided linear control of `m`.  L9 now has both the finite-set
   complement gluing theorem and an ordered-gap cover theorem: a list carrying
   left-ray, adjacent-gap, and right-ray vanishing data implies `W ≡ 0` by
-  continuity.  What remains is upstream real-analysis/combinatorics packaging
-  that constructs those concrete tail/barrier/gap certificates from the raw
-  AC/BV/sign-change hypotheses.
+  continuity.  What remains is final-assembly packaging: provide the local
+  `δ,L` witnesses at upward crossings from the chosen regularity hypotheses,
+  build the ordered-gap witness, and feed the closed L6/L8 packages into L9.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
   The remaining Lean work is combinatorial coverage and continuity gluing, not a
   new analytic identity.
@@ -367,9 +372,8 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `abel_right_flank_zero_of_integratingFactor_of_atBotBarrier`,
   `abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier`, and the left
   interval version.  This closes the abstract "upper barrier gives primitive
-  divergence" step without axioms; the next L8 task is to construct the
-  concrete barrier near an upward crossing from L7 strictness and the local
-  sign-change geometry.
+  divergence" step without axioms.  This route is now backup infrastructure;
+  the concrete logarithmic-singularity route below is the main L8 route.
 - 2026-07-12: advanced L9 upstream packaging.  Added
   `VanishesOnOrderedGapsFrom`, `VanishesOnOrderedGaps`, their pointwise
   off-breakpoint lemmas, and
@@ -388,3 +392,17 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos`.  The proof uses only
   `W' = -(2mu'/m)W`, `mu' >= 0`, the L4 outer signs of `m`, and `W -> 0` at the
   corresponding tail.  No primitive, BV estimate, or new axiom is needed.
+- 2026-07-12: FULLY CLOSED L8 at the deterministic barrier layer.  Added the
+  concrete logarithmic barrier package:
+  `primitive_tendsto_atBot_of_right_log_singularity` / left version prove that
+  a primitive `A' = c` tends to `-inf` from the singular bounds
+  `γ/(t-a) <= c(t)` and `c(t) <= -γ/(b-t)`.  Added algebraic Laplace-coefficient
+  sources
+  `right_laplaceCoeff_logSingularity_of_muDeriv_lower_m_upper` and
+  `left_laplaceCoeff_logSingularity_of_muDeriv_lower_m_lower`, then wrapped the
+  actual Abel interval conclusions as
+  `abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper` and
+  `abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower`.  The
+  remaining final-assembly task is to provide the local `δ,L` witnesses from the
+  chosen strict-crossing/regularity hypotheses; the L8 analytic mechanism itself
+  is now axiom-free and closed.

@@ -1,5 +1,6 @@
 import DriftingIdentifiability.LaplaceACAbel
 import Mathlib.Analysis.ODE.Gronwall
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Topology.Algebra.Module.Cardinality
 import Mathlib.Topology.Order.OrderClosed
@@ -736,6 +737,250 @@ theorem abel_right_flank_zero_of_integratingFactor_of_atBotBarrier
     (exp_comp_tendsto_zero_of_tendsto_atBot
       (tendsto_atBot_of_eventually_le_of_tendsto_atBot hBdiv hAupper))
 
+/-! ### Concrete logarithmic barriers for L8 -/
+
+/-- The distance to a right-hand endpoint tends to `0` from above. -/
+theorem tendsto_sub_const_nhdsGT_zero {a : ℝ} :
+    Tendsto (fun x : ℝ => x - a) (𝓝[>] a) (𝓝[>] 0) := by
+  refine tendsto_nhdsWithin_iff.mpr ⟨?_, ?_⟩
+  · have hnhds : Tendsto (fun x : ℝ => x - a) (𝓝[>] a) (𝓝 (a - a)) :=
+      (tendsto_id.sub tendsto_const_nhds).mono_left nhdsWithin_le_nhds
+    simpa using hnhds
+  · filter_upwards [self_mem_nhdsWithin] with x hx
+    exact sub_pos.mpr (show a < x from hx)
+
+/-- The distance to a left-hand endpoint tends to `0` from above. -/
+theorem tendsto_const_sub_nhdsLT_zero {a : ℝ} :
+    Tendsto (fun x : ℝ => a - x) (𝓝[<] a) (𝓝[>] 0) := by
+  refine tendsto_nhdsWithin_iff.mpr ⟨?_, ?_⟩
+  · have hnhds : Tendsto (fun x : ℝ => a - x) (𝓝[<] a) (𝓝 (a - a)) :=
+      (tendsto_const_nhds.sub tendsto_id).mono_left nhdsWithin_le_nhds
+    simpa using hnhds
+  · filter_upwards [self_mem_nhdsWithin] with x hx
+    exact sub_pos.mpr (show x < a from hx)
+
+/-- Logarithmic right-hand barrier tends to `-∞` at the crossing. -/
+theorem tendsto_log_sub_const_nhdsGT_atBot {a C γ : ℝ} (hγ : 0 < γ) :
+    Tendsto (fun x : ℝ => C + γ * Real.log (x - a)) (𝓝[>] a) atBot := by
+  exact tendsto_atBot_add_const_left _ _
+    ((Real.tendsto_log_nhdsGT_zero.comp tendsto_sub_const_nhdsGT_zero).const_mul_atBot hγ)
+
+/-- Logarithmic left-hand barrier tends to `-∞` at the crossing. -/
+theorem tendsto_log_const_sub_nhdsLT_atBot {a C γ : ℝ} (hγ : 0 < γ) :
+    Tendsto (fun x : ℝ => C + γ * Real.log (a - x)) (𝓝[<] a) atBot := by
+  exact tendsto_atBot_add_const_left _ _
+    ((Real.tendsto_log_nhdsGT_zero.comp tendsto_const_sub_nhdsLT_zero).const_mul_atBot hγ)
+
+theorem hasDerivWithinAt_log_sub_const
+    {a x γ : ℝ} (hax : a < x) :
+    HasDerivWithinAt (fun u : ℝ => γ * Real.log (u - a))
+      (γ * (1 / (x - a))) (Ici x) x := by
+  have hsub : HasDerivAt (fun u : ℝ => u - a) 1 x := by
+    simpa using (hasDerivAt_id x).sub_const a
+  have hlog : HasDerivAt (fun u : ℝ => Real.log (u - a)) ((1 / (x - a)) * 1) x := by
+    simpa [one_div, Function.comp_def] using
+      (Real.hasDerivAt_log (sub_ne_zero.mpr (ne_of_gt hax))).comp x hsub
+  have hlog' : HasDerivAt (fun u : ℝ => Real.log (u - a)) (1 / (x - a)) x := by
+    simpa using hlog
+  simpa [mul_comm, mul_left_comm, mul_assoc] using
+    (hlog'.const_mul γ).hasDerivWithinAt
+
+theorem hasDerivWithinAt_log_const_sub
+    {a x γ : ℝ} (hxa : x < a) :
+    HasDerivWithinAt (fun u : ℝ => γ * Real.log (a - u))
+      (-(γ * (1 / (a - x)))) (Ici x) x := by
+  have hsub : HasDerivAt (fun u : ℝ => a - u) (-1) x := by
+    change HasDerivAt ((fun _ : ℝ => a) - id) (-1) x
+    simpa using (hasDerivAt_const x a).sub (hasDerivAt_id x)
+  have hlog : HasDerivAt (fun u : ℝ => Real.log (a - u)) ((1 / (a - x)) * (-1)) x := by
+    simpa [one_div, Function.comp_def] using
+      (Real.hasDerivAt_log (sub_ne_zero.mpr (ne_of_gt hxa))).comp x hsub
+  have hlog' : HasDerivAt (fun u : ℝ => Real.log (a - u)) (-(1 / (a - x))) x := by
+    simpa using hlog
+  simpa [mul_comm, mul_left_comm, mul_assoc] using
+    (hlog'.const_mul γ).hasDerivWithinAt
+
+/-- Right-side logarithmic primitive bound.
+
+If `A' = c` and `c` dominates `γ/(t-a)` on `(a,r)`, then near `a` from the
+right, `A` is bounded above by a logarithmic barrier tending to `-∞`. -/
+theorem eventually_primitive_le_log_barrier_right
+    {A c : ℝ → ℝ} {a r γ : ℝ}
+    (har : a < r) (_hγ : 0 < γ)
+    (hAcont : ∀ x : ℝ, a < x → x ≤ r → ContinuousOn A (Icc x r))
+    (hA : ∀ x : ℝ, a < x → x ≤ r →
+      ∀ t ∈ Ico x r, HasDerivWithinAt A (c t) (Ici t) t)
+    (hc : ∀ t : ℝ, a < t → t < r → γ / (t - a) ≤ c t) :
+    ∀ᶠ x in 𝓝[>] a,
+      A x ≤ A r + γ * (Real.log (x - a) - Real.log (r - a)) := by
+  filter_upwards [Ioo_mem_nhdsGT har] with x hx
+  have hxr : x ≤ r := hx.2.le
+  let B : ℝ → ℝ := fun s => A x + γ * Real.log (s - a) - γ * Real.log (x - a)
+  have hBcont : ContinuousOn B (Icc x r) := by
+    have hsubcont : ContinuousOn (fun s : ℝ => s - a) (Icc x r) := by
+      exact continuousOn_id.sub continuousOn_const
+    have hne : ∀ s ∈ Icc x r, s - a ≠ 0 := by
+      intro s hs
+      exact sub_ne_zero.mpr (ne_of_gt (lt_of_lt_of_le hx.1 hs.1))
+    have hlog : ContinuousOn (fun s : ℝ => Real.log (s - a)) (Icc x r) :=
+      hsubcont.log hne
+    exact (continuousOn_const.add (continuousOn_const.mul hlog)).sub continuousOn_const
+  have hBderiv : ∀ t ∈ Ico x r,
+      HasDerivWithinAt B (γ * (1 / (t - a))) (Ici t) t := by
+    intro t ht
+    have hat : a < t := lt_of_lt_of_le hx.1 ht.1
+    have hderiv := hasDerivWithinAt_log_sub_const (a := a) (x := t) (γ := γ) hat
+    dsimp only [B]
+    change HasDerivWithinAt
+      (fun u : ℝ => A x + γ * Real.log (u - a) - γ * Real.log (x - a))
+      (γ * (1 / (t - a))) (Ici t) t
+    exact (hderiv.const_add (A x)).sub_const (γ * Real.log (x - a))
+  have hbase : B x ≤ A x := by simp [B]
+  have hcomp : ∀ z, z ∈ Icc x r → B z ≤ A z :=
+    image_le_of_deriv_right_le_deriv_boundary
+      (a := x) (b := r)
+      (f := B) (f' := fun t : ℝ => γ * (1 / (t - a)))
+      (B := A) (B' := c)
+      hBcont hBderiv hbase (hAcont x hx.1 hxr) (hA x hx.1 hxr)
+      (fun t ht => by
+        have h := hc t (lt_of_lt_of_le hx.1 ht.1) ht.2
+        rw [div_eq_mul_one_div] at h
+        exact h)
+  have hrineq : B r ≤ A r := hcomp r ⟨hxr, le_rfl⟩
+  have hrineq' : A x + γ * Real.log (r - a) ≤ A r + γ * Real.log (x - a) := by
+    simpa [B] using hrineq
+  linarith
+
+/-- Left-side logarithmic primitive bound.
+
+If `A' = c` and `c ≤ -γ/(a-t)` on `(l,a)`, then near `a` from the left, `A`
+is bounded above by a logarithmic barrier tending to `-∞`. -/
+theorem eventually_primitive_le_log_barrier_left
+    {A c : ℝ → ℝ} {l a γ : ℝ}
+    (hla : l < a) (_hγ : 0 < γ)
+    (hAcont : ∀ x : ℝ, l ≤ x → x < a → ContinuousOn A (Icc l x))
+    (hA : ∀ x : ℝ, l ≤ x → x < a →
+      ∀ t ∈ Ico l x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hc : ∀ t : ℝ, l ≤ t → t < a → c t ≤ -(γ / (a - t))) :
+    ∀ᶠ x in 𝓝[<] a,
+      A x ≤ A l + γ * (Real.log (a - x) - Real.log (a - l)) := by
+  filter_upwards [Ioo_mem_nhdsLT hla] with x hx
+  have hlx : l ≤ x := hx.1.le
+  let B : ℝ → ℝ := fun s => A l + γ * Real.log (a - s) - γ * Real.log (a - l)
+  have hBcont : ContinuousOn B (Icc l x) := by
+    have hsubcont : ContinuousOn (fun s : ℝ => a - s) (Icc l x) := by
+      exact continuousOn_const.sub continuousOn_id
+    have hne : ∀ s ∈ Icc l x, a - s ≠ 0 := by
+      intro s hs
+      exact sub_ne_zero.mpr (ne_of_gt (lt_of_le_of_lt hs.2 hx.2))
+    have hlog : ContinuousOn (fun s : ℝ => Real.log (a - s)) (Icc l x) :=
+      hsubcont.log hne
+    exact (continuousOn_const.add (continuousOn_const.mul hlog)).sub continuousOn_const
+  have hBderiv : ∀ t ∈ Ico l x,
+      HasDerivWithinAt B (-(γ * (1 / (a - t)))) (Ici t) t := by
+    intro t ht
+    have hta : t < a := lt_trans ht.2 hx.2
+    have hderiv := hasDerivWithinAt_log_const_sub (a := a) (x := t) (γ := γ) hta
+    dsimp only [B]
+    change HasDerivWithinAt
+      (fun u : ℝ => A l + γ * Real.log (a - u) - γ * Real.log (a - l))
+      (-(γ * (1 / (a - t)))) (Ici t) t
+    exact (hderiv.const_add (A l)).sub_const (γ * Real.log (a - l))
+  have hbase : A l ≤ B l := by simp [B]
+  have hcomp : ∀ z, z ∈ Icc l x → A z ≤ B z :=
+    image_le_of_deriv_right_le_deriv_boundary
+      (a := l) (b := x)
+      (f := A) (f' := c)
+      (B := B) (B' := fun t : ℝ => -(γ * (1 / (a - t))))
+      (hAcont x hlx hx.2) (hA x hlx hx.2) hbase hBcont hBderiv
+      (fun t ht => by
+        have h := hc t ht.1 (lt_trans ht.2 hx.2)
+        rw [div_eq_mul_one_div] at h
+        exact h)
+  have hxineq : A x ≤ A l + γ * Real.log (a - x) - γ * Real.log (a - l) := by
+    simpa [B] using hcomp x ⟨hlx, le_rfl⟩
+  linarith
+
+/-- Right-side logarithmic barrier tends to `-∞`, packaged with the primitive
+comparison above. -/
+theorem primitive_tendsto_atBot_of_right_log_singularity
+    {A c : ℝ → ℝ} {a r γ : ℝ}
+    (har : a < r) (hγ : 0 < γ)
+    (hAcont : ∀ x : ℝ, a < x → x ≤ r → ContinuousOn A (Icc x r))
+    (hA : ∀ x : ℝ, a < x → x ≤ r →
+      ∀ t ∈ Ico x r, HasDerivWithinAt A (c t) (Ici t) t)
+    (hc : ∀ t : ℝ, a < t → t < r → γ / (t - a) ≤ c t) :
+    Tendsto A (𝓝[>] a) atBot := by
+  refine tendsto_atBot_of_eventually_le_of_tendsto_atBot
+    (A := A) (B := fun x : ℝ => A r + γ * (Real.log (x - a) - Real.log (r - a))) ?_ ?_
+  · have h :=
+      tendsto_log_sub_const_nhdsGT_atBot
+        (a := a) (C := A r - γ * Real.log (r - a)) (γ := γ) hγ
+    convert h using 1
+    ext x
+    ring
+  · exact eventually_primitive_le_log_barrier_right har hγ hAcont hA hc
+
+/-- Left-side logarithmic barrier tends to `-∞`, packaged with the primitive
+comparison above. -/
+theorem primitive_tendsto_atBot_of_left_log_singularity
+    {A c : ℝ → ℝ} {l a γ : ℝ}
+    (hla : l < a) (hγ : 0 < γ)
+    (hAcont : ∀ x : ℝ, l ≤ x → x < a → ContinuousOn A (Icc l x))
+    (hA : ∀ x : ℝ, l ≤ x → x < a →
+      ∀ t ∈ Ico l x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hc : ∀ t : ℝ, l ≤ t → t < a → c t ≤ -(γ / (a - t))) :
+    Tendsto A (𝓝[<] a) atBot := by
+  refine tendsto_atBot_of_eventually_le_of_tendsto_atBot
+    (A := A) (B := fun x : ℝ => A l + γ * (Real.log (a - x) - Real.log (a - l))) ?_ ?_
+  · have h :=
+      tendsto_log_const_sub_nhdsLT_atBot
+        (a := a) (C := A l - γ * Real.log (a - l)) (γ := γ) hγ
+    convert h using 1
+    ext x
+    ring
+  · exact eventually_primitive_le_log_barrier_left hla hγ hAcont hA hc
+
+/-- Algebraic source of the right-side logarithmic singularity for the actual
+Laplace Abel coefficient.
+
+If `μ' ≥ δ > 0` and `0 < m ≤ L(t-a)` on the right of an upward crossing, then
+`2μ'/m` dominates `(2δ/L)/(t-a)`. -/
+theorem right_laplaceCoeff_logSingularity_of_muDeriv_lower_m_upper
+    {δ L μ m h : ℝ} (hδ : 0 < δ) (hL : 0 < L) (hh : 0 < h)
+    (hmpos : 0 < m) (hμ : δ ≤ μ) (hmupper : m ≤ L * h) :
+    (((2 : ℝ) * δ) / L) / h ≤ ((2 : ℝ) * μ) / m := by
+  field_simp [hL.ne', hh.ne', hmpos.ne']
+  nlinarith [mul_nonneg (le_of_lt hL) (le_of_lt hh),
+    mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) (le_of_lt hδ),
+    mul_le_mul_of_nonneg_left hμ (by norm_num : (0 : ℝ) ≤ 2), hmupper]
+
+/-- Algebraic source of the left-side logarithmic singularity for the actual
+Laplace Abel coefficient.
+
+If `μ' ≥ δ > 0` and `-L(a-t) ≤ m < 0` on the left of an upward crossing, then
+`2μ'/m ≤ -(2δ/L)/(a-t)`. -/
+theorem left_laplaceCoeff_logSingularity_of_muDeriv_lower_m_lower
+    {δ L μ m h : ℝ} (hδ : 0 < δ) (hL : 0 < L) (hh : 0 < h)
+    (hmneg : m < 0) (hμ : δ ≤ μ) (hmlower : -(L * h) ≤ m) :
+    ((2 : ℝ) * μ) / m ≤ -((((2 : ℝ) * δ) / L) / h) := by
+  let n : ℝ := -m
+  have hnpos : 0 < n := by
+    dsimp [n]
+    exact neg_pos.mpr hmneg
+  have hnupper : n ≤ L * h := by
+    dsimp [n]
+    linarith
+  have hright : (((2 : ℝ) * δ) / L) / h ≤ ((2 : ℝ) * μ) / n :=
+    right_laplaceCoeff_logSingularity_of_muDeriv_lower_m_upper
+      hδ hL hh hnpos hμ hnupper
+  have hneg := neg_le_neg hright
+  have hquot : ((2 : ℝ) * μ) / m = -(((2 : ℝ) * μ) / n) := by
+    dsimp [n]
+    field_simp [hmneg.ne]
+  rw [hquot]
+  exact hneg
+
 /-- If the right side of an upward crossing has the L8 integrating-factor
 divergence data, then `W` vanishes on the whole right flank up to the next
 breakpoint. -/
@@ -774,6 +1019,70 @@ theorem abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot
     ∀ x : ℝ, a < x → x < b → W x = 0 :=
   abel_right_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
     (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
+
+/-- L8 right interval from a concrete logarithmic singularity.
+
+This is the upstream form used at the right side of an upward crossing: if on
+some reference subinterval `(a,r)` the primitive coefficient satisfies
+`γ/(t-a) ≤ c t` with `γ > 0`, then any primitive `A' = c` tends to `-∞` as
+`t → a+`; boundedness of `W` then forces vanishing on the whole right interval. -/
+theorem abel_right_interval_zero_of_upwardCrossing_of_logSingularity
+    {W A c : ℝ → ℝ} {a b r γ : ℝ}
+    (hab : a < b) (har : a < r) (hrb : r < b) (hγ : 0 < γ)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hAcont : ∀ x y : ℝ, a < x → x ≤ y → y < b → ContinuousOn A (Icc x y))
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hc : ∀ t : ℝ, a < t → t < r → γ / (t - a) ≤ c t) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  have hAdiv : Tendsto A (𝓝[>] a) atBot :=
+    primitive_tendsto_atBot_of_right_log_singularity
+      (A := A) (c := c) (a := a) (r := r) (γ := γ)
+      har hγ
+      (fun x hax hxr => hAcont x r hax hxr hrb)
+      (fun x hax hxr => hA x r hax hxr hrb)
+      hc
+  exact abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    (W := W) (A := A) (c := c) (a := a) (b := b)
+    hab hcont hW hA hWbounded hAdiv
+
+/-- L8 right interval for the actual Laplace coefficient `c = 2 μ'/m`.
+
+This closes the right-side upstream barrier construction from the natural local
+inputs supplied by strict tilted-mean growth and one-sided sign-change geometry:
+`μ' ≥ δ > 0` and `0 < m ≤ L(t-a)` near the upward crossing. -/
+theorem abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper
+    {W A μDeriv m : ℝ → ℝ} {a b r δ L : ℝ}
+    (hab : a < b) (har : a < r) (hrb : r < b) (hδ : 0 < δ) (hL : 0 < L)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y,
+        HasDerivWithinAt W (-((((2 : ℝ) * μDeriv t) / m t)) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y,
+        HasDerivWithinAt A (((2 : ℝ) * μDeriv t) / m t) (Ici t) t)
+    (hAcont : ∀ x y : ℝ, a < x → x ≤ y → y < b → ContinuousOn A (Icc x y))
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hμ : ∀ t : ℝ, a < t → t < r → δ ≤ μDeriv t)
+    (hmpos : ∀ t : ℝ, a < t → t < r → 0 < m t)
+    (hmupper : ∀ t : ℝ, a < t → t < r → m t ≤ L * (t - a)) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  have hγ : 0 < ((2 : ℝ) * δ) / L := by
+    exact div_pos (mul_pos (by norm_num) hδ) hL
+  exact abel_right_interval_zero_of_upwardCrossing_of_logSingularity
+    (W := W) (A := A)
+    (c := fun t : ℝ => ((2 : ℝ) * μDeriv t) / m t)
+    (a := a) (b := b) (r := r) (γ := ((2 : ℝ) * δ) / L)
+    hab har hrb hγ hcont hW hA hAcont hWbounded
+    (fun t hat htr =>
+      right_laplaceCoeff_logSingularity_of_muDeriv_lower_m_upper
+        hδ hL (sub_pos.mpr hat) (hmpos t hat htr) (hμ t hat htr)
+        (hmupper t hat htr))
 
 /-- L8 right interval from an upper barrier for the primitive near the upward
 crossing. -/
@@ -832,6 +1141,70 @@ theorem abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot
     ∀ x : ℝ, a < x → x < b → W x = 0 :=
   abel_left_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
     (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
+
+/-- L8 left interval from a concrete logarithmic singularity.
+
+This is the upstream form used at the left side of an upward crossing at `b`.
+If on `(l,b)` the coefficient satisfies `c t ≤ -γ/(b-t)` with `γ > 0`, then a
+primitive tends to `-∞` as `t → b-`; boundedness of `W` then forces vanishing on
+the whole left interval. -/
+theorem abel_left_interval_zero_of_upwardCrossing_of_logSingularity
+    {W A c : ℝ → ℝ} {a b l γ : ℝ}
+    (hab : a < b) (hal : a < l) (hlb : l < b) (hγ : 0 < γ)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hAcont : ∀ x y : ℝ, a < x → x ≤ y → y < b → ContinuousOn A (Icc x y))
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] b) (norm ∘ W))
+    (hc : ∀ t : ℝ, l ≤ t → t < b → c t ≤ -(γ / (b - t))) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  have hAdiv : Tendsto A (𝓝[<] b) atBot :=
+    primitive_tendsto_atBot_of_left_log_singularity
+      (A := A) (c := c) (l := l) (a := b) (γ := γ)
+      hlb hγ
+      (fun x hlx hxb => hAcont l x hal hlx hxb)
+      (fun x hlx hxb => hA l x hal hlx hxb)
+      hc
+  exact abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    (W := W) (A := A) (c := c) (a := a) (b := b)
+    hab hcont hW hA hWbounded hAdiv
+
+/-- L8 left interval for the actual Laplace coefficient `c = 2 μ'/m`.
+
+This closes the left-side upstream barrier construction from the natural local
+inputs supplied by strict tilted-mean growth and one-sided sign-change geometry:
+`μ' ≥ δ > 0` and `-L(b-t) ≤ m < 0` near the upward crossing. -/
+theorem abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower
+    {W A μDeriv m : ℝ → ℝ} {a b l δ L : ℝ}
+    (hab : a < b) (hal : a < l) (hlb : l < b) (hδ : 0 < δ) (hL : 0 < L)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y,
+        HasDerivWithinAt W (-((((2 : ℝ) * μDeriv t) / m t)) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y,
+        HasDerivWithinAt A (((2 : ℝ) * μDeriv t) / m t) (Ici t) t)
+    (hAcont : ∀ x y : ℝ, a < x → x ≤ y → y < b → ContinuousOn A (Icc x y))
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] b) (norm ∘ W))
+    (hμ : ∀ t : ℝ, l ≤ t → t < b → δ ≤ μDeriv t)
+    (hmneg : ∀ t : ℝ, l ≤ t → t < b → m t < 0)
+    (hmlower : ∀ t : ℝ, l ≤ t → t < b → -(L * (b - t)) ≤ m t) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  have hγ : 0 < ((2 : ℝ) * δ) / L := by
+    exact div_pos (mul_pos (by norm_num) hδ) hL
+  exact abel_left_interval_zero_of_upwardCrossing_of_logSingularity
+    (W := W) (A := A)
+    (c := fun t : ℝ => ((2 : ℝ) * μDeriv t) / m t)
+    (a := a) (b := b) (l := l) (γ := ((2 : ℝ) * δ) / L)
+    hab hal hlb hγ hcont hW hA hAcont hWbounded
+    (fun t hlt htb =>
+      left_laplaceCoeff_logSingularity_of_muDeriv_lower_m_lower
+        hδ hL (sub_pos.mpr htb) (hmneg t hlt htb) (hμ t hlt htb)
+        (hmlower t hlt htb))
 
 /-- L8 left interval from an upper barrier for the primitive near the upward
 crossing. -/
