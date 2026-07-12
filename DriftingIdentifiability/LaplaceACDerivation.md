@@ -126,7 +126,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L5 | common ODE `(**)` for `Z_p, Z_q`; Abel `W'=-(2mu'/m)W` | BRIDGE + REGULARITY DISCHARGE DONE under an explicit C²-normalizer certificate. `LaplaceACAbel.lean` proves the Abel algebra from derivative data; `LaplaceACRegularity.lean` defines `LaplaceC2NormalizerRegular`, derives the `m'`/`m''` data from certified first-order identities, and proves `hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular` with no exposed `HasDerivAt` hypotheses. `LaplaceACDensityRegularity.lean` now proves continuous nonnegative densities imply `LaplaceC2NormalizerRegular` |
 | L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | CERTIFICATE + BV-LIMIT PACKAGING DONE in `LaplaceACPropagation.lean`: `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` / left version prove vanishing on outer rays from Abel + a primitive `A' = 2mu'/m` with finite tail limit, and `abel_right_outer_zero_of_tail_bvPrimitive` / left version now construct that finite primitive tail limit from a tail-BV oscillation bound `‖A y - A x‖ <= G x`, `G -> 0`. Remaining upstream AC work: construct the concrete primitive `A` and prove the required tail-BV estimate from L3/L4 |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
-| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`. Remaining upstream AC work: derive this divergence from L7 + sign-change geometry |
+| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE + BARRIER PACKAGING DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`, and `abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier` / left version now derive this divergence from an eventually larger upper barrier `B` with `B -> -∞`. Remaining upstream AC work: construct the concrete barrier from L7 strictness plus sign-change geometry |
 | L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | GLUING THEOREM DONE in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set. Remaining upstream combinatorics: instantiate `hzero` from the alternating sign-change/parity cover |
 
 3A needs L0-L6. 3B additionally needs L7-L9.
@@ -174,6 +174,9 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
 - L6: the deterministic BV-to-tail-limit packaging is now formalized; the
   remaining nontrivial part is deriving the concrete tail-BV estimate for
   `A' = 2mu'/m` from monotonicity plus the L4 outer sign geometry.
+- L8: the deterministic barrier-to-divergence packaging is now formalized; the
+  remaining nontrivial part is deriving an explicit barrier `B -> -inf` for the
+  primitive near an upward crossing from L7 strictness and local sign geometry.
 - L9-cover: standard real analysis/combinatorics; expected to go through.
 - L3 (tilted-mean monotonicity): **RESOLVED, AXIOM-FREE (this session).** This was
   THE decisive test of whether the route needs an external axiom. It does not:
@@ -200,11 +203,13 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   formalized in `LaplaceACPropagation.lean` without axioms.  L6 now has both
   the primitive-tail-limit version and the upstream tail-BV version: a gauge
   estimate `‖A y - A x‖ <= G x`, `G -> 0`, gives a finite limit for `A` by a
-  Cauchy-filter argument and then kills the whole outer ray.  L8 consumes
-  primitive divergence `A -> -inf` at an upward crossing; L9 consumes
-  finite-breakpoint complement vanishing and glues by continuity.  What remains
-  is upstream real-analysis packaging that constructs those certificates from
-  the raw AC/BV/sign-change hypotheses.
+  Cauchy-filter argument and then kills the whole outer ray.  L8 now has both
+  the primitive-divergence version and the upstream atBot-barrier version: an
+  eventual upper bound `A <= B` with `B -> -inf` gives the required
+  `A -> -inf` and then kills the flank.  L9 consumes finite-breakpoint
+  complement vanishing and glues by continuity.  What remains is upstream
+  real-analysis packaging that constructs those concrete tail/barrier
+  certificates from the raw AC/BV/sign-change hypotheses.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
   The remaining Lean work is combinatorial coverage and continuity gluing, not a
   new analytic identity.
@@ -344,3 +349,13 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   abstract "BV estimate gives finite primitive tail limit" step without axioms;
   the next L6 task is to derive the concrete BV gauge for
   `A' = 2mu'/m` from the Laplace tilted-mean hypotheses.
+- 2026-07-12: advanced L8 upstream packaging.  Added the order squeeze
+  `tendsto_atBot_of_eventually_le_of_tendsto_atBot` and wrapped the existing
+  upward-crossing certificates as
+  `abel_left_flank_zero_of_integratingFactor_of_atBotBarrier`,
+  `abel_right_flank_zero_of_integratingFactor_of_atBotBarrier`,
+  `abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier`, and the left
+  interval version.  This closes the abstract "upper barrier gives primitive
+  divergence" step without axioms; the next L8 task is to construct the
+  concrete barrier near an upward crossing from L7 strictness and the local
+  sign-change geometry.

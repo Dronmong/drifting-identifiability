@@ -205,6 +205,23 @@ theorem exp_comp_tendsto_zero_of_tendsto_atBot
     Tendsto (fun x => Real.exp (A x)) l (𝓝 0) :=
   Real.tendsto_exp_atBot.comp hA
 
+/-! ## L8 divergence packages -/
+
+/-- Order-squeeze into `atBot`.
+
+This is the tiny topological endpoint behind the L8 upstream packages: if an
+upper barrier `B` tends to `-∞` and `A ≤ B` eventually, then `A` also tends to
+`-∞`. -/
+theorem tendsto_atBot_of_eventually_le_of_tendsto_atBot
+    {α : Type*} {l : Filter α} {A B : α → ℝ}
+    (hB : Tendsto B l atBot)
+    (hAB : ∀ᶠ x in l, A x ≤ B x) :
+    Tendsto A l atBot := by
+  rw [tendsto_atBot]
+  intro b
+  filter_upwards [hB.eventually_le_atBot b, hAB] with x hBx hAx
+  exact le_trans hAx hBx
+
 /-! ## Tail-BV packages for L6 -/
 
 /-- A right-tail Cauchy criterion packaged for L6.
@@ -467,6 +484,47 @@ theorem abel_right_flank_zero_of_integratingFactor
       hconst hWbounded hEzero
   exact (mul_eq_zero.mp hbase).resolve_right (Real.exp_ne_zero _)
 
+/-- L8 left flank from an upper barrier for the primitive.
+
+This is the upstream divergence package: instead of requiring callers to prove
+`A → -∞` directly, it is enough to give an eventually larger barrier `B` with
+`B → -∞`.  The crossing-specific analysis can supply such a barrier later
+(for instance a logarithmic one). -/
+theorem abel_left_flank_zero_of_integratingFactor_of_atBotBarrier
+    {W A B c : ℝ → ℝ} {x a : ℝ}
+    (hxa : x < a)
+    (hcont : ∀ b : ℝ, x ≤ b → b < a →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x b))
+    (hW : ∀ b : ℝ, x ≤ b → b < a →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b : ℝ, x ≤ b → b < a →
+      ∀ t ∈ Ico x b, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] a) (norm ∘ W))
+    (hBdiv : Tendsto B (𝓝[<] a) atBot)
+    (hAupper : ∀ᶠ t in 𝓝[<] a, A t ≤ B t) :
+    W x = 0 :=
+  abel_left_flank_zero_of_integratingFactor hxa hcont hW hA hWbounded
+    (exp_comp_tendsto_zero_of_tendsto_atBot
+      (tendsto_atBot_of_eventually_le_of_tendsto_atBot hBdiv hAupper))
+
+/-- L8 right flank from an upper barrier for the primitive. -/
+theorem abel_right_flank_zero_of_integratingFactor_of_atBotBarrier
+    {W A B c : ℝ → ℝ} {a x : ℝ}
+    (hax : a < x)
+    (hcont : ∀ b : ℝ, a < b → b ≤ x →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc b x))
+    (hW : ∀ b : ℝ, a < b → b ≤ x →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b : ℝ, a < b → b ≤ x →
+      ∀ t ∈ Ico b x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hBdiv : Tendsto B (𝓝[>] a) atBot)
+    (hAupper : ∀ᶠ t in 𝓝[>] a, A t ≤ B t) :
+    W x = 0 :=
+  abel_right_flank_zero_of_integratingFactor hax hcont hW hA hWbounded
+    (exp_comp_tendsto_zero_of_tendsto_atBot
+      (tendsto_atBot_of_eventually_le_of_tendsto_atBot hBdiv hAupper))
+
 /-- If the right side of an upward crossing has the L8 integrating-factor
 divergence data, then `W` vanishes on the whole right flank up to the next
 breakpoint. -/
@@ -506,6 +564,25 @@ theorem abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot
   abel_right_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
     (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
 
+/-- L8 right interval from an upper barrier for the primitive near the upward
+crossing. -/
+theorem abel_right_interval_zero_of_upwardCrossing_of_atBotBarrier
+    {W A B c : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hBdiv : Tendsto B (𝓝[>] a) atBot)
+    (hAupper : ∀ᶠ t in 𝓝[>] a, A t ≤ B t) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 :=
+  abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    hab hcont hW hA hWbounded
+    (tendsto_atBot_of_eventually_le_of_tendsto_atBot hBdiv hAupper)
+
 /-- If the left side of an upward crossing has the L8 integrating-factor
 divergence data, then `W` vanishes on the whole left flank down to the previous
 breakpoint. -/
@@ -544,6 +621,25 @@ theorem abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot
     ∀ x : ℝ, a < x → x < b → W x = 0 :=
   abel_left_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
     (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
+
+/-- L8 left interval from an upper barrier for the primitive near the upward
+crossing. -/
+theorem abel_left_interval_zero_of_upwardCrossing_of_atBotBarrier
+    {W A B c : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] b) (norm ∘ W))
+    (hBdiv : Tendsto B (𝓝[<] b) atBot)
+    (hAupper : ∀ᶠ t in 𝓝[<] b, A t ≤ B t) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 :=
+  abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    hab hcont hW hA hWbounded
+    (tendsto_atBot_of_eventually_le_of_tendsto_atBot hBdiv hAupper)
 
 /-! ## L9: finite breakpoint gluing -/
 
