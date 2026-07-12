@@ -205,6 +205,85 @@ theorem exp_comp_tendsto_zero_of_tendsto_atBot
     Tendsto (fun x => Real.exp (A x)) l (𝓝 0) :=
   Real.tendsto_exp_atBot.comp hA
 
+/-! ## Tail-BV packages for L6 -/
+
+/-- A right-tail Cauchy criterion packaged for L6.
+
+If the oscillation of a primitive `A` on every tail interval `[x,y]` is bounded
+by a tail gauge `G x` and `G x → 0`, then `A` has a finite limit at `+∞`.
+This is the deterministic endpoint needed after the AC/BV estimates construct
+the integrating-factor primitive. -/
+theorem cauchy_map_atTop_of_tail_norm_sub_le
+    {A G : ℝ → ℝ} {a : ℝ}
+    (hG : Tendsto G atTop (𝓝 0))
+    (hbound : ∀ x y : ℝ, a ≤ x → x ≤ y → ‖A y - A x‖ ≤ G x) :
+    Cauchy (map A atTop) := by
+  rw [Metric.cauchy_iff]
+  constructor
+  · infer_instance
+  · intro ε hε
+    have hsmallDist : ∀ᶠ x in atTop, dist (G x) 0 < ε :=
+      (Metric.tendsto_nhds.mp hG) ε hε
+    have hsmall : ∀ᶠ x in atTop, G x < ε := by
+      filter_upwards [hsmallDist] with x hx
+      exact lt_of_le_of_lt (le_abs_self (G x)) (by simpa [Real.dist_eq] using hx)
+    rcases eventually_atTop.1 hsmall with ⟨M0, hM0⟩
+    let M : ℝ := max a M0
+    refine ⟨A '' Ici M, ?_, ?_⟩
+    · change {x | A x ∈ A '' Ici M} ∈ atTop
+      exact mem_of_superset (Ici_mem_atTop M) fun x hx => ⟨x, hx, rfl⟩
+    · intro u hu v hv
+      rcases hu with ⟨x, hxM, rfl⟩
+      rcases hv with ⟨y, hyM, rfl⟩
+      by_cases hxy : x ≤ y
+      · have hax : a ≤ x := le_trans (le_max_left a M0) hxM
+        have hGx : G x < ε := hM0 x (le_trans (le_max_right a M0) hxM)
+        calc
+          dist (A x) (A y) = ‖A y - A x‖ := by
+            rw [dist_eq_norm, norm_sub_rev]
+          _ ≤ G x := hbound x y hax hxy
+          _ < ε := hGx
+      · have hyx : y ≤ x := le_of_not_ge hxy
+        have hay : a ≤ y := le_trans (le_max_left a M0) hyM
+        have hGy : G y < ε := hM0 y (le_trans (le_max_right a M0) hyM)
+        calc
+          dist (A x) (A y) = ‖A x - A y‖ := by
+            rw [dist_eq_norm]
+          _ ≤ G y := hbound y x hay hyx
+          _ < ε := hGy
+
+/-- Right-tail finite-limit constructor from the L6 tail-BV estimate. -/
+theorem exists_tendsto_atTop_of_tail_norm_sub_le
+    {A G : ℝ → ℝ} {a : ℝ}
+    (hG : Tendsto G atTop (𝓝 0))
+    (hbound : ∀ x y : ℝ, a ≤ x → x ≤ y → ‖A y - A x‖ ≤ G x) :
+    ∃ L : ℝ, Tendsto A atTop (𝓝 L) :=
+  cauchy_map_iff_exists_tendsto.mp
+    (cauchy_map_atTop_of_tail_norm_sub_le hG hbound)
+
+/-- Left-tail finite-limit constructor from the symmetric L6 tail-BV estimate. -/
+theorem exists_tendsto_atBot_of_tail_norm_sub_le
+    {A G : ℝ → ℝ} {a : ℝ}
+    (hG : Tendsto G atBot (𝓝 0))
+    (hbound : ∀ x y : ℝ, x ≤ y → y ≤ a → ‖A x - A y‖ ≤ G y) :
+    ∃ L : ℝ, Tendsto A atBot (𝓝 L) := by
+  have hGtop : Tendsto (fun x : ℝ => G (-x)) atTop (𝓝 0) :=
+    hG.comp tendsto_neg_atTop_atBot
+  have htop :
+      ∃ L : ℝ, Tendsto (fun x : ℝ => A (-x)) atTop (𝓝 L) := by
+    refine exists_tendsto_atTop_of_tail_norm_sub_le
+      (A := fun x : ℝ => A (-x)) (G := fun x : ℝ => G (-x)) (a := -a)
+      hGtop ?_
+    intro x y hx hxy
+    have hyx : -y ≤ -x := neg_le_neg hxy
+    have hxa : -x ≤ a := by
+      exact neg_le.mp hx
+    simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
+      hbound (-y) (-x) hyx hxa
+  rcases htop with ⟨L, hL⟩
+  refine ⟨L, ?_⟩
+  simpa [Function.comp_def] using hL.comp tendsto_neg_atBot_atTop
+
 /-! ## L6: outer intervals -/
 
 /-- **L6 right outer interval.**  If every finite interval `[x,b]` in the
@@ -249,6 +328,30 @@ theorem abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive
   abel_right_outer_zero_of_integratingFactor hcont hW hA hWtail
     (exp_comp_tendsto_nhds hAtail)
 
+/-- L6 right outer interval from a tail-BV estimate for the primitive.
+
+This is the upstream packaging used by the AC converse: once the analytic work
+has produced a primitive `A' = c` whose tail oscillation is bounded by a gauge
+`G x → 0`, the finite primitive limit required by
+`abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` is constructed
+internally. -/
+theorem abel_right_outer_zero_of_tail_bvPrimitive
+    {W A c G : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x b))
+    (hW : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atTop (𝓝 0))
+    (hG : Tendsto G atTop (𝓝 0))
+    (hBV : ∀ x y : ℝ, a ≤ x → x ≤ y → ‖A y - A x‖ ≤ G x) :
+    ∀ x : ℝ, a ≤ x → W x = 0 := by
+  rcases exists_tendsto_atTop_of_tail_norm_sub_le hG hBV with ⟨L, hAtail⟩
+  exact abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive
+    (W := W) (A := A) (c := c) (a := a) (L := L)
+    hcont hW hA hWtail hAtail
+
 /-- **L6 left outer interval.**  Symmetric version of
 `abel_right_outer_zero_of_integratingFactor`. -/
 theorem abel_left_outer_zero_of_integratingFactor
@@ -285,6 +388,24 @@ theorem abel_left_outer_zero_of_integratingFactor_of_tendsto_primitive
     ∀ x : ℝ, x ≤ a → W x = 0 :=
   abel_left_outer_zero_of_integratingFactor hcont hW hA hWtail
     (exp_comp_tendsto_nhds hAtail)
+
+/-- L6 left outer interval from a symmetric tail-BV estimate for the primitive. -/
+theorem abel_left_outer_zero_of_tail_bvPrimitive
+    {W A c G : ℝ → ℝ} {a : ℝ}
+    (hcont : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc b x))
+    (hW : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atBot (𝓝 0))
+    (hG : Tendsto G atBot (𝓝 0))
+    (hBV : ∀ x y : ℝ, x ≤ y → y ≤ a → ‖A x - A y‖ ≤ G y) :
+    ∀ x : ℝ, x ≤ a → W x = 0 := by
+  rcases exists_tendsto_atBot_of_tail_norm_sub_le hG hBV with ⟨L, hAtail⟩
+  exact abel_left_outer_zero_of_integratingFactor_of_tendsto_primitive
+    (W := W) (A := A) (c := c) (a := a) (L := L)
+    hcont hW hA hWtail hAtail
 
 /-! ## L8: upward-crossing flanks -/
 
