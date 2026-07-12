@@ -129,7 +129,7 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L6 | OUTER rays: `W ≡ 0` on the two semi-infinite sign intervals | DONE in `LaplaceACPropagation.lean` by a primitive-free sign argument. `abel_right_outer_zero_of_nonpos_coeff` and `abel_left_outer_zero_of_nonneg_coeff` show that if `W' = -cW`, `W -> 0` at the relevant tail, and `c` has the outer-ray sign, then `W` vanishes on the ray. The concrete wrappers `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` and `abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos` consume exactly the Laplace coefficient `c = 2 mu'/m`: L3 gives `mu' >= 0`, while L4/outer sign geometry gives `m < 0` on the right outer ray and `m > 0` on the left. The older primitive/BV packages remain available but are no longer needed for L6. |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
 | L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | DONE in `LaplaceACPropagation.lean`. The previous abstract barrier package remains, but the main route is now concrete: `primitive_tendsto_atBot_of_right_log_singularity` / left version prove `A -> -∞` from a logarithmic singular coefficient, and `abel_right_interval_zero_of_upwardCrossing_of_logSingularity` / left version feed that into the bounded Abel squeeze. The actual Laplace-coefficient wrappers `abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper` and `abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower` derive the log singularity from local `mu' >= δ > 0` plus one-sided linear control of `m` at the upward crossing. |
-| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | GLUING + ORDERED-GAP PACKAGING DONE in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set, and `continuous_eq_zero_of_vanishesOnOrderedGaps` now packages the common finite-breakpoint cover: left ray, adjacent open gaps, and right ray. Remaining upstream combinatorics: construct the `VanishesOnOrderedGaps` witness from the alternating sign-change/parity cover |
+| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | **DONE at the deterministic packaging layer** in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set; `continuous_eq_zero_of_vanishesOnOrderedGaps` packages the common finite-breakpoint cover; and `continuous_eq_zero_of_alternatingUpwardPairs` now converts the alternating down/up parity cover directly into global vanishing. |
 
 3A needs L0-L6. 3B additionally needs L7-L9.
 
@@ -187,9 +187,10 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   flanks. What remains for the final theorem is to supply these local `δ,L`
   witnesses from the selected crossing/regularity hypotheses, not to prove the
   L8 propagation/barrier mechanism.
-- L9-cover: the deterministic ordered-gap cover package is now formalized; the
-  remaining combinatorial task is to assemble its `VanishesOnOrderedGaps`
-  witness from the actual alternating sign-change/parity proof.
+- L9-cover: RESOLVED as a deterministic package.  The ordered-gap cover and the
+  alternating down/up parity cover are both formalized; the theorem
+  `continuous_eq_zero_of_alternatingUpwardPairs` converts the parity witness into
+  the ordered-gap witness and then uses continuity to prove `W ≡ 0`.
 - L3 (tilted-mean monotonicity): **RESOLVED, AXIOM-FREE (this session).** This was
   THE decisive test of whether the route needs an external axiom. It does not:
   `laplaceTiltedMean_monotone` (`LaplaceTiltedMeanMonotone.lean`) proves `mu_p`
@@ -221,15 +222,17 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   reusable backup tools but are not part of the required L6 route.  L8 is now
   also closed at the deterministic level: concrete logarithmic singularity
   packages construct `A -> -inf`, and the actual `2mu'/m` wrappers derive those
-  singularities from `mu' >= δ` plus one-sided linear control of `m`.  L9 now has both the finite-set
-  complement gluing theorem and an ordered-gap cover theorem: a list carrying
-  left-ray, adjacent-gap, and right-ray vanishing data implies `W ≡ 0` by
+  singularities from `mu' >= δ` plus one-sided linear control of `m`.  L9 now has
+  the finite-set complement gluing theorem, the ordered-gap cover theorem, and
+  the alternating parity-cover theorem: a finite `[down, up, down, ...]` witness
+  carrying the L6 outer-ray and L8 flank vanishings implies `W ≡ 0` by
   continuity.  What remains is final-assembly packaging: provide the local
   `δ,L` witnesses at upward crossings from the chosen regularity hypotheses,
-  build the ordered-gap witness, and feed the closed L6/L8 packages into L9.
+  instantiate the finite alternating breakpoint list, and feed the closed
+  L6/L8/L9 packages into the certified gate.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
-  The remaining Lean work is combinatorial coverage and continuity gluing, not a
-  new analytic identity.
+  The remaining Lean work is final theorem assembly, not a new analytic identity
+  or a new L9 combinatorial lemma.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -380,9 +383,9 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `continuous_eq_zero_of_vanishesOnOrderedGaps`.  This closes the abstract
   finite ordered-breakpoint cover step: once L6/L8 provide vanishing on the
   left ray, every adjacent open gap, and the right ray of a finite breakpoint
-  list, continuity glues the breakpoint values.  The next L9 task is to build
-  that ordered-gap witness from the actual alternating sign-change/parity
-  structure.
+  list, continuity glues the breakpoint values.  The later parity-cover theorem
+  below now builds this ordered-gap witness from the alternating
+  sign-change/parity structure.
 - 2026-07-12: FULLY CLOSED L6 by replacing the remaining concrete BV estimate
   with a primitive-free sign argument.  Added
   `abel_square_left_le_right_of_nonpos_coeff`,
@@ -406,3 +409,11 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   remaining final-assembly task is to provide the local `δ,L` witnesses from the
   chosen strict-crossing/regularity hypotheses; the L8 analytic mechanism itself
   is now axiom-free and closed.
+- 2026-07-12: FULLY CLOSED L9 at the deterministic parity-cover layer.  Added
+  `VanishesOnAlternatingUpwardPairsFrom`,
+  `VanishesOnAlternatingUpwardPairs`,
+  `VanishesOnOrderedGapsFrom.of_alternatingUpwardPairs`,
+  `VanishesOnOrderedGaps.of_alternatingUpwardPairs`, and
+  `continuous_eq_zero_of_alternatingUpwardPairs`.  A finite alternating
+  `[down, up, down, ...]` cover now directly feeds the existing ordered-gap and
+  continuity gluing theorem, with no new axioms.

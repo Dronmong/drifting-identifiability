@@ -1247,6 +1247,60 @@ def VanishesOnOrderedGaps (W : ℝ → ℝ) : List ℝ → Prop
       (∀ x : ℝ, x < first → W x = 0) ∧
         VanishesOnOrderedGapsFrom W first rest
 
+/-- Alternating upward-crossing cover data to the right of a downward
+breakpoint.
+
+The intended shape is `[up₁, down₂, up₃, down₄, ...]` after an initial downward
+breakpoint.  Each upward crossing kills the two adjacent open gaps:
+`(leftDown, up)` and `(up, rightDown)`.  The recursion then continues from the
+new downward breakpoint.  The empty tail is the final right ray after the last
+downward breakpoint.  A singleton tail is deliberately impossible: it would
+mean the breakpoint list ends at an upward crossing, which cannot be the
+odd-parity Laplace mean-shift pattern. -/
+def VanishesOnAlternatingUpwardPairsFrom (W : ℝ → ℝ) (leftDown : ℝ) : List ℝ → Prop
+  | [] => ∀ x : ℝ, leftDown < x → W x = 0
+  | [_up] => False
+  | up :: rightDown :: rest =>
+      (∀ x : ℝ, leftDown < x → x < up → W x = 0) ∧
+      (∀ x : ℝ, up < x → x < rightDown → W x = 0) ∧
+        VanishesOnAlternatingUpwardPairsFrom W rightDown rest
+
+/-- Top-level alternating upward-crossing cover data.
+
+The intended breakpoint list has the form
+`[down₁, up₂, down₃, up₄, ..., down_M]`: L6 kills the left ray before `down₁`,
+each upward crossing kills its two adjacent interior gaps, and the last
+downward crossing supplies the right ray. -/
+def VanishesOnAlternatingUpwardPairs (W : ℝ → ℝ) : List ℝ → Prop
+  | [] => ∀ x : ℝ, W x = 0
+  | firstDown :: rest =>
+      (∀ x : ℝ, x < firstDown → W x = 0) ∧
+        VanishesOnAlternatingUpwardPairsFrom W firstDown rest
+
+/-- The alternating upward-crossing cover produces the ordered-gap witness used
+by the L9 gluing theorem. -/
+theorem VanishesOnOrderedGapsFrom.of_alternatingUpwardPairs
+    {W : ℝ → ℝ} {leftDown : ℝ} :
+    ∀ {breaks : List ℝ},
+      VanishesOnAlternatingUpwardPairsFrom W leftDown breaks →
+        VanishesOnOrderedGapsFrom W leftDown breaks
+  | [], hvan => hvan
+  | [_up], hvan => False.elim hvan
+  | up :: rightDown :: rest, hvan => by
+      rcases hvan with ⟨hleftGap, hrightGap, htail⟩
+      exact ⟨hleftGap, ⟨hrightGap,
+        VanishesOnOrderedGapsFrom.of_alternatingUpwardPairs htail⟩⟩
+
+/-- Top-level alternating upward-crossing cover produces the ordered-gap data. -/
+theorem VanishesOnOrderedGaps.of_alternatingUpwardPairs
+    {W : ℝ → ℝ} :
+    ∀ {breaks : List ℝ},
+      VanishesOnAlternatingUpwardPairs W breaks → VanishesOnOrderedGaps W breaks
+  | [], hvan => hvan
+  | firstDown :: rest, hvan => by
+      rcases hvan with ⟨hleftRay, htail⟩
+      exact ⟨hleftRay, VanishesOnOrderedGapsFrom.of_alternatingUpwardPairs htail⟩
+
 /-- The gap data to the right of a fixed breakpoint implies vanishing away from
 the remaining breakpoints. -/
 theorem VanishesOnOrderedGapsFrom.eq_zero_of_not_mem
@@ -1332,5 +1386,19 @@ theorem continuous_eq_zero_of_vanishesOnOrderedGaps
   exact VanishesOnOrderedGaps.eq_zero_of_not_mem hvan (by
     intro hxmem
     exact hx (by simpa using hxmem))
+
+/-- **L9 alternating parity cover.**  If `W` is continuous and the finite
+breakpoint list carries the alternating downward/upward cover data generated
+by the Laplace mean-shift sign pattern, then `W` vanishes everywhere.
+
+This is the final upstream L9 package: it converts the parity cover into the
+ordered-gap witness and then applies the continuity gluing theorem. -/
+theorem continuous_eq_zero_of_alternatingUpwardPairs
+    {W : ℝ → ℝ} (breaks : List ℝ)
+    (hcont : Continuous W)
+    (hvan : VanishesOnAlternatingUpwardPairs W breaks) :
+    ∀ x : ℝ, W x = 0 := by
+  exact continuous_eq_zero_of_vanishesOnOrderedGaps breaks hcont
+    (VanishesOnOrderedGaps.of_alternatingUpwardPairs hvan)
 
 end DriftingIdentifiability
