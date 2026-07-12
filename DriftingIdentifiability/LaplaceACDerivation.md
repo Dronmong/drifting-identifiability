@@ -107,10 +107,10 @@ Wronskian `W := Z_p' Z_q - Z_p Z_q'`:
 | L3 | `mu_p` monotone (`mu' >= 0`) | **DONE, AXIOM-FREE** (`LaplaceTiltedMeanMonotone.lean`, `laplaceTiltedMean_monotone`): Monge/TP2 + symmetrization, no correlation-inequality axiom |
 | L4 | `mu` bounded (`mu_+`, `mu_-`) + all zeros of `m` in `[mu_-,mu_+]` | TODO; from exp moment + DCT |
 | L5 | common ODE `(**)` for `Z_p, Z_q`; `W` AC; Abel `W'=-(2mu'/m)W` a.e. | ODE/ABEL BRIDGE DONE in `LaplaceACAbel.lean`: zero drift gives the common ratio `m = D_p/Z_p`; from explicit differentiability data the actual normalizer Wronskian satisfies Abel pointwise, and an a.e. wrapper is proved. Remaining analytic work is to derive those differentiability/second-derivative hypotheses from the a.c. exp-moment assumptions |
-| L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | PROPAGATION CORE DONE in `LaplaceACPropagation.lean`: integrating-factor constancy plus right/left tail squeezes. Remaining: construct the primitive `A' = 2mu'/m` from the BV data and prove `exp A` has the required finite tail limit from L3/L4 |
+| L6 | OUTER BV: `int|2mu'/m|<inf` => `W ≡ 0` on semi-infinite intervals | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive` / left version prove vanishing on outer rays from Abel + a primitive `A' = 2mu'/m` with finite tail limit. Remaining upstream AC work: construct that primitive and finite limit from the BV estimate supplied by L3/L4 |
 | L7 | `mu'(a_k) > 0` STRICT at crossings (zeros lie in supp interior; strict covariance) | DONE in right-derivative/straddling-mass form (`hasStrictDerivWithinAt_Ici_laplaceTiltedMeanFromDisplacement_of_twoSidedMass`), plus bridge `laplaceTiltedMean_eq_fromDisplacement`; later L8 may choose how much two-sided/classical-AC packaging it needs |
-| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | PROPAGATION CORE DONE in `LaplaceACPropagation.lean`: boundedness squeeze says an eventually constant `W·exp(A)` has zero constant when `W` is bounded and `exp(A) -> 0`. Remaining: prove the upward-crossing divergence input `exp(A)->0` from L7 + sign-change geometry |
-| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | PARTIAL: finite-interval zero continuation is proved (`abel_zero_propagates_Icc`). Remaining: formal finite sign-change cover/parity bookkeeping and continuity gluing at the crossings |
+| L8 | INTERIOR blow-up: upward crossing + bounded `W` => `W ≡ 0` on flanks | CERTIFICATE THEOREM DONE in `LaplaceACPropagation.lean`: `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot` / left version prove flank vanishing from Abel + bounded `W` + primitive divergence `A -> -∞`. Remaining upstream AC work: derive this divergence from L7 + sign-change geometry |
+| L9 | finitely many sign changes + parity covering => `W ≡ 0` on `R` | GLUING THEOREM DONE in `LaplaceACPropagation.lean`: `continuous_eq_zero_of_zero_off_finset` proves a continuous `W` vanishes everywhere once the outer/flank arguments kill the complement of a finite breakpoint set. Remaining upstream combinatorics: instantiate `hzero` from the alternating sign-change/parity cover |
 
 3A needs L0-L6. 3B additionally needs L7-L9.
 
@@ -163,10 +163,13 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   pointwise, and packages the a.e. version.  The remaining task is now upstream
   regularity, not L5 algebra: prove the required differentiability/second
   derivative data from the a.c. exponential-moment hypotheses.
-- L6/L8 propagation: the deterministic ODE layer is now formalized in
-  `LaplaceACPropagation.lean` without axioms.  What remains is the real-analysis
-  packaging that turns the AC/BV/sign-change hypotheses into the primitive
-  limits consumed by those lemmas.
+- L6/L8/L9 certificate layer: the deterministic ODE/continuity endgame is now
+  formalized in `LaplaceACPropagation.lean` without axioms.  L6 consumes a
+  primitive `A' = 2mu'/m` with finite tail limit; L8 consumes primitive
+  divergence `A -> -inf` at an upward crossing; L9 consumes finite-breakpoint
+  complement vanishing and glues by continuity.  What remains is upstream
+  real-analysis packaging that constructs those certificates from the raw
+  AC/BV/sign-change hypotheses.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
   The remaining Lean work is combinatorial coverage and continuity gluing, not a
   new analytic identity.
@@ -259,3 +262,16 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   reusable Abel-propagation core; remaining work is to derive the primitive
   finite-limit / zero-limit inputs from the AC sign-change hypotheses and then
   formalize the finite parity cover.
+- 2026-07-11: strengthened L6/L8/L9 to certificate theorems.  L6 now has
+  right/left outer-ray vanishing from a primitive with finite tail limit:
+  `abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive`,
+  `abel_left_outer_zero_of_integratingFactor_of_tendsto_primitive`.  L8 now has
+  right/left upward-crossing interval vanishing from primitive divergence
+  `A -> -inf` and bounded `W`:
+  `abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot`,
+  `abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot`.  L9 now has the
+  finite-breakpoint continuity gluing theorem
+  `continuous_eq_zero_of_zero_off_finset`.  These are axiom-free.  The remaining
+  work is no longer the propagation/gluing logic itself; it is constructing the
+  finite-limit/divergence/finite-cover certificates from the raw a.c.
+  mean-shift hypotheses.

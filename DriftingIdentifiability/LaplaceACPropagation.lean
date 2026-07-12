@@ -1,6 +1,8 @@
 import DriftingIdentifiability.LaplaceACAbel
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Topology.Algebra.Module.Cardinality
+import Mathlib.Topology.Order.OrderClosed
 
 /-!
 # Propagation lemmas for the absolutely-continuous Laplace converse
@@ -186,5 +188,273 @@ theorem bounded_integratingFactor_const_zero_of_factor_tendsto_zero
     (hEzero : Tendsto (fun x => Real.exp (A x)) l (𝓝 0)) :
     C = 0 :=
   bounded_factor_const_zero_of_factor_tendsto_zero hconst hWbounded hEzero
+
+/-- Continuity of `exp` packaged in the form used by the integrating-factor
+lemmas. -/
+theorem exp_comp_tendsto_nhds
+    {α : Type*} {l : Filter α} {A : α → ℝ} {L : ℝ}
+    (hA : Tendsto A l (𝓝 L)) :
+    Tendsto (fun x => Real.exp (A x)) l (𝓝 (Real.exp L)) :=
+  (Real.continuous_exp.tendsto L).comp hA
+
+/-- If the primitive tends to `-∞`, its exponential integrating factor tends
+to zero.  This is the analytic shape of the L8 upward-crossing divergence. -/
+theorem exp_comp_tendsto_zero_of_tendsto_atBot
+    {α : Type*} {l : Filter α} {A : α → ℝ}
+    (hA : Tendsto A l atBot) :
+    Tendsto (fun x => Real.exp (A x)) l (𝓝 0) :=
+  Real.tendsto_exp_atBot.comp hA
+
+/-! ## L6: outer intervals -/
+
+/-- **L6 right outer interval.**  If every finite interval `[x,b]` in the
+right outer region satisfies the Abel/integrating-factor hypotheses, `W → 0`
+at `+∞`, and the integrating factor has a finite tail limit, then `W` vanishes
+throughout the right outer ray.
+
+The analytic BV work in the a.c. converse is precisely to construct such an
+`A` with `A' = c = 2μ'/m` and finite `exp A` limit on the outer sign interval. -/
+theorem abel_right_outer_zero_of_integratingFactor
+    {W A c : ℝ → ℝ} {a L : ℝ}
+    (hcont : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x b))
+    (hW : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atTop (𝓝 0))
+    (hAtail : Tendsto (fun x => Real.exp (A x)) atTop (𝓝 L)) :
+    ∀ x : ℝ, a ≤ x → W x = 0 := by
+  intro x hax
+  exact abel_right_tail_zero_of_integratingFactor
+    (W := W) (A := A) (c := c) (a := x) (L := L)
+    (fun b hxb => hcont x b hax hxb)
+    (fun b hxb => hW x b hax hxb)
+    (fun b hxb => hA x b hax hxb)
+    hWtail hAtail
+
+/-- L6 right outer interval, stated using convergence of the primitive `A`
+itself rather than convergence of `exp A`. -/
+theorem abel_right_outer_zero_of_integratingFactor_of_tendsto_primitive
+    {W A c : ℝ → ℝ} {a L : ℝ}
+    (hcont : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x b))
+    (hW : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x b : ℝ, a ≤ x → x ≤ b →
+      ∀ t ∈ Ico x b, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atTop (𝓝 0))
+    (hAtail : Tendsto A atTop (𝓝 L)) :
+    ∀ x : ℝ, a ≤ x → W x = 0 :=
+  abel_right_outer_zero_of_integratingFactor hcont hW hA hWtail
+    (exp_comp_tendsto_nhds hAtail)
+
+/-- **L6 left outer interval.**  Symmetric version of
+`abel_right_outer_zero_of_integratingFactor`. -/
+theorem abel_left_outer_zero_of_integratingFactor
+    {W A c : ℝ → ℝ} {a L : ℝ}
+    (hcont : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc b x))
+    (hW : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atBot (𝓝 0))
+    (hAtail : Tendsto (fun x => Real.exp (A x)) atBot (𝓝 L)) :
+    ∀ x : ℝ, x ≤ a → W x = 0 := by
+  intro x hxa
+  exact abel_left_tail_zero_of_integratingFactor
+    (W := W) (A := A) (c := c) (a := x) (L := L)
+    (fun b hbx => hcont b x hbx hxa)
+    (fun b hbx => hW b x hbx hxa)
+    (fun b hbx => hA b x hbx hxa)
+    hWtail hAtail
+
+/-- L6 left outer interval, stated using convergence of the primitive `A`
+itself rather than convergence of `exp A`. -/
+theorem abel_left_outer_zero_of_integratingFactor_of_tendsto_primitive
+    {W A c : ℝ → ℝ} {a L : ℝ}
+    (hcont : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc b x))
+    (hW : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b x : ℝ, b ≤ x → x ≤ a →
+      ∀ t ∈ Ico b x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWtail : Tendsto W atBot (𝓝 0))
+    (hAtail : Tendsto A atBot (𝓝 L)) :
+    ∀ x : ℝ, x ≤ a → W x = 0 :=
+  abel_left_outer_zero_of_integratingFactor hcont hW hA hWtail
+    (exp_comp_tendsto_nhds hAtail)
+
+/-! ## L8: upward-crossing flanks -/
+
+/-- **L8 left flank.**  Suppose `x < a` lies to the left of an upward crossing.
+If Abel/integrating-factor constancy holds on every `[x,b]` with `b < a`,
+`W` is bounded as one approaches `a` from the left, and `exp A → 0` from the
+left, then `W x = 0`.
+
+This packages the boundedness-vs-blow-up contradiction: if the constant
+`W x * exp(A x)` were nonzero, then `W` would have to blow up as `exp(A)` tends
+to zero. -/
+theorem abel_left_flank_zero_of_integratingFactor
+    {W A c : ℝ → ℝ} {x a : ℝ}
+    (hxa : x < a)
+    (hcont : ∀ b : ℝ, x ≤ b → b < a →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x b))
+    (hW : ∀ b : ℝ, x ≤ b → b < a →
+      ∀ t ∈ Ico x b, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b : ℝ, x ≤ b → b < a →
+      ∀ t ∈ Ico x b, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] a) (norm ∘ W))
+    (hEzero : Tendsto (fun t => Real.exp (A t)) (𝓝[<] a) (𝓝 0)) :
+    W x = 0 := by
+  have hconst : ∀ᶠ b in 𝓝[<] a,
+      W b * Real.exp (A b) = W x * Real.exp (A x) := by
+    filter_upwards [Ioo_mem_nhdsLT hxa] with b hb
+    exact abel_integratingFactor_const_Icc
+      (W := W) (A := A) (c := c)
+      (hcont b hb.1.le hb.2) (hW b hb.1.le hb.2) (hA b hb.1.le hb.2)
+      b ⟨hb.1.le, le_rfl⟩
+  have hbase : W x * Real.exp (A x) = 0 :=
+    bounded_integratingFactor_const_zero_of_factor_tendsto_zero
+      hconst hWbounded hEzero
+  exact (mul_eq_zero.mp hbase).resolve_right (Real.exp_ne_zero _)
+
+/-- **L8 right flank.**  Symmetric crossing-flank theorem approaching an upward
+crossing from the right. -/
+theorem abel_right_flank_zero_of_integratingFactor
+    {W A c : ℝ → ℝ} {a x : ℝ}
+    (hax : a < x)
+    (hcont : ∀ b : ℝ, a < b → b ≤ x →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc b x))
+    (hW : ∀ b : ℝ, a < b → b ≤ x →
+      ∀ t ∈ Ico b x, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ b : ℝ, a < b → b ≤ x →
+      ∀ t ∈ Ico b x, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hEzero : Tendsto (fun t => Real.exp (A t)) (𝓝[>] a) (𝓝 0)) :
+    W x = 0 := by
+  have hconst : ∀ᶠ b in 𝓝[>] a,
+      W b * Real.exp (A b) = W x * Real.exp (A x) := by
+    filter_upwards [Ioo_mem_nhdsGT hax] with b hb
+    exact (abel_integratingFactor_const_Icc
+      (W := W) (A := A) (c := c)
+      (hcont b hb.1 hb.2.le) (hW b hb.1 hb.2.le) (hA b hb.1 hb.2.le)
+      x ⟨hb.2.le, le_rfl⟩).symm
+  have hbase : W x * Real.exp (A x) = 0 :=
+    bounded_integratingFactor_const_zero_of_factor_tendsto_zero
+      hconst hWbounded hEzero
+  exact (mul_eq_zero.mp hbase).resolve_right (Real.exp_ne_zero _)
+
+/-- If the right side of an upward crossing has the L8 integrating-factor
+divergence data, then `W` vanishes on the whole right flank up to the next
+breakpoint. -/
+theorem abel_right_interval_zero_of_upwardCrossing
+    {W A c : ℝ → ℝ} {a b : ℝ}
+    (_hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hEzero : Tendsto (fun t => Real.exp (A t)) (𝓝[>] a) (𝓝 0)) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  intro x hax hxb
+  exact abel_right_flank_zero_of_integratingFactor
+    (W := W) (A := A) (c := c) hax
+    (fun y hay hyx => hcont y x hay hyx hxb)
+    (fun y hay hyx => hW y x hay hyx hxb)
+    (fun y hay hyx => hA y x hay hyx hxb)
+    hWbounded hEzero
+
+/-- L8 right flank from primitive divergence `A → -∞` at the upward crossing. -/
+theorem abel_right_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    {W A c : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[>] a) (norm ∘ W))
+    (hAdiv : Tendsto A (𝓝[>] a) atBot) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 :=
+  abel_right_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
+    (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
+
+/-- If the left side of an upward crossing has the L8 integrating-factor
+divergence data, then `W` vanishes on the whole left flank down to the previous
+breakpoint. -/
+theorem abel_left_interval_zero_of_upwardCrossing
+    {W A c : ℝ → ℝ} {a b : ℝ}
+    (_hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] b) (norm ∘ W))
+    (hEzero : Tendsto (fun t => Real.exp (A t)) (𝓝[<] b) (𝓝 0)) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 := by
+  intro x hax hxb
+  exact abel_left_flank_zero_of_integratingFactor
+    (W := W) (A := A) (c := c) hxb
+    (fun y hxy hyb => hcont x y hax hxy hyb)
+    (fun y hxy hyb => hW x y hax hxy hyb)
+    (fun y hxy hyb => hA x y hax hxy hyb)
+    hWbounded hEzero
+
+/-- L8 left flank from primitive divergence `A → -∞` at the upward crossing. -/
+theorem abel_left_interval_zero_of_upwardCrossing_of_tendsto_atBot
+    {W A c : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hcont : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ContinuousOn (fun t => W t * Real.exp (A t)) (Icc x y))
+    (hW : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt W (-(c t) * W t) (Ici t) t)
+    (hA : ∀ x y : ℝ, a < x → x ≤ y → y < b →
+      ∀ t ∈ Ico x y, HasDerivWithinAt A (c t) (Ici t) t)
+    (hWbounded : IsBoundedUnder (· ≤ ·) (𝓝[<] b) (norm ∘ W))
+    (hAdiv : Tendsto A (𝓝[<] b) atBot) :
+    ∀ x : ℝ, a < x → x < b → W x = 0 :=
+  abel_left_interval_zero_of_upwardCrossing hab hcont hW hA hWbounded
+    (exp_comp_tendsto_zero_of_tendsto_atBot hAdiv)
+
+/-! ## L9: finite breakpoint gluing -/
+
+/-- If a continuous real-valued function vanishes on a dense set, it vanishes
+everywhere. -/
+theorem continuous_eq_zero_of_dense_zeroSet
+    {W : ℝ → ℝ}
+    (hcont : Continuous W)
+    (hdense : Dense {x : ℝ | W x = 0}) :
+    ∀ x : ℝ, W x = 0 := by
+  have hclosed : IsClosed {x : ℝ | W x = 0} :=
+    isClosed_eq hcont continuous_const
+  intro x
+  have hx : x ∈ closure {x : ℝ | W x = 0} := by
+    rw [hdense.closure_eq]
+    trivial
+  exact hclosed.closure_subset hx
+
+/-- **L9 continuity gluing.**  If a continuous `W` vanishes away from a finite
+set of breakpoints, then it vanishes everywhere.  This is the formal gluing
+step after the outer and crossing-flank arguments have killed every open sign
+interval. -/
+theorem continuous_eq_zero_of_zero_off_finset
+    {W : ℝ → ℝ} (breaks : Finset ℝ)
+    (hcont : Continuous W)
+    (hzero : ∀ x : ℝ, x ∉ (breaks : Set ℝ) → W x = 0) :
+    ∀ x : ℝ, W x = 0 := by
+  have hfinite : (breaks : Set ℝ).Finite := breaks.finite_toSet
+  have hdense_compl : Dense ((breaks : Set ℝ)ᶜ) :=
+    hfinite.countable.dense_compl ℝ
+  have hdense_zero : Dense {x : ℝ | W x = 0} :=
+    hdense_compl.mono fun x hx => hzero x hx
+  exact continuous_eq_zero_of_dense_zeroSet hcont hdense_zero
 
 end DriftingIdentifiability

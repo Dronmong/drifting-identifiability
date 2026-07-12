@@ -1210,10 +1210,12 @@ Remaining research objectives are now narrower and split by trust level:
   Current Lean progress is axiom-free: L2's full Wronskian tail assembly under
   explicit two-sided exponential moments, L3 monotone tilted mean, L7 strict
   right-derivative at straddling points, and the L5 zero-drift ODE/Abel bridge
-  (`LaplaceACAbel.lean`).  The L6/L8/L9 deterministic propagation core is also
+  (`LaplaceACAbel.lean`).  The L6/L8/L9 deterministic certificate layer is also
   now formalized in `LaplaceACPropagation.lean`: finite-interval
-  integrating-factor constancy, right/left tail squeezes, boundedness squeeze at
-  crossing-side zero integrating factors, and finite-interval zero continuation.
+  integrating-factor constancy, right/left outer-ray vanishing from a primitive
+  with finite tail limit, right/left upward-crossing interval vanishing from
+  primitive divergence `A -> -∞` plus bounded `W`, and finite-breakpoint
+  continuity gluing.
   L2 now proves `W -> 0` at both tails via
   dominated-convergence moment limits and the mass-determinant formula.  L5 now proves that
   zero drift gives the common ratio `m = D_p/Z_p`, derives the shared ODE from
@@ -1221,8 +1223,9 @@ Remaining research objectives are now narrower and split by trust level:
   identities for the named normalizer Wronskian.  What remains upstream is:
   derive the L5 differentiability/second-derivative hypotheses from the a.c.
   exponential-moment assumptions; construct the primitive `A' = 2μ'/m` and its
-  finite/zero limiting behavior from the BV and upward-crossing hypotheses; and
-  formalize the finite sign-change parity cover plus continuity gluing.
+  finite/divergent limiting behavior from the BV and upward-crossing hypotheses;
+  and instantiate the finite sign-change parity cover that supplies vanishing
+  off the finite breakpoint set.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
