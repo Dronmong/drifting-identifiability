@@ -239,12 +239,16 @@ the finiteness hypothesis is removable by a compactness/limiting argument on
   `[down, up, down]` parity case.  The same file now proves global Wronskian
   continuity from `LaplaceC2NormalizerRegular`, a concrete 3A/single-downward
   assembly theorem from L2+L5+L6, and a concrete first-3B
-  `[down, up, down]` assembly theorem from L2+L5+L6+L8+L9.
+  `[down, up, down]` assembly theorem from L2+L5+L6+L8+L9.  It now also defines
+  the arbitrary finite `LaplaceACAlternatingChain`, proves each local
+  `LaplaceACUpwardCrossingCertificate` kills its two flanks, and proves the
+  general arbitrary-length theorem `laplaceAC_identifies_of_alternatingChain`.
 - L9-finiteness: a hypothesis for general a.c.; automatic for analytic densities.
-  The remaining Lean work is upstream witness construction for the concrete
-  arbitrary-length finite breakpoint list, plus automatic derivation of the
-  local `δ,L` crossing witnesses from the chosen smoothness hypotheses.  It is
-  not a new analytic identity, final gate, or L9 combinatorial lemma.
+  The arbitrary finite breakpoint induction is now formalized.  The remaining
+  Lean work is automatic derivation of each local upward-crossing certificate
+  (`δ,L`, one-sided sign, and primitive data) from the chosen smoothness
+  hypotheses.  It is not a new analytic identity, final gate, or L9
+  combinatorial lemma.
 
 Given the prior sign-error episode: this is a plan to validate, not a theorem.
 The zero structure and residue signs are numerically corroborated (below).
@@ -449,3 +453,13 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   the first nontrivial 3B pattern `[down, up, down]` via L6 outer rays and L8
   flank blow-up.  Remaining work is now the arbitrary-length parity-list
   induction and automatic production of local `δ,L` witnesses.
+- 2026-07-12: CLOSED ARBITRARY-LENGTH FINAL ASSEMBLY.  Added the local
+  certificate structure `LaplaceACUpwardCrossingCertificate`, its flank theorem
+  `LaplaceACUpwardCrossingCertificate.vanishes`, the recursive finite
+  `LaplaceACAlternatingChain`, and the general theorem
+  `laplaceAC_identifies_of_alternatingChain`.  This handles any finite
+  `[down, up, down, ..., down]` list by induction, using L6 for the two outer
+  rays, L8 for every upward crossing, L9 for gluing, and the certified gate for
+  `p = q`.  The remaining polish layer is to generate the local crossing
+  certificates automatically from smoothness/strict-crossing hypotheses rather
+  than supplying them as explicit certificate data.

@@ -1223,15 +1223,18 @@ Remaining research objectives are now narrower and split by trust level:
   the certified Wronskian gate to conclude `p = q`.  It also proves Wronskian
   continuity from `LaplaceC2NormalizerRegular`, a concrete 3A
   single-downward-crossing assembly theorem, and the first nontrivial 3B
-  `[down, up, down]` assembly theorem.
+  `[down, up, down]` assembly theorem.  The arbitrary finite parity induction is
+  now packaged too: `LaplaceACUpwardCrossingCertificate` records one local
+  upward crossing, `LaplaceACAlternatingChain` records any finite
+  `[down, up, down, ..., down]` chain, and
+  `laplaceAC_identifies_of_alternatingChain` proves identification for the whole
+  chain.
 
-  What remains upstream is sharply localized: construct the concrete
-  `LaplaceACFinalAssembly` certificate for arbitrary-length finite
-  zero/sign-change lists.  In practice this means deriving the local `δ,L`
-  witnesses at each upward crossing from the selected
-  smoothness/strict-crossing hypotheses, and instantiating/inducting over the
-  finite alternating breakpoint list.  The single-crossing and
-  `[down, up, down]` patterns are now packaged.
+  What remains upstream is sharply localized: derive each local
+  `LaplaceACUpwardCrossingCertificate` automatically from selected
+  smoothness/strict-crossing hypotheses.  The final gate, Wronskian continuity,
+  outer-ray propagation, upward-crossing flank propagation, L9 gluing, and
+  arbitrary finite parity-list induction are now packaged.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
