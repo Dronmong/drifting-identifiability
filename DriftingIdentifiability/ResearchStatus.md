@@ -1249,6 +1249,15 @@ that needs no sign certificate at all.  `#print axioms` reports only Lean
 foundations for the entire chain; the finite-simple-zeros theorem is now a
 corollary surface.
 
+Milestone 6 (assembly) is also closed: `LaplaceRealConverse.lean` records the
+single umbrella theorem `laplaceZeroDrift_identifies_real` — zero raw Laplace
+drift identifies probability measures satisfying
+`LaplaceRealConverseCondition` = (right-dense zero-mass gaps, the
+nowhere-dense/atomic/singular class) OR (unrestricted continuous densities
+with exponential moments) — together with its legitimacy witness.  This is
+the honest one-theorem statement of the 1-d Laplace converse as currently
+machine-checked.
+
 Remaining research objectives are now narrower and split by trust level:
 
 - Lean-native, general-measure track: remove the nondegeneracy from the

@@ -549,3 +549,41 @@ so future agents do not repeat equivalent mistakes.
 - **Relevant Lean declarations/files:** `Paperaxioms.lean`,
   `GaussianConvolutionInjectivity.lean`,
   `CharacteristicIdentifiability.lean`, `RawFieldConverse.md`.
+
+### 2026-07-12 — "unrestricted a.c. converse needs Levinson-type ODE asymptotics" (wrong impossibility claim)
+
+- **Exact condition:** Claim recorded in `LaplaceGeneralConverseRoadmap.md`
+  (Milestone-5 "RESOLVED ON PAPER" note, 2026-07-11) and echoed in
+  `ResearchStatus.md`: the unrestricted a.c. exponential-moment converse is
+  "rigorous modulo Levinson-type asymptotic ODE integration, which Mathlib
+  lacks — so NOT yet formalizable"; formalization would need "substantial
+  analytic facts about distributional Green's-function identities, tail
+  asymptotics, and ODE asymptotic uniqueness/Abel theory".
+- **Intended mechanism:** The paper proof analyzed the doubly-decaying
+  solution space of the common second-order ODE via tail asymptotics
+  (`W → L` finite through Abel integration to infinity, `Z_p ~ c·e^{-x/τ}`),
+  suggesting the Lean route had to reproduce asymptotic ODE integration.
+- **Counterexample or obstruction:** The impossibility claim was false.  The
+  Milestone-5 closure (2026-07-12) formalized the continuous-density case
+  with elementary ingredients only: the L8 interval lemmas were already
+  one-sided, so an arbitrary component edge of `{m ≠ 0}` works in place of a
+  simple crossing once the one-sided sign is used to force the slope limit
+  `m'(edge) ≥ 0`, hence `μ'(edge) ≥ 1`; an `sSup`/`sInf` + IVT extraction
+  replaces any zero enumeration; and locally-flat zeros fall to the certified
+  first-order pair `D' = (1/τ)L_c - 2Z`, `L_c' = (1/τ)D`.
+- **Why the argument fails:** The paper proof's global two-sided-decay /
+  shooting framing obscured that the Wronskian coordinate needs only LOCAL
+  one-sided data near each zero-set edge plus the already-certified tail
+  limits `W → 0`.  No asymptotic integration, Frobenius theory, or
+  distributional identity enters.
+- **Fatal or repairable:** Repaired (the claim, not the theorem): the
+  unrestricted continuous-density theorem
+  `laplaceAC_identifies_of_continuousDensity` is now machine-checked and
+  axiom-free.
+- **Possible repair:** n/a — lesson: treat "Mathlib lacks X so this is not
+  formalizable" as a hypothesis to attack, not a fact; look for a coordinate
+  in which the global argument becomes pointwise/local.
+- **Relevant Lean declarations/files:** `LaplaceACFinal.lean`
+  (`laplaceAC_wronskian_eq_zero_of_zeroDrift_regular`,
+  `laplaceAC_identifies_of_continuousDensity`), `LaplaceACDerivation.md`
+  ("M5 CLOSURE" section), `LaplaceGeneralConverseRoadmap.md` (corrected).

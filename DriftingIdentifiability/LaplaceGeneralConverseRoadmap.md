@@ -911,16 +911,34 @@ Attack routes, in recommended order:
   weak-* limit of a minimizing sequence is a candidate counterexample
   (or reveals which compactness fails).  Cheap, high information value.
 
-### Milestone 6 — assembly and registration
+### Milestone 6 — assembly and registration (✅ DONE 2026-07-12, machine-checked, axiom-free)
 
-Combine: `ZeroDrift ⟹ 𝔞 ≡ 0` (M5, or M3's hypothesis class) + endgame
-(M2) ⟹ `laplaceZeroDrift_identifies_real`.  Then:
-1. Root import in `DriftingIdentifiability.lean`.
-2. Promoted list in `scripts/AxiomAudit.ps1` (headline theorems only).
-3. `scripts/Check.ps1` green; `#print axioms` = foundations only.
-4. Update `LaplaceArbitraryConverse.md` status header,
-   `ResearchStatus.md`, and the auto-memory project-state file.
-5. Update `LoggedFailures.md` with whatever died along the way.
+`LaplaceRealConverse.lean` now provides the promised single assembly:
+`LaplaceRealConverseCondition τ p q` is the disjunction of the two certified
+regimes — right-dense zero-mass gaps (M3: finite mixtures, countable atoms,
+Cantor-type singular supports, no moments) OR the unrestricted
+continuous-density package (M5 closure: continuous densities + exponential
+moments, arbitrary mean-shift zero set) — and
+
+```text
+laplaceZeroDrift_identifies_real :
+  IdentifiesAtZero (LaplaceRealConverseCondition τ)
+    (meanShiftDrift (laplaceKernel τ))
+```
+
+with legitimacy `laplaceRealConverseCondition_isLegitimate` (Gaussian pair
+through the a.c. disjunct).  Checklist discharged:
+1. Root import in `DriftingIdentifiability.lean` — done.
+2. Promoted list in `scripts/AxiomAudit.ps1` — done (headline + edge/flat
+   bricks + legitimacy; 346 promoted declarations).
+3. `scripts/Check.ps1` green; `#print axioms` = foundations only — done.
+4. `LaplaceArbitraryConverse.md`, `ResearchStatus.md`, auto-memory — done.
+5. `LoggedFailures.md` — done (the wrong "needs Levinson / not formalizable"
+   impossibility claim is logged and corrected).
+
+The two disjuncts are genuinely complementary (atoms/singular vs interval
+supports); the open frontier is their common refinement — general L¹
+densities, and mixed measures on interval supports.
 
 ---
 
