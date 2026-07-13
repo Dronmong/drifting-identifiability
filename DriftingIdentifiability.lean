@@ -32,3 +32,4 @@ import DriftingIdentifiability.LaplaceACDensityRegularity
 import DriftingIdentifiability.LaplaceACAsymptotics
 import DriftingIdentifiability.LaplaceACPropagation
 import DriftingIdentifiability.LaplaceACFinal
+import DriftingIdentifiability.LaplaceACGaussianCertificate

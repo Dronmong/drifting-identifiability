@@ -516,9 +516,15 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`, plus the
   `IdentifiesAtZero` wrapper
   `laplaceAC_identifiesAtZero_of_continuousDensity_finiteSimpleZeros`.
-  Also added Gaussian density/moment lemmas and a concrete distinct pair hook:
-  `standardGaussian_vs_shiftedGaussian_finiteSimpleZeros` constructs the
-  standard-vs-shifted Gaussian package once the explicit standard-Gaussian
-  Laplace single-crossing sign certificate is supplied.  The density/moment and
-  distinctness parts are proved in Lean; the Gaussian sign-pattern certificate
-  remains the honest concrete-family analytic task.
+  Also added Gaussian density/moment lemmas and a concrete distinct pair hook.
+- 2026-07-12: CLOSED THE STANDARD-GAUSSIAN NON-VACUITY GAP.  Added
+  `LaplaceACGaussianCertificate.lean`, which constructs the
+  `StandardGaussianLaplaceSingleDownCertificate` axiom-free for every positive
+  bandwidth.  The proof reduces signs to the displacement numerator, proves
+  oddness at the origin by Gaussian symmetry, proves strict one-sided signs by
+  pairing `x+s` with `x-s`, and proves the simple-zero derivative by a
+  half-line integration-by-parts identity for
+  `s * exp (-s / τ) * φ(s)`.  The public witness
+  `standardGaussian_vs_shiftedGaussian_finiteSimpleZeros`, the distinct-pair
+  theorem, and the legitimacy theorem are now hypothesis-free apart from
+  `ValidBandwidth τ`.

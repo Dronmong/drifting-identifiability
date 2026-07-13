@@ -1663,8 +1663,11 @@ structure StandardGaussianLaplaceSingleDownCertificate (τ : ℝ) : Type where
     laplaceMeanShiftRatio τ (gaussianReal 0 (1 : NNReal)) t < 0
 
 /-- Concrete standard-vs-shifted Gaussian finite-simple-zero package, once the
-standard Gaussian one-crossing sign certificate is available. -/
-noncomputable def standardGaussian_vs_shiftedGaussian_finiteSimpleZeros
+standard Gaussian one-crossing sign certificate is available.
+
+The unconditional certificate is constructed in
+`LaplaceACGaussianCertificate.lean`, which reuses this lower-level constructor. -/
+noncomputable def standardGaussian_vs_shiftedGaussian_finiteSimpleZeros_of_certificate
     (τ : ℝ) (cert : StandardGaussianLaplaceSingleDownCertificate τ) :
     LaplaceACContinuousDensityFiniteSimpleZeros τ
       (gaussianReal 0 (1 : NNReal)) (gaussianReal 1 (1 : NNReal)) :=
@@ -1678,13 +1681,15 @@ noncomputable def standardGaussian_vs_shiftedGaussian_finiteSimpleZeros
     cert.zero cert.hm_left cert.hm_right
 
 /-- The finite-simple-zero condition admits a concrete distinct Gaussian pair
-as soon as the standard-Gaussian one-crossing sign certificate is supplied. -/
+as soon as the standard-Gaussian one-crossing sign certificate is supplied.
+
+The unconditional version is in `LaplaceACGaussianCertificate.lean`. -/
 theorem laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_standardGaussianCertificate
     (τ : ℝ) (cert : StandardGaussianLaplaceSingleDownCertificate τ) :
     ConditionAllowsDistinctPair
       (LaplaceACContinuousDensityFiniteSimpleZerosCondition τ) :=
   laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_package
-    (standardGaussian_vs_shiftedGaussian_finiteSimpleZeros τ cert)
+    (standardGaussian_vs_shiftedGaussian_finiteSimpleZeros_of_certificate τ cert)
     gaussianReal_zero_ne_one_unitVariance
 
 end DriftingIdentifiability
