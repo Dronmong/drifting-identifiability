@@ -21,18 +21,24 @@ formalizable.  Full proof in `LaplaceGeneralConverseRoadmap.md` (Milestone 5).
 
 **Current trust boundary.**  The machine-checked main track proves conditional
 gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, and the finite/nowhere-dense
-classes.  The a.c. exponential-moment result is presently a paper proof, not a
+classes.  It also now proves a Lean-native a.c. subclass:
+`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros` identifies
+continuous-density, exponential-moment laws whose `p` mean-shift ratio has a
+finite alternating simple-zero/sign-change certificate.  This condition is
+demonstrably non-vacuous by the axiom-free standard-Gaussian witness
+`standardGaussian_vs_shiftedGaussian_finiteSimpleZeros`.  The broader
+unrestricted a.c. exponential-moment result remains a paper proof, not a
 promoted Lean theorem.
 
-**Decision 2026-07-11: DERIVE the a.c. case, do NOT axiomatize it.**  The a.c.
-single-crossing (3A) and multiple-zero (3B) bridges `ZeroDrift ⟹ W ≡ 0` are
-non-trivial project-own facts, not well-known theorems, so they will be PROVED
-in Lean (reducing to the already-certified `W ≡ 0 ⟹ p = q` gate) rather than
-asserted as axioms.  The live derivation plan is
-[`LaplaceACDerivation.md`](LaplaceACDerivation.md); the conditional-axiom route
+**Decision 2026-07-11/12: DERIVE the a.c. case, do NOT axiomatize it.**  The
+finite-simple-zero a.c. bridge has now been proved in Lean, reducing through the
+already-certified `W ≡ 0 ⟹ p = q` gate rather than asserting an identifiability
+axiom.  The live derivation record is
+[`LaplaceACDerivation.md`](LaplaceACDerivation.md).  The conditional-axiom route
 in [`LaplaceACConditionalAxiomPlan.md`](LaplaceACConditionalAxiomPlan.md) is
-retained only as an explicitly-marked FALLBACK if a derivation step proves
-infeasible.  No `ZeroDrift -> p = q` (or a.c. bridge) axiom is being added.
+retained only as an explicitly-marked FALLBACK for a stronger future
+unrestricted a.c. analytic bridge.  No `ZeroDrift -> p = q` axiom, and no
+finite-simple-zero a.c. bridge axiom, is being added.
 
 **Handoff roadmap for the general-measure push:**
 `LaplaceGeneralConverseRoadmap.md` (2026-07-10) — start there; it contains

@@ -1033,8 +1033,10 @@ converse for arbitrary fields" concession is answered for the Gaussian kernel
 (arbitrary targets) and for the Laplace kernel (Gaussian targets).  The
 Laplace-kernel arbitrary-target converse has also advanced beyond the
 rebuttal: finite mixtures, nowhere-dense/right-dense-gap supports, and several
-Wronskian gates are machine-checked below, while the a.c.
-exponential-moment case is now resolved on paper but not yet Lean-certified.
+Wronskian gates are machine-checked below.  The continuous-density
+finite-simple-zero a.c. subclass is also Lean-certified and non-vacuous; the
+broader unrestricted a.c. exponential-moment case is resolved on paper but not
+yet Lean-certified.
 
 ## Laplacian-kernel arbitrary-target structural reduction
 
@@ -1183,58 +1185,68 @@ strictly two-sided version:
 Milestone-5 subproblem is to remove this nondegeneracy by formalizing the
 one-sided support/zero-coordinate cases.
 
-Claude/Fable's 2026-07-11 paper proof appears to resolve the remaining
-one-dimensional **absolutely continuous + exponential-moment** case: under zero
-drift, `Z_p` and `Z_q` solve the same second-order ODE, the corrected tail
-asymptotics make the non-`Z_p` solution grow at both ends, and the
-doubly-decaying solution space is therefore one-dimensional, so
-`Z_q = α Z_p` and smoothing injectivity plus mass gives `p = q`.  This is not
-currently a promoted Lean theorem: the missing ingredients are standard but
-substantial analytic facts about distributional Green's-function identities,
-tail asymptotics, and ODE asymptotic uniqueness/Abel theory.
+The a.c. route now has a **Lean-native finite-simple-zero theorem surface**.
+`LaplaceACAbel.lean`, `LaplaceACRegularity.lean`,
+`LaplaceACDensityRegularity.lean`, `LaplaceACAsymptotics.lean`,
+`LaplaceACPropagation.lean`, and `LaplaceACFinal.lean` assemble the full
+Wronskian route under explicit continuous-density, exponential-moment, and
+finite alternating simple-zero hypotheses.  The user-facing theorem
+
+```text
+laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros
+```
+
+states that for one-dimensional probability laws with continuous Lebesgue
+densities, the required two-sided exponential moments, and a finite alternating
+simple sign-changing zero list for the `p` mean-shift ratio, zero raw Laplace
+mean-shift drift forces `p = q`.  No primitive functions, local `δ/L`
+witnesses, exposed C²-normalizer certificates, or leftover `HasDerivAt`
+hypotheses remain in the public statement; those are generated internally.
+
+This theorem is also now demonstrably non-vacuous.  `LaplaceACFinal.lean`
+contains the Gaussian density/moment infrastructure, and
+`LaplaceACGaussianCertificate.lean` constructs the standard-Gaussian
+single-downward-crossing certificate axiom-free for every positive bandwidth.
+Consequently the public witness
+
+```text
+standardGaussian_vs_shiftedGaussian_finiteSimpleZeros
+```
+
+and the distinct-pair / legitimacy results
+
+```text
+laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_standardGaussian
+laplaceACFiniteSimpleZerosCondition_isLegitimate_of_standardGaussian
+```
+
+are hypothesis-free apart from `ValidBandwidth τ`; `#print axioms` reports only
+Lean foundations (`propext`, `Classical.choice`, `Quot.sound`).
+
+Separately, Claude/Fable's 2026-07-11 paper proof appears to resolve the broader
+one-dimensional **unrestricted absolutely-continuous + exponential-moment**
+case: under zero drift, `Z_p` and `Z_q` solve the same second-order ODE, the
+corrected tail asymptotics make the non-`Z_p` solution grow at both ends, and
+the doubly-decaying solution space is therefore one-dimensional, so
+`Z_q = α Z_p` and smoothing injectivity plus mass gives `p = q`.  This broader
+statement is not currently a promoted Lean theorem: it would require removing
+the finite-simple-zero/sign-pattern hypothesis, likely via substantial analytic
+facts about distributional Green's-function identities, tail asymptotics, and
+ODE asymptotic uniqueness/Abel theory.
 
 Remaining research objectives are now narrower and split by trust level:
 
-- Lean-native: remove the nondegeneracy from the gap-local `W = 0` theorem by
-  formalizing the one-sided support/zero-coordinate cases.
-- Derivation track (DECISION 2026-07-11 — do NOT axiomatize): the a.c.
-  single-crossing (3A) and multiple-zero (3B) bridges `ZeroDrift -> W ≡ 0` are
-  non-trivial project-own facts, not well-known theorems, so they are being
-  PROVED in Lean rather than asserted as axioms; the final `p = q` step remains
-  the already-certified Wronskian gate.  Two enabling discoveries: the elliptic
-  identity is already certified classically (`LaplaceWronskian.lean`), and the
-  asymptotic step needs neither Levinson nor Frobenius (bounded-variation Abel
-  integral for 3A; boundedness-vs-blow-up at upward mean-shift crossings for
-  3B).  Live plan: `LaplaceACDerivation.md`.  The conditional-axiom route
-  (`LaplaceACConditionalAxiomPlan.md`) is retained only as an explicit FALLBACK.
-  Current Lean progress is axiom-free: L2's full Wronskian tail assembly under
-  explicit two-sided exponential moments, L3 monotone tilted mean, L7 strict
-  right-derivative at straddling points, and the L5 zero-drift ODE/Abel bridge
-  (`LaplaceACAbel.lean`).  L5's regularity discharge is now also formalized:
-  `LaplaceACRegularity.lean` packages the no-leftover-`HasDerivAt` Abel theorem
-  under `LaplaceC2NormalizerRegular`, and `LaplaceACDensityRegularity.lean`
-  proves continuous nonnegative density representations imply that certificate.
-  The L6/L8/L9 deterministic certificate layer is formalized in
-  `LaplaceACPropagation.lean`: primitive-free outer-ray vanishing, concrete
-  logarithmic-singularity upward-crossing vanishing, ordered-gap continuity
-  gluing, and alternating parity-cover gluing.  `LaplaceACFinal.lean` now
-  supplies the final socket: a concrete `LaplaceACFinalAssembly` certificate
-  gives `W ≡ 0`, and `laplaceAC_identifies_of_finalAssembly` feeds this into
-  the certified Wronskian gate to conclude `p = q`.  It also proves Wronskian
-  continuity from `LaplaceC2NormalizerRegular`, a concrete 3A
-  single-downward-crossing assembly theorem, and the first nontrivial 3B
-  `[down, up, down]` assembly theorem.  The arbitrary finite parity induction is
-  now packaged too: `LaplaceACUpwardCrossingCertificate` records one local
-  upward crossing, `LaplaceACAlternatingChain` records any finite
-  `[down, up, down, ..., down]` chain, and
-  `laplaceAC_identifies_of_alternatingChain` proves identification for the whole
-  chain.
-
-  What remains upstream is sharply localized: derive each local
-  `LaplaceACUpwardCrossingCertificate` automatically from selected
-  smoothness/strict-crossing hypotheses.  The final gate, Wronskian continuity,
-  outer-ray propagation, upward-crossing flank propagation, L9 gluing, and
-  arbitrary finite parity-list induction are now packaged.
+- Lean-native, general-measure track: remove the nondegeneracy from the
+  gap-local `W = 0` theorem by formalizing the one-sided support/zero-coordinate
+  cases.
+- Lean-native, a.c. track: the continuous-density finite-simple-zero theorem is
+  closed and non-vacuous.  The remaining a.c. research objective is the stronger
+  unrestricted exponential-moment theorem with no finite-simple-zero/sign-list
+  hypothesis.
+- Conditional-axiom track: `LaplaceACConditionalAxiomPlan.md` is retained only
+  as an explicit FALLBACK for the broader unrestricted a.c. analytic bridge.
+  The current finite-simple-zero theorem and Gaussian non-vacuity witness are
+  proved axiom-free and should not be replaced by conditional axioms.
 - General-measure track: extend beyond a.c. + exponential moment and
   nowhere-dense supports.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and

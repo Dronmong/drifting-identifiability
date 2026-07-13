@@ -1,20 +1,24 @@
 # Conditional axiom implementation plan for the 1-d Laplace a.c. converse
 
-Date: 2026-07-11 (revised after a codebase audit)
+Date: 2026-07-11 (revised after a codebase audit; status updated 2026-07-12)
 
-> STATUS 2026-07-11: 3A is being DERIVED, not axiomatized. After the audit found
-> 3A/3B to be non-trivial project-own facts (not well-known theorems), the
-> decision is to PROVE the analytic step `ZeroDrift + a.c. + single-crossing ->
-> W ≡ 0` in Lean. The live plan for 3A is now `LaplaceACDerivation.md`; this
-> axiom-route document is retained only as the FALLBACK if a derivation step
-> proves infeasible. 3B remains open regardless (multiple-zero gap). Do not
-> implement the 3A scaffold axiom below unless the derivation route is abandoned.
+> STATUS 2026-07-12: the finite-simple-zero a.c. derivation route is now
+> machine-checked and axiom-free.  `LaplaceACFinal.lean` proves the
+> continuous-density finite-simple-zero theorem, and
+> `LaplaceACGaussianCertificate.lean` proves the standard-Gaussian
+> non-vacuity witness.  This axiom-route document is therefore **not** the active
+> implementation plan for the proved finite-simple-zero theorem.  It is retained
+> only as a FALLBACK design for a stronger future theorem: unrestricted
+> a.c. + exponential-moment targets with no finite-zero/sign-pattern hypothesis.
+> Do not implement any scaffold axiom below unless the project explicitly
+> decides to replace that broader analytic bridge by a conditional external
+> theorem.
 
-Purpose: give future agents a precise, auditable, and TOOLING-ACCURATE route for
-turning the paper-level absolutely-continuous / exponential-moment proof
-(LaplaceGeneralConverseRoadmap.md, Milestone 5) into an opt-in conditional Lean
-module without cheating. This file is intentionally separate from the roadmap so
-the proposed axiom boundary can be reviewed in isolation.
+Purpose: give future agents a precise, auditable, and TOOLING-ACCURATE fallback
+route for turning the **broader** paper-level absolutely-continuous /
+exponential-moment proof (LaplaceGeneralConverseRoadmap.md, Milestone 5) into an
+opt-in conditional Lean module without cheating.  It should not be used for the
+already-proved continuous-density finite-simple-zero theorem.
 
 This revision corrects an earlier draft that (a) proposed trivially-inhabited
 predicates, which silently reduce the "conditional" theorem to the forbidden

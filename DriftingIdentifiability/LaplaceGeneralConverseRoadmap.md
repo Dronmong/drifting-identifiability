@@ -519,6 +519,19 @@ gate; the paper proof above supplies the missing analytic step
 > `LaplaceACDerivation.md`.  The conditional-axiom plan below is retained ONLY as
 > a fallback if a derivation step proves infeasible.
 
+**Lean-native finite-simple-zero closure (2026-07-12).**  The derivation route
+has now produced a proved, non-vacuous a.c. theorem for the structured
+finite-zero case.  `LaplaceACFinal.lean` exposes
+`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`: continuous
+Lebesgue densities, two-sided exponential moments, and a finite alternating
+simple sign-changing zero list for the `p` mean-shift ratio are sufficient for
+zero raw Laplace drift to imply `p = q`.  `LaplaceACGaussianCertificate.lean`
+constructs the standard-Gaussian single-downward-crossing certificate
+axiom-free, giving a concrete distinct-pair legitimacy witness.  The remaining
+Milestone-5 research target is therefore the broader unrestricted
+a.c. exponential-moment theorem with no finite-zero/sign-pattern hypothesis,
+plus the still broader arbitrary-measure determinant-propagation problem.
+
 **Safe conditional-axiom plan (2026-07-11, Codex) — FALLBACK ONLY.**  If we decide to
 axiomatize the missing analysis, keep the axiom boundary below the final
 identifiability statement.  Do **not** add an axiom of the form

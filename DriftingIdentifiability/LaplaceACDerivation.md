@@ -494,9 +494,10 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `LaplaceACAlternatingChain.cons_regular` and the clean theorem
   `laplaceAC_identifies_of_continuousDensity_finiteAlternating`, deriving C²
   regularity from continuous densities by
-  `laplaceC2NormalizerRegular_of_continuousDensity`.  A named Gaussian/mixture
-  inhabitant is not yet formalized; it would require proving the concrete
-  zero-list/sign/local-bound facts for that density rather than assuming them.
+  `laplaceC2NormalizerRegular_of_continuousDensity`.  This entry predates the
+  later Gaussian non-vacuity closure below; the standard-Gaussian
+  finite-simple-zero inhabitant is now formalized in
+  `LaplaceACGaussianCertificate.lean`.
 - 2026-07-12: CLOSED LOCAL UPWARD-CROSSING CERTIFICATE AUTOMATION.  Renamed the
   earlier semi-regular constructor to
   `LaplaceACUpwardCrossingCertificate.of_regular_withLocalBounds`, then made
