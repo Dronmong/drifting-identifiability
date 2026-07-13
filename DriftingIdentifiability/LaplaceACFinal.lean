@@ -1692,4 +1692,726 @@ theorem laplaceACFiniteSimpleZerosCondition_allowsDistinctPair_of_standardGaussi
     (standardGaussian_vs_shiftedGaussian_finiteSimpleZeros_of_certificate τ cert)
     gaussianReal_zero_ne_one_unitVariance
 
+/-! ## Milestone-5 closure: the unrestricted continuous-density theorem
+
+Everything below removes the finite-simple-zeros hypothesis.  The three new
+ingredients (documented in `LaplaceACDerivation.md`, section "M5 CLOSURE"):
+
+1. at a finite edge of a sign component of the mean-shift ratio, the one-sided
+   sign alone forces the slope limit `m' ≥ 0`, hence `μ' ≥ 1 > 0` — no
+   simplicity or two-sided-mass input;
+2. a `sSup`/`sInf` + IVT component extraction replaces the alternating list;
+3. where `m ≡ 0` locally, the certified first-order identities
+   `D' = (1/τ)L_c - 2Z` and `L_c' = (1/τ)D` force `Z' = 0` pointwise for both
+   laws, so the Wronskian vanishes there too; the rest is continuity. -/
+
+/-- If `f` vanishes at `a` and is positive on a right interval, its derivative
+at `a` is nonnegative (right slope limit). -/
+private theorem hasDerivAt_nonneg_of_zero_of_pos_right
+    {f : ℝ → ℝ} {d a b : ℝ} (hab : a < b)
+    (hf : HasDerivAt f d a) (hfa : f a = 0)
+    (hpos : ∀ t : ℝ, a < t → t < b → 0 < f t) : 0 ≤ d := by
+  have hderiv : HasDerivWithinAt f d (Ioi a) a := hf.hasDerivWithinAt
+  rw [hasDerivWithinAt_iff_tendsto_slope] at hderiv
+  have hset : Ioi a \ {a} = Ioi a :=
+    sdiff_singleton_eq_self (fun h => lt_irrefl a (mem_Ioi.mp h))
+  rw [hset] at hderiv
+  have hev : ∀ᶠ t in 𝓝[>] a, 0 ≤ slope f a t := by
+    filter_upwards [Ioo_mem_nhdsGT hab] with t ht
+    rw [slope_def_field, hfa, sub_zero]
+    exact div_nonneg (hpos t ht.1 ht.2).le (by linarith [ht.1])
+  exact ge_of_tendsto hderiv hev
+
+/-- If `f` vanishes at `b` and is negative on a left interval, its derivative
+at `b` is nonnegative (left slope limit). -/
+private theorem hasDerivAt_nonneg_of_zero_of_neg_left
+    {f : ℝ → ℝ} {d a b : ℝ} (hab : a < b)
+    (hf : HasDerivAt f d b) (hfb : f b = 0)
+    (hneg : ∀ t : ℝ, a < t → t < b → f t < 0) : 0 ≤ d := by
+  have hderiv : HasDerivWithinAt f d (Iio b) b := hf.hasDerivWithinAt
+  rw [hasDerivWithinAt_iff_tendsto_slope] at hderiv
+  have hset : Iio b \ {b} = Iio b :=
+    sdiff_singleton_eq_self (fun h => lt_irrefl b (mem_Iio.mp h))
+  rw [hset] at hderiv
+  have hev : ∀ᶠ t in 𝓝[<] b, 0 ≤ slope f b t := by
+    filter_upwards [Ioo_mem_nhdsLT hab] with t ht
+    rw [slope_def_field, hfb, sub_zero]
+    exact div_nonneg_of_nonpos (hneg t ht.1 ht.2).le
+      (by linarith [ht.2])
+  exact ge_of_tendsto hderiv hev
+
+/-- **Left-edge blow-up.**  If the common mean-shift ratio vanishes at `a` and
+is positive on `(a, b)`, then under zero drift the normalizer Wronskian
+vanishes on all of `(a, b)`.
+
+Unlike the upward-crossing certificate, no hypothesis is made on the other
+side of `a`: the one-sided sign forces `m'(a) ≥ 0`, hence `μ'(a) ≥ 1`, and the
+L8 log-singularity machinery applies. -/
+theorem laplaceAC_wronskian_eq_zero_on_Ioo_of_leftEdge
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {a b : ℝ} (hab : a < b)
+    (hma : laplaceMeanShiftRatio τ p a = 0)
+    (hmpos : ∀ t : ℝ, a < t → t < b → 0 < laplaceMeanShiftRatio τ p t) :
+    ∀ x : ℝ, a < x → x < b →
+      laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
+  let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
+  let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  let c : ℝ → ℝ := fun x => ((2 : ℝ) * μDeriv x) / m x
+  have hm_all : ∀ t : ℝ, HasDerivAt m (laplaceMeanShiftRatioDeriv τ p t) t :=
+    fun t => hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp t
+  have hμ_cont : Continuous μDeriv := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    change ContinuousAt (laplaceMeanShiftRatioDeriv τ p + fun _ : ℝ => (1 : ℝ)) x
+    exact
+      (hasDerivAt_laplaceMeanShiftRatioDeriv_regular τ hτ p hp x).continuousAt.add
+        continuousAt_const
+  have hm_cont : Continuous m := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    exact (hm_all x).continuousAt
+  have hWcont : Continuous W := by
+    simpa [W] using
+      continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  -- the edge slope is nonnegative, so `μ'` is strictly positive at the edge
+  have hslope : 0 ≤ laplaceMeanShiftRatioDeriv τ p a :=
+    hasDerivAt_nonneg_of_zero_of_pos_right hab (hm_all a) hma hmpos
+  have hμa_pos : 0 < μDeriv a := by
+    dsimp [μDeriv]
+    linarith
+  obtain ⟨l₁, r₁, δ, _, hl₁a, har₁, hr₁b, hδ, hbound₁⟩ :=
+    exists_Ioo_lower_bound_half_of_continuous_pos (g := μDeriv) (a := a)
+      (lower := a - 1) (upper := b) hμ_cont (by linarith) hab hμa_pos
+  obtain ⟨_, r₂, L, _, _, har₂, hr₂b, hL, _, hlin⟩ :=
+    exists_Ioo_linear_bound_of_hasDerivAt_zero (f := m) (a := a)
+      (lower := a - 1) (upper := b) (by linarith) hab (hm_all a)
+      (by simpa [m] using hma)
+  set r : ℝ := min r₁ r₂ with hrdef
+  have har : a < r := lt_min har₁ har₂
+  have hrb : r < b := lt_of_le_of_lt (min_le_left _ _) hr₁b
+  have hc_cont : ContinuousOn c (Ioo a b) := by
+    dsimp [c]
+    exact ((continuous_const.mul hμ_cont).continuousOn).div hm_cont.continuousOn
+      (fun t ht => (hmpos t ht.1 ht.2).ne')
+  have hvanish : ∀ x : ℝ, a < x → x < b → W x = 0 := by
+    refine abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper
+      (W := W) (A := fun z : ℝ => ∫ s in r..z, c s)
+      (μDeriv := μDeriv) (m := m)
+      (a := a) (b := b) (r := r) (δ := δ) (L := L)
+      hab har hrb hδ hL ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    · intro x y hx hxy hy
+      refine hWcont.continuousOn.mul
+        (Real.continuous_exp.comp_continuousOn ?_)
+      exact intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := r) (x := x) (y := y)
+        hc_cont ⟨har, hrb⟩ ⟨hx, lt_of_le_of_lt hxy hy⟩
+        ⟨lt_of_lt_of_le hx hxy, hy⟩
+    · intro x y hx hxy hy t ht
+      have hmt : laplaceMeanShiftRatio τ p t ≠ 0 :=
+        (hmpos t (lt_of_lt_of_le hx ht.1) (lt_trans ht.2 hy)).ne'
+      have hderiv :=
+        hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular
+          τ hτ p q hp hq hzero t hmt
+      simpa [W, μDeriv, m] using hderiv.hasDerivWithinAt
+    · intro x y hx hxy hy t ht
+      have htGap : t ∈ Ioo a b :=
+        ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+      exact intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := r) (t := t)
+        hc_cont ⟨har, hrb⟩ htGap
+    · intro x y hx hxy hy
+      exact intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := r) (x := x) (y := y)
+        hc_cont ⟨har, hrb⟩ ⟨hx, lt_of_le_of_lt hxy hy⟩
+        ⟨lt_of_lt_of_le hx hxy, hy⟩
+    · simpa [W] using
+        laplaceWronskian_isBoundedUnder_nhdsGT_of_regular τ hτ p q hp hq a
+    · intro t hat htr
+      exact hbound₁ t (by linarith)
+        (lt_of_lt_of_le htr (min_le_left _ _))
+    · intro t hat htr
+      exact hmpos t hat
+        (lt_trans (lt_of_lt_of_le htr (min_le_left _ _)) hr₁b)
+    · intro t hat htr
+      exact hlin t hat (le_of_lt (lt_of_lt_of_le htr (min_le_right _ _)))
+  exact hvanish
+
+/-- **Right-edge blow-up.**  Mirror of the left-edge lemma: if the common
+mean-shift ratio vanishes at `b` and is negative on `(a, b)`, the normalizer
+Wronskian vanishes on all of `(a, b)` under zero drift. -/
+theorem laplaceAC_wronskian_eq_zero_on_Ioo_of_rightEdge
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {a b : ℝ} (hab : a < b)
+    (hmb : laplaceMeanShiftRatio τ p b = 0)
+    (hmneg : ∀ t : ℝ, a < t → t < b → laplaceMeanShiftRatio τ p t < 0) :
+    ∀ x : ℝ, a < x → x < b →
+      laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  let W : ℝ → ℝ := fun x => laplaceKernelNormalizerWronskian τ p q x
+  let μDeriv : ℝ → ℝ := fun x => laplaceMeanShiftRatioDeriv τ p x + 1
+  let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  let c : ℝ → ℝ := fun x => ((2 : ℝ) * μDeriv x) / m x
+  have hm_all : ∀ t : ℝ, HasDerivAt m (laplaceMeanShiftRatioDeriv τ p t) t :=
+    fun t => hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp t
+  have hμ_cont : Continuous μDeriv := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    change ContinuousAt (laplaceMeanShiftRatioDeriv τ p + fun _ : ℝ => (1 : ℝ)) x
+    exact
+      (hasDerivAt_laplaceMeanShiftRatioDeriv_regular τ hτ p hp x).continuousAt.add
+        continuousAt_const
+  have hm_cont : Continuous m := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    exact (hm_all x).continuousAt
+  have hWcont : Continuous W := by
+    simpa [W] using
+      continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  have hslope : 0 ≤ laplaceMeanShiftRatioDeriv τ p b :=
+    hasDerivAt_nonneg_of_zero_of_neg_left hab (hm_all b) hmb hmneg
+  have hμb_pos : 0 < μDeriv b := by
+    dsimp [μDeriv]
+    linarith
+  obtain ⟨l₁, r₁, δ, hal₁, hl₁b, hbr₁, _, hδ, hbound₁⟩ :=
+    exists_Ioo_lower_bound_half_of_continuous_pos (g := μDeriv) (a := b)
+      (lower := a) (upper := b + 1) hμ_cont hab (lt_add_one b) hμb_pos
+  obtain ⟨l₂, _, L, hal₂, hl₂b, _, _, hL, hlin, _⟩ :=
+    exists_Ioo_linear_bound_of_hasDerivAt_zero (f := m) (a := b)
+      (lower := a) (upper := b + 1) hab (lt_add_one b) (hm_all b)
+      (by simpa [m] using hmb)
+  set l : ℝ := (max l₁ l₂ + b) / 2 with hldef
+  have hmaxb : max l₁ l₂ < b := max_lt hl₁b hl₂b
+  have hl₁l : l₁ < l := by
+    have h₁ : l₁ ≤ max l₁ l₂ := le_max_left _ _
+    dsimp [l]
+    linarith
+  have hl₂l : l₂ < l := by
+    have h₂ : l₂ ≤ max l₁ l₂ := le_max_right _ _
+    dsimp [l]
+    linarith
+  have hal : a < l := by
+    have h₁ : a < max l₁ l₂ := lt_max_of_lt_left hal₁
+    dsimp [l]
+    linarith
+  have hlb : l < b := by
+    dsimp [l]
+    linarith
+  have hc_cont : ContinuousOn c (Ioo a b) := by
+    dsimp [c]
+    exact ((continuous_const.mul hμ_cont).continuousOn).div hm_cont.continuousOn
+      (fun t ht => (hmneg t ht.1 ht.2).ne)
+  have hvanish : ∀ x : ℝ, a < x → x < b → W x = 0 := by
+    refine abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower
+      (W := W) (A := fun z : ℝ => ∫ s in l..z, c s)
+      (μDeriv := μDeriv) (m := m)
+      (a := a) (b := b) (l := l) (δ := δ) (L := L)
+      hab hal hlb hδ hL ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    · intro x y hx hxy hy
+      refine hWcont.continuousOn.mul
+        (Real.continuous_exp.comp_continuousOn ?_)
+      exact intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := l) (x := x) (y := y)
+        hc_cont ⟨hal, hlb⟩ ⟨hx, lt_of_le_of_lt hxy hy⟩
+        ⟨lt_of_lt_of_le hx hxy, hy⟩
+    · intro x y hx hxy hy t ht
+      have hmt : laplaceMeanShiftRatio τ p t ≠ 0 :=
+        (hmneg t (lt_of_lt_of_le hx ht.1) (lt_trans ht.2 hy)).ne
+      have hderiv :=
+        hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular
+          τ hτ p q hp hq hzero t hmt
+      simpa [W, μDeriv, m] using hderiv.hasDerivWithinAt
+    · intro x y hx hxy hy t ht
+      have htGap : t ∈ Ioo a b :=
+        ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+      exact intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := l) (t := t)
+        hc_cont ⟨hal, hlb⟩ htGap
+    · intro x y hx hxy hy
+      exact intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+        (c := c) (a := a) (b := b) (base := l) (x := x) (y := y)
+        hc_cont ⟨hal, hlb⟩ ⟨hx, lt_of_le_of_lt hxy hy⟩
+        ⟨lt_of_lt_of_le hx hxy, hy⟩
+    · simpa [W] using
+        laplaceWronskian_isBoundedUnder_nhdsLT_of_regular τ hτ p q hp hq b
+    · intro t hlt htb
+      exact hbound₁ t (lt_of_lt_of_le hl₁l hlt) (lt_trans htb hbr₁)
+    · intro t hlt htb
+      exact hmneg t (lt_of_lt_of_le hal hlt) htb
+    · intro t hlt htb
+      exact hlin t (le_of_lt (lt_of_lt_of_le hl₂l hlt)) htb
+  exact hvanish
+
+/-- **Left outer ray.**  If the common mean-shift ratio is positive on
+`(-∞, a]` then, under zero drift, `W → 0` at `-∞` forces the Wronskian to
+vanish on the whole ray. -/
+theorem laplaceAC_wronskian_eq_zero_on_left_ray
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hμnonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hWbot :
+      Tendsto (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+        atBot (𝓝 0))
+    {a : ℝ} (hmpos : ∀ t : ℝ, t ≤ a → 0 < laplaceMeanShiftRatio τ p t) :
+    ∀ x : ℝ, x ≤ a → laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  have hWcont :
+      Continuous (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x) :=
+    continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  refine abel_left_outer_zero_of_muDeriv_nonneg_of_m_pos
+    (W := fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+    (muDeriv := fun t : ℝ => laplaceMeanShiftRatioDeriv τ p t + 1)
+    (m := fun t : ℝ => laplaceMeanShiftRatio τ p t) (a := a)
+    ?_ ?_ ?_ ?_ hWbot
+  · intro b x _ _
+    exact hWcont.continuousOn
+  · intro b x _ hxa t ht
+    have hmt : laplaceMeanShiftRatio τ p t ≠ 0 :=
+      (hmpos t (le_trans ht.2.le hxa)).ne'
+    have hderiv :=
+      hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular
+        τ hτ p q hp hq hzero t hmt
+    simpa using hderiv.hasDerivWithinAt
+  · intro t _
+    exact hμnonneg t
+  · intro t ht
+    exact hmpos t ht
+
+/-- **Right outer ray.**  Mirror: negativity of the common mean-shift ratio on
+`[a, ∞)` plus `W → 0` at `+∞` forces the Wronskian to vanish on the ray. -/
+theorem laplaceAC_wronskian_eq_zero_on_right_ray
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hμnonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hWtop :
+      Tendsto (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+        atTop (𝓝 0))
+    {a : ℝ} (hmneg : ∀ t : ℝ, a ≤ t → laplaceMeanShiftRatio τ p t < 0) :
+    ∀ x : ℝ, a ≤ x → laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  have hWcont :
+      Continuous (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x) :=
+    continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  refine abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg
+    (W := fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+    (muDeriv := fun t : ℝ => laplaceMeanShiftRatioDeriv τ p t + 1)
+    (m := fun t : ℝ => laplaceMeanShiftRatio τ p t) (a := a)
+    ?_ ?_ ?_ ?_ hWtop
+  · intro x b _ _
+    exact hWcont.continuousOn
+  · intro x b hax _ t ht
+    have hmt : laplaceMeanShiftRatio τ p t ≠ 0 :=
+      (hmneg t (le_trans hax ht.1)).ne
+    have hderiv :=
+      hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular
+        τ hτ p q hp hq hzero t hmt
+    simpa using hderiv.hasDerivWithinAt
+  · intro t _
+    exact hμnonneg t
+  · intro t ht
+    exact hmneg t ht
+
+/-- Where the mean-shift numerator vanishes identically on a neighborhood, the
+normalizer derivative coefficient vanishes at the center.
+
+Proof: `D' = (1/τ)L_c - 2Z` (certified) forces `Z = (1/(2τ))L_c` on the
+neighborhood, and `L_c' = (1/τ)D = 0` there (certified), so `Z' = 0`. -/
+private theorem laplaceRightDerivCoeff_eq_zero_of_locally_flat
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p : Measure ℝ)
+    [IsProbabilityMeasure p] (hp : LaplaceC2NormalizerRegular τ p)
+    {x₀ ε : ℝ} (hε : 0 < ε)
+    (hflat : ∀ t : ℝ, x₀ - ε < t → t < x₀ + ε →
+      laplaceMeanShiftNumerator τ p t = 0) :
+    laplaceKernelNormalizerRightDerivCoeff τ p x₀ = 0 := by
+  have hx₀U : x₀ ∈ Ioo (x₀ - ε) (x₀ + ε) := ⟨by linarith, by linarith⟩
+  have hU : Ioo (x₀ - ε) (x₀ + ε) ∈ 𝓝 x₀ :=
+    Ioo_mem_nhds hx₀U.1 hx₀U.2
+  -- the certified numerator derivative vanishes on the neighborhood
+  have hDeriv0 : ∀ t ∈ Ioo (x₀ - ε) (x₀ + ε),
+      laplaceMeanShiftNumeratorDeriv τ p t = 0 := by
+    intro t ht
+    have hev : laplaceMeanShiftNumerator τ p =ᶠ[𝓝 t] fun _ => (0 : ℝ) :=
+      eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)
+        (fun s hs => hflat s hs.1 hs.2)
+    have hD0 : HasDerivAt (laplaceMeanShiftNumerator τ p) 0 t :=
+      (hasDerivAt_const t (0 : ℝ)).congr_of_eventuallyEq hev
+    exact (hasDerivAt_laplaceMeanShiftNumerator τ hτ p t).unique hD0
+  -- hence `Z = (1/(2τ)) L_c` on the neighborhood
+  have hτne : τ ≠ 0 := hτ.ne'
+  have hZval : ∀ t ∈ Ioo (x₀ - ε) (x₀ + ε),
+      kernelNormalizer (laplaceKernel τ) p t =
+        (1 / (2 * τ)) * kernelNormalizer (laplaceCompanionKernel τ) p t := by
+    intro t ht
+    have h0 := hDeriv0 t ht
+    unfold laplaceMeanShiftNumeratorDeriv at h0
+    field_simp at h0 ⊢
+    linarith
+  -- the companion normalizer has derivative `(1/τ) D(x₀) = 0` at the center
+  have hD0 : (∫ y, laplaceWeightedDisplacement τ x₀ y ∂p) = 0 := by
+    have := hflat x₀ hx₀U.1 hx₀U.2
+    simpa [laplaceMeanShiftNumerator] using this
+  have hLc : HasDerivAt (kernelNormalizer (laplaceCompanionKernel τ) p)
+      (0 : ℝ) x₀ := by
+    have h := hasDerivAt_laplaceCompanionNormalizer τ hτ p x₀
+    simpa [hD0] using h
+  have hscaled : HasDerivAt
+      (fun t : ℝ =>
+        (1 / (2 * τ)) * kernelNormalizer (laplaceCompanionKernel τ) p t)
+      (0 : ℝ) x₀ := by
+    simpa using hLc.const_mul (1 / (2 * τ))
+  have hZeq : (fun s : ℝ => kernelNormalizer (laplaceKernel τ) p s) =ᶠ[𝓝 x₀]
+      fun t : ℝ =>
+        (1 / (2 * τ)) * kernelNormalizer (laplaceCompanionKernel τ) p t :=
+    eventuallyEq_of_mem hU (fun t ht => hZval t ht)
+  have hZ0 : HasDerivAt
+      (fun s : ℝ => kernelNormalizer (laplaceKernel τ) p s) (0 : ℝ) x₀ :=
+    hscaled.congr_of_eventuallyEq hZeq
+  exact (hp.hasDerivAt_normalizer x₀).unique hZ0
+
+/-- **Locally-flat mean shift kills the Wronskian pointwise.**  If the common
+mean-shift ratio vanishes identically on a neighborhood of `x₀`, then under
+zero drift both normalizer derivatives vanish at `x₀`, hence so does the
+normalizer Wronskian. -/
+theorem laplaceAC_wronskian_eq_zero_of_locally_flat
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {x₀ ε : ℝ} (hε : 0 < ε)
+    (hflat : ∀ t : ℝ, x₀ - ε < t → t < x₀ + ε →
+      laplaceMeanShiftRatio τ p t = 0) :
+    laplaceKernelNormalizerWronskian τ p q x₀ = 0 := by
+  have hDp : ∀ t : ℝ, x₀ - ε < t → t < x₀ + ε →
+      laplaceMeanShiftNumerator τ p t = 0 := by
+    intro t h₁ h₂
+    have hcommon := laplaceMeanShiftRatio_common_self τ hτ p t
+    unfold laplaceMeanShiftNumerator
+    rw [hcommon, hflat t h₁ h₂, zero_mul]
+  have hDq : ∀ t : ℝ, x₀ - ε < t → t < x₀ + ε →
+      laplaceMeanShiftNumerator τ q t = 0 := by
+    intro t h₁ h₂
+    have hcommon := laplaceMeanShiftRatio_common_of_zeroDrift τ hτ p q hzero t
+    unfold laplaceMeanShiftNumerator
+    rw [hcommon, hflat t h₁ h₂, zero_mul]
+  have hp0 := laplaceRightDerivCoeff_eq_zero_of_locally_flat τ hτ p hp hε hDp
+  have hq0 := laplaceRightDerivCoeff_eq_zero_of_locally_flat τ hτ q hq hε hDq
+  unfold laplaceKernelNormalizerWronskian
+  rw [hp0, hq0]
+  ring
+
+/-- **Milestone-5 core: zero drift forces the Wronskian to vanish everywhere,
+with NO hypothesis on the zero set of the mean-shift ratio.**
+
+The proof is a pointwise trichotomy on `m(x₀)`:
+
+* `m(x₀) > 0`: extract the nearest zero below `x₀` (`sSup` of a closed set) or
+  a clear ray to `-∞` (IVT); the left-edge blow-up or the left outer ray kills
+  `W(x₀)`;
+* `m(x₀) < 0`: mirror with `sInf` and the right side;
+* `m(x₀) = 0`: either `m ≡ 0` near `x₀` (locally-flat lemma) or `x₀` is a
+  closure point of `{m ≠ 0}`, where `W = 0` extends by continuity. -/
+theorem laplaceAC_wronskian_eq_zero_of_zeroDrift_regular
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hp : LaplaceC2NormalizerRegular τ p)
+    (hq : LaplaceC2NormalizerRegular τ q)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hμnonneg : ∀ t : ℝ, 0 ≤ laplaceMeanShiftRatioDeriv τ p t + 1)
+    (hWtop :
+      Tendsto (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+        atTop (𝓝 0))
+    (hWbot :
+      Tendsto (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x)
+        atBot (𝓝 0)) :
+    ∀ x : ℝ, laplaceKernelNormalizerWronskian τ p q x = 0 := by
+  let m : ℝ → ℝ := fun x => laplaceMeanShiftRatio τ p x
+  have hm_cont : Continuous m := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    exact (hasDerivAt_laplaceMeanShiftRatio_regular τ hτ p hp x).continuousAt
+  have hWcont :
+      Continuous (fun x : ℝ => laplaceKernelNormalizerWronskian τ p q x) :=
+    continuous_laplaceKernelNormalizerWronskian_of_regular τ hτ p q hp hq
+  -- every point where the mean shift is nonzero
+  have hnonzero : ∀ x₀ : ℝ, m x₀ ≠ 0 →
+      laplaceKernelNormalizerWronskian τ p q x₀ = 0 := by
+    intro x₀ hmx₀
+    rcases lt_or_gt_of_ne hmx₀ with hneg | hpos
+    · -- `m(x₀) < 0`: look right
+      by_cases hS : ∃ t : ℝ, x₀ ≤ t ∧ m t = 0
+      · obtain ⟨t₀, ht₀x, ht₀0⟩ := hS
+        have hSne : (Ici x₀ ∩ m ⁻¹' {0}).Nonempty :=
+          ⟨t₀, mem_Ici.mpr ht₀x, by simpa using ht₀0⟩
+        have hSclosed : IsClosed (Ici x₀ ∩ m ⁻¹' {0}) :=
+          isClosed_Ici.inter (isClosed_singleton.preimage hm_cont)
+        have hSbdd : BddBelow (Ici x₀ ∩ m ⁻¹' {0}) :=
+          ⟨x₀, fun t ht => mem_Ici.mp ht.1⟩
+        set β : ℝ := sInf (Ici x₀ ∩ m ⁻¹' {0}) with hβdef
+        have hβmem := hSclosed.csInf_mem hSne hSbdd
+        have hxβ : x₀ ≤ β := mem_Ici.mp hβmem.1
+        have hmβ : m β = 0 := by simpa using hβmem.2
+        have hβgt : x₀ < β := by
+          rcases eq_or_lt_of_le hxβ with heq | hlt
+          · exfalso
+            rw [← heq] at hmβ
+            exact hneg.ne hmβ
+          · exact hlt
+        have hmid : ∀ t : ℝ, x₀ ≤ t → t < β → m t < 0 := by
+          intro t hxt htβ
+          rcases lt_trichotomy (m t) 0 with hlt | heq | hgt
+          · exact hlt
+          · exfalso
+            have : β ≤ t := csInf_le hSbdd ⟨mem_Ici.mpr hxt, by simpa using heq⟩
+            linarith
+          · exfalso
+            have h0mem : (0 : ℝ) ∈ Icc (m x₀) (m t) := ⟨hneg.le, hgt.le⟩
+            obtain ⟨z, hzIcc, hz0⟩ :=
+              intermediate_value_Icc hxt hm_cont.continuousOn h0mem
+            have : β ≤ z :=
+              csInf_le hSbdd ⟨mem_Ici.mpr hzIcc.1, by simpa using hz0⟩
+            linarith [hzIcc.2]
+        obtain ⟨l₁, r₁, δ₁, _, hl₁x, hxr₁, _, hδ₁, hbound₁⟩ :=
+          exists_Ioo_lower_bound_half_of_continuous_pos
+            (g := fun t : ℝ => -(m t)) (a := x₀)
+            (lower := x₀ - 1) (upper := β) hm_cont.neg
+            (by linarith) hβgt (by simpa using hneg)
+        have hmneg_ext : ∀ t : ℝ, l₁ < t → t < β → m t < 0 := by
+          intro t hlt htβ
+          rcases le_or_gt x₀ t with hle | hgt
+          · exact hmid t hle htβ
+          · have := hbound₁ t hlt (lt_trans hgt hxr₁)
+            linarith
+        have hvan := laplaceAC_wronskian_eq_zero_on_Ioo_of_rightEdge
+          τ hτ p q hp hq hzero (lt_trans hl₁x hβgt) hmβ hmneg_ext
+        exact hvan x₀ hl₁x hβgt
+      · push Not at hS
+        have hmray : ∀ t : ℝ, x₀ ≤ t → m t < 0 := by
+          intro t hxt
+          rcases lt_trichotomy (m t) 0 with hlt | heq | hgt
+          · exact hlt
+          · exact absurd heq (hS t hxt)
+          · exfalso
+            have h0mem : (0 : ℝ) ∈ Icc (m x₀) (m t) := ⟨hneg.le, hgt.le⟩
+            obtain ⟨z, hzIcc, hz0⟩ :=
+              intermediate_value_Icc hxt hm_cont.continuousOn h0mem
+            exact hS z hzIcc.1 hz0
+        exact laplaceAC_wronskian_eq_zero_on_right_ray
+          τ hτ p q hp hq hzero hμnonneg hWtop hmray x₀ le_rfl
+    · -- `m(x₀) > 0`: look left
+      by_cases hS : ∃ t : ℝ, t ≤ x₀ ∧ m t = 0
+      · obtain ⟨t₀, ht₀x, ht₀0⟩ := hS
+        have hSne : (Iic x₀ ∩ m ⁻¹' {0}).Nonempty :=
+          ⟨t₀, mem_Iic.mpr ht₀x, by simpa using ht₀0⟩
+        have hSclosed : IsClosed (Iic x₀ ∩ m ⁻¹' {0}) :=
+          isClosed_Iic.inter (isClosed_singleton.preimage hm_cont)
+        have hSbdd : BddAbove (Iic x₀ ∩ m ⁻¹' {0}) :=
+          ⟨x₀, fun t ht => mem_Iic.mp ht.1⟩
+        set α : ℝ := sSup (Iic x₀ ∩ m ⁻¹' {0}) with hαdef
+        have hαmem := hSclosed.csSup_mem hSne hSbdd
+        have hαx : α ≤ x₀ := mem_Iic.mp hαmem.1
+        have hmα : m α = 0 := by simpa using hαmem.2
+        have hαlt : α < x₀ := by
+          rcases eq_or_lt_of_le hαx with heq | hlt
+          · exfalso
+            rw [heq] at hmα
+            exact hpos.ne' hmα
+          · exact hlt
+        have hmid : ∀ t : ℝ, α < t → t ≤ x₀ → 0 < m t := by
+          intro t hαt htx
+          rcases lt_trichotomy (m t) 0 with hlt | heq | hgt
+          · exfalso
+            have h0mem : (0 : ℝ) ∈ Icc (m t) (m x₀) := ⟨hlt.le, hpos.le⟩
+            obtain ⟨z, hzIcc, hz0⟩ :=
+              intermediate_value_Icc htx hm_cont.continuousOn h0mem
+            have : z ≤ α :=
+              le_csSup hSbdd ⟨mem_Iic.mpr hzIcc.2, by simpa using hz0⟩
+            linarith [hzIcc.1]
+          · exfalso
+            have : t ≤ α := le_csSup hSbdd ⟨mem_Iic.mpr htx, by simpa using heq⟩
+            linarith
+          · exact hgt
+        obtain ⟨l₁, r₁, δ₁, _, hl₁x, hxr₁, _, hδ₁, hbound₁⟩ :=
+          exists_Ioo_lower_bound_half_of_continuous_pos
+            (g := m) (a := x₀) (lower := α) (upper := x₀ + 1)
+            hm_cont hαlt (lt_add_one x₀) hpos
+        have hmpos_ext : ∀ t : ℝ, α < t → t < r₁ → 0 < m t := by
+          intro t hαt htr
+          rcases le_or_gt t x₀ with hle | hgt
+          · exact hmid t hαt hle
+          · have := hbound₁ t (lt_trans hl₁x hgt) htr
+            linarith
+        have hvan := laplaceAC_wronskian_eq_zero_on_Ioo_of_leftEdge
+          τ hτ p q hp hq hzero (lt_trans hαlt hxr₁) hmα hmpos_ext
+        exact hvan x₀ hαlt hxr₁
+      · push Not at hS
+        have hmray : ∀ t : ℝ, t ≤ x₀ → 0 < m t := by
+          intro t htx
+          rcases lt_trichotomy (m t) 0 with hlt | heq | hgt
+          · exfalso
+            have h0mem : (0 : ℝ) ∈ Icc (m t) (m x₀) := ⟨hlt.le, hpos.le⟩
+            obtain ⟨z, hzIcc, hz0⟩ :=
+              intermediate_value_Icc htx hm_cont.continuousOn h0mem
+            exact hS z hzIcc.2 hz0
+          · exact absurd heq (hS t htx)
+          · exact hgt
+        exact laplaceAC_wronskian_eq_zero_on_left_ray
+          τ hτ p q hp hq hzero hμnonneg hWbot hmray x₀ le_rfl
+  -- final trichotomy
+  intro x₀
+  by_cases hmx₀ : m x₀ = 0
+  · by_cases hflat : ∃ ε : ℝ, 0 < ε ∧
+        ∀ t : ℝ, x₀ - ε < t → t < x₀ + ε → m t = 0
+    · obtain ⟨ε, hε, hf⟩ := hflat
+      exact laplaceAC_wronskian_eq_zero_of_locally_flat
+        τ hτ p q hp hq hzero hε hf
+    · push Not at hflat
+      have hclosure : x₀ ∈ closure {t : ℝ | m t ≠ 0} := by
+        rw [Metric.mem_closure_iff]
+        intro ε hε
+        obtain ⟨t, ht₁, ht₂, ht0⟩ := hflat ε hε
+        refine ⟨t, ht0, ?_⟩
+        rw [Real.dist_eq, abs_sub_lt_iff]
+        constructor <;> linarith
+      have hWclosed :
+          IsClosed {t : ℝ | laplaceKernelNormalizerWronskian τ p q t = 0} :=
+        isClosed_eq hWcont continuous_const
+      have hsubset : {t : ℝ | m t ≠ 0} ⊆
+          {t : ℝ | laplaceKernelNormalizerWronskian τ p q t = 0} :=
+        fun t ht => hnonzero t ht
+      exact closure_minimal hsubset hWclosed hclosure
+  · exact hnonzero x₀ hmx₀
+
+/-- Hypothesis package for the unrestricted continuous-density a.c. Laplace
+theorem: continuous densities, two-sided exponential first moments, and the
+`p` first moment used by the L3 monotonicity linchpin.
+
+Compared with `LaplaceACContinuousDensityFiniteSimpleZeros`, ALL zero-structure
+fields (`firstDown`, `rest`, `hm_left`, `zeros`) are gone: the mean-shift
+ratio's zero set may be arbitrary. -/
+structure LaplaceACContinuousDensityUnrestricted
+    (τ : ℝ) (p q : Measure ℝ) where
+  ρp : ℝ → ℝ
+  ρq : ℝ → ℝ
+  hpρ : ContinuousDensityMeasure p ρp
+  hqρ : ContinuousDensityMeasure q ρq
+  hpMoment : LaplaceTwoSidedExpFirstMoment τ p
+  hqMoment : LaplaceTwoSidedExpFirstMoment τ q
+  hpFirstMoment : Integrable (fun y : ℝ => y) p
+
+/-- Every finite-simple-zero package is in particular an unrestricted package
+(the zero-structure data is simply discarded). -/
+def LaplaceACContinuousDensityFiniteSimpleZeros.toUnrestricted
+    {τ : ℝ} {p q : Measure ℝ}
+    (h : LaplaceACContinuousDensityFiniteSimpleZeros τ p q) :
+    LaplaceACContinuousDensityUnrestricted τ p q :=
+  { ρp := h.ρp
+    ρq := h.ρq
+    hpρ := h.hpρ
+    hqρ := h.hqρ
+    hpMoment := h.hpMoment
+    hqMoment := h.hqMoment
+    hpFirstMoment := h.hpFirstMoment }
+
+/-- **Unrestricted continuous-density a.c. Laplace converse (Milestone-5
+closure).**
+
+For probability laws with continuous Lebesgue densities, two-sided exponential
+first moments, and a `p` first moment, zero raw Laplace mean-shift drift
+forces `p = q` — with **no hypothesis whatsoever on the zero set of the
+mean-shift ratio** (no finiteness, no simplicity, no alternation, no sign
+pattern).  This subsumes
+`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`. -/
+theorem laplaceAC_identifies_of_continuousDensity
+    (τ : ℝ) (hτ : ValidBandwidth τ) (p q : Measure ℝ)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (h : LaplaceACContinuousDensityUnrestricted τ p q) : p = q := by
+  have hpReg : LaplaceC2NormalizerRegular τ p :=
+    laplaceC2NormalizerRegular_of_continuousDensity τ hτ p h.ρp h.hpρ
+  have hqReg : LaplaceC2NormalizerRegular τ q :=
+    laplaceC2NormalizerRegular_of_continuousDensity τ hτ q h.ρq h.hqρ
+  have hμnonneg :=
+    laplaceMeanShiftRatioDeriv_add_one_nonneg_of_regular τ hτ p hpReg
+      h.hpFirstMoment
+  have hWtop := laplaceKernelNormalizerWronskian_tendsto_atTop_zero
+    τ hτ p q h.hpMoment.exp_pos h.hqMoment.exp_pos
+  have hWbot := laplaceKernelNormalizerWronskian_tendsto_atBot_zero
+    τ hτ p q h.hpMoment.exp_neg h.hqMoment.exp_neg
+  exact laplaceKernelNormalizer_wronskian_eq_zero_imp_eq τ hτ p q
+    (laplaceAC_wronskian_eq_zero_of_zeroDrift_regular
+      τ hτ p q hpReg hqReg hzero hμnonneg hWtop hWbot)
+
+/-- Condition form of the unrestricted continuous-density theorem. -/
+def LaplaceACContinuousDensityCondition
+    (τ : ℝ) (p q : Measure ℝ) : Prop :=
+  IsProbabilityMeasure p ∧ IsProbabilityMeasure q ∧
+    Nonempty (LaplaceACContinuousDensityUnrestricted τ p q)
+
+/-- `IdentifiesAtZero` wrapper for the unrestricted continuous-density
+condition. -/
+theorem laplaceAC_identifiesAtZero_of_continuousDensity
+    (τ : ℝ) (hτ : ValidBandwidth τ) :
+    IdentifiesAtZero
+      (LaplaceACContinuousDensityCondition τ)
+      (meanShiftDrift (laplaceKernel τ)) := by
+  intro p q hcond hzero
+  rcases hcond with ⟨hpProb, hqProb, ⟨h⟩⟩
+  letI : IsProbabilityMeasure p := hpProb
+  letI : IsProbabilityMeasure q := hqProb
+  exact laplaceAC_identifies_of_continuousDensity τ hτ p q hzero h
+
+/-- Any explicit unrestricted package witnesses the condition. -/
+theorem laplaceACContinuousDensityCondition_of_package
+    {τ : ℝ} {p q : Measure ℝ}
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (h : LaplaceACContinuousDensityUnrestricted τ p q) :
+    LaplaceACContinuousDensityCondition τ p q :=
+  ⟨inferInstance, inferInstance, ⟨h⟩⟩
+
+/-- Concrete Gaussian witness for the unrestricted condition.  Unlike the
+finite-simple-zero witness, no sign certificate is needed at all: the package
+only carries density and moment data. -/
+noncomputable def standardGaussian_vs_shiftedGaussian_unrestricted (τ : ℝ) :
+    LaplaceACContinuousDensityUnrestricted τ
+      (gaussianReal 0 (1 : NNReal)) (gaussianReal 1 (1 : NNReal)) :=
+  { ρp := gaussianPDFReal 0 (1 : NNReal)
+    ρq := gaussianPDFReal 1 (1 : NNReal)
+    hpρ := continuousDensityMeasure_gaussianReal 0 (by norm_num : (1 : NNReal) ≠ 0)
+    hqρ := continuousDensityMeasure_gaussianReal 1 (by norm_num : (1 : NNReal) ≠ 0)
+    hpMoment := laplaceTwoSidedExpFirstMoment_gaussianReal τ 0 (1 : NNReal)
+    hqMoment := laplaceTwoSidedExpFirstMoment_gaussianReal τ 1 (1 : NNReal)
+    hpFirstMoment := integrable_id_gaussianReal_as_fun 0 (1 : NNReal) }
+
+/-- The unrestricted condition admits a concrete distinct Gaussian pair. -/
+theorem laplaceACContinuousDensityCondition_allowsDistinctPair
+    (τ : ℝ) :
+    ConditionAllowsDistinctPair (LaplaceACContinuousDensityCondition τ) :=
+  ⟨gaussianReal 0 (1 : NNReal), gaussianReal 1 (1 : NNReal),
+    laplaceACContinuousDensityCondition_of_package
+      (standardGaussian_vs_shiftedGaussian_unrestricted τ),
+    gaussianReal_zero_ne_one_unitVariance⟩
+
+/-- The unrestricted continuous-density condition is formally legitimate:
+inhabited, and allowing a distinct pair before any zero-drift hypothesis. -/
+theorem laplaceACContinuousDensityCondition_isLegitimate
+    (τ : ℝ) :
+    IsLegitimateCondition (LaplaceACContinuousDensityCondition τ) := by
+  constructor
+  · exact ⟨gaussianReal 0 (1 : NNReal), gaussianReal 1 (1 : NNReal),
+      laplaceACContinuousDensityCondition_of_package
+        (standardGaussian_vs_shiftedGaussian_unrestricted τ)⟩
+  · exact laplaceACContinuousDensityCondition_allowsDistinctPair τ
+
 end DriftingIdentifiability

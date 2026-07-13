@@ -454,10 +454,12 @@ After Milestone 3 the enemy is measures whose combined support has
 interior (e.g. absolutely continuous parts with full-interval support).
 
 **★ RESOLVED ON PAPER 2026-07-11 (Fable) — a correct proof for a.c. measures
-with an exponential moment.  (Not yet formalizable: needs asymptotic ODE
-integration that Mathlib lacks.)**  The earlier "obstruction" writeups were
-wrong because of a sign error in the tail behaviour of the mean shift, now
-corrected and numerically verified.  Here is the proof.
+with an exponential moment.  (The "needs asymptotic ODE integration Mathlib
+lacks" caveat below proved WRONG: the 2026-07-12 closure formalized the
+continuous-density case with elementary one-sided slope limits instead — see
+the "MILESTONE 5 CLOSED" entry further down.)**  The earlier "obstruction"
+writeups were wrong because of a sign error in the tail behaviour of the mean
+shift, now corrected and numerically verified.  Here is the proof.
 
 *Setup.*  Let `p, q` be a.c. with `∫ e^{|y|/τ}dp, dq < ∞`, and suppose zero
 drift.  Set `m := D_p/Z_p` (the common mean shift; `D_q = m Z_q` by zero drift)
@@ -527,10 +529,36 @@ Lebesgue densities, two-sided exponential moments, and a finite alternating
 simple sign-changing zero list for the `p` mean-shift ratio are sufficient for
 zero raw Laplace drift to imply `p = q`.  `LaplaceACGaussianCertificate.lean`
 constructs the standard-Gaussian single-downward-crossing certificate
-axiom-free, giving a concrete distinct-pair legitimacy witness.  The remaining
-Milestone-5 research target is therefore the broader unrestricted
-a.c. exponential-moment theorem with no finite-zero/sign-pattern hypothesis,
-plus the still broader arbitrary-measure determinant-propagation problem.
+axiom-free, giving a concrete distinct-pair legitimacy witness.
+
+**★ MILESTONE 5 CLOSED for continuous densities (2026-07-12, Fable) —
+MACHINE-CHECKED, axiom-free.**  `laplaceAC_identifies_of_continuousDensity`
+(`LaplaceACFinal.lean`) removes the finite-zero/sign-pattern hypothesis
+ENTIRELY: continuous densities + two-sided exponential first moments + `p`
+first moment + zero drift ⟹ `p = q`, for an ARBITRARY mean-shift zero set.
+The feared need for Levinson/asymptotic-ODE theory never materialized; the
+closure needed only three elementary new bricks on top of the L-ladder:
+
+1. *edge slope-limit*: at a finite left edge `α` of a component of `{m > 0}`
+   (or right edge of `{m < 0}`), one-sided sign forces `m'(α) ≥ 0`, so
+   `μ'(α) = m'(α) + 1 ≥ 1 > 0`, and the L8 log-singularity lemmas — which
+   never look at the far side of the breakpoint — kill `W` on the whole
+   component; no simplicity, crossing structure, or two-sided mass needed;
+2. *component extraction*: `sSup`/`sInf` of the closed zero set + IVT replace
+   the finite alternating list, per-point (`W(x₀)` dies via the nearest zero
+   on the relevant side, or via the L6 outer ray if there is none);
+3. *locally-flat zeros*: where `m ≡ 0` on an interval, the certified
+   first-order pair `D' = (1/τ)L_c − 2Z`, `L_c' = (1/τ)D` forces
+   `Z_p' = Z_q' = 0` pointwise, so `W = 0` there; all remaining zeros are
+   closure points of `{m ≠ 0}` and inherit `W = 0` by continuity.
+
+Non-vacuity is unconditional and certificate-free:
+`laplaceACContinuousDensityCondition_isLegitimate` (the Gaussian pair
+witnesses the condition using only density + moment data).  The remaining
+Milestone-5 research targets are (i) general L¹ (non-continuous) densities —
+needs an a.e./integral Abel argument in place of the pointwise C² bridge —
+and (ii) the arbitrary-measure determinant-propagation problem (atoms and
+singular parts on interval supports).
 
 **Safe conditional-axiom plan (2026-07-11, Codex) — FALLBACK ONLY.**  If we decide to
 axiomatize the missing analysis, keep the axiom boundary below the final

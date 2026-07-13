@@ -1033,10 +1033,12 @@ converse for arbitrary fields" concession is answered for the Gaussian kernel
 (arbitrary targets) and for the Laplace kernel (Gaussian targets).  The
 Laplace-kernel arbitrary-target converse has also advanced beyond the
 rebuttal: finite mixtures, nowhere-dense/right-dense-gap supports, and several
-Wronskian gates are machine-checked below.  The continuous-density
-finite-simple-zero a.c. subclass is also Lean-certified and non-vacuous; the
-broader unrestricted a.c. exponential-moment case is resolved on paper but not
-yet Lean-certified.
+Wronskian gates are machine-checked below.  The continuous-density a.c. case
+is now Lean-certified **unrestricted** (2026-07-12): zero drift + continuous
+densities + two-sided exponential first moments + a `p` first moment forces
+`p = q` with no hypothesis on the mean-shift zero set
+(`laplaceAC_identifies_of_continuousDensity`), and the condition is
+demonstrably legitimate via a certificate-free Gaussian witness.
 
 ## Laplacian-kernel arbitrary-target structural reduction
 
@@ -1223,32 +1225,42 @@ laplaceACFiniteSimpleZerosCondition_isLegitimate_of_standardGaussian
 are hypothesis-free apart from `ValidBandwidth τ`; `#print axioms` reports only
 Lean foundations (`propext`, `Classical.choice`, `Quot.sound`).
 
-Separately, Claude/Fable's 2026-07-11 paper proof appears to resolve the broader
-one-dimensional **unrestricted absolutely-continuous + exponential-moment**
-case: under zero drift, `Z_p` and `Z_q` solve the same second-order ODE, the
-corrected tail asymptotics make the non-`Z_p` solution grow at both ends, and
-the doubly-decaying solution space is therefore one-dimensional, so
-`Z_q = α Z_p` and smoothing injectivity plus mass gives `p = q`.  This broader
-statement is not currently a promoted Lean theorem: it would require removing
-the finite-simple-zero/sign-pattern hypothesis, likely via substantial analytic
-facts about distributional Green's-function identities, tail asymptotics, and
-ODE asymptotic uniqueness/Abel theory.
+**2026-07-12 (Fable): the unrestricted continuous-density theorem is now
+Lean-certified — Milestone 5 closed for this class.**  The anticipated need
+for distributional identities and Levinson/ODE-asymptotic theory did not
+materialize.  `LaplaceACFinal.lean` proves
+
+```text
+laplaceAC_identifies_of_continuousDensity
+```
+
+— continuous Lebesgue densities + two-sided exponential first moments + a `p`
+first moment + zero raw Laplace drift imply `p = q`, with **no hypothesis on
+the zero set of the mean-shift ratio** (no finiteness, simplicity,
+alternation, or sign pattern).  The proof is a pointwise trichotomy: at any
+point where `m ≠ 0`, either an outer-ray or an arbitrary-edge blow-up kills
+the Wronskian (the edge needs only the one-sided slope limit `m' ≥ 0`, giving
+`μ' ≥ 1` for free — this is what replaced the Levinson-type analysis); where
+`m ≡ 0` locally, the certified first-order elliptic pair forces both
+normalizer derivatives to vanish; the rest is closure/continuity.  The
+condition form is `IsLegitimateCondition`
+(`laplaceACContinuousDensityCondition_isLegitimate`) via a Gaussian witness
+that needs no sign certificate at all.  `#print axioms` reports only Lean
+foundations for the entire chain; the finite-simple-zeros theorem is now a
+corollary surface.
 
 Remaining research objectives are now narrower and split by trust level:
 
 - Lean-native, general-measure track: remove the nondegeneracy from the
   gap-local `W = 0` theorem by formalizing the one-sided support/zero-coordinate
   cases.
-- Lean-native, a.c. track: the continuous-density finite-simple-zero theorem is
-  closed and non-vacuous.  The remaining a.c. research objective is the stronger
-  unrestricted exponential-moment theorem with no finite-simple-zero/sign-list
-  hypothesis.
+- Lean-native, a.c. track: relax continuous densities to general L¹ densities
+  (needs an a.e./integral Abel argument in place of the pointwise C² bridge).
 - Conditional-axiom track: `LaplaceACConditionalAxiomPlan.md` is retained only
-  as an explicit FALLBACK for the broader unrestricted a.c. analytic bridge.
-  The current finite-simple-zero theorem and Gaussian non-vacuity witness are
-  proved axiom-free and should not be replaced by conditional axioms.
+  as a historical FALLBACK; the unrestricted continuous-density theorem is
+  proved axiom-free, so no conditional axioms are needed for this class.
 - General-measure track: extend beyond a.c. + exponential moment and
-  nowhere-dense supports.
+  nowhere-dense supports (atoms and singular parts on interval supports).
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
   any multidimensional analogue of the ODE argument.
 

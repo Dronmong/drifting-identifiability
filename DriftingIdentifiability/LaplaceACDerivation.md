@@ -279,6 +279,70 @@ The single UP crossing at 0 flanks BOTH interior intervals, exactly as the
 covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
 (where there are no zeros), consistent with L3 non-strict / L7 strict-at-zeros.
 
+## M5 CLOSURE (2026-07-12): removing the finite-simple-zeros hypothesis
+
+**Goal.** Upgrade `laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`
+to the UNRESTRICTED continuous-density theorem: zero raw Laplace drift plus
+continuous densities plus two-sided exponential moments (plus the `p` first
+moment for L3) forces `p = q` — **no hypothesis on the zero set of the mean
+shift `m` at all** (no finiteness, no simplicity, no alternation, no sign
+pattern).  This is the Milestone-5 research target stated in
+`LaplaceGeneralConverseRoadmap.md`.
+
+**The three insights that make it possible.**
+
+1. **Edges beat crossings.**  The L8 abstract interval lemmas
+   (`abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper` and
+   its left mirror) are already ONE-SIDED: they never look at `m` on the far
+   side of the breakpoint.  So they apply not just at simple upward crossings
+   but at an arbitrary finite EDGE of a component of `{m > 0}` (left edge) or
+   `{m < 0}` (right edge).  At such an edge `α` the one-sided sign alone forces
+   the slope limit `m'(α) ≥ 0` (difference quotients `m(t)/(t−α)` are
+   nonnegative from the sign geometry on the component side), hence
+   `μ'(α) = m'(α) + 1 ≥ 1 > 0` — strictly positive WITHOUT simplicity,
+   two-sided mass, or L7.  Continuity of `m'` (C² certificate) then gives the
+   `δ` lower bound near `α`, and differentiability of `m` at `α` with
+   `m(α) = 0` gives the linear bound `|m| ≤ L·|t−α|` (dslope).  These are
+   exactly the `δ/L` inputs of the L8 lemmas, so `W ≡ 0` on the whole
+   component interval adjacent to the edge.
+2. **Component trichotomy replaces the alternating list.**  For `x₀` with
+   `m(x₀) > 0`: either `m > 0` on all of `(−∞, x₀]` (no zero below, by IVT)
+   — then the L6 outer-ray lemma with `W → 0` at `−∞` kills `W(x₀)` — or
+   `α := sSup {t ≤ x₀ | m t = 0}` is a member of the zero set
+   (`IsClosed.csSup_mem`) with `m > 0` on `(α, x₀]` (IVT), and the edge
+   blow-up kills `W` on `(α, b)` ∋ `x₀`.  Mirror for `m(x₀) < 0` via `sInf`.
+   No enumeration of zeros is ever needed.
+3. **Locally-flat zeros are killed by the certified elliptic pair.**  If
+   `m ≡ 0` on an interval `U` (interior of the zero set), then `D ≡ 0` on `U`
+   for BOTH laws (`D_q = m·Z_q` by zero drift).  The certified first-order
+   identities `D' = (1/τ)·L_c − 2·Z` (displacement derivative) and
+   `L_c' = (1/τ)·D` (companion derivative) then give, pointwise on `U`:
+   `Z = (1/(2τ))·L_c` and `L_c' = 0`, hence `Z' = 0` for both laws, hence
+   `W = Z_p'Z_q − Z_pZ_q' = 0` on `U`.  Every remaining zero of `m` is a
+   closure point of `{m ≠ 0}`, where `W = 0` extends by continuity of `W`.
+
+**Assembly.**  `∀ x₀`: trichotomy on `m(x₀)` — the three cases above cover
+`{m > 0}`, `{m < 0}`, `int{m = 0}`, and `∂{m = 0} ⊆ closure {m ≠ 0}`.  So
+`W ≡ 0` on ℝ, and the certified gate
+`laplaceKernelNormalizer_wronskian_eq_zero_imp_eq` gives `p = q`.
+
+**What is genuinely new in Lean** (all elementary): the slope-limit edge
+lemma (`m'(edge) ≥ 0` from one-sided sign), the `sSup`/`sInf` + IVT component
+extraction, the locally-flat `Z' = 0` lemma from the two certified derivative
+identities, and the closure/continuity glue.  Everything else is reuse:
+L2 tails, L3 global `μ' ≥ 0`, L5 Abel one-call bridge
+(`hasDerivAt_laplaceKernelNormalizerWronskian_of_zeroDrift_regular`), L6
+outer rays, L8 interval lemmas, FTC primitive helpers, `W` continuity, gate.
+
+**Scope note.**  Continuous densities (not general L¹ densities) remain the
+regularity class, because the C² normalizer certificate
+(`LaplaceC2NormalizerRegular`, built by
+`laplaceC2NormalizerRegular_of_continuousDensity`) is what feeds the Abel
+bridge.  General a.c. would need an a.e./integral Abel argument — recorded as
+the residual refinement, not attempted here.  The arbitrary-measure
+(atoms + singular parts on interval supports) determinant-propagation problem
+also remains open beyond this.
+
 ## Session log
 
 - 2026-07-11: added `upperExpMass_tendsto_atTop_zero`
@@ -529,3 +593,28 @@ covering predicts, so `W ≡ 0` throughout. `mu'` dips to 0 only in the TAILS
   `standardGaussian_vs_shiftedGaussian_finiteSimpleZeros`, the distinct-pair
   theorem, and the legitimacy theorem are now hypothesis-free apart from
   `ValidBandwidth τ`.
+- 2026-07-12: **MILESTONE 5 CLOSED FOR CONTINUOUS DENSITIES — UNRESTRICTED
+  THEOREM PROVED, AXIOM-FREE.**  Implemented the "M5 CLOSURE" design above in
+  `LaplaceACFinal.lean`.  New certified pieces: the one-sided slope-limit
+  lemmas (`hasDerivAt_nonneg_of_zero_of_pos_right` / `_neg_left`, private);
+  the arbitrary-edge blow-up theorems
+  `laplaceAC_wronskian_eq_zero_on_Ioo_of_leftEdge` / `_of_rightEdge` (no
+  simplicity, no crossing, no two-sided-mass input — the edge slope limit
+  gives `mu' >= 1` for free); the outer-ray wrappers
+  `laplaceAC_wronskian_eq_zero_on_left_ray` / `_on_right_ray`; the
+  locally-flat lemma `laplaceAC_wronskian_eq_zero_of_locally_flat` (via the
+  certified first-order pair `D' = (1/tau)L_c - 2Z`, `L_c' = (1/tau)D`, no
+  second-order data); the sSup/sInf + IVT component assembly
+  `laplaceAC_wronskian_eq_zero_of_zeroDrift_regular` (zero drift + C2
+  certificates + global `mu' >= 0` + `W -> 0` at both ends imply `W == 0`
+  everywhere, for an ARBITRARY mean-shift zero set); and the headline
+  `laplaceAC_identifies_of_continuousDensity` with condition form,
+  `IdentifiesAtZero` wrapper, and the certificate-free Gaussian witness
+  (`standardGaussian_vs_shiftedGaussian_unrestricted`,
+  `laplaceACContinuousDensityCondition_isLegitimate`).  All `#print axioms` =
+  propext/Classical.choice/Quot.sound; full build green; TrustAudit green (55
+  files, 15+5 axioms unchanged); promoted AxiomAudit green (343 decls).  The
+  finite-simple-zeros theorem is now a corollary surface
+  (`LaplaceACContinuousDensityFiniteSimpleZeros.toUnrestricted`).  Remaining
+  M5 refinements: general L1 densities (a.e. Abel), arbitrary measures
+  (atoms/singular parts on interval supports).

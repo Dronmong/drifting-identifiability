@@ -19,16 +19,31 @@ doubly-decaying space is 1-dim, `Z_q ∝ Z_p`, hence `p = q`.  Rigorous modulo
 Levinson-type asymptotic ODE integration, which Mathlib lacks — so NOT yet
 formalizable.  Full proof in `LaplaceGeneralConverseRoadmap.md` (Milestone 5).
 
+**Update 2026-07-12 (Fable): MILESTONE 5 CLOSED for continuous densities,
+MACHINE-CHECKED, axiom-free.**  `laplaceAC_identifies_of_continuousDensity`
+(`LaplaceACFinal.lean`) proves: continuous Lebesgue densities + two-sided
+exponential first moments + `p` first moment + zero raw Laplace drift ⟹
+`p = q`, with **no hypothesis on the mean-shift zero set at all** (no
+finiteness, simplicity, alternation, or sign pattern).  The Levinson-type
+asymptotics the paper proof seemed to need were avoided entirely: a one-sided
+slope-limit argument makes `μ' ≥ 1` at every component edge of `{m ≠ 0}`
+(L8 blow-up applies to arbitrary edges), an `sSup`/IVT component extraction
+replaces the alternating list, and the certified first-order elliptic pair
+kills the locally-flat zeros.  Design + proof record:
+`LaplaceACDerivation.md`, section "M5 CLOSURE".
+
 **Current trust boundary.**  The machine-checked main track proves conditional
 gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, and the finite/nowhere-dense
-classes.  It also now proves a Lean-native a.c. subclass:
-`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros` identifies
-continuous-density, exponential-moment laws whose `p` mean-shift ratio has a
-finite alternating simple-zero/sign-change certificate.  This condition is
-demonstrably non-vacuous by the axiom-free standard-Gaussian witness
-`standardGaussian_vs_shiftedGaussian_finiteSimpleZeros`.  The broader
-unrestricted a.c. exponential-moment result remains a paper proof, not a
-promoted Lean theorem.
+classes; the finite-simple-zeros a.c. subclass
+(`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`); and now the
+**unrestricted continuous-density theorem**
+`laplaceAC_identifies_of_continuousDensity`, which subsumes it.  Both are
+demonstrably non-vacuous: the unrestricted condition is
+`IsLegitimateCondition` via the Gaussian pair
+(`laplaceACContinuousDensityCondition_isLegitimate`), with the witness needing
+no sign certificate at all.  Remaining open: general L¹ (non-continuous)
+densities, and arbitrary measures with atoms/singular parts on
+interval supports.
 
 **Decision 2026-07-11/12: DERIVE the a.c. case, do NOT axiomatize it.**  The
 finite-simple-zero a.c. bridge has now been proved in Lean, reducing through the
