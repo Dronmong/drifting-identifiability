@@ -554,11 +554,28 @@ closure needed only three elementary new bricks on top of the L-ladder:
 
 Non-vacuity is unconditional and certificate-free:
 `laplaceACContinuousDensityCondition_isLegitimate` (the Gaussian pair
-witnesses the condition using only density + moment data).  The remaining
-Milestone-5 research targets are (i) general L¹ (non-continuous) densities —
-needs an a.e./integral Abel argument in place of the pointwise C² bridge —
-and (ii) the arbitrary-measure determinant-propagation problem (atoms and
-singular parts on interval supports).
+witnesses the condition using only density + moment data).
+
+**★★ ATOMLESS UPGRADE (2026-07-13, Fable) — MACHINE-CHECKED, axiom-free.**
+`LaplaceAtomlessConverse.lean` removes BOTH the density-continuity and the
+exponential-moment hypotheses: `laplaceZeroDrift_identifies_of_noAtoms` —
+zero drift + `NoAtoms p` + `NoAtoms q` + a `p` first moment ⟹ `p = q`.
+Rough L¹ densities, singular-continuous laws, and their mixtures are all
+covered; the anticipated a.e.-Abel machinery was never needed.  The engine
+is the **companion alignment defect** `K = L_p·Z_q − L_q·Z_p`, whose
+zero-drift structure is purely FIRST-order: for atomless laws `Z ∈ C¹`
+(certified right-derivative + mass continuity + an upgrade lemma), and the
+certified pair `D' = (1/τ)L − 2Z`, `L' = (1/τ)D` gives the exact pointwise
+identities `K = τ·m·W` and `K' = −τ(m'+2)·W`; on `{m ≠ 0}` this is a
+first-order ODE with continuous coefficient and GLOBAL lower bound
+`m'+2 ≥ 1` (L3), the L8/L6 layer applies verbatim, `K = τmW` kills the zero
+set pointwise, and `K → 0` at ±∞ needs no moments.  The certified gate
+`laplaceZeroDrift_imp_eq_of_companionAligned` finishes.  The condition
+`LaplaceAtomlessCondition` is bandwidth-free and legitimate, and subsumes the
+continuous-density condition.  The remaining Milestone-5 research targets are
+(i) atoms on interval supports (the arbitrary-measure
+determinant-propagation problem) and (ii) dropping the `p` first moment
+(needs an integrability-free L3).
 
 **Safe conditional-axiom plan (2026-07-11, Codex) — FALLBACK ONLY.**  If we decide to
 axiomatize the missing analysis, keep the axiom boundary below the final

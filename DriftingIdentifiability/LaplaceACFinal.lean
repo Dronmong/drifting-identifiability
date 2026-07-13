@@ -44,7 +44,7 @@ private lemma uIcc_subset_Ioo_of_endpoints_mem_Ioo
 /-- Primitive-by-FTC helper used by upward-crossing certificates.  If a scalar
 coefficient is continuous on an open gap, then `z ↦ ∫ s in base..z, c s` has
 the expected right derivative at every point of that gap. -/
-private theorem intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
+theorem intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
     {c : ℝ → ℝ} {a b base t : ℝ}
     (hcont : ContinuousOn c (Ioo a b))
     (hbase : base ∈ Ioo a b) (ht : t ∈ Ioo a b) :
@@ -74,7 +74,7 @@ private theorem intervalPrimitive_hasDerivWithinAt_Ici_of_continuousOn_Ioo
   exact hderivJ.mono_of_mem_nhdsWithin (Icc_mem_nhdsGE ht_mid)
 
 /-- Continuity of the same FTC primitive on compact subintervals of the gap. -/
-private theorem intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
+theorem intervalPrimitive_continuousOn_Icc_of_continuousOn_Ioo
     {c : ℝ → ℝ} {a b base x y : ℝ}
     (hcont : ContinuousOn c (Ioo a b))
     (hbase : base ∈ Ioo a b) (hx : x ∈ Ioo a b) (hy : y ∈ Ioo a b) :
@@ -135,7 +135,7 @@ private theorem laplaceWronskian_isBoundedUnder_nhdsGT_of_regular
 
 /-- A continuous scalar function that is strictly positive at `a` is bounded
 below by half its value on a two-sided neighborhood of `a`. -/
-private theorem exists_Ioo_lower_bound_half_of_continuous_pos
+theorem exists_Ioo_lower_bound_half_of_continuous_pos
     {g : ℝ → ℝ} {a lower upper : ℝ}
     (hg : Continuous g) (hlower : lower < a) (hupper : a < upper)
     (hga : 0 < g a) :
@@ -188,7 +188,7 @@ sides of `a`.
 This is the slope/MVT-style local regularity step used by the simple-zero
 constructor.  It uses `dslope`: continuity of `dslope f a` at `a` follows from
 differentiability, and `(t-a) * dslope f a t = f t - f a`. -/
-private theorem exists_Ioo_linear_bound_of_hasDerivAt_zero
+theorem exists_Ioo_linear_bound_of_hasDerivAt_zero
     {f : ℝ → ℝ} {a lower upper : ℝ} {D : ℝ}
     (hlower : lower < a) (hupper : a < upper)
     (hf : HasDerivAt f D a) (hfa : f a = 0) :

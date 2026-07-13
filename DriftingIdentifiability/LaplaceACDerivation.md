@@ -343,6 +343,42 @@ the residual refinement, not attempted here.  The arbitrary-measure
 (atoms + singular parts on interval supports) determinant-propagation problem
 also remains open beyond this.
 
+## ATOMLESS UPGRADE PLAN (2026-07-12): rough densities via the K-coordinate
+
+**Goal.** Remove the density-continuity AND exponential-moment hypotheses:
+prove `ZeroDrift + NoAtoms p + NoAtoms q + (p first moment) ⟹ p = q`.  This
+clears general L¹ densities, singular-continuous laws, and their mixtures —
+everything except atoms on interval supports.
+
+**Key discovery: the alignment defect `K := L_p·Z_q − L_q·Z_p`
+(`laplaceCompanionAlignmentDefect`, already defined and gated by
+`laplaceZeroDrift_imp_eq_of_companionAligned`) has a PURELY FIRST-ORDER
+zero-drift structure:**
+
+* For atomless measures `Z ∈ C¹` (certified right-derivative
+  `hasDerivWithinAt_Ici_laplaceKernelNormalizer` + continuity of the
+  one-sided masses + a right-derivative-to-derivative upgrade lemma), and
+  `D, L` are C¹ for ANY probability measure (certified).  Hence `m = D/Z ∈ C¹`
+  — no density exists, let alone a continuous one.
+* Differentiating `D_μ = m·Z_μ` once and substituting the certified
+  `D' = (1/τ)L − 2Z` gives `L_μ = τ(m'Z_μ + m·Z_μ' + 2Z_μ)` pointwise; pure
+  algebra then yields the two exact identities
+  `K = τ·m·W` and `K' = −τ(m'+2)·W` (using certified `L' = (1/τ)D` and the
+  zero-drift cancellation).  On `{m ≠ 0}`: `K' = −((m'+2)/m)·K`, everywhere,
+  C¹, continuous coefficient.
+* L3 gives `m'+2 = μ'+1 ≥ 1` GLOBALLY — the L8 blow-up lemmas get their `δ`
+  lower bound with no local extraction and no edge-slope lemma.
+* Where `m(x₀) = 0`: `K(x₀) = τ·0·W(x₀) = 0` POINTWISE — the locally-flat
+  and closure/continuity cases of the W-route vanish entirely.
+* `K → 0` at ±∞ for ANY finite measure (bounded kernels + DCT) — the
+  exponential moments were only ever needed for `W → 0`.
+
+**Assembly** = the same sSup/sInf + IVT trichotomy as the M5 closure, run on
+`K` with `μDeriv := (m'+2)/2 ≥ 1/2`, feeding the same abstract L6/L8 lemmas,
+ending in the companion-alignment gate.  Subsumes
+`laplaceAC_identifies_of_continuousDensity` (continuous density ⟹ a.c. ⟹
+atomless; that theorem's hypotheses include the first moment).
+
 ## Session log
 
 - 2026-07-11: added `upperExpMass_tendsto_atTop_zero`
@@ -618,3 +654,36 @@ also remains open beyond this.
   (`LaplaceACContinuousDensityFiniteSimpleZeros.toUnrestricted`).  Remaining
   M5 refinements: general L1 densities (a.e. Abel), arbitrary measures
   (atoms/singular parts on interval supports).
+- 2026-07-13: **ATOMLESS UPGRADE LANDED — ROUGH DENSITIES CLEARED, AXIOM-FREE.**
+  Implemented the "ATOMLESS UPGRADE PLAN" above in
+  `LaplaceAtomlessConverse.lean`.  New certified pieces: two-sided continuity
+  of the one-sided exponential masses at atomless points
+  (`lowerExpMass_continuousAt`, `upperExpMass_continuousAt`, DCT with constant
+  dominators); continuity of the normalizer derivative coefficient; the
+  right-derivative-to-derivative upgrade
+  (`hasDerivAt_of_continuous_of_hasDerivWithinAt_Ici`, via
+  `constant_of_has_deriv_right_zero` + FTC); the genuinely-C1 normalizer
+  `hasDerivAt_laplaceKernelNormalizer_of_noAtoms`; C1 mean-shift ratio with
+  continuous derivative and the L3 bridge, all `_of_noAtoms`; the K-identities
+  `laplaceCompanionAlignmentDefect_eq_of_zeroDrift` (K = tau*m*W) and
+  `hasDerivAt_laplaceCompanionAlignmentDefect_of_zeroDrift`
+  (K' = -tau*(m'+2)*W) — both purely first-order, from the certified pair
+  `D' = (1/tau)L - 2Z`, `L' = (1/tau)D` plus the C1 normalizer; moment-free
+  tails `laplaceCompanionAlignmentDefect_tendsto_atTop/atBot_zero`; the
+  K-edge/K-ray propagation with GLOBAL delta = 1/2 (from L3, no edge-slope
+  lemma needed); and the assembly
+  `laplaceCompanionAlignmentDefect_eq_zero_of_zeroDrift` (m(x0) = 0 case is
+  pointwise trivial via K = tau*m*W — no flat/closure arguments remain).
+  HEADLINE: `laplaceZeroDrift_identifies_of_noAtoms` — ZeroDrift + NoAtoms p +
+  NoAtoms q + Integrable id p ⟹ p = q, NO density, NO exponential moments,
+  NO zero-set hypothesis.  The condition `LaplaceAtomlessCondition` is
+  BANDWIDTH-FREE and `IsLegitimateCondition`
+  (`laplaceAtomlessCondition_isLegitimate`, Gaussian pair); it subsumes the
+  continuous-density condition
+  (`laplaceAtomlessCondition_of_continuousDensityCondition`).  The Milestone-6
+  umbrella `LaplaceRealConverseCondition` is now also bandwidth-free:
+  (right-dense zero-mass gaps) OR (atomless + p first moment).  Check.ps1
+  green: 57 files, 355 promoted decls, 15+5 axioms unchanged; all new
+  headliners `#print axioms` = foundations only.  REMAINING open: atoms on
+  interval supports; dropping the p first moment (would need an
+  integrability-free L3).

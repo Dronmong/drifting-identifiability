@@ -1258,18 +1258,38 @@ with exponential moments) — together with its legitimacy witness.  This is
 the honest one-theorem statement of the 1-d Laplace converse as currently
 machine-checked.
 
+**2026-07-13 (Fable): the ATOMLESS converse is Lean-certified — rough
+densities and singular-continuous laws cleared.**  `LaplaceAtomlessConverse.lean`
+proves
+
+```text
+laplaceZeroDrift_identifies_of_noAtoms
+```
+
+— zero raw Laplace drift + `NoAtoms p` + `NoAtoms q` + a `p` first moment
+imply `p = q`, with **no density regularity and no exponential moments**.
+The route avoids the anticipated a.e.-Abel machinery entirely: the companion
+alignment defect `K = L_p·Z_q − L_q·Z_p` has a purely first-order zero-drift
+structure (`K = τ·m·W`, `K' = −τ(m'+2)·W`, both exact and pointwise for
+atomless laws, with `m'+2 ≥ 1` globally from L3), so the same L6/L8
+propagation closes `K ≡ 0` and the certified companion-alignment gate gives
+`p = q`.  The condition `LaplaceAtomlessCondition` is bandwidth-free,
+`IsLegitimateCondition`, and subsumes the continuous-density condition;
+the Milestone-6 umbrella `LaplaceRealConverseCondition` is now
+(right-dense zero-mass gaps) ∨ (atomless + `p` first moment), also
+bandwidth-free.
+
 Remaining research objectives are now narrower and split by trust level:
 
 - Lean-native, general-measure track: remove the nondegeneracy from the
   gap-local `W = 0` theorem by formalizing the one-sided support/zero-coordinate
   cases.
-- Lean-native, a.c. track: relax continuous densities to general L¹ densities
-  (needs an a.e./integral Abel argument in place of the pointwise C² bridge).
 - Conditional-axiom track: `LaplaceACConditionalAxiomPlan.md` is retained only
-  as a historical FALLBACK; the unrestricted continuous-density theorem is
-  proved axiom-free, so no conditional axioms are needed for this class.
-- General-measure track: extend beyond a.c. + exponential moment and
-  nowhere-dense supports (atoms and singular parts on interval supports).
+  as a historical FALLBACK; the atomless theorem is proved axiom-free, so no
+  conditional axioms are needed for this class.
+- General-measure track: measures with atoms on interval supports (the last
+  structural gap between the two umbrella regimes), and dropping the `p`
+  first moment from the atomless theorem.
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
   any multidimensional analogue of the ODE argument.
 

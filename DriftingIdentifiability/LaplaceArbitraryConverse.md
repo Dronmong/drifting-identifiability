@@ -32,18 +32,28 @@ replaces the alternating list, and the certified first-order elliptic pair
 kills the locally-flat zeros.  Design + proof record:
 `LaplaceACDerivation.md`, section "M5 CLOSURE".
 
+**Update 2026-07-13 (Fable): ATOMLESS converse machine-checked, axiom-free.**
+`laplaceZeroDrift_identifies_of_noAtoms` (`LaplaceAtomlessConverse.lean`):
+zero drift + both laws atomless + a `p` first moment ⟹ `p = q` — no density
+regularity, no exponential moments, no zero-set hypothesis.  Engine: the
+companion alignment defect `K = L_p·Z_q − L_q·Z_p` is `C¹` for atomless laws
+with the exact first-order zero-drift identities `K = τ·m·W` and
+`K' = −τ(m'+2)·W`; L3 makes the ODE coefficient globally bounded below, the
+L8/L6 propagation closes `K ≡ 0`, and the certified companion-alignment gate
+finishes.  Covers rough L¹ densities, singular-continuous laws, and their
+mixtures; subsumes the continuous-density theorem.
+
 **Current trust boundary.**  The machine-checked main track proves conditional
-gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, and the finite/nowhere-dense
-classes; the finite-simple-zeros a.c. subclass
-(`laplaceAC_identifies_of_continuousDensity_finiteSimpleZeros`); and now the
-**unrestricted continuous-density theorem**
-`laplaceAC_identifies_of_continuousDensity`, which subsumes it.  Both are
-demonstrably non-vacuous: the unrestricted condition is
-`IsLegitimateCondition` via the Gaussian pair
-(`laplaceACContinuousDensityCondition_isLegitimate`), with the witness needing
-no sign certificate at all.  Remaining open: general L¹ (non-continuous)
-densities, and arbitrary measures with atoms/singular parts on
-interval supports.
+gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, `K ≡ 0 ⟹ p = q`, and the
+following unconditional classes: finite/nowhere-dense supports (no moments);
+the finite-simple-zeros and unrestricted continuous-density a.c. theorems;
+and the **atomless theorem** `laplaceZeroDrift_identifies_of_noAtoms`, which
+subsumes both a.c. theorems.  The Milestone-6 umbrella
+`laplaceZeroDrift_identifies_real` now records
+(right-dense zero-mass gaps) ∨ (atomless + `p` first moment) — a
+bandwidth-free condition, `IsLegitimateCondition` via the Gaussian pair.
+Remaining open: measures with atoms on interval supports, and dropping the
+`p` first moment.
 
 **Decision 2026-07-11/12: DERIVE the a.c. case, do NOT axiomatize it.**  The
 finite-simple-zero a.c. bridge has now been proved in Lean, reducing through the
