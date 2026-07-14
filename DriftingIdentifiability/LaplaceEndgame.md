@@ -19,7 +19,11 @@ arbitrary probability measures on ℝ?*
 > (~1070 lines).  The Milestone-6 umbrella, the atomless theorem, the
 > continuous-density theorem, and the "atoms on interval supports" gap are all
 > now strict corollaries, and the `p`-first-moment wart is gone.  **Frontier C
-> (Gaussian-kernel arbitrary converse) is the recommended next step.**
+> (Gaussian-kernel arbitrary converse) turned out to be ALREADY CLOSED in the
+> repo (`gaussianMeanShiftDrift_identifiesAtZero`, arbitrary dimension) — see the
+> correction in §4; `GaussianArbitraryConverse.lean` adds the direct-`p=q` and
+> legitimacy surface for parity.  Remaining frontier is now higher-dimensional
+> Laplace / Matérn kernels (§5, Frontier D).**
 >
 > Implementation notes worth keeping: (i) `laplaceMeanShiftRatioDeriv` and
 > `laplaceKernelNormalizerWronskian` were *already* defined through the
@@ -343,7 +347,28 @@ corollary section or skip.
 
 ## 4. Frontier C — the Gaussian-kernel arbitrary-target converse (cheap, high value)
 
-**Status check this pass:** the repo has *no* general Gaussian-kernel
+> **★★★ CORRECTION + DONE (2026-07-13): this frontier was ALREADY CLOSED, and
+> the recon below was wrong.**  The repo *does* have the general raw
+> Gaussian-kernel converse: `gaussianMeanShiftDrift_identifiesAtZero`
+> (`GaussianScoreRecovery.lean:295`) — for **arbitrary** probability measures on
+> any finite-dimensional real inner-product space, pointwise zero Gaussian
+> mean-shift drift forces `p = q`, axiom-free (already in the promoted list).
+> It is even *stronger* than the 1-d target planned here (arbitrary dimension),
+> and it is proved exactly as anticipated: the derivative identity
+> `∇log Zₚ = σ⁻²·meanShiftₚ` is `hasFDerivAt_log_gaussianKernelNormalizer`, zero
+> drift makes the two log-normalizers differ by a constant
+> (`is_const_of_fderiv_eq_zero`), `gaussianKernelNormalizer_proportional_constant_eq_one`
+> forces the constant to `1`, and `gaussianKernelNormalizer_injective` finishes.
+> All that was missing was surface parity with the Laplace headline:
+> `GaussianArbitraryConverse.lean` adds `gaussianZeroDrift_identifies` (direct
+> `p = q` form) and `bothProbability_isLegitimate` (`IsLegitimateCondition` for
+> the unconditional condition).  `Check.ps1` green; both new decls axiom-free.
+> The structural moral below still stands.  Net: **both canonical kernels, all
+> finite dimensions for Gaussian (1-d for Laplace), arbitrary targets,
+> unconditional.**
+
+**Status check this pass (as originally written — SUPERSEDED, see correction
+above):** the repo has *no* general Gaussian-kernel
 zero-drift converse — only the empirical/finite-support version
 (`gaussianEmpiricalPoint_identifies`, `EmpiricalFrameBound.lean:722`) and the
 conditional MMD track.  But the hard endgame **already exists, axiom-free**:

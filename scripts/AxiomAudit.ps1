@@ -11,6 +11,8 @@ $declarations = @(
   'DriftingIdentifiability.hasFDerivAt_log_gaussianKernelNormalizer',
   'DriftingIdentifiability.gaussianMeanShift_eq_imp_kernelNormalizer_eq',
   'DriftingIdentifiability.gaussianMeanShiftDrift_identifiesAtZero',
+  'DriftingIdentifiability.gaussianZeroDrift_identifies',
+  'DriftingIdentifiability.bothProbability_isLegitimate',
   'DriftingIdentifiability.multivariateGaussian_exponentialTiltCentroid',
   'DriftingIdentifiability.multivariateGaussian_laplaceMeanShiftDrift_radial_tendsto',
   'DriftingIdentifiability.gaussianRadialLimit_zero_imp_parameters_eq',

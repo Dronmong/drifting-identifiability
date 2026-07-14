@@ -1315,10 +1315,17 @@ the continuous-density theorem are now strict corollaries; the previously-open
 "atoms on interval supports" class and the `p`-first-moment hypothesis are both
 eliminated.  The unconditional condition `LaplaceUnconditionalCondition`
 (= a pair of probability measures) is `IsLegitimateCondition` and
-bandwidth-free.  Remaining objectives: Frontier C — the Gaussian-kernel
-arbitrary-target converse (`D = σ²·Z′` + the existing axiom-free
-`gaussianKernelNormalizer_injective`); and higher-dimensional analogues.
-Milestones, derivations, and Lean gotchas: `LaplaceEndgame.md`.
+bandwidth-free.  **Frontier C is also done** — but it was already closed in the
+repo before this session: `gaussianMeanShiftDrift_identifiesAtZero`
+(`GaussianScoreRecovery.lean`) proves the raw Gaussian mean-shift converse for
+arbitrary probability measures in ANY finite dimension, axiom-free, via the
+score identity `∇log Z = σ⁻²·meanShift`; `GaussianArbitraryConverse.lean` adds
+the direct-`p=q` headline `gaussianZeroDrift_identifies` and
+`bothProbability_isLegitimate` for parity with the Laplace result.  So both
+canonical kernels now have unconditional arbitrary-target converses (Laplace in
+1-d, Gaussian in all finite dimensions).  Remaining objectives: higher-
+dimensional Laplace / Matérn-class kernels (no 1-d ODE structure — genuinely
+open).  Milestones, derivations, and Lean gotchas: `LaplaceEndgame.md`.
 
 ## Conditional research modules
 
