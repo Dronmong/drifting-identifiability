@@ -1327,6 +1327,97 @@ canonical kernels now have unconditional arbitrary-target converses (Laplace in
 dimensional Laplace / Matérn-class kernels (no 1-d ODE structure — genuinely
 open).  Milestones, derivations, and Lean gotchas: `LaplaceEndgame.md`.
 
+**2026-07-14 (Fable): Frontier D research pass — higher-dimensional Laplace —
+recorded in `LaplaceHigherDim.md` (no Lean written; findings + implementation
+plan).**  The n-d Laplace kernel bifurcates by norm, since the repo's
+`laplaceKernel` is norm-generic.  (1) The **ℓ¹/product** case (`laplaceKernel`
+on `PiLp 1 (fun _ : ι => ℝ)`; sklearn's `laplacian_kernel`) **reduces entirely
+to the 1-d unconditional theorem**: coordinate `i` of the n-d drift at probe
+`x` is exactly the 1-d Laplace drift of an exponentially tilted slice measure,
+so `laplaceZeroDrift_identifies` fires slice-by-slice (its unconditionality is
+load-bearing — tilts inherit atoms/tails), forcing `Z_p = c·Z_q` with `c`
+constant, `c = 1` by iterated 1-d Tonelli, and `p = q` by a `Finset`-induction
+on rectangle coordinates powered by `laplaceKernelNormalizer_injective`.  Full
+paper proof + staged Lean plan (est. 600–900 lines) in the doc, formulated as a
+**tensorization meta-theorem** (any product kernel whose 1-d factors have an
+unconditional converse + smoothing injectivity — also yields anisotropic
+bandwidths and mixed Laplace/Gaussian tensor kernels).  (2) The **ℓ²/radial**
+case (Matérn-1/2) is research-grade open; the doc derives the displacement
+potential `D_p = ∇ψ_p` (`ψ_p` = Matérn-3/2 smoothing, elementary radial
+identity), the Matérn-universal companion PDE `(1−τ²Δ)D = (n+1)τ²∇Z` (checked
+against the proven 1-d companion identities), the vector Abel system
+`2(Dm)W + (div W)m = −(n+1)W`, and a regularity result (no atomic deltas in
+`ΔZ` for n ≥ 2 — cleaner than 1-d); staged program D2.a–D2.d (far-field
+foundation largely pre-built in `LaplacianGaussianConverse.lean`; radial
+measures reduce to a scalar Abel ODE; finite-support via exposed-point
+peeling; general endgame paper-first).  **Paper determination (same day):**
+the referenced paper's Eq. (12) explicitly takes ∥·∥ to be the **ℓ2-distance**
+(verified in `papers/2602.04770v2.pdf`, restated in its appendix, `cdist` in
+the pseudocode), so the paper-faithful n-d target is the ℓ²/radial case —
+`laplaceKernel` on `EuclideanSpace ℝ ι` is exactly the paper's kernel — and
+the sequencing in `LaplaceHigherDim.md` §5 now leads with the ℓ² program
+(D2.a far-field → D2.b radial measures → D2.c/D2.d), keeping the ℓ¹
+tensorization theorem as a derisked adjacent result.  **A second, directed ℓ²
+pass (same day) added `LaplaceHigherDim.md` §4.6–§4.8**: new findings —
+monotone compensated weights (moment-minimal far field), a no-concentration
+principle (fixed bandwidth ⟹ no probe limit isolates atoms; exposed-point
+peeling invalidated and D2.c corrected to singularity matching), **ball-average
+atom alignment** (`q({a})·D_p(a) = p({a})·D_q(a)` for every point, arbitrary
+measures, n ≥ 2 — a provable-now n-d theorem, milestone L3), the
+difference-potential equation `(n+1)τ²∇Φ = m(Φ − τ²ΔΦ)` with the maximum
+principle pinning extrema of `Φ` to `{m = 0}`, the n-d L3 conjecture (Laplace
+centroid-map monotonicity — numerics first), classical-calculus feasibility
+for radial measures (no distribution theory needed anywhere), and
+subordination-based n-d smoothing injectivity (no closed-form transform
+needed).  Plus a lemma-level implementation plan, milestones L0–L5
+(foundations → far field/dimension reduction → atom alignment → injectivity →
+radial-measure converse), with Mathlib support verified
+(`hasFDerivAt_integral_of_dominated_loc_of_lip`, Gaussian Fourier transform,
+ball-average API, generic charFun cancellation).  **A third pass (same day)
+deep-dived L5 (`LaplaceHigherDim.md` §4.9)**: exact cylindrical derivative
+formulas (`m̃'+1 = Cov_w(X, X/d)/τ`, reducing at n = 1 to the proven 1-d L3);
+the tangential IBP identity `∫(ρ²/d)w dμ = ((n−1)τ/r)∫t·w dμ` for radial μ
+(per-shell 1-d integration by parts — eliminates the Laplacian layer from L5
+entirely); the substitution `v = r^{n−1}w` making the radial system exactly
+1-d-shaped (`K = τm̃v`, `K' = −τ(m̃'+n+1)v`, slotting into the abstract
+LaplaceACPropagation abel layer with `μDeriv_rad = m̃' + (n−1)`, whose four
+consumed inputs were recon-verified at LaplaceUnconditionalConverse.lean:882–
+1010); boundary conditions resolved (`v(0⁺) = 0` unconditionally even with
+origin atoms; ray at ∞ under mild `(n−1)/2`-moments, subsequence suffices);
+the needed sign condition reduced to the radial slack inequality
+`E_w[X²/d] + (n−1)τ ≥ m̃·E_w[X/d]`, **proved for `m̃ ≤ 0` (Cauchy–Schwarz) and
+free at zeros of `m̃`; the `m̃ > 0` case is the single remaining open point**
+(numerics spec written); statement design via shell mixtures
+(`Measure.bind` of a radial profile against `uniformShell`) sidesteps
+Haar-orbit disintegration; L5 v1 targets n ≥ 3 (classical two-sided
+derivatives), n = 2 as v2 (log-integrable `m̃'` via FTC form).  Lemma-grain
+plan in §4.9(R8).
+
+**2026-07-14 (Fable): milestones L0 and L1 IMPLEMENTED, machine-checked,
+axiom-free, `--wfail`-clean.**  `LaplaceRadialFoundations.lean` (L0) and
+`LaplaceRadialFarField.lean` (L1) are wired into the root module; Check.ps1 green
+(61 Lean files; axiom audit over the promoted headlines shows only
+propext/Classical.choice/Quot.sound).  **L0** proves, for arbitrary finite
+measures on any real inner-product space: the Matérn-3/2 profile
+`matern32Profile` with derivative `g'(r) = −r e^{−r/τ}` and the uniform
+`τ·e⁻¹` gradient bound; `hasFDerivAt_matern32Profile_norm_sub`, the
+through-the-diagonal gradient `∇ₓ g(‖x−y‖) = e^{−‖x−y‖/τ}(y−x)` (chain rule via
+`√⟪·,·⟫` off-diagonal, a `g'(0)=0` little-o argument on the diagonal); the
+displacement field `laplaceDisplacementField` (= D) and potential
+`laplaceDisplacementPotential` (= ψ) with `τ/e`-bounded integrability; the
+headline `hasFDerivAt_laplaceDisplacementPotential` (**`∇ψ = D`**, via
+`hasFDerivAt_integral_of_dominated_of_fderiv_le` with the uniform gradient
+dominator — no moment hypothesis); and `zeroDrift_displacementAligned` (**the
+(PA) gate `Z_q·D_p = Z_p·D_q`**, proved from `meanShift = Z⁻¹·D` + normalizer
+positivity, independent of the FDeriv).  **L1** proves
+`laplaceCompensatedWeight_monotone` and the headline **`zeroDrift_tiltedCentroid_eq`**
+(zero drift ⟹ exponential-tilt centroids agree in every direction, arbitrary
+probability measures with exponential moments — D2.a far-field foundation), via
+the existing `kernelCentroid_laplace_radial_tendsto`.  Lean gotchas recorded in
+`LaplaceHigherDim.md` §4.8 (innerSL_apply_apply / innerSL_apply_norm /
+SecondCountableTopologyEither haveI / omit-before-docstring / two_smul).  Next:
+L2 (dimensional reduction + collinear corollary), then L3/L4/L5.
+
 ## Conditional research modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` remain

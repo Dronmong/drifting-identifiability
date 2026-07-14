@@ -23,7 +23,10 @@ arbitrary probability measures on ℝ?*
 > repo (`gaussianMeanShiftDrift_identifiesAtZero`, arbitrary dimension) — see the
 > correction in §4; `GaussianArbitraryConverse.lean` adds the direct-`p=q` and
 > legitimacy surface for parity.  Remaining frontier is now higher-dimensional
-> Laplace / Matérn kernels (§5, Frontier D).**
+> Laplace / Matérn kernels (§5, Frontier D) — whose dedicated research pass is
+> recorded in `LaplaceHigherDim.md` (2026-07-14): the ℓ¹/product n-d case
+> reduces to the 1-d theorem and is implementation-ready; the ℓ²/radial case
+> has a structural framework and staged partials, endgame open.**
 >
 > Implementation notes worth keeping: (i) `laplaceMeanShiftRatioDeriv` and
 > `laplaceKernelNormalizerWronskian` were *already* defined through the
@@ -423,15 +426,32 @@ boilerplate.  Park as C+ until 1-d lands.
 
 ---
 
-## 5. Frontier D — horizons after A and C (not planned in detail)
+## 5. Frontier D — horizons after A and C
+
+> **2026-07-14 update: the dedicated research pass exists — see
+> `LaplaceHigherDim.md`.**  Outcome: in n-d the kernel bifurcates by norm.
+> **The referenced paper's Eq. (12) uses the ℓ² norm** ("∥·∥ is ℓ2-distance",
+> verified in `papers/2602.04770v2.pdf`), so the paper-faithful target is the
+> radial case.  The ℓ¹/product case (`laplaceKernel` on `PiLp 1`; sklearn's
+> `laplacian_kernel` — *not* the paper's kernel) **reduces completely to the
+> 1-d unconditional theorem** by coordinate slicing with exponentially tilted
+> measures — full proof on paper, implementation-ready, kept as an adjacent
+> result.  The ℓ²/radial (Matérn-1/2) case — the primary objective — gets a
+> structural framework (displacement potential `D = ∇ψ` with `ψ` the Matérn-3/2
+> smoothing; companion PDE `(1−τ²Δ)D = (n+1)τ²∇Z`; vector Abel system) plus a
+> staged partial-results program (far-field foundation → radial measures →
+> finite support → endgame); its general endgame remains open research.
 
 - **ℝⁿ Laplace kernel.**  No ODE structure in n > 1; the one-sided mass
   decomposition is a genuinely 1-d trick.  Plausible entry points: radial
   slicing through pairs of points, or the divergence-form identity
   `Δₓ e^{−‖x−y‖/τ} = (1/τ²)k − ((n−1)/(τ‖x−y‖))k` (Matérn-½ is the resolvent
   kernel of `(I − τ²Δ)` in odd dimensions ⟹ possible PDE route:
-  zero drift ⟹ `(I − τ²Δ)`-resolvent smooths are proportional?).  Speculative;
-  needs a real research pass of its own.
+  zero drift ⟹ `(I − τ²Δ)`-resolvent smooths are proportional?).  *Research
+  pass done — superseded by `LaplaceHigherDim.md`, which confirms the PDE-route
+  intuition (the resolvent identity is exact, holds in every dimension at the
+  potential level, and is Matérn-universal) and adds the ℓ¹ tensorization
+  reduction.*
 - **Poly-exponential (Matérn-type) kernels in 1-d.**  `f(r) = P(r)e^{−r/τ}`
   satisfies a constant-coefficient linear ODE; the D/L/Z tower generalizes to
   a `(deg P + 2)`-dimensional companion system.  Conjecture: the K-trick is
