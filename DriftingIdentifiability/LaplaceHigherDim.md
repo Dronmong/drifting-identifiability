@@ -1151,3 +1151,37 @@ Hand-derived and cross-checked this pass (not yet in Lean): the §2 reduction
 `p = δ₀, n = 1` and against the repo's 1-d companion identities; `g - τ²Δg =
 (n+1)τ²k` and `g' = -re^{-r/τ}` checked symbolically; (★) checked to reduce to
 the proven 1-d Abel ODE at `n = 1`.
+
+---
+
+## 7. Implementation addendum: L3 atom-alignment gate
+
+Added 2026-07-14.  The algebraic gate for L3 is implemented axiom-free in
+`LaplaceAtomAlignment.lean` and wired into the root module.
+
+Implemented names:
+
+- `ballAverage`
+- `laplaceAtomConeScale`
+- `laplaceAtomConeCoeff`
+- `atomMassReal`
+- `LaplaceAtomConeProductData`
+- `laplaceNormalizerDisplacementProduct_eq_of_zeroDrift`
+- `laplaceZeroDrift_atomAlignment_of_coneProductData`
+- `laplaceZeroDrift_atomMassRatio_of_coneProductData`
+- `laplaceZeroDrift_atomMass_zero_iff_of_coneProductData`
+
+Interpretation: if the planned small-ball cone extraction proves the two product
+limits packaged by `LaplaceAtomConeProductData`, then zero drift immediately
+forces the atom-alignment identity
+`q({a}) * D_p(a) = p({a}) * D_q(a)` in vector-smul form, plus the nonzero-drift
+atom-mass ratio and atom-presence equivalence.
+
+Remaining L3 work: prove the analytic cone-extraction package for arbitrary
+probability measures in dimension `n >= 2`:
+
+1. normalizer cone coefficient equals atom mass;
+2. displacement numerator cone coefficient is zero;
+3. product rule for `Z_nu * D_mu`.
+
+No axiom, constant, or opaque theorem was introduced by the L3 gate.
