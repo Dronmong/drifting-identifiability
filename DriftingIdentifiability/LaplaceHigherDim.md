@@ -670,12 +670,12 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 |---|---|---|---|---|
 | **L0 ✅ DONE** | `LaplaceRadialFoundations.lean` | `ψ`, `D = ∇ψ`, (PA), `Φ` basics | 1 session | low |
 | **L1 ✅ DONE** | `LaplaceRadialFarField.lean` | moment-minimal drift radial limits (D2.a) | 1 session | low |
-| L2 | (same file) | dimensional reduction + collinear corollary | 0.5 session | low |
+| **L2 ✅ DONE** | `LaplaceRadialFarField.lean` | affine-isometry dimensional reduction + parametrized collinear corollary | 0.5 session | low |
 | L3 | `LaplaceAtomAlignment.lean` | `C_a` functional; atom-alignment theorem | 1–2 sessions | medium |
 | L4 | `LaplaceInjectivityEuclidean.lean` | n-d smoothing injectivity | 1–2 sessions | medium |
 | L5 | `LaplaceRadialMeasureConverse.lean` | radial-measure converse (D2.b) | 3–5 sessions | high (one open lemma) |
 
-> **✅ L0 and L1 implemented and machine-checked (2026-07-14), axiom-free,
+> **✅ L0, L1, and L2 implemented and machine-checked (2026-07-14), axiom-free,
 > `--wfail`-clean, wired into the root module.**  Both went through essentially
 > as designed.  L0 delivered `matern32Profile`(+ derivative/bounds/`τ·e⁻¹`
 > gradient bound), the through-the-diagonal gradient
@@ -689,7 +689,16 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 > it does *not* depend on the FDeriv).  L1 delivered
 > `laplaceCompensatedWeight_monotone` and the headline
 > **`zeroDrift_tiltedCentroid_eq`** (radial-limit reduction through the existing
-> `kernelCentroid_laplace_radial_tendsto`).  Lean notes for the next agent:
+> `kernelCentroid_laplace_radial_tendsto`).  L2 delivered the reusable transport
+> lemmas `kernelNormalizer_laplace_affineIsometryMap`,
+> `laplaceDisplacementField_affineIsometryMap`,
+> `meanShift_laplace_affineIsometryMap`, the WLOG reduction
+> `zeroDrift_of_affineIsometryMap_zeroDrift`, and the one-dimensional
+> pushforward corollary `laplaceZeroDrift_identifies_of_collinear`.  The
+> collinear statement is intentionally formulated for laws already presented as
+> pushforwards along a common line; extracting such a parametrization from an
+> abstract support-in-line hypothesis is support/disintegration packaging, not
+> part of the analytic L2 core.  Lean notes for the next agent:
 > `innerSL` application is `innerSL_apply_apply` (not `innerSL_apply`); the CLM
 > norm isometry is `innerSL_apply_norm`; CLM-valued `Continuous.aestronglyMeasurable`
 > needs an explicit `haveI : SecondCountableTopologyEither E (E →L[ℝ] ℝ) :=
@@ -743,17 +752,29 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 - Optional cgf phrasing via `Mathlib.Probability.Moments.Tilted` (the Gaussian
   file already exercises this API).
 
-**L2 — dimensional reduction (same file).**
+**L2 — dimensional reduction (same file).  ✅ DONE for affine-isometric pushforwards.**
 - For an affine subspace `A ⊆ E` (model: `(x₀ +ᵥ S)` with `S` a subspace, or a
   `LinearIsometryEquiv`-embedded `F`), if `p, q` are supported in `A`, then for
   probes `x ∈ A` the drift lies in the direction space of `A` and equals the
   drift of the restricted measures computed inside `A` (distances agree;
   `Measure.map` of the isometry transports the integrals).
-- `laplaceZeroDrift_identifies_of_collinear`: supports in a common line ⟹
-  `p = q`, via transport to `ℝ` + `laplaceZeroDrift_identifies` (Frontier A).
-  First unconditional n-d ℓ² statement, however thin.
-- General WLOG lemma: it suffices to prove the ℓ² converse for pairs whose
-  joint support affinely spans `E`.
+- Implemented core: `affineIsometryEmbedding`, distance/kernel preservation,
+  normalizer transport, displacement-field transport, mean-shift transport, and
+  `zeroDrift_of_affineIsometryMap_zeroDrift`.
+- Implemented corollary:
+  `laplaceZeroDrift_identifies_of_collinear`: if `p` and `q` are probability
+  measures on `ℝ` and their ambient laws are `map (fun t => a + t • u)` for a
+  common unit direction `u`, then ambient zero drift identifies the two ambient
+  pushforwards, by transport to `ℝ` + `laplaceZeroDrift_identifies` (Frontier A).
+  First unconditional n-d ℓ² statement, in parametrized collinear form.
+- Remaining packaging, if desired later: convert an abstract hypothesis
+  “`P` and `Q` are supported in a common affine line/subspace” into explicit
+  source measures whose pushforwards are `P` and `Q`; this is not needed for the
+  analytic reduction and was deliberately not folded into L2.
+- General WLOG lemma, in implemented form: if the pair is already given as an
+  affine-isometric pushforward from `F`, it suffices to prove the ℓ² converse in
+  `F`.  A support-spanning formulation can be added on top of the packaging
+  lemma above.
 
 **L3 — atom alignment (new theorem).**
 - Ball-average operator: `ballAvg f a ε := ⨍ x in Metric.ball a ε, f x`
