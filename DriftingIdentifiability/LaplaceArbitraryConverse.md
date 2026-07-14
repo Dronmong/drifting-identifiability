@@ -32,6 +32,21 @@ replaces the alternating list, and the certified first-order elliptic pair
 kills the locally-flat zeros.  Design + proof record:
 `LaplaceACDerivation.md`, section "M5 CLOSURE".
 
+**★★★ RESOLVED 2026-07-13 (Fable): THE ARBITRARY-TARGET CONVERSE IS CLOSED.**
+`laplaceZeroDrift_identifies` (`LaplaceUnconditionalConverse.lean`): zero raw
+Laplace mean-shift drift identifies **arbitrary** probability measures on ℝ,
+with no hypotheses beyond probability — no atomlessness, no moment, no density.
+This is the full 1-d conjecture, machine-checked and axiom-free (`Check.ps1`
+green: 58 files, 374 promoted decls; `#print axioms` = Lean foundations only).
+The atomless theorem below, both a.c. theorems, and the Milestone-6 umbrella are
+now strict corollaries.  The engine is the same companion alignment defect `K`,
+phrased with the one-sided (right) derivative of `Z` that exists for every
+finite measure; atoms only break two-sidedness of `Z`, never the one-sided
+calculus, and the abstract propagation layer was already right-derivative-based.
+Design + derivations: [`LaplaceEndgame.md`](LaplaceEndgame.md).  The remaining
+research frontier is the Gaussian-kernel arbitrary-target converse and higher
+dimensions.
+
 **Update 2026-07-13 (Fable): ATOMLESS converse machine-checked, axiom-free.**
 `laplaceZeroDrift_identifies_of_noAtoms` (`LaplaceAtomlessConverse.lean`):
 zero drift + both laws atomless + a `p` first moment ⟹ `p = q` — no density
@@ -47,13 +62,16 @@ mixtures; subsumes the continuous-density theorem.
 gates such as `W ≡ 0 ⟹ p = q`, `𝔞 ≡ 0 ⟹ p = q`, `K ≡ 0 ⟹ p = q`, and the
 following unconditional classes: finite/nowhere-dense supports (no moments);
 the finite-simple-zeros and unrestricted continuous-density a.c. theorems;
-and the **atomless theorem** `laplaceZeroDrift_identifies_of_noAtoms`, which
-subsumes both a.c. theorems.  The Milestone-6 umbrella
-`laplaceZeroDrift_identifies_real` now records
-(right-dense zero-mass gaps) ∨ (atomless + `p` first moment) — a
-bandwidth-free condition, `IsLegitimateCondition` via the Gaussian pair.
-Remaining open: measures with atoms on interval supports, and dropping the
-`p` first moment.
+the **atomless theorem** `laplaceZeroDrift_identifies_of_noAtoms`; and — as of
+2026-07-13 — the **fully unconditional theorem** `laplaceZeroDrift_identifies`
+(probability measures only), which subsumes all of the above.  The Milestone-6
+umbrella `laplaceZeroDrift_identifies_real` records
+(right-dense zero-mass gaps) ∨ (atomless + `p` first moment) and is itself now a
+corollary of the unconditional theorem; the unconditional condition
+`LaplaceUnconditionalCondition` (a pair of probability measures) is
+`IsLegitimateCondition` via the Gaussian pair and bandwidth-free.  Nothing on
+the 1-d arbitrary-target problem remains open: the atoms-on-interval-supports
+class is covered and the `p`-first-moment hypothesis is eliminated.
 
 **Decision 2026-07-11/12: DERIVE the a.c. case, do NOT axiomatize it.**  The
 finite-simple-zero a.c. bridge has now been proved in Lean, reducing through the

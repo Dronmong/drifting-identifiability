@@ -1293,6 +1293,33 @@ Remaining research objectives are now narrower and split by trust level:
 - Higher-dimensional track: Laplace smoothing injectivity/Dirac rigidity and
   any multidimensional analogue of the ODE argument.
 
+**2026-07-13 (Fable): THE ARBITRARY-TARGET CONJECTURE IS CLOSED — Frontier A
+machine-checked, axiom-free.**  `LaplaceUnconditionalConverse.lean` proves
+`laplaceZeroDrift_identifies`: zero raw Laplace mean-shift drift identifies
+ARBITRARY probability measures on ℝ, with no hypotheses beyond
+probability — no atomlessness, no moment, no density.  The one-sided K-route
+planned in `LaplaceEndgame.md` executed as designed: the companion-alignment
+gate is unconditional (whole conjecture ⟺ `K ≡ 0`); the abstract L6/L8
+propagation layer was already right-derivative-based; the K-identities
+(`K = τ·m·W⁺`, `K′⁺ = −τ(m′⁺+2)·W⁺`) hold for all measures because
+`laplaceMeanShiftRatioDeriv`/`laplaceKernelNormalizerWronskian` are already
+defined through the certified right-derivative coefficient; the moment
+dropped out via `laplaceTiltedMeanRightDerivCoeff ≥ 0` plus one-sided
+uniqueness; `m` is two-sided differentiable at its zeros (where `D = 0`), so
+the existing edge linear-bound helper was reused verbatim; and the càdlàg
+Abel coefficient is interval-integrable via `|Z'⁺| ≤ 1/τ` plus compactness,
+feeding the standard right-FTC.  `Check.ps1` green (58 files, 374 promoted
+declarations, 15 paper + 5 conditional axioms unchanged).  The Milestone-6
+umbrella, the atomless theorem (`laplaceZeroDrift_identifies_of_noAtoms`), and
+the continuous-density theorem are now strict corollaries; the previously-open
+"atoms on interval supports" class and the `p`-first-moment hypothesis are both
+eliminated.  The unconditional condition `LaplaceUnconditionalCondition`
+(= a pair of probability measures) is `IsLegitimateCondition` and
+bandwidth-free.  Remaining objectives: Frontier C — the Gaussian-kernel
+arbitrary-target converse (`D = σ²·Z′` + the existing axiom-free
+`gaussianKernelNormalizer_injective`); and higher-dimensional analogues.
+Milestones, derivations, and Lean gotchas: `LaplaceEndgame.md`.
+
 ## Conditional research modules
 
 `CharacteristicIdentifiability.lean` and `GaussianNondegeneracy.lean` remain

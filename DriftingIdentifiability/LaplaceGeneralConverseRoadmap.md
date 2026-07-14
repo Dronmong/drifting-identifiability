@@ -577,6 +577,25 @@ continuous-density condition.  The remaining Milestone-5 research targets are
 determinant-propagation problem) and (ii) dropping the `p` first moment
 (needs an integrability-free L3).
 
+**★★★ ENDGAME DONE (2026-07-13, Fable) — THE CONJECTURE IS CLOSED,
+machine-checked, axiom-free.**  `LaplaceUnconditionalConverse.lean` proves
+`laplaceZeroDrift_identifies`: zero raw Laplace drift identifies ARBITRARY
+probability measures on ℝ — NO atomlessness, NO moment, NO density.  The
+one-sided K-route from `LaplaceEndgame.md` went through as designed: the
+abstract propagation layer was already right-derivative-based, the K-identities
+(`K = τ·m·W⁺`, `K′⁺ = −τ(m′⁺+2)·W⁺`) hold for all measures because
+`laplaceMeanShiftRatioDeriv`/`laplaceKernelNormalizerWronskian` are already
+rdc-based, the moment dropped out via `laplaceTiltedMeanRightDerivCoeff ≥ 0` +
+one-sided uniqueness, `m` is two-sided differentiable at its zeros (where `D`
+also vanishes) so the edge linear-bound helper was reused verbatim, and the
+càdlàg coefficient is interval-integrable via `|Z'⁺| ≤ 1/τ` + compactness.
+`Check.ps1` green (58 files, 374 promoted decls).  The Milestone-6 umbrella,
+the atomless theorem, and the continuous-density theorem are now strict
+corollaries; the "atoms on interval supports" gap is closed.  Remaining
+frontier: the Gaussian-kernel arbitrary-target converse (Frontier C —
+`D = σ²·Z′` + existing `gaussianKernelNormalizer_injective`), and higher
+dimensions.  Original plan + derivations: `LaplaceEndgame.md`.
+
 **Safe conditional-axiom plan (2026-07-11, Codex) — FALLBACK ONLY.**  If we decide to
 axiomatize the missing analysis, keep the axiom boundary below the final
 identifiability statement.  Do **not** add an axiom of the form
