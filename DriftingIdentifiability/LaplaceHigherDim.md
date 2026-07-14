@@ -804,6 +804,70 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
   `n = 1` the rest is *not* differentiable-with-o(ε)-average — consistent with
   the 1-d jump identity carrying a different constant).
 
+> **L3 implementation status (2026-07-14).**  Codex implemented `L2` in full and
+> the **algebraic gate** of `L3` in `LaplaceAtomAlignment.lean`: given the
+> cone-extraction data `LaplaceAtomConeProductData` (the two `Tendsto` facts
+> that the ball-average cone coefficient of `Z_ν·D_μ` converges to
+> `ν({a})·D_μ(a)`), zero drift forces atom alignment
+> (`laplaceZeroDrift_atomAlignment_of_coneProductData`) plus the mass-ratio and
+> `p{a}=0 ↔ q{a}=0` corollaries.  What remains for "full L3" is to **discharge
+> that hypothesis** — the ball-average asymptotics — which is a large analytic
+> build (see the `w(ε)` route below).
+>
+> **Foundation implemented (`LaplaceConeExtraction.lean`, machine-checked,
+> axiom-free).**  Step (1) of the route below is done: the reflection
+> `x ↦ 2a − x` is measure-preserving and a measurable embedding
+> (`measurePreserving_reflection`, `measurableEmbedding_reflection`,
+> `image_reflection_ball`), giving `∫_{B(a,ε)} (x − a) = 0`
+> (`setIntegral_sub_center_ball_eq_zero`) and `⨍_{B(a,ε)} (x − a) = 0`
+> (`setAverage_sub_center_ball_eq_zero`) — the symmetry that makes the linear
+> Taylor term average out.  Instances needed: `[(volume).IsAddHaarMeasure]`,
+> `[(volume).IsNegInvariant]` (both hold for `volume` on finite-dim spaces).
+> Steps (2)–(7) (ball-average defect `o(ε)`, `w` lower bound, single-kernel
+> differentiability, Fubini/DCT extraction, product rule, discharge) remain — a
+> multi-session analytic build, ~500 more lines.
+>
+> **The `w(ε)`-normalizer route (recommended; avoids the exact `⨍‖x‖`
+> constant).**  Codex's `laplaceAtomConeCoeff` hard-codes the scale
+> `(n+1)τ/(nε)`, which forces the exact `⨍_{B(a,ε)}‖x−a‖ = nε/(n+1)` layer-cake
+> computation.  Instead normalize by the kernel's own average defect
+> `w(a,ε) := 1 − ⨍_{B(a,ε)} e^{−‖x−a‖/τ}` (independent of the measure).  Then for
+> `2 ≤ n = finrank ℝ E`:
+> 1. **Reflection symmetry** `⨍_{B(a,ε)}(x−a) = 0` — via
+>    `Measure.measurePreserving_neg` + translation invariance
+>    (`MeasurePreserving.setIntegral_image_emb`); the reflection `x ↦ 2a−x`
+>    preserves the ball and negates `x−a`.
+> 2. **Ball-average defect of a differentiable function is `o(ε)`**: if `φ` is
+>    `DifferentiableAt ℝ φ a` then
+>    `φ(a) − ⨍_{B(a,ε)} φ = o(ε)` (Taylor `φ(x)−φ(a)−∇φ(a)(x−a) = o(‖x−a‖)`, the
+>    linear part averages to `0` by (1), the remainder is `≤ η(ε)·ε`).
+> 3. **`w` lower bound** `w(a,ε) ≥ c·ε` for small `ε` — *no* exact constant, just
+>    the annulus ratio `vol(B(a,ε)∖B(a,ε/2))/vol(B(a,ε)) = 1−2^{−n} ≥ 1/2`
+>    (`addHaar_ball` + `measure_diff`), combined with `1−e^{−r/τ} ≥ c` for
+>    `r ≥ ε/2`.  Also `0 < w`, `w → 0`.
+> 4. **Single-kernel differentiability**: for `y ≠ a`, `x ↦ e^{−‖x−y‖/τ}` is
+>    `DifferentiableAt ℝ · a` (chain rule, `‖·−y‖` smooth off `y`), so its cone
+>    defect is `o(ε)` by (2); for `y = a` the defect is *exactly* `w(a,ε)`.
+> 5. **Atom extraction via Fubini + DCT**:
+>    `(Z_μ(a) − ⨍_{B(a,ε)}Z_μ)/w = ∫ [ (e^{−‖a−y‖/τ} − ⨍e^{−‖x−y‖/τ})/w ] dμ(y)`
+>    (Fubini, `integral_integral_swap`), integrand `→ 1_{y=a}` pointwise (by (3)+(4);
+>    at `y=a` it is exactly `1`) and bounded by `1/(cτ)` (Lipschitz + (3)), so DCT
+>    gives `→ μ({a})`.  The same machinery gives `(D_μ(a) − ⨍D_μ)/w → 0` (the
+>    `y=a` term vanishes by the radial-odd symmetry (1); all others `o(ε)`).
+> 6. **Product rule**: `C^w_a[Z_ν·D_μ] = ν({a})·D_μ(a)` from
+>    `T_ε[fg] = f(a)T_ε[g] + g(a)T_ε[f] − ⨍((f−f(a))(g−g(a)))`, with the cross
+>    term `≤ L_f·ε·ω_g(ε)` giving `o(w)` (f Lipschitz, g continuous at a).
+> 7. **Discharge**: combine with `Z_q·D_p = Z_p·D_q` (zero drift,
+>    `zeroDrift_displacementAligned`, L0) — the `w`-normalized coefficients are
+>    equal for every `ε`, so their common limit gives
+>    `q({a})·D_p(a) = p({a})·D_q(a)` **unconditionally** (replacing the
+>    `LaplaceAtomConeProductData` hypothesis with a theorem for `2 ≤ finrank`).
+> All ingredients verified present in Mathlib (`addHaar_ball`, `measure_diff`,
+> `lintegral`/`integral_eq_integral_meas_lt` layer cake — used only for (3)'s
+> bound, `Measure.measurePreserving_neg`, `integral_integral_swap`,
+> `tendsto_integral_filter_of_dominated_convergence`,
+> `hasFDerivAt_integral_of_dominated_of_fderiv_le`).  Estimated ~400–600 lines.
+
 **L4 — n-d smoothing injectivity.**
 - `laplaceProfile_integrable : Integrable (fun x => exp (-‖x‖/τ))` on
   `EuclideanSpace ℝ ι` via the product domination `≤ ∏ᵢ exp (-|xᵢ|/(√n τ))`
