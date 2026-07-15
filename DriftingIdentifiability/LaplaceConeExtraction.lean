@@ -19,7 +19,7 @@ namespace DriftingIdentifiability
 
 open Paper
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [MeasureSpace E] [BorelSpace E] [(volume : Measure E).IsAddHaarMeasure]
   [(volume : Measure E).IsNegInvariant]
 
@@ -442,5 +442,1108 @@ lemma abs_laplaceKernelPt_sub_le {τ : ℝ} (hτ : 0 < τ) (y a x : E) :
       _ ≤ (1 / τ) * ‖x - a‖ := harg
 
 end SingleKernel
+
+/-! ## The `w`-normalized cone coefficient: single-kernel limits -/
+
+section WNormalized
+
+variable [FiniteDimensional ℝ E] [Nontrivial E]
+
+/-- The `w(ε)`-normalized scalar cone coefficient.  This is the variant used in
+the L3 discharge route because the atom-centered kernel has coefficient exactly
+`1`, avoiding the exact layer-cake constant for `⨍ ‖x-a‖`. -/
+noncomputable def kernelAverageConeCoeffW (τ : ℝ) (a : E) (φ : E → ℝ) (ε : ℝ) : ℝ :=
+  (kernelAverageDefect τ a ε)⁻¹ *
+    (φ a - ⨍ x in Metric.ball a ε, φ x ∂(volume : Measure E))
+
+set_option linter.unusedSectionVars false in
+lemma kernelAverageDefect_pos {τ : ℝ} (hτ : 0 < τ) (a : E) {ε : ℝ}
+    (hε : 0 < ε) (hετ : ε ≤ 2 * τ) :
+    0 < kernelAverageDefect τ a ε := by
+  have h := kernelAverageDefect_ge hτ a hε hετ
+  have hpos : 0 < ε / (4 * Real.exp 1 * τ) := by positivity
+  exact lt_of_lt_of_le hpos h
+
+set_option linter.unusedSectionVars false in
+/-- For the atom-centered kernel, the `w`-normalized coefficient is exactly `1`
+whenever `w ≠ 0`. -/
+lemma kernelAverageConeCoeffW_laplaceKernelPt_self_eq_one
+    {τ : ℝ} (a : E) {ε : ℝ} (hw : kernelAverageDefect τ a ε ≠ 0) :
+    kernelAverageConeCoeffW τ a (laplaceKernelPt τ a) ε = 1 := by
+  unfold kernelAverageConeCoeffW kernelAverageDefect laplaceKernelPt
+  have hcenter : Real.exp (-‖a - a‖ / τ) = 1 := by simp
+  rw [hcenter]
+  exact inv_mul_cancel₀ hw
+
+set_option linter.unusedSectionVars false in
+/-- The self-kernel coefficient tends to `1` along positive radii. -/
+lemma tendsto_kernelAverageConeCoeffW_laplaceKernelPt_self
+    {τ : ℝ} (hτ : 0 < τ) (a : E) :
+    Tendsto (fun ε : ℝ => kernelAverageConeCoeffW τ a (laplaceKernelPt τ a) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 1) := by
+  rw [Metric.tendsto_nhdsWithin_nhds]
+  intro δ hδ
+  refine ⟨2 * τ, mul_pos (by norm_num) hτ, fun ε hεpos hεdist => ?_⟩
+  have hεpos' : 0 < ε := hεpos
+  have hεle : ε ≤ 2 * τ := by
+    have habs : |ε| < 2 * τ := by simpa [Real.dist_eq] using hεdist
+    have hlt : ε < 2 * τ := by rwa [abs_of_pos hεpos'] at habs
+    exact le_of_lt hlt
+  have heq := kernelAverageConeCoeffW_laplaceKernelPt_self_eq_one (τ := τ) a
+    (kernelAverageDefect_pos hτ a hεpos' hεle).ne'
+  simpa [heq] using hδ
+
+set_option linter.unusedSectionVars false in
+/-- The lower bound on `w(a,ε)` gives a uniform upper bound on `w(a,ε)⁻¹ * ε`.
+This is the numerical heart of the dominated-convergence bound for the
+`w`-normalized cone coefficient. -/
+lemma inv_kernelAverageDefect_mul_radius_le
+    {τ : ℝ} (hτ : 0 < τ) (a : E) {ε : ℝ}
+    (hε : 0 < ε) (hετ : ε ≤ 2 * τ) :
+    (kernelAverageDefect τ a ε)⁻¹ * ε ≤ 4 * Real.exp 1 * τ := by
+  set C : ℝ := 4 * Real.exp 1 * τ with hC
+  have hCpos : 0 < C := by positivity
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hε hετ
+  have hlow := kernelAverageDefect_ge hτ a hε hετ
+  have hlowC : ε / C ≤ kernelAverageDefect τ a ε := by
+    simpa [C, hC] using hlow
+  have hεCpos : 0 < ε / C := div_pos hε hCpos
+  have hinv : (kernelAverageDefect τ a ε)⁻¹ ≤ (ε / C)⁻¹ := by
+    simpa [one_div] using one_div_le_one_div_of_le hεCpos hlowC
+  calc (kernelAverageDefect τ a ε)⁻¹ * ε
+      ≤ (ε / C)⁻¹ * ε := mul_le_mul_of_nonneg_right hinv hε.le
+    _ = C := by field_simp [hε.ne', hCpos.ne']
+    _ = 4 * Real.exp 1 * τ := hC
+
+set_option linter.unusedSectionVars false in
+/-- Away from the source point, the fixed-source Laplace kernel is differentiable
+at the averaging centre. -/
+lemma laplaceKernelPt_differentiableAt_of_ne {τ : ℝ} {a y : E} (hy : y ≠ a) :
+    DifferentiableAt ℝ (laplaceKernelPt τ y) a := by
+  unfold laplaceKernelPt
+  have hsub : DifferentiableAt ℝ (fun x : E => x - y) a :=
+    differentiableAt_id.sub_const y
+  have hsub_ne : a - y ≠ 0 := sub_ne_zero.mpr (Ne.symm hy)
+  have hnorm : DifferentiableAt ℝ (fun x : E => ‖x - y‖) a :=
+    hsub.norm ℝ hsub_ne
+  have hscaled : DifferentiableAt ℝ (fun x : E => (-τ⁻¹) * ‖x - y‖) a :=
+    hnorm.const_mul (-τ⁻¹)
+  simpa [laplaceKernelPt, div_eq_mul_inv, neg_mul, mul_comm, mul_left_comm, mul_assoc]
+    using hscaled.exp
+
+set_option linter.unusedSectionVars false in
+/-- Off the atom, the `w`-normalized single-kernel cone coefficient vanishes.
+This is the pointwise input for the dominated-convergence atom extraction. -/
+lemma tendsto_kernelAverageConeCoeffW_laplaceKernelPt_of_ne
+    {τ : ℝ} (hτ : 0 < τ) {a y : E} (hy : y ≠ a) :
+    Tendsto (fun ε : ℝ => kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+  have hdef := tendsto_setAverage_defect_of_differentiableAt
+    (laplaceKernelPt_continuous τ y) (laplaceKernelPt_differentiableAt_of_ne (τ := τ) hy)
+  rw [Metric.tendsto_nhdsWithin_nhds]
+  intro δ hδ
+  set C : ℝ := 4 * Real.exp 1 * τ with hC
+  have hCpos : 0 < C := by positivity
+  have hη : 0 < δ / C := by positivity
+  rw [Metric.tendsto_nhdsWithin_nhds] at hdef
+  obtain ⟨ρ₁, hρ₁pos, hρ₁⟩ := hdef (δ / C) hη
+  refine ⟨min ρ₁ (2 * τ), lt_min hρ₁pos (mul_pos (by norm_num) hτ),
+    fun ε hεpos hεdist => ?_⟩
+  have hερ₁ : |ε - 0| < ρ₁ := lt_of_lt_of_le hεdist (min_le_left _ _)
+  have hετ_abs : |ε - 0| < 2 * τ := lt_of_lt_of_le hεdist (min_le_right _ _)
+  have hεpos' : 0 < ε := hεpos
+  have hερ₁dist : dist ε 0 < ρ₁ := by simpa [Real.dist_eq] using hερ₁
+  have hετ : ε ≤ 2 * τ := by
+    have habs : |ε| < 2 * τ := by simpa [Real.dist_eq] using hετ_abs
+    have hlt : ε < 2 * τ := by rwa [abs_of_pos hεpos'] at habs
+    exact le_of_lt hlt
+  have hsmall := hρ₁ hεpos hερ₁dist
+  rw [dist_zero_right] at hsmall ⊢
+  unfold kernelAverageConeCoeffW
+  set d : ℝ := laplaceKernelPt τ y a -
+    ⨍ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E)
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hεpos' hετ
+  have hbound_ratio : |(kernelAverageDefect τ a ε)⁻¹ * ε| ≤ C := by
+    rw [abs_of_pos (mul_pos (inv_pos.mpr hwpos) hεpos')]
+    simpa [C, hC] using inv_kernelAverageDefect_mul_radius_le hτ a hεpos' hετ
+  have hdecomp :
+      (kernelAverageDefect τ a ε)⁻¹ * d =
+        ((kernelAverageDefect τ a ε)⁻¹ * ε) * (ε⁻¹ * d) := by
+    field_simp [hεpos'.ne']
+  rw [Real.norm_eq_abs, hdecomp]
+  calc |((kernelAverageDefect τ a ε)⁻¹ * ε) * (ε⁻¹ * d)|
+      = |(kernelAverageDefect τ a ε)⁻¹ * ε| * |ε⁻¹ * d| := abs_mul _ _
+    _ ≤ C * |ε⁻¹ * d| := mul_le_mul_of_nonneg_right hbound_ratio (abs_nonneg _)
+    _ < δ := by
+        have hs : |ε⁻¹ * d| < δ / C := by
+          simpa [d, smul_eq_mul, Real.norm_eq_abs] using hsmall
+        have hmul : C * |ε⁻¹ * d| < C * (δ / C) :=
+          mul_lt_mul_of_pos_left hs hCpos
+        have hCmul : C * (δ / C) = δ := by field_simp [hCpos.ne']
+        linarith
+
+set_option linter.unusedSectionVars false in
+/-- If a continuous scalar function differs from its centre value by at most `M`
+on a ball, then the centre-minus-average defect is bounded by `M`. -/
+lemma abs_sub_setAverage_le_of_forall_abs_sub_le
+    {φ : E → ℝ} {a : E} {ε M : ℝ}
+    (hφc : Continuous φ) (hε : 0 < ε)
+    (hbound : ∀ x ∈ Metric.ball a ε, |φ a - φ x| ≤ M) :
+    |φ a - ⨍ x in Metric.ball a ε, φ x ∂(volume : Measure E)| ≤ M := by
+  set s := Metric.ball a ε with hs
+  have hVne : (volume : Measure E) s ≠ 0 := by
+    rw [hs]
+    exact (measure_ball_pos _ a hε).ne'
+  have hVlt : (volume : Measure E) s ≠ ⊤ := by
+    have hVltTop : (volume : Measure E) s < ⊤ := by
+      rw [hs]
+      exact measure_ball_lt_top
+    exact hVltTop.ne
+  set V : ℝ := (volume : Measure E).real s with hVdef
+  have hVpos : 0 < V := ENNReal.toReal_pos hVne hVlt
+  have hint_phi : IntegrableOn φ s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous hφc a ε
+  have hint_const : IntegrableOn (fun _ : E => φ a) s volume :=
+    integrableOn_const hVlt
+  have hint_diff : IntegrableOn (fun x : E => φ a - φ x) s volume :=
+    hint_const.sub hint_phi
+  have hkey :
+      φ a - ⨍ x in s, φ x ∂(volume : Measure E) =
+        V⁻¹ * ∫ x in s, (φ a - φ x) ∂(volume : Measure E) := by
+    rw [setAverage_eq, smul_eq_mul, ← hVdef]
+    rw [integral_sub hint_const hint_phi, setIntegral_const, smul_eq_mul]
+    field_simp [hVpos.ne']
+    ring
+  have habs_int :
+      |∫ x in s, (φ a - φ x) ∂(volume : Measure E)| ≤
+        ∫ x in s, |φ a - φ x| ∂(volume : Measure E) := by
+    simpa [Real.norm_eq_abs] using
+      (norm_integral_le_integral_norm (fun x : E => φ a - φ x)
+        (μ := (volume : Measure E).restrict s))
+  have hint_abs : IntegrableOn (fun x : E => |φ a - φ x|) s volume := by
+    exact hint_diff.norm
+  have hconst_int : IntegrableOn (fun _ : E => M) s volume :=
+    integrableOn_const hVlt
+  have h_int_le :
+      ∫ x in s, |φ a - φ x| ∂(volume : Measure E) ≤ M * V := by
+    calc ∫ x in s, |φ a - φ x| ∂(volume : Measure E)
+        ≤ ∫ _x in s, M ∂(volume : Measure E) := by
+          apply setIntegral_mono_on hint_abs hconst_int
+            (by rw [hs]; exact measurableSet_ball)
+          intro x hx
+          exact hbound x (by simpa [hs] using hx)
+      _ = M * V := by
+        rw [setIntegral_const, smul_eq_mul, hVdef]
+        ring
+  rw [hs] at hkey
+  rw [hkey]
+  calc |V⁻¹ * ∫ x in Metric.ball a ε, (φ a - φ x) ∂(volume : Measure E)|
+      = V⁻¹ * |∫ x in Metric.ball a ε, (φ a - φ x) ∂(volume : Measure E)| := by
+        rw [abs_mul, abs_of_pos (inv_pos.mpr hVpos)]
+    _ ≤ V⁻¹ * (M * V) := by
+        apply mul_le_mul_of_nonneg_left
+        · exact le_trans habs_int (by simpa [hs] using h_int_le)
+        · positivity
+    _ = M := by field_simp [hVpos.ne']
+
+set_option linter.unusedSectionVars false in
+/-- Uniform domination for single-kernel `w`-coefficients.  This is the bounded
+integrand needed in the Fubini/DCT atom-extraction step: after normalization by
+the self-kernel defect, every fixed-source kernel contributes at most `4e`. -/
+lemma abs_kernelAverageConeCoeffW_laplaceKernelPt_le
+    {τ : ℝ} (hτ : 0 < τ) (a y : E) {ε : ℝ}
+    (hε : 0 < ε) (hετ : ε ≤ 2 * τ) :
+    |kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε| ≤ 4 * Real.exp 1 := by
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hε hετ
+  have hnum :
+    |laplaceKernelPt τ y a -
+        ⨍ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E)| ≤
+        (1 / τ) * ε := by
+    apply abs_sub_setAverage_le_of_forall_abs_sub_le
+      (laplaceKernelPt_continuous τ y) hε
+    intro x hx
+    have hxle : ‖x - a‖ ≤ ε := by
+      rw [← dist_eq_norm]
+      exact le_of_lt (Metric.mem_ball.mp hx)
+    calc |laplaceKernelPt τ y a - laplaceKernelPt τ y x|
+        ≤ (1 / τ) * ‖a - x‖ := abs_laplaceKernelPt_sub_le hτ y x a
+      _ = (1 / τ) * ‖x - a‖ := by rw [norm_sub_rev]
+      _ ≤ (1 / τ) * ε := by gcongr
+  unfold kernelAverageConeCoeffW
+  set d : ℝ := laplaceKernelPt τ y a -
+    ⨍ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E)
+  have hratio := inv_kernelAverageDefect_mul_radius_le hτ a hε hετ
+  calc |(kernelAverageDefect τ a ε)⁻¹ * d|
+      = (kernelAverageDefect τ a ε)⁻¹ * |d| := by
+        rw [abs_mul, abs_of_pos (inv_pos.mpr hwpos)]
+    _ ≤ (kernelAverageDefect τ a ε)⁻¹ * ((1 / τ) * ε) := by
+        apply mul_le_mul_of_nonneg_left
+        · simpa [d] using hnum
+        · positivity
+    _ = ((kernelAverageDefect τ a ε)⁻¹ * ε) * (1 / τ) := by ring
+    _ ≤ (4 * Real.exp 1 * τ) * (1 / τ) := by
+        apply mul_le_mul_of_nonneg_right hratio
+        positivity
+    _ = 4 * Real.exp 1 := by field_simp [hτ.ne']
+
+set_option linter.unusedSectionVars false in
+/-- Measurability, in the source variable `y`, of the `w`-normalized coefficient
+of the fixed-source kernel `x ↦ k(x,y)`.  This supplies the measurability input
+for dominated convergence. -/
+lemma measurable_kernelAverageConeCoeffW_laplaceKernelPt
+    (τ : ℝ) (a : E) (ε : ℝ) :
+    Measurable (fun y : E => kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε) := by
+  have hcenter : Measurable (fun y : E => laplaceKernelPt τ y a) := by
+    have hc : Continuous (fun y : E => laplaceKernelPt τ y a) := by
+      unfold laplaceKernelPt
+      fun_prop
+    exact hc.measurable
+  have hjoint : StronglyMeasurable
+      (Function.uncurry (fun x : E => fun y : E => laplaceKernelPt τ y x)) := by
+    have hc : Continuous (fun z : E × E => laplaceKernelPt τ z.2 z.1) := by
+      unfold laplaceKernelPt
+      fun_prop
+    change StronglyMeasurable (fun z : E × E => laplaceKernelPt τ z.2 z.1)
+    exact hc.stronglyMeasurable
+  have hIntSM : StronglyMeasurable
+      (fun y : E => ∫ x in Metric.ball a ε,
+        laplaceKernelPt τ y x ∂(volume : Measure E)) := by
+    simpa [Measure.restrict_apply_univ] using
+      (hjoint.integral_prod_left
+        (μ := (volume : Measure E).restrict (Metric.ball a ε)))
+  have havg : Measurable
+      (fun y : E => ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x ∂(volume : Measure E)) := by
+    simp_rw [setAverage_eq, smul_eq_mul]
+    exact measurable_const.mul hIntSM.measurable
+  unfold kernelAverageConeCoeffW
+  exact measurable_const.mul (hcenter.sub havg)
+
+set_option linter.unusedSectionVars false in
+/-- The singleton indicator integrates to the real atom mass. -/
+lemma integral_indicator_singleton_one_eq_atomMassReal
+    (μ : Measure E) [IsFiniteMeasure μ] (a : E) :
+    ∫ y, Set.indicator ({a} : Set E) (fun _ : E => (1 : ℝ)) y ∂μ =
+      atomMassReal μ a := by
+  rw [integral_indicator (measurableSet_singleton a)]
+  unfold atomMassReal
+  rw [setIntegral_const, smul_eq_mul, mul_one, Measure.real]
+
+set_option linter.unusedSectionVars false in
+/-- **DCT atom extraction, integral form.**  Integrating the pointwise
+`w`-normalized single-kernel coefficient against a finite measure extracts the
+atom at the centre.  The remaining L3 Fubini socket is to identify this integral
+with the actual `w`-normalized ball-average defect of `Z_μ`. -/
+lemma tendsto_integral_kernelAverageConeCoeffW_laplaceKernelPt
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (μ : Measure E) [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        ∫ y, kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε ∂μ)
+      (𝓝[>] (0 : ℝ)) (𝓝 (atomMassReal μ a)) := by
+  have hmeas :
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+        AEStronglyMeasurable
+          (fun y : E => kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε) μ :=
+    Eventually.of_forall fun ε =>
+      (measurable_kernelAverageConeCoeffW_laplaceKernelPt τ a ε).aestronglyMeasurable
+  have hsmall : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε ≤ 2 * τ :=
+    eventually_nhdsWithin_of_eventually_nhds <| by
+      filter_upwards [Iio_mem_nhds (show (0 : ℝ) < 2 * τ by positivity)] with ε hεlt
+      exact le_of_lt hεlt
+  have hbound :
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+        ∀ᵐ y ∂μ,
+          ‖kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε‖ ≤
+            (fun _ : E => 4 * Real.exp 1) y := by
+    filter_upwards [self_mem_nhdsWithin, hsmall] with ε hεpos hεle
+    exact ae_of_all μ fun y => by
+      simpa [Real.norm_eq_abs] using
+        abs_kernelAverageConeCoeffW_laplaceKernelPt_le hτ a y hεpos hεle
+  have hlim :
+      ∀ᵐ y ∂μ,
+        Tendsto
+          (fun ε : ℝ => kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε)
+          (𝓝[>] (0 : ℝ))
+          (𝓝 (Set.indicator ({a} : Set E) (fun _ : E => (1 : ℝ)) y)) := by
+    refine ae_of_all μ fun y => ?_
+    by_cases hy : y = a
+    · subst y
+      simpa using tendsto_kernelAverageConeCoeffW_laplaceKernelPt_self hτ a
+    · have hnot : y ∉ ({a} : Set E) := by simpa using hy
+      rw [Set.indicator_of_notMem hnot]
+      exact tendsto_kernelAverageConeCoeffW_laplaceKernelPt_of_ne hτ hy
+  have hDCT :
+      Tendsto
+        (fun ε : ℝ =>
+          ∫ y, kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε ∂μ)
+        (𝓝[>] (0 : ℝ))
+        (𝓝 (∫ y, Set.indicator ({a} : Set E) (fun _ : E => (1 : ℝ)) y ∂μ)) :=
+    tendsto_integral_filter_of_dominated_convergence
+      (fun _ : E => 4 * Real.exp 1) hmeas hbound (integrable_const _) hlim
+  simpa [integral_indicator_singleton_one_eq_atomMassReal μ a] using hDCT
+
+set_option linter.unusedSectionVars false in
+/-- A fixed-source Laplace kernel is integrable against any finite source
+measure, uniformly bounded by `1`. -/
+lemma integrable_laplaceKernelPt_fixed
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] (x : E) :
+    Integrable (fun y : E => laplaceKernelPt τ y x) μ := by
+  refine Integrable.of_bound ?_ 1 ?_
+  · apply Continuous.aestronglyMeasurable
+    unfold laplaceKernelPt
+    fun_prop
+  · filter_upwards with y
+    rw [Real.norm_eq_abs, abs_of_pos (laplaceKernelPt_pos (τ := τ) y x)]
+    exact laplaceKernelPt_le_one (τ := τ) hτ y x
+
+set_option linter.unusedSectionVars false in
+/-- Product integrability of the bounded single-kernel integrand on
+`B(a,ε) × μ`.  This is the Fubini input for reconciling the DCT integral form
+with the actual ball-average defect of the normalizer. -/
+lemma integrable_laplaceKernelPt_prod_restrict_ball
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    Integrable (fun z : E × E => laplaceKernelPt τ z.2 z.1)
+      (((volume : Measure E).restrict (Metric.ball a ε)).prod μ) := by
+  haveI : Fact ((volume : Measure E) (Metric.ball a ε) < ⊤) := ⟨measure_ball_lt_top⟩
+  refine Integrable.of_bound ?_ 1 ?_
+  · have hc : Continuous (fun z : E × E => laplaceKernelPt τ z.2 z.1) := by
+      unfold laplaceKernelPt
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · filter_upwards with z
+    rw [Real.norm_eq_abs, abs_of_pos (laplaceKernelPt_pos (τ := τ) z.2 z.1)]
+    exact laplaceKernelPt_le_one (τ := τ) hτ z.2 z.1
+
+set_option linter.unusedSectionVars false in
+/-- The paper's Laplace normalizer is the source integral of the single-kernel
+function used by the cone-extraction DCT layer. -/
+lemma kernelNormalizer_laplace_eq_integral_laplaceKernelPt
+    (τ : ℝ) (μ : Measure E) (x : E) :
+    kernelNormalizer (laplaceKernel τ) μ x =
+      ∫ y, laplaceKernelPt τ y x ∂μ := by
+  unfold kernelNormalizer
+  apply integral_congr_ae
+  exact ae_of_all μ fun y => by
+    rw [laplaceKernel_eq_exp]
+    rfl
+
+set_option linter.unusedSectionVars false in
+/-- Fubini reconciliation for the ball integral of the Laplace normalizer. -/
+lemma setIntegral_kernelNormalizer_laplace_eq_integral_setIntegral_laplaceKernelPt
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ∫ x in Metric.ball a ε, kernelNormalizer (laplaceKernel τ) μ x ∂(volume : Measure E) =
+      ∫ y, ∫ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E) ∂μ := by
+  have hprod := integrable_laplaceKernelPt_prod_restrict_ball hτ a ε μ
+  calc ∫ x in Metric.ball a ε, kernelNormalizer (laplaceKernel τ) μ x ∂(volume : Measure E)
+      = ∫ x in Metric.ball a ε, ∫ y, laplaceKernelPt τ y x ∂μ ∂(volume : Measure E) := by
+        apply integral_congr_ae
+        exact ae_of_all _ fun x => kernelNormalizer_laplace_eq_integral_laplaceKernelPt τ μ x
+    _ = ∫ y, ∫ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E) ∂μ := by
+        exact integral_integral_swap
+          (μ := (volume : Measure E).restrict (Metric.ball a ε)) (ν := μ)
+          (f := fun x y => laplaceKernelPt τ y x) hprod
+
+set_option linter.unusedSectionVars false in
+/-- Fubini reconciliation for the averaged normalizer. -/
+lemma setAverage_kernelNormalizer_laplace_eq_integral_setAverage_laplaceKernelPt
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ⨍ x in Metric.ball a ε, kernelNormalizer (laplaceKernel τ) μ x ∂(volume : Measure E) =
+      ∫ y, ⨍ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E) ∂μ := by
+  have hprod := integrable_laplaceKernelPt_prod_restrict_ball hτ a ε μ
+  have hinner_int : Integrable
+      (fun y : E => ∫ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E)) μ :=
+    hprod.integral_prod_right
+  rw [setAverage_eq, smul_eq_mul,
+    setIntegral_kernelNormalizer_laplace_eq_integral_setIntegral_laplaceKernelPt hτ a ε μ]
+  simp_rw [setAverage_eq, smul_eq_mul]
+  rw [integral_const_mul]
+
+set_option linter.unusedSectionVars false in
+/-- **Fubini bridge for `Z_μ`.**  The integral-form atom extraction theorem is
+exactly the `w`-normalized ball-average cone coefficient of the actual
+normalizer. -/
+lemma integral_kernelAverageConeCoeffW_laplaceKernelPt_eq_kernelNormalizer
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ∫ y, kernelAverageConeCoeffW τ a (laplaceKernelPt τ y) ε ∂μ =
+      kernelAverageConeCoeffW τ a
+        (fun x => kernelNormalizer (laplaceKernel τ) μ x) ε := by
+  have hka : kernelNormalizer (laplaceKernel τ) μ a =
+      ∫ y, laplaceKernelPt τ y a ∂μ :=
+    kernelNormalizer_laplace_eq_integral_laplaceKernelPt τ μ a
+  have havg : ⨍ x in Metric.ball a ε,
+      kernelNormalizer (laplaceKernel τ) μ x ∂(volume : Measure E) =
+      ∫ y, ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x ∂(volume : Measure E) ∂μ :=
+    setAverage_kernelNormalizer_laplace_eq_integral_setAverage_laplaceKernelPt hτ a ε μ
+  have hprod := integrable_laplaceKernelPt_prod_restrict_ball hτ a ε μ
+  have hint_center : Integrable (fun y : E => laplaceKernelPt τ y a) μ :=
+    integrable_laplaceKernelPt_fixed hτ μ a
+  have hint_avg : Integrable
+      (fun y : E => ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x ∂(volume : Measure E)) μ := by
+    have hint_inner : Integrable
+        (fun y : E => ∫ x in Metric.ball a ε,
+          laplaceKernelPt τ y x ∂(volume : Measure E)) μ :=
+      hprod.integral_prod_right
+    simp_rw [setAverage_eq, smul_eq_mul]
+    exact hint_inner.const_mul _
+  unfold kernelAverageConeCoeffW
+  change ∫ y,
+      (kernelAverageDefect τ a ε)⁻¹ *
+        (laplaceKernelPt τ y a -
+          ⨍ x in Metric.ball a ε, laplaceKernelPt τ y x ∂(volume : Measure E)) ∂μ =
+    (kernelAverageDefect τ a ε)⁻¹ *
+      (kernelNormalizer (laplaceKernel τ) μ a -
+        ⨍ x in Metric.ball a ε,
+          kernelNormalizer (laplaceKernel τ) μ x ∂(volume : Measure E))
+  rw [hka, havg]
+  rw [← integral_sub hint_center hint_avg, integral_const_mul]
+
+set_option linter.unusedSectionVars false in
+/-- **Normalizer atom extraction.**  The actual `w`-normalized ball-average
+defect of the Laplace normalizer detects precisely the atom mass at the centre. -/
+lemma tendsto_kernelAverageConeCoeffW_kernelNormalizer_laplace
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (μ : Measure E) [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        kernelAverageConeCoeffW τ a
+          (fun x => kernelNormalizer (laplaceKernel τ) μ x) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 (atomMassReal μ a)) := by
+  simpa [integral_kernelAverageConeCoeffW_laplaceKernelPt_eq_kernelNormalizer hτ a]
+    using tendsto_integral_kernelAverageConeCoeffW_laplaceKernelPt hτ a μ
+
+/-! ### Vector-valued displacement-kernel cone coefficients -/
+
+/-- The `w(ε)`-normalized vector cone coefficient. -/
+noncomputable def kernelAverageConeCoeffWVec
+    (τ : ℝ) (a : E) (φ : E → E) (ε : ℝ) : E :=
+  (kernelAverageDefect τ a ε)⁻¹ •
+    (φ a - ⨍ x in Metric.ball a ε, φ x ∂(volume : Measure E))
+
+set_option linter.unusedSectionVars false in
+/-- The atom-centered displacement kernel is odd around the centre, so its
+ball integral vanishes exactly. -/
+lemma setIntegral_laplaceKernelPt_self_smul_sub_eq_zero
+    (τ : ℝ) (a : E) (ε : ℝ) :
+    ∫ x in Metric.ball a ε,
+      laplaceKernelPt τ a x • (a - x) ∂(volume : Measure E) = 0 := by
+  set φ : E → E := fun x => laplaceKernelPt τ a x • (a - x) with hφ
+  have hkey :
+      ∫ x in Metric.ball a ε, φ x ∂(volume : Measure E) =
+        ∫ x in Metric.ball a ε, φ (2 • a - x) ∂(volume : Measure E) := by
+    conv_lhs => rw [← image_reflection_ball a ε]
+    rw [(measurePreserving_reflection a).setIntegral_image_emb
+      (measurableEmbedding_reflection a) φ (Metric.ball a ε)]
+  have hneg : ∫ x in Metric.ball a ε, φ (2 • a - x) ∂(volume : Measure E) =
+      -∫ x in Metric.ball a ε, φ x ∂(volume : Measure E) := by
+    rw [← integral_neg]
+    congr 1
+    funext x
+    have hk : laplaceKernelPt τ a (2 • a - x) = laplaceKernelPt τ a x := by
+      unfold laplaceKernelPt
+      congr 1
+      congr 1
+      have h₁ : 2 • a - x - a = -(x - a) := by rw [two_smul]; abel
+      rw [h₁, norm_neg]
+    simp only [hφ]
+    calc laplaceKernelPt τ a (2 • a - x) • (a - (2 • a - x))
+        = laplaceKernelPt τ a x • (x - a) := by
+          rw [hk]
+          congr 1
+          rw [two_smul]
+          abel
+      _ = -(laplaceKernelPt τ a x • (a - x)) := by
+          rw [show x - a = -(a - x) by abel, smul_neg]
+  rw [hneg] at hkey
+  have hII : (2 : ℝ) • (∫ x in Metric.ball a ε, φ x ∂(volume : Measure E)) = 0 := by
+    rw [two_smul]
+    exact add_eq_zero_iff_eq_neg.mpr hkey
+  have hzero : ∫ x in Metric.ball a ε, φ x ∂(volume : Measure E) = 0 :=
+    (smul_eq_zero.mp hII).resolve_left (by norm_num)
+  simpa [φ, hφ] using hzero
+
+set_option linter.unusedSectionVars false in
+/-- The atom-centered displacement kernel has zero ball average. -/
+lemma setAverage_laplaceKernelPt_self_smul_sub_eq_zero
+    (τ : ℝ) (a : E) (ε : ℝ) :
+    ⨍ x in Metric.ball a ε,
+      laplaceKernelPt τ a x • (a - x) ∂(volume : Measure E) = 0 := by
+  rw [setAverage_eq, setIntegral_laplaceKernelPt_self_smul_sub_eq_zero, smul_zero]
+
+set_option linter.unusedSectionVars false in
+/-- The self-source displacement kernel has exactly zero `w`-cone coefficient. -/
+lemma kernelAverageConeCoeffWVec_laplaceDisplacementKernel_self_eq_zero
+    (τ : ℝ) (a : E) (ε : ℝ) :
+    kernelAverageConeCoeffWVec τ a
+      (fun x => laplaceKernelPt τ a x • (a - x)) ε = 0 := by
+  unfold kernelAverageConeCoeffWVec
+  rw [setAverage_laplaceKernelPt_self_smul_sub_eq_zero]
+  simp
+
+set_option linter.unusedSectionVars false in
+/-- The fixed-source displacement-kernel integrand is continuous in the probe. -/
+lemma laplaceDisplacementKernelPt_continuous (τ : ℝ) (y : E) :
+    Continuous (fun x : E => laplaceKernelPt τ y x • (y - x)) := by
+  exact (laplaceKernelPt_continuous τ y).smul (continuous_const.sub continuous_id)
+
+set_option linter.unusedSectionVars false in
+/-- Away from the source point, the fixed-source displacement-kernel integrand
+is differentiable at the averaging centre. -/
+lemma laplaceDisplacementKernelPt_differentiableAt_of_ne
+    {τ : ℝ} {a y : E} (hy : y ≠ a) :
+    DifferentiableAt ℝ (fun x : E => laplaceKernelPt τ y x • (y - x)) a := by
+  exact (laplaceKernelPt_differentiableAt_of_ne (τ := τ) hy).smul
+    ((differentiableAt_const y).sub differentiableAt_id)
+
+set_option linter.unusedSectionVars false in
+/-- Off the source point, the vector displacement-kernel `w`-coefficient
+vanishes.  Together with the exact self-source zero lemma, this is the pointwise
+core for the future integrated displacement extraction. -/
+lemma tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_of_ne
+    {τ : ℝ} (hτ : 0 < τ) {a y : E} (hy : y ≠ a) :
+    Tendsto
+      (fun ε : ℝ =>
+        kernelAverageConeCoeffWVec τ a
+          (fun x => laplaceKernelPt τ y x • (y - x)) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+  have hdef := tendsto_setAverage_defect_of_differentiableAt
+    (laplaceDisplacementKernelPt_continuous τ y)
+    (laplaceDisplacementKernelPt_differentiableAt_of_ne (τ := τ) hy)
+  rw [Metric.tendsto_nhdsWithin_nhds]
+  intro δ hδ
+  set C : ℝ := 4 * Real.exp 1 * τ with hC
+  have hCpos : 0 < C := by positivity
+  have hη : 0 < δ / C := by positivity
+  rw [Metric.tendsto_nhdsWithin_nhds] at hdef
+  obtain ⟨ρ₁, hρ₁pos, hρ₁⟩ := hdef (δ / C) hη
+  refine ⟨min ρ₁ (2 * τ), lt_min hρ₁pos (mul_pos (by norm_num) hτ),
+    fun ε hεpos hεdist => ?_⟩
+  have hερ₁ : |ε - 0| < ρ₁ := lt_of_lt_of_le hεdist (min_le_left _ _)
+  have hετ_abs : |ε - 0| < 2 * τ := lt_of_lt_of_le hεdist (min_le_right _ _)
+  have hεpos' : 0 < ε := hεpos
+  have hερ₁dist : dist ε 0 < ρ₁ := by simpa [Real.dist_eq] using hερ₁
+  have hετ : ε ≤ 2 * τ := by
+    have habs : |ε| < 2 * τ := by simpa [Real.dist_eq] using hετ_abs
+    have hlt : ε < 2 * τ := by rwa [abs_of_pos hεpos'] at habs
+    exact le_of_lt hlt
+  have hsmall := hρ₁ hεpos hερ₁dist
+  rw [dist_zero_right] at hsmall ⊢
+  unfold kernelAverageConeCoeffWVec
+  set d : E :=
+    (laplaceKernelPt τ y a • (y - a)) -
+      ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hεpos' hετ
+  have hbound_ratio : |(kernelAverageDefect τ a ε)⁻¹ * ε| ≤ C := by
+    rw [abs_of_pos (mul_pos (inv_pos.mpr hwpos) hεpos')]
+    simpa [C, hC] using inv_kernelAverageDefect_mul_radius_le hτ a hεpos' hετ
+  have hdecomp :
+      (kernelAverageDefect τ a ε)⁻¹ • d =
+        ((kernelAverageDefect τ a ε)⁻¹ * ε) • (ε⁻¹ • d) := by
+    rw [smul_smul]
+    congr 1
+    field_simp [hεpos'.ne']
+  rw [hdecomp]
+  calc ‖((kernelAverageDefect τ a ε)⁻¹ * ε) • (ε⁻¹ • d)‖
+      = |(kernelAverageDefect τ a ε)⁻¹ * ε| * ‖ε⁻¹ • d‖ := norm_smul _ _
+    _ ≤ C * ‖ε⁻¹ • d‖ := mul_le_mul_of_nonneg_right hbound_ratio (norm_nonneg _)
+    _ < δ := by
+        have hs : ‖ε⁻¹ • d‖ < δ / C := by
+          simpa [d] using hsmall
+        have hmul : C * ‖ε⁻¹ • d‖ < C * (δ / C) :=
+          mul_lt_mul_of_pos_left hs hCpos
+        have hCmul : C * (δ / C) = δ := by field_simp [hCpos.ne']
+        linarith
+
+set_option linter.unusedSectionVars false in
+/-- Pointwise displacement-kernel extraction: every fixed source has zero
+`w`-cone coefficient in the displacement numerator.  At `y=a` this is exact odd
+symmetry; away from `a` it is differentiability plus the `w ≥ cε` lower bound. -/
+lemma tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementKernel
+    {τ : ℝ} (hτ : 0 < τ) (a y : E) :
+    Tendsto
+      (fun ε : ℝ =>
+        kernelAverageConeCoeffWVec τ a
+          (fun x => laplaceKernelPt τ y x • (y - x)) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+  by_cases hy : y = a
+  · subst y
+    refine tendsto_const_nhds.congr' ?_
+    exact Eventually.of_forall fun ε =>
+      (kernelAverageConeCoeffWVec_laplaceDisplacementKernel_self_eq_zero τ a ε).symm
+  · exact tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_of_ne hτ hy
+
+set_option linter.unusedSectionVars false in
+/-- Scalar derivative bound for `u ↦ u exp(-u)`: its derivative has absolute
+value at most `1` on `[0,∞)`. -/
+private lemma abs_one_sub_mul_exp_neg_le_one {u : ℝ} (hu : 0 ≤ u) :
+    |(1 - u) * Real.exp (-u)| ≤ 1 := by
+  by_cases hle : u ≤ 1
+  · have hnonneg : 0 ≤ 1 - u := by linarith
+    have hsuble : 1 - u ≤ 1 := by linarith
+    have hexple : Real.exp (-u) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+    have hexpnonneg : 0 ≤ Real.exp (-u) := (Real.exp_pos _).le
+    rw [abs_mul, abs_of_nonneg hnonneg, abs_of_nonneg hexpnonneg]
+    nlinarith
+  · have hge : 1 ≤ u := le_of_not_ge hle
+    have hnonpos : 1 - u ≤ 0 := by linarith
+    have hexpnonneg : 0 ≤ Real.exp (-u) := (Real.exp_pos _).le
+    rw [abs_mul, abs_of_nonpos hnonpos, abs_of_nonneg hexpnonneg]
+    have hpart : (u - 1) * Real.exp (-u) ≤ u * Real.exp (-u) := by
+      have : u - 1 ≤ u := by linarith
+      exact mul_le_mul_of_nonneg_right this hexpnonneg
+    have hpeak : u * Real.exp (-u) ≤ Real.exp (-1) := by
+      simpa using (mul_exp_neg_div_le (τ := (1 : ℝ)) zero_lt_one hu)
+    have hexp1 : Real.exp (-1 : ℝ) ≤ 1 := Real.exp_le_one_iff.mpr (by norm_num)
+    nlinarith
+
+set_option linter.unusedSectionVars false in
+/-- The radial scalar function `r ↦ r exp(-r/τ)` is 1-Lipschitz on
+`[0,∞)`. -/
+lemma radial_mul_exp_neg_div_lipschitz
+    {τ r s : ℝ} (hτ : 0 < τ) (hr : 0 ≤ r) (hs : 0 ≤ s) :
+    |r * Real.exp (-r / τ) - s * Real.exp (-s / τ)| ≤ |r - s| := by
+  set f : ℝ → ℝ := fun t => t * Real.exp (-t / τ) with hfdef
+  have hf : ∀ t ∈ Set.Ici (0 : ℝ), DifferentiableAt ℝ f t := by
+    intro t ht
+    unfold f
+    have hlinAt : HasDerivAt (fun u : ℝ => -u / τ) (-(1 / τ)) t := by
+      simpa [one_div, neg_div] using (hasDerivAt_id t).neg.div_const τ
+    exact differentiableAt_id.mul hlinAt.exp.differentiableAt
+  have hderiv : ∀ t ∈ Set.Ici (0 : ℝ), ‖deriv f t‖ ≤ (1 : ℝ) := by
+    intro t ht
+    have ht0 : 0 ≤ t := ht
+    have hdiff1 : DifferentiableAt ℝ (fun t : ℝ => t) t := differentiableAt_id
+    have hlinAt : HasDerivAt (fun u : ℝ => -u / τ) (-(1 / τ)) t := by
+      simpa [one_div, neg_div] using (hasDerivAt_id t).neg.div_const τ
+    have hdiff2 : DifferentiableAt ℝ (fun t : ℝ => Real.exp (-t / τ)) t :=
+      hlinAt.exp.differentiableAt
+    have hder :
+        deriv f t = (1 - t / τ) * Real.exp (-t / τ) := by
+      unfold f
+      change deriv ((fun t : ℝ => t) * fun t : ℝ => Real.exp (-t / τ)) t =
+        (1 - t / τ) * Real.exp (-t / τ)
+      rw [deriv_mul hdiff1 hdiff2, deriv_id'']
+      have hexpder :
+          deriv (fun x : ℝ => Real.exp (-x / τ)) t =
+            Real.exp (-t / τ) * (-(1 / τ)) := hlinAt.exp.deriv
+      rw [hexpder]
+      field_simp [hτ.ne']
+      ring
+    rw [hder, Real.norm_eq_abs]
+    have hnonneg : 0 ≤ t / τ := div_nonneg ht0 hτ.le
+    simpa [sub_eq_add_neg, neg_div] using abs_one_sub_mul_exp_neg_le_one hnonneg
+  have hmv := (convex_Ici (0 : ℝ)).norm_image_sub_le_of_norm_deriv_le
+    (f := f) (C := (1 : ℝ)) hf hderiv hs hr
+  simpa [f, hfdef, Real.norm_eq_abs, abs_sub_comm, one_mul] using hmv
+
+set_option linter.unusedSectionVars false in
+/-- Uniform Lipschitz bound, in the probe variable, for the fixed-source
+Laplace displacement kernel.  Crucially the constant is independent of the
+source point `y`, so no moment assumption on the source measure is needed. -/
+lemma norm_laplaceDisplacementKernelPt_sub_le
+    {τ : ℝ} (hτ : 0 < τ) (a x y : E) :
+    ‖laplaceKernelPt τ y a • (y - a) -
+        laplaceKernelPt τ y x • (y - x)‖ ≤
+      3 * ‖x - a‖ := by
+  set ka : ℝ := laplaceKernelPt τ y a with hka
+  set kx : ℝ := laplaceKernelPt τ y x with hkx
+  set r : ℝ := ‖y - a‖ with hr
+  set s : ℝ := ‖y - x‖ with hs
+  have hka_pos : 0 < ka := by simpa [ka, hka] using laplaceKernelPt_pos (τ := τ) y a
+  have hkx_pos : 0 < kx := by simpa [kx, hkx] using laplaceKernelPt_pos (τ := τ) y x
+  have hka_le : ka ≤ 1 := by simpa [ka, hka] using laplaceKernelPt_le_one (τ := τ) hτ y a
+  have hr_nonneg : 0 ≤ r := by simp [hr]
+  have hs_nonneg : 0 ≤ s := by simp [hs]
+  have hrs : |r - s| ≤ ‖x - a‖ := by
+    rw [hr, hs]
+    calc |‖y - a‖ - ‖y - x‖|
+        ≤ ‖(y - a) - (y - x)‖ := abs_norm_sub_norm_le _ _
+      _ = ‖x - a‖ := by rw [sub_sub_sub_cancel_left]
+  have hrad :
+      |r * ka - s * kx| ≤ |r - s| := by
+    have hrad' := radial_mul_exp_neg_div_lipschitz hτ hr_nonneg hs_nonneg
+    have hka_eq : ka = Real.exp (-r / τ) := by
+      rw [hka, hr]
+      unfold laplaceKernelPt
+      rw [norm_sub_rev]
+    have hkx_eq : kx = Real.exp (-s / τ) := by
+      rw [hkx, hs]
+      unfold laplaceKernelPt
+      rw [norm_sub_rev]
+    simpa [hka_eq, hkx_eq, mul_comm, mul_left_comm, mul_assoc] using hrad'
+  have hsecond : |ka - kx| * s ≤ 2 * ‖x - a‖ := by
+    have htri : |s * ka - s * kx| ≤ |s * ka - r * ka| + |r * ka - s * kx| :=
+      abs_sub_le _ _ _
+    have hleft : |s * ka - r * ka| ≤ |r - s| := by
+      calc |s * ka - r * ka|
+          = |(s - r) * ka| := by ring_nf
+        _ = |s - r| * |ka| := abs_mul _ _
+        _ = |r - s| * ka := by rw [abs_sub_comm, abs_of_pos hka_pos]
+        _ ≤ |r - s| * 1 := mul_le_mul_of_nonneg_left hka_le (abs_nonneg _)
+        _ = |r - s| := by ring
+    have hsk : |ka - kx| * s = |s * ka - s * kx| := by
+      calc |ka - kx| * s
+          = s * |ka - kx| := by ring
+        _ = |s| * |ka - kx| := by rw [abs_of_nonneg hs_nonneg]
+        _ = |s * (ka - kx)| := by rw [abs_mul]
+        _ = |s * ka - s * kx| := by ring_nf
+    calc |ka - kx| * s
+        = |s * ka - s * kx| := hsk
+      _ ≤ |s * ka - r * ka| + |r * ka - s * kx| := htri
+      _ ≤ |r - s| + |r - s| := add_le_add hleft hrad
+      _ ≤ ‖x - a‖ + ‖x - a‖ := add_le_add hrs hrs
+      _ = 2 * ‖x - a‖ := by ring
+  calc ‖laplaceKernelPt τ y a • (y - a) -
+        laplaceKernelPt τ y x • (y - x)‖
+      = ‖ka • (y - a) - kx • (y - x)‖ := by rw [hka, hkx]
+    _ = ‖ka • ((y - a) - (y - x)) + (ka - kx) • (y - x)‖ := by
+        congr 1
+        module
+    _ ≤ ‖ka • ((y - a) - (y - x))‖ + ‖(ka - kx) • (y - x)‖ := norm_add_le _ _
+    _ = |ka| * ‖(y - a) - (y - x)‖ + |ka - kx| * ‖y - x‖ := by
+        rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs]
+    _ = ka * ‖x - a‖ + |ka - kx| * s := by
+        rw [abs_of_pos hka_pos, hs, sub_sub_sub_cancel_left]
+    _ ≤ 1 * ‖x - a‖ + 2 * ‖x - a‖ := by
+        apply add_le_add
+        · exact mul_le_mul_of_nonneg_right hka_le (norm_nonneg _)
+        · simpa [s, hs] using hsecond
+    _ = 3 * ‖x - a‖ := by ring
+
+set_option linter.unusedSectionVars false in
+/-- Vector-valued analogue of `abs_sub_setAverage_le_of_forall_abs_sub_le`. -/
+lemma norm_sub_setAverage_le_of_forall_norm_sub_le
+    {φ : E → E} {a : E} {ε M : ℝ}
+    (hφc : Continuous φ) (hε : 0 < ε)
+    (hbound : ∀ x ∈ Metric.ball a ε, ‖φ a - φ x‖ ≤ M) :
+    ‖φ a - ⨍ x in Metric.ball a ε, φ x ∂(volume : Measure E)‖ ≤ M := by
+  set s := Metric.ball a ε with hs
+  have hVne : (volume : Measure E) s ≠ 0 := by
+    rw [hs]
+    exact (measure_ball_pos _ a hε).ne'
+  have hVlt : (volume : Measure E) s ≠ ⊤ := by
+    have hVltTop : (volume : Measure E) s < ⊤ := by
+      rw [hs]
+      exact measure_ball_lt_top
+    exact hVltTop.ne
+  set V : ℝ := (volume : Measure E).real s with hVdef
+  have hVpos : 0 < V := ENNReal.toReal_pos hVne hVlt
+  have hint_phi : IntegrableOn φ s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous hφc a ε
+  have hint_const : IntegrableOn (fun _ : E => φ a) s volume :=
+    integrableOn_const hVlt
+  have hint_diff : IntegrableOn (fun x : E => φ a - φ x) s volume :=
+    hint_const.sub hint_phi
+  have hkey : φ a - ⨍ x in s, φ x ∂(volume : Measure E) =
+      -(V⁻¹ • ∫ x in s, (φ x - φ a) ∂(volume : Measure E)) := by
+    have hrint : ∫ x in s, (φ x - φ a) ∂(volume : Measure E) =
+        (∫ x in s, φ x ∂(volume : Measure E)) - V • φ a := by
+      rw [integral_sub hint_phi hint_const, setIntegral_const, hVdef]
+    rw [setAverage_eq, ← hVdef, hrint, smul_sub, smul_smul,
+      inv_mul_cancel₀ hVpos.ne', one_smul]
+    abel
+  have habs_int :
+      ‖∫ x in s, (φ x - φ a) ∂(volume : Measure E)‖ ≤
+        ∫ x in s, ‖φ x - φ a‖ ∂(volume : Measure E) :=
+    norm_integral_le_integral_norm _
+  have hint_norm : IntegrableOn (fun x : E => ‖φ x - φ a‖) s volume :=
+    (hint_phi.sub hint_const).norm
+  have hconst_int : IntegrableOn (fun _ : E => M) s volume :=
+    integrableOn_const hVlt
+  have h_int_le :
+      ∫ x in s, ‖φ x - φ a‖ ∂(volume : Measure E) ≤ M * V := by
+    calc ∫ x in s, ‖φ x - φ a‖ ∂(volume : Measure E)
+        ≤ ∫ _x in s, M ∂(volume : Measure E) := by
+          apply setIntegral_mono_on hint_norm hconst_int
+            (by rw [hs]; exact measurableSet_ball)
+          intro x hx
+          calc ‖φ x - φ a‖ = ‖φ a - φ x‖ := norm_sub_rev _ _
+            _ ≤ M := hbound x (by simpa [hs] using hx)
+      _ = M * V := by
+        rw [setIntegral_const, smul_eq_mul, hVdef]
+        ring
+  rw [hs] at hkey
+  rw [hkey, norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hVpos)]
+  calc V⁻¹ * ‖∫ x in Metric.ball a ε, (φ x - φ a) ∂(volume : Measure E)‖
+      ≤ V⁻¹ * (M * V) := by
+        apply mul_le_mul_of_nonneg_left
+        · exact le_trans habs_int (by simpa [hs] using h_int_le)
+        · positivity
+    _ = M := by field_simp [hVpos.ne']
+
+set_option linter.unusedSectionVars false in
+/-- Uniform domination for vector displacement-kernel `w`-coefficients. -/
+lemma norm_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_le
+    {τ : ℝ} (hτ : 0 < τ) (a y : E) {ε : ℝ}
+    (hε : 0 < ε) (hετ : ε ≤ 2 * τ) :
+    ‖kernelAverageConeCoeffWVec τ a
+        (fun x => laplaceKernelPt τ y x • (y - x)) ε‖ ≤
+      12 * Real.exp 1 * τ := by
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hε hετ
+  have hnum :
+      ‖(laplaceKernelPt τ y a • (y - a)) -
+        ⨍ x in Metric.ball a ε,
+          laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)‖ ≤
+        3 * ε := by
+    apply norm_sub_setAverage_le_of_forall_norm_sub_le
+      (laplaceDisplacementKernelPt_continuous τ y) hε
+    intro x hx
+    have hxle : ‖x - a‖ ≤ ε := by
+      rw [← dist_eq_norm]
+      exact le_of_lt (Metric.mem_ball.mp hx)
+    calc ‖laplaceKernelPt τ y a • (y - a) -
+          laplaceKernelPt τ y x • (y - x)‖
+        ≤ 3 * ‖x - a‖ := norm_laplaceDisplacementKernelPt_sub_le hτ a x y
+      _ ≤ 3 * ε := by gcongr
+  unfold kernelAverageConeCoeffWVec
+  set d : E := (laplaceKernelPt τ y a • (y - a)) -
+    ⨍ x in Metric.ball a ε,
+      laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)
+  have hratio := inv_kernelAverageDefect_mul_radius_le hτ a hε hετ
+  calc ‖(kernelAverageDefect τ a ε)⁻¹ • d‖
+      = |(kernelAverageDefect τ a ε)⁻¹| * ‖d‖ := norm_smul _ _
+    _ = (kernelAverageDefect τ a ε)⁻¹ * ‖d‖ := by
+        rw [abs_of_pos (inv_pos.mpr hwpos)]
+    _ ≤ (kernelAverageDefect τ a ε)⁻¹ * (3 * ε) := by
+        apply mul_le_mul_of_nonneg_left
+        · simpa [d] using hnum
+        · positivity
+    _ = 3 * ((kernelAverageDefect τ a ε)⁻¹ * ε) := by ring
+    _ ≤ 3 * (4 * Real.exp 1 * τ) := by gcongr
+    _ = 12 * Real.exp 1 * τ := by ring
+
+set_option linter.unusedSectionVars false in
+/-- Measurability, in the source variable, of the vector displacement-kernel
+`w`-coefficient. -/
+lemma stronglyMeasurable_kernelAverageConeCoeffWVec_laplaceDisplacementKernel
+    (τ : ℝ) (a : E) (ε : ℝ) :
+    StronglyMeasurable
+      (fun y : E =>
+        kernelAverageConeCoeffWVec τ a
+          (fun x => laplaceKernelPt τ y x • (y - x)) ε) := by
+  have hcenter : StronglyMeasurable
+      (fun y : E => laplaceKernelPt τ y a • (y - a)) := by
+    apply Continuous.stronglyMeasurable
+    exact (by
+      unfold laplaceKernelPt
+      fun_prop : Continuous (fun y : E => laplaceKernelPt τ y a • (y - a)))
+  have hjoint : StronglyMeasurable
+      (Function.uncurry
+        (fun x : E => fun y : E => laplaceKernelPt τ y x • (y - x))) := by
+    have hc : Continuous
+        (fun z : E × E => laplaceKernelPt τ z.2 z.1 • (z.2 - z.1)) := by
+      unfold laplaceKernelPt
+      fun_prop
+    change StronglyMeasurable
+      (fun z : E × E => laplaceKernelPt τ z.2 z.1 • (z.2 - z.1))
+    exact hc.stronglyMeasurable
+  have hIntSM : StronglyMeasurable
+      (fun y : E => ∫ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) := by
+    simpa [Measure.restrict_apply_univ] using
+      (hjoint.integral_prod_left
+        (μ := (volume : Measure E).restrict (Metric.ball a ε)))
+  have havg : StronglyMeasurable
+      (fun y : E => ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) := by
+    simp_rw [setAverage_eq]
+    exact hIntSM.const_smul _
+  unfold kernelAverageConeCoeffWVec
+  exact (hcenter.sub havg).const_smul _
+
+set_option linter.unusedSectionVars false in
+/-- **Integrated displacement extraction, DCT form.**  Integrating the
+`w`-normalized fixed-source displacement-kernel coefficient against any finite
+source measure gives zero in the small-ball limit. -/
+lemma tendsto_integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (μ : Measure E) [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        ∫ y,
+          kernelAverageConeCoeffWVec τ a
+            (fun x => laplaceKernelPt τ y x • (y - x)) ε ∂μ)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+  have hmeas :
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+        AEStronglyMeasurable
+          (fun y : E =>
+            kernelAverageConeCoeffWVec τ a
+              (fun x => laplaceKernelPt τ y x • (y - x)) ε) μ :=
+    Eventually.of_forall fun ε =>
+      (stronglyMeasurable_kernelAverageConeCoeffWVec_laplaceDisplacementKernel
+        τ a ε).aestronglyMeasurable
+  have hsmall : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε ≤ 2 * τ :=
+    eventually_nhdsWithin_of_eventually_nhds <| by
+      filter_upwards [Iio_mem_nhds (show (0 : ℝ) < 2 * τ by positivity)] with ε hεlt
+      exact le_of_lt hεlt
+  have hbound :
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+        ∀ᵐ y ∂μ,
+          ‖kernelAverageConeCoeffWVec τ a
+              (fun x => laplaceKernelPt τ y x • (y - x)) ε‖ ≤
+            (fun _ : E => 12 * Real.exp 1 * τ) y := by
+    filter_upwards [self_mem_nhdsWithin, hsmall] with ε hεpos hεle
+    exact ae_of_all μ fun y =>
+      norm_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_le hτ a y hεpos hεle
+  have hlim :
+      ∀ᵐ y ∂μ,
+        Tendsto
+          (fun ε : ℝ =>
+            kernelAverageConeCoeffWVec τ a
+              (fun x => laplaceKernelPt τ y x • (y - x)) ε)
+          (𝓝[>] (0 : ℝ)) (𝓝 (0 : E)) := by
+    exact ae_of_all μ fun y =>
+      tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementKernel hτ a y
+  simpa using tendsto_integral_filter_of_dominated_convergence
+    (fun _ : E => 12 * Real.exp 1 * τ) hmeas hbound (integrable_const _) hlim
+
+set_option linter.unusedSectionVars false in
+/-- Product integrability of the bounded vector displacement-kernel integrand on
+`B(a,ε) × μ`. -/
+lemma integrable_laplaceDisplacementKernelPt_prod_restrict_ball
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    Integrable
+      (fun z : E × E => laplaceKernelPt τ z.2 z.1 • (z.2 - z.1))
+      (((volume : Measure E).restrict (Metric.ball a ε)).prod μ) := by
+  haveI : Fact ((volume : Measure E) (Metric.ball a ε) < ⊤) := ⟨measure_ball_lt_top⟩
+  refine Integrable.of_bound ?_ (τ * Real.exp (-1)) ?_
+  · have hc : Continuous
+        (fun z : E × E => laplaceKernelPt τ z.2 z.1 • (z.2 - z.1)) := by
+      unfold laplaceKernelPt
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · filter_upwards with z
+    rw [norm_smul, Real.norm_eq_abs, abs_of_pos (laplaceKernelPt_pos (τ := τ) z.2 z.1)]
+    unfold laplaceKernelPt
+    rw [norm_sub_rev]
+    simpa [mul_comm] using mul_exp_neg_div_le hτ (norm_nonneg (z.2 - z.1))
+
+set_option linter.unusedSectionVars false in
+/-- The Laplace displacement field is the source integral of the vector
+fixed-source kernel used in the cone-extraction DCT layer. -/
+lemma laplaceDisplacementField_eq_integral_laplaceKernelPt
+    (τ : ℝ) (μ : Measure E) (x : E) :
+    laplaceDisplacementField τ μ x =
+      ∫ y, laplaceKernelPt τ y x • (y - x) ∂μ := by
+  unfold laplaceDisplacementField
+  apply integral_congr_ae
+  exact ae_of_all μ fun y => by
+    dsimp
+    rw [laplaceKernel_eq_exp]
+    rfl
+
+set_option linter.unusedSectionVars false in
+/-- Fubini reconciliation for the ball integral of the displacement field. -/
+lemma setIntegral_laplaceDisplacementField_eq_integral_setIntegral_laplaceKernelPt
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ∫ x in Metric.ball a ε, laplaceDisplacementField τ μ x ∂(volume : Measure E) =
+      ∫ y, ∫ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E) ∂μ := by
+  have hprod := integrable_laplaceDisplacementKernelPt_prod_restrict_ball hτ a ε μ
+  calc ∫ x in Metric.ball a ε, laplaceDisplacementField τ μ x ∂(volume : Measure E)
+      = ∫ x in Metric.ball a ε,
+          ∫ y, laplaceKernelPt τ y x • (y - x) ∂μ ∂(volume : Measure E) := by
+        apply integral_congr_ae
+        exact ae_of_all _ fun x => laplaceDisplacementField_eq_integral_laplaceKernelPt τ μ x
+    _ = ∫ y, ∫ x in Metric.ball a ε,
+          laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E) ∂μ := by
+        exact integral_integral_swap
+          (μ := (volume : Measure E).restrict (Metric.ball a ε)) (ν := μ)
+          (f := fun x y => laplaceKernelPt τ y x • (y - x)) hprod
+
+set_option linter.unusedSectionVars false in
+/-- Fubini reconciliation for the averaged displacement field. -/
+lemma setAverage_laplaceDisplacementField_eq_integral_setAverage_laplaceKernelPt
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ⨍ x in Metric.ball a ε, laplaceDisplacementField τ μ x ∂(volume : Measure E) =
+      ∫ y, ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E) ∂μ := by
+  have hprod := integrable_laplaceDisplacementKernelPt_prod_restrict_ball hτ a ε μ
+  have hinner_int : Integrable
+      (fun y : E => ∫ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) μ :=
+    hprod.integral_prod_right
+  rw [setAverage_eq,
+    setIntegral_laplaceDisplacementField_eq_integral_setIntegral_laplaceKernelPt hτ a ε μ]
+  simp_rw [setAverage_eq]
+  rw [integral_smul]
+
+set_option linter.unusedSectionVars false in
+/-- Fubini bridge for the vector displacement numerator. -/
+lemma integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_eq_displacementField
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (ε : ℝ)
+    (μ : Measure E) [IsFiniteMeasure μ] :
+    ∫ y,
+        kernelAverageConeCoeffWVec τ a
+          (fun x => laplaceKernelPt τ y x • (y - x)) ε ∂μ =
+      kernelAverageConeCoeffWVec τ a
+        (fun x => laplaceDisplacementField τ μ x) ε := by
+  have hDa : laplaceDisplacementField τ μ a =
+      ∫ y, laplaceKernelPt τ y a • (y - a) ∂μ :=
+    laplaceDisplacementField_eq_integral_laplaceKernelPt τ μ a
+  have havg : ⨍ x in Metric.ball a ε,
+      laplaceDisplacementField τ μ x ∂(volume : Measure E) =
+      ∫ y, ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E) ∂μ :=
+    setAverage_laplaceDisplacementField_eq_integral_setAverage_laplaceKernelPt hτ a ε μ
+  have hprod := integrable_laplaceDisplacementKernelPt_prod_restrict_ball hτ a ε μ
+  have hint_center : Integrable (fun y : E => laplaceKernelPt τ y a • (y - a)) μ :=
+    (integrable_laplaceDisplacementField_integrand hτ μ a).congr
+      (ae_of_all μ fun y => by
+        dsimp
+        rw [laplaceKernel_eq_exp]
+        rfl)
+  have hint_avg : Integrable
+      (fun y : E => ⨍ x in Metric.ball a ε,
+        laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) μ := by
+    have hint_inner : Integrable
+        (fun y : E => ∫ x in Metric.ball a ε,
+          laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) μ :=
+      hprod.integral_prod_right
+    simp_rw [setAverage_eq]
+    exact hint_inner.smul _
+  unfold kernelAverageConeCoeffWVec
+  change ∫ y,
+      (kernelAverageDefect τ a ε)⁻¹ •
+        ((laplaceKernelPt τ y a • (y - a)) -
+          ⨍ x in Metric.ball a ε,
+            laplaceKernelPt τ y x • (y - x) ∂(volume : Measure E)) ∂μ =
+    (kernelAverageDefect τ a ε)⁻¹ •
+      (laplaceDisplacementField τ μ a -
+        ⨍ x in Metric.ball a ε,
+          laplaceDisplacementField τ μ x ∂(volume : Measure E))
+  rw [hDa, havg]
+  rw [← integral_sub hint_center hint_avg, integral_smul]
+
+set_option linter.unusedSectionVars false in
+/-- **Integrated displacement-numerator extraction.**  The actual
+`w`-normalized ball-average defect of the Laplace displacement field tends to
+zero for every finite source measure. -/
+lemma tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementField
+    {τ : ℝ} (hτ : 0 < τ) (a : E) (μ : Measure E) [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        kernelAverageConeCoeffWVec τ a
+          (fun x => laplaceDisplacementField τ μ x) ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 (0 : E)) := by
+  simpa [integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_eq_displacementField hτ a]
+    using tendsto_integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel hτ a μ
+
+end WNormalized
 
 end DriftingIdentifiability

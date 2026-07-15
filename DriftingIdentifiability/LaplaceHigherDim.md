@@ -832,9 +832,24 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 >   and the `1/τ`-Lipschitz bound `abs_laplaceKernelPt_sub_le`
 >   (from a from-scratch exp-Lipschitz-on-`Iic 0`, `abs_exp_sub_exp_le_of_nonpos`).
 >
-> Steps (5)–(7) (Fubini/DCT atom extraction `C^w[Z_μ]→μ({a})` and `C^w[D_μ]→0`,
-> product rule, unconditional discharge) remain — the Fubini/DCT assembly, ~350
-> more lines.
+> Step (5) is now substantially discharged in `LaplaceConeExtraction.lean`: the
+> `w`-normalized single-kernel coefficient has the exact self limit, the
+> off-source zero limit, a uniform `4e` domination bound, measurability in the
+> source variable, and the DCT integral-form theorem
+> `tendsto_integral_kernelAverageConeCoeffW_laplaceKernelPt`, which extracts
+> `μ({a})` from `∫ C^w_a[k_y] dμ(y)`.  The Fubini bridge is also proved:
+> `tendsto_kernelAverageConeCoeffW_kernelNormalizer_laplace` says the *actual*
+> `w`-normalized ball-average defect of `Z_μ` tends to `μ({a})`.  On the
+> displacement side, the pointwise fixed-source vector coefficient is proved to
+> tend to `0` for every source (`tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementKernel`):
+> the self-source case is exact odd symmetry and the off-source case is
+> differentiability plus `w ≥ cε`.  The integrated displacement-numerator
+> extraction is now also closed:
+> `tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementField` proves that the
+> actual `w`-normalized ball-average defect of `D_μ` tends to `0`, using a
+> vector DCT theorem and a Fubini bridge back to `laplaceDisplacementField`.
+> What still remains for full L3 is the product rule for `Z_ν · D_μ` and the
+> final unconditional discharge of `LaplaceAtomConeProductData`.
 >
 > **The `w(ε)`-normalizer route (recommended; avoids the exact `⨍‖x‖`
 > constant).**  Codex's `laplaceAtomConeCoeff` hard-codes the scale
