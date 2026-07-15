@@ -370,4 +370,77 @@ lemma kernelAverageDefect_ge {τ : ℝ} (hτ : 0 < τ) (a : E) {ε : ℝ}
 
 end KernelDefect
 
+/-! ## Single-kernel cone facts -/
+
+section SingleKernel
+
+/-- The Laplace kernel as a function of the probe with fixed source `y`. -/
+noncomputable def laplaceKernelPt (τ : ℝ) (y : E) (x : E) : ℝ :=
+  Real.exp (-‖x - y‖ / τ)
+
+set_option linter.unusedSectionVars false in
+lemma laplaceKernelPt_continuous (τ : ℝ) (y : E) : Continuous (laplaceKernelPt τ y) := by
+  unfold laplaceKernelPt; fun_prop
+
+set_option linter.unusedSectionVars false in
+lemma laplaceKernelPt_le_one {τ : ℝ} (hτ : 0 < τ) (y x : E) : laplaceKernelPt τ y x ≤ 1 := by
+  rw [laplaceKernelPt, Real.exp_le_one_iff]
+  exact div_nonpos_of_nonpos_of_nonneg (by simp [norm_nonneg]) hτ.le
+
+set_option linter.unusedSectionVars false in
+lemma laplaceKernelPt_pos {τ : ℝ} (y x : E) : 0 < laplaceKernelPt τ y x := Real.exp_pos _
+
+set_option linter.unusedSectionVars false in
+/-- `e^s − e^t ≤ s − t` for `t ≤ s ≤ 0` (`exp` is `1`-Lipschitz on `Iic 0`). -/
+lemma exp_sub_exp_le_of_nonpos {s t : ℝ} (hs : s ≤ 0) (hst : t ≤ s) :
+    Real.exp s - Real.exp t ≤ s - t := by
+  have h1 : Real.exp s - Real.exp t = Real.exp t * (Real.exp (s - t) - 1) := by
+    rw [mul_sub, mul_one, ← Real.exp_add, show t + (s - t) = s from by ring]
+  have h2 : Real.exp (s - t) - 1 ≤ (s - t) * Real.exp (s - t) := by
+    have hb := Real.add_one_le_exp (-(s - t))
+    have he : Real.exp (-(s - t)) * Real.exp (s - t) = 1 := by
+      rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+    nlinarith [hb, Real.exp_pos (s - t), he]
+  calc Real.exp s - Real.exp t = Real.exp t * (Real.exp (s - t) - 1) := h1
+    _ ≤ Real.exp t * ((s - t) * Real.exp (s - t)) :=
+        mul_le_mul_of_nonneg_left h2 (Real.exp_pos t).le
+    _ = (s - t) * Real.exp s := by
+        rw [show Real.exp t * ((s - t) * Real.exp (s - t))
+              = (s - t) * (Real.exp t * Real.exp (s - t)) from by ring,
+          ← Real.exp_add, show t + (s - t) = s from by ring]
+    _ ≤ (s - t) * 1 :=
+        mul_le_mul_of_nonneg_left (Real.exp_le_one_iff.mpr hs) (by linarith)
+    _ = s - t := mul_one _
+
+set_option linter.unusedSectionVars false in
+/-- `|e^u − e^v| ≤ |u − v|` for `u, v ≤ 0`. -/
+lemma abs_exp_sub_exp_le_of_nonpos {u v : ℝ} (hu : u ≤ 0) (hv : v ≤ 0) :
+    |Real.exp u - Real.exp v| ≤ |u - v| := by
+  rcases le_total v u with h | h
+  · rw [abs_of_nonneg (by linarith [Real.exp_le_exp.mpr h]),
+      abs_of_nonneg (by linarith)]
+    exact exp_sub_exp_le_of_nonpos hu h
+  · rw [abs_of_nonpos (by linarith [Real.exp_le_exp.mpr h]),
+      abs_of_nonpos (by linarith), neg_sub, neg_sub]
+    exact exp_sub_exp_le_of_nonpos hv h
+
+set_option linter.unusedSectionVars false in
+/-- The kernel is `1/τ`-Lipschitz in the probe: `|κ_y(x) − κ_y(a)| ≤ (1/τ)‖x−a‖`. -/
+lemma abs_laplaceKernelPt_sub_le {τ : ℝ} (hτ : 0 < τ) (y a x : E) :
+    |laplaceKernelPt τ y x - laplaceKernelPt τ y a| ≤ (1 / τ) * ‖x - a‖ := by
+  have harg : |(-‖x - y‖ / τ) - (-‖a - y‖ / τ)| ≤ (1 / τ) * ‖x - a‖ := by
+    rw [div_sub_div_same, abs_div, abs_of_pos hτ, one_div, ← div_eq_inv_mul,
+      div_le_div_iff_of_pos_right hτ]
+    calc |(-‖x - y‖) - (-‖a - y‖)| = |‖a - y‖ - ‖x - y‖| := by congr 1; ring
+      _ ≤ ‖(a - y) - (x - y)‖ := abs_norm_sub_norm_le _ _
+      _ = ‖x - a‖ := by rw [sub_sub_sub_cancel_right, norm_sub_rev]
+  calc |laplaceKernelPt τ y x - laplaceKernelPt τ y a|
+      ≤ |(-‖x - y‖ / τ) - (-‖a - y‖ / τ)| :=
+        abs_exp_sub_exp_le_of_nonpos
+          (div_nonpos_of_nonpos_of_nonneg (by simp [norm_nonneg]) hτ.le)
+          (div_nonpos_of_nonpos_of_nonneg (by simp [norm_nonneg]) hτ.le)
+      _ ≤ (1 / τ) * ‖x - a‖ := harg
+
+end SingleKernel
+
 end DriftingIdentifiability

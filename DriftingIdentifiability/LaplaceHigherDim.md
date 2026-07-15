@@ -815,17 +815,26 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 > build (see the `w(ε)` route below).
 >
 > **Foundation implemented (`LaplaceConeExtraction.lean`, machine-checked,
-> axiom-free).**  Step (1) of the route below is done: the reflection
-> `x ↦ 2a − x` is measure-preserving and a measurable embedding
-> (`measurePreserving_reflection`, `measurableEmbedding_reflection`,
-> `image_reflection_ball`), giving `∫_{B(a,ε)} (x − a) = 0`
-> (`setIntegral_sub_center_ball_eq_zero`) and `⨍_{B(a,ε)} (x − a) = 0`
-> (`setAverage_sub_center_ball_eq_zero`) — the symmetry that makes the linear
-> Taylor term average out.  Instances needed: `[(volume).IsAddHaarMeasure]`,
-> `[(volume).IsNegInvariant]` (both hold for `volume` on finite-dim spaces).
-> Steps (2)–(7) (ball-average defect `o(ε)`, `w` lower bound, single-kernel
-> differentiability, Fubini/DCT extraction, product rule, discharge) remain — a
-> multi-session analytic build, ~500 more lines.
+> axiom-free).**  Steps (1)–(4) of the route below are done:
+> - (1) reflection symmetry: `x ↦ 2a − x` is measure-preserving + a measurable
+>   embedding (`measurePreserving_reflection`, `measurableEmbedding_reflection`,
+>   `image_reflection_ball`), giving `∫_{B(a,ε)}(x−a) = 0`
+>   (`setIntegral_sub_center_ball_eq_zero`) and `⨍_{B(a,ε)}(x−a) = 0`
+>   (`setAverage_sub_center_ball_eq_zero`).  Instances:
+>   `[(volume).IsAddHaarMeasure]`, `[(volume).IsNegInvariant]` (hold on
+>   finite-dim spaces).
+> - (2) ball-average defect `o(ε)`: `tendsto_setAverage_defect_of_differentiableAt`
+>   — `ε⁻¹•(φ a − ⨍_{B(a,ε)}φ) → 0` for `φ` continuous, differentiable at `a`.
+> - (3) `w` lower bound: `kernelAverageDefect τ a ε = 1 − ⨍ e^{−‖·−a‖/τ}` with
+>   `kernelAverageDefect_ge : ε/(4eτ) ≤ w(a,ε)` for `0 < ε ≤ 2τ` (annulus
+>   fraction `1 − 2^{−n} ≥ 1/2` via `addHaar_ball`; `1 − e^{−s} ≥ s·e^{−1}`).
+> - (4) single-kernel facts: `laplaceKernelPt`, its continuity/positivity/`≤1`,
+>   and the `1/τ`-Lipschitz bound `abs_laplaceKernelPt_sub_le`
+>   (from a from-scratch exp-Lipschitz-on-`Iic 0`, `abs_exp_sub_exp_le_of_nonpos`).
+>
+> Steps (5)–(7) (Fubini/DCT atom extraction `C^w[Z_μ]→μ({a})` and `C^w[D_μ]→0`,
+> product rule, unconditional discharge) remain — the Fubini/DCT assembly, ~350
+> more lines.
 >
 > **The `w(ε)`-normalizer route (recommended; avoids the exact `⨍‖x‖`
 > constant).**  Codex's `laplaceAtomConeCoeff` hard-codes the scale
