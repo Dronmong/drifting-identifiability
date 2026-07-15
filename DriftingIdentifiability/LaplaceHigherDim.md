@@ -1413,6 +1413,15 @@ session-handoff spec).**
   relation `shellD = shellT - r·shellZ`.  Remaining S-layer hard analysis:
   the actual T₃ integral identity via the reverse `d`-substitution and the
   ray-mass identity.
+- 2026-07-15 (S-layer, T₃ polynomial core — **green focused build**): added the
+  reverse-distance polynomial numerator `shellRhoPoly`, its endpoint vanishing,
+  derivative `P'(z)=4z(r²+s²-z²)`, the product derivative for
+  `P(z)·exp(-(1/τ)z)`, and the endpoint-zero FTC identity.  The rearranged
+  polynomial identity is now certified:
+  `∫ P(z)e^{-z/τ} dz = 4τ ∫ z(r²+s²-z²)e^{-z/τ} dz` over
+  `[|r-s|, r+s]`.  Remaining T₃ work: push this through the reverse
+  `d`-substitution to identify the two original zonal shell integrals
+  `shellRhoSqOverDist` and `shellT`; then prove the ray-mass identity.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

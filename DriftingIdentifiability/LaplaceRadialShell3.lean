@@ -373,6 +373,185 @@ noncomputable def shellRhoSqOverDist (τ r s : ℝ) : ℝ :=
   (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
     Real.exp (-(1 / τ) * shellDist r s u) * (shellRhoSq s u / shellDist r s u)
 
+/-- The polynomial numerator for `ρ²` after the reverse distance substitution
+`u = (r²+s²-z²)/(2rs)`:
+`ρ² = ((z²-(r-s)²)((r+s)²-z²))/(4r²)`. -/
+noncomputable def shellRhoPoly (r s z : ℝ) : ℝ :=
+  (z ^ 2 - (r - s) ^ 2) * ((r + s) ^ 2 - z ^ 2)
+
+@[simp] lemma shellRhoPoly_left_endpoint (r s : ℝ) :
+    shellRhoPoly r s (r - s) = 0 := by
+  unfold shellRhoPoly
+  ring
+
+@[simp] lemma shellRhoPoly_neg_left_endpoint (r s : ℝ) :
+    shellRhoPoly r s (s - r) = 0 := by
+  unfold shellRhoPoly
+  ring
+
+@[simp] lemma shellRhoPoly_right_endpoint (r s : ℝ) :
+    shellRhoPoly r s (r + s) = 0 := by
+  unfold shellRhoPoly
+  ring
+
+@[simp] lemma shellRhoPoly_abs_left_endpoint (r s : ℝ) :
+    shellRhoPoly r s |r - s| = 0 := by
+  unfold shellRhoPoly
+  rw [sq_abs]
+  ring
+
+lemma hasDerivAt_shellRhoPoly (r s z : ℝ) :
+    HasDerivAt (fun x : ℝ => shellRhoPoly r s x)
+      (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) z := by
+  unfold shellRhoPoly
+  have h₁ : HasDerivAt (fun x : ℝ => x ^ 2 - (r - s) ^ 2) (2 * z) z := by
+    simpa using (hasDerivAt_pow 2 z).sub_const ((r - s) ^ 2)
+  have h₂ : HasDerivAt (fun x : ℝ => (r + s) ^ 2 - x ^ 2) (-(2 * z)) z := by
+    simpa using (hasDerivAt_pow 2 z).const_sub ((r + s) ^ 2)
+  have h :
+      HasDerivAt
+        (fun x : ℝ => (x ^ 2 - (r - s) ^ 2) * ((r + s) ^ 2 - x ^ 2))
+        ((2 * z) * ((r + s) ^ 2 - z ^ 2) +
+          (z ^ 2 - (r - s) ^ 2) * (-(2 * z))) z := h₁.mul h₂
+  convert h using 1
+  ring
+
+lemma hasDerivAt_exp_neg_inv_mul (τ z : ℝ) :
+    HasDerivAt (fun x : ℝ => Real.exp (-(1 / τ) * x))
+      (-(1 / τ) * Real.exp (-(1 / τ) * z)) z := by
+  have h := ((hasDerivAt_id z).const_mul (-(1 / τ))).exp
+  convert h using 1
+  · ext x
+    rfl
+  · simp [id, mul_comm]
+
+lemma hasDerivAt_shellRhoPoly_mul_exp (τ r s z : ℝ) :
+    HasDerivAt
+      (fun x : ℝ => shellRhoPoly r s x * Real.exp (-(1 / τ) * x))
+      ((4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+        + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z))) z := by
+  exact (hasDerivAt_shellRhoPoly r s z).mul (hasDerivAt_exp_neg_inv_mul τ z)
+
+/-- The endpoint-zero FTC identity for the polynomial-exponential primitive
+used in the reverse-distance proof of the `T₃` shell identity. -/
+lemma integral_deriv_shellRhoPoly_mul_exp_eq_zero (τ r s : ℝ) :
+    (∫ z in |r - s|..(r + s),
+      deriv (fun x : ℝ => shellRhoPoly r s x * Real.exp (-(1 / τ) * x)) z) = 0 := by
+  let a : ℝ := |r - s|
+  let b : ℝ := r + s
+  let F : ℝ → ℝ := fun x => shellRhoPoly r s x * Real.exp (-(1 / τ) * x)
+  let F' : ℝ → ℝ := fun z =>
+    (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+      + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z))
+  have hdiff : ∀ x ∈ Set.uIcc a b, DifferentiableAt ℝ F x := by
+    intro x _
+    exact (hasDerivAt_shellRhoPoly_mul_exp τ r s x).differentiableAt
+  have hderiv : deriv F = F' := by
+    funext x
+    exact (hasDerivAt_shellRhoPoly_mul_exp τ r s x).deriv
+  have hF'int : IntervalIntegrable F' volume a b := by
+    apply Continuous.intervalIntegrable
+    dsimp [F', shellRhoPoly]
+    fun_prop
+  have hFint : IntervalIntegrable (deriv F) volume a b := by
+    simpa [hderiv] using hF'int
+  have hftc := intervalIntegral.integral_deriv_eq_sub
+    (a := a) (b := b) (f := F) hdiff hFint
+  dsimp [F, a, b] at hftc ⊢
+  rw [hftc]
+  simp
+
+/-- The explicit polynomial-exponential derivative integrates to zero over the
+distance endpoints.  This is the raw integration-by-parts identity used by the
+reverse-distance `T₃` proof before rearranging constants. -/
+lemma integral_shellRhoPoly_exp_deriv_formula_eq_zero (τ r s : ℝ) :
+    (∫ z in |r - s|..(r + s),
+      (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+        + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z))) = 0 := by
+  let F : ℝ → ℝ := fun x => shellRhoPoly r s x * Real.exp (-(1 / τ) * x)
+  have hderiv : ∀ z : ℝ,
+      deriv F z =
+        (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+          + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z)) := by
+    intro z
+    exact (hasDerivAt_shellRhoPoly_mul_exp τ r s z).deriv
+  calc
+    (∫ z in |r - s|..(r + s),
+      (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+        + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z)))
+        = ∫ z in |r - s|..(r + s), deriv F z := by
+          apply intervalIntegral.integral_congr
+          intro z _
+          exact (hderiv z).symm
+    _ = 0 := by
+          simpa [F] using integral_deriv_shellRhoPoly_mul_exp_eq_zero τ r s
+
+/-- Rearranged polynomial-exponential identity behind the per-shell `T₃`
+formula.  The proof uses the endpoint-zero FTC identity above and only then
+splits constants out of the interval integral. -/
+lemma shellRhoPoly_integral_identity
+    {τ : ℝ} (hτ : 0 < τ) (r s : ℝ) :
+    (∫ z in |r - s|..(r + s),
+      shellRhoPoly r s z * Real.exp (-(1 / τ) * z)) =
+      4 * τ *
+        ∫ z in |r - s|..(r + s),
+          z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z) := by
+  let F : ℝ → ℝ := fun z =>
+    z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z)
+  let G : ℝ → ℝ := fun z =>
+    shellRhoPoly r s z * Real.exp (-(1 / τ) * z)
+  have hFint : IntervalIntegrable F volume |r - s| (r + s) := by
+    apply Continuous.intervalIntegrable
+    dsimp [F]
+    fun_prop
+  have hGint : IntervalIntegrable G volume |r - s| (r + s) := by
+    apply Continuous.intervalIntegrable
+    dsimp [G, shellRhoPoly]
+    fun_prop
+  have hraw := integral_shellRhoPoly_exp_deriv_formula_eq_zero τ r s
+  have hsplit :
+      (∫ z in |r - s|..(r + s),
+        (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+          + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z))) =
+        4 * (∫ z in |r - s|..(r + s), F z)
+          - (1 / τ) * (∫ z in |r - s|..(r + s), G z) := by
+    calc
+      (∫ z in |r - s|..(r + s),
+        (4 * z * (r ^ 2 + s ^ 2 - z ^ 2)) * Real.exp (-(1 / τ) * z)
+          + shellRhoPoly r s z * (-(1 / τ) * Real.exp (-(1 / τ) * z)))
+          = ∫ z in |r - s|..(r + s), 4 * F z + (-(1 / τ)) * G z := by
+              apply intervalIntegral.integral_congr
+              intro z _
+              dsimp [F, G]
+              ring
+      _ = (∫ z in |r - s|..(r + s), 4 * F z)
+            + (∫ z in |r - s|..(r + s), (-(1 / τ)) * G z) := by
+              rw [intervalIntegral.integral_add (hFint.const_mul 4)
+                (hGint.const_mul (-(1 / τ)))]
+      _ = 4 * (∫ z in |r - s|..(r + s), F z)
+            + (-(1 / τ)) * (∫ z in |r - s|..(r + s), G z) := by
+              rw [intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul]
+      _ = 4 * (∫ z in |r - s|..(r + s), F z)
+          - (1 / τ) * (∫ z in |r - s|..(r + s), G z) := by
+              ring
+  rw [hsplit] at hraw
+  have hτne : τ ≠ 0 := hτ.ne'
+  let I : ℝ := ∫ z in |r - s|..(r + s), F z
+  let J : ℝ := ∫ z in |r - s|..(r + s), G z
+  have hsumIJ : 4 * I - (1 / τ) * J = 0 := by
+    simpa [I, J] using hraw
+  have hmain : J = 4 * τ * I := by
+    have hτinv : τ * (1 / τ) = 1 := by
+      field_simp [hτne]
+    have hEq : (1 / τ) * J = 4 * I := by
+      linarith
+    calc
+      J = (τ * (1 / τ)) * J := by rw [hτinv, one_mul]
+      _ = τ * ((1 / τ) * J) := by ring
+      _ = τ * (4 * I) := by rw [hEq]
+      _ = 4 * τ * I := by ring
+  simpa [I, J, F, G] using hmain
+
 @[simp] lemma chartMap_mk_pair_apply_zero (s u φ : ℝ) :
     chartMap (s, (u, φ)) 0 = s * u := by
   simp [chartMap_mk_pair]

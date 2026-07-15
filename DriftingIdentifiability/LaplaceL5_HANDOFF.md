@@ -147,7 +147,18 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
 - `shellDist`, `shellZ`; `laplaceKernel_rayProbe_{nonneg,le_one}`,
   `continuous_laplaceKernel_rayProbe`, `laplaceKernel_rayProbe_chart`.
 - **`kernelNormalizer_radialMixture₃`**: `Z̃_ν(r) = ∫ shellZ τ r s dν` — the ray
-  normalizer as a ν-mixture of per-shell zonal kernel averages. **← we are here.**
+  normalizer as a ν-mixture of per-shell zonal kernel averages.
+- **Update 2026-07-15:** `shellC`, `kernelNormalizer_companion_radialMixture₃`,
+  `shellD`, and `laplaceWeightedDisplacement_coord_radialMixture₃` are also done,
+  so the basic ray objects `Z̃`, `C̃`, and `D̃` all have ν-mixture formulas.
+  The T₃ vocabulary is in place (`shellAxial`, `shellRhoSq`, `shellT`,
+  `shellRhoSqOverDist`, `shellD = shellT - r·shellZ`), and the reverse-distance
+  polynomial core is now certified: `shellRhoPoly`, endpoint vanishing,
+  `P'(z)=4z(r²+s²-z²)`, and
+  `∫ P(z)e^{-z/τ} dz = 4τ∫ z(r²+s²-z²)e^{-z/τ} dz` over `[|r-s|,r+s]`.
+  **Current S-layer location:** push that polynomial identity through the
+  reverse `d`-substitution to prove the original T₃ shell identity, then prove
+  the ray-mass identity.
 
 ---
 
@@ -157,9 +168,9 @@ Follow `LaplaceHigherDim.md §4.10 (F3–F11)` and the file plan §4.10(F11).  S
 file split (each downstream file imports the previous):
 
 ### 5a. Finish `LaplaceRadialShell3.lean` (S-layer)
-1. **`shellC` (companion) is DONE** (`kernelNormalizer_companion_radialMixture₃`).
-   **`shellD`** (drift e₁-component) is the next lemma — all its API is already
-   scouted (do NOT re-research):
+1. **`shellC` and `shellD` are DONE** (`kernelNormalizer_companion_radialMixture₃`
+   and `laplaceWeightedDisplacement_coord_radialMixture₃`).  The original API
+   scout is kept here as historical context only:
    ```
    noncomputable def shellD (τ r s : ℝ) : ℝ :=
      (1/2) * ∫ u in Ioc (-1:ℝ) 1, Real.exp (-(1/τ) * shellDist r s u) * (s*u - r)
@@ -193,10 +204,12 @@ file split (each downstream file imports the previous):
      and `mul_exp_neg_le` in `LaplaceCompanion.lean` are **PRIVATE** — reprove the
      `≤ τ·e⁻¹` bound from `mul_exp_neg_div_le` instead.)  So `hC` uses `C = τ·e⁻¹`
      (or any `C ≥` that; `τ` also works).
-   Then reuse the exact `integral_radialMixture₃` + `integral_congr_ae` +
-   `integral_chartBase_zonal` skeleton of `kernelNormalizer_radialMixture₃`.
+   This has already been implemented using the `integral_radialMixture₃` +
+   `integral_congr_ae` + `integral_chartBase_zonal` skeleton of
+   `kernelNormalizer_radialMixture₃`.
 2. **T₃ per-shell identity** and the **ray-mass identity** `∫₀^∞ r²Z̄ dr = 2τ³`.
-   T₃ route (§4.10 refinement bullet, 2026-07-15): the **reverse polynomial**
+   The polynomial FTC core of the T₃ route is DONE.  Remaining T₃ route
+   (§4.10 refinement bullet, 2026-07-15): the **reverse polynomial**
    `d`-substitution `u(z) = (r²+s²−z²)/(2rs)` (NO √-singularity, no endpoint
    case split) via `intervalIntegral.integral_comp_mul_deriv'` with primitives
    `Pₖ' = zᵏe^{−z/τ}` (`k ≤ 4`), then per-exponential-atom `ring`.
