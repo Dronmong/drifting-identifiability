@@ -1329,6 +1329,24 @@ session-handoff spec).**
 - 2026-07-15: architecture derived and recorded; nothing implemented yet.
   Next actions: (i) RSI numerics for the `m̃ > r` regime, (ii) S-layer file
   `LaplaceRadialShell3.lean`.
+- 2026-07-15 (numerics, same session): **RSI robustly TRUE empirically; the
+  open `m̃ > r` case looks strictly safe.**  C# Simpson scan (script:
+  scratchpad `RsiScan.cs`; τ=1 wlog): 800 random 1–4-shell configs × 90
+  probes (72k samples) + 14k adversarial near+far 2-shell samples.  The
+  finite-difference check validates `m̃' = -1 + Cov_w(X, X/d)/τ` to 1e-10
+  (independent confirmation of the (F3)/(F6) formula derivation).  Results:
+  in the OPEN region `m̃ > r`, `Cov ≥ +0.04τ > 0` always (min over both
+  scans; adversarial min `+1.25τ`) — consistent with the within-shell
+  co-monotonicity argument (`s > r` shells have `Cov_within ≥ 0`).  Worst
+  case OVERALL is a *single shell just behind the probe* (`s/r ≈ 0.8`,
+  `m̃ < 0` region): `Cov ≈ -0.0457τ` — a 40× margin against the needed
+  `-2τ`, and it appears mixtures only improve on the single-shell worst
+  case.  So `RadialSlack₃` ships as a conjectured-true named hypothesis;
+  identified route to REMOVE it later (v2): law of total covariance over
+  the shell mixture + within-shell Chebyshev (`s ≥ r` shells free) +
+  explicit single-shell bound `Cov_shell ≥ -τ/8`-ish for `s < r` (closed
+  forms exist) + cross-shell mean-monotonicity — all elementary but gnarly;
+  not v1.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal
