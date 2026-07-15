@@ -1310,6 +1310,252 @@ open-ended.  Full lemma-level detail for every L-milestone: §4.8.
 
 ---
 
+### 4.10 L5 v1 implementation architecture (fourth pass, 2026-07-15): the `n = 3` explicit route
+
+*This pass supersedes the (R8) execution plan for v1.  L0–L4 are all closed
+(L4 = `laplaceSmoothingInjective_euclideanSpace`, LaplaceRadialFourier.lean:990,
+fully unconditional).  Re-deriving the radial system against the actual 1-d
+codebase (LaplaceGeneralConverseCompanionWronskian.lean,
+LaplaceUnconditionalConverse.lean:882–1010, LaplaceACPropagation.lean) exposed
+a dramatically cheaper architecture at `n = 3` in which every hard analytic
+layer of (R8) — sphere-measure API, zonal density, tangential IBP, the C²/Δ
+layer, `∫dμ/d` estimates — either dissolves into elementary closed-form algebra
+or is not needed at all.  Everything below is hand-verified (each identity
+re-derived twice, cross-checked against (R1)–(R4) and the 1-d code).*
+
+**Status log (append entries here as work proceeds; this section is the
+session-handoff spec).**
+
+- 2026-07-15: architecture derived and recorded; nothing implemented yet.
+  Next actions: (i) RSI numerics for the `m̃ > r` regime, (ii) S-layer file
+  `LaplaceRadialShell3.lean`.
+
+**(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
+the physically canonical dimension and the cleanest (`n = 3` makes the zonal
+density *uniform*, Archimedes).  General `n ≥ 3` (v2) follows the same skeleton
+with Gegenbauer densities `(1-u²)^{(n-3)/2}` and the Matérn ladder shifted; no
+step below is `n = 3`-specific in *structure*, only in the constants and in the
+closed forms being elementary.
+
+**(F1) Radial measures via an explicit chart — no `toSphere`, no `bind`.**
+Define `sphereChart (u φ : ℝ) : EuclideanSpace ℝ (Fin 3) :=
+!₂[u, √(1-u²)·cos φ, √(1-u²)·sin φ]` and
+
+```
+radialMixture₃ (μ̃ : Measure ℝ) : Measure (EuclideanSpace ℝ (Fin 3)) :=
+  Measure.map (fun z : ℝ × (ℝ × ℝ) => z.1 • sphereChart z.2.1 z.2.2)
+    (μ̃.prod chartBase),
+chartBase := (4π)⁻¹ • ((volume.restrict (Ioc (-1) 1)).prod
+                        (volume.restrict (Ioc (-π) π)))
+```
+
+with hypotheses `[IsProbabilityMeasure μ̃]` and `hsupp : μ̃ (Iio 0) = 0`
+(measures on ℝ, not ℝ≥0, to keep 1-d calculus painless; `s = 0` gives the
+origin atom automatically since `0 • Φ = 0`).  ONE pushforward of ONE product
+measure: no kernel-measurability, no `Measure.bind`.  Archimedes (`n = 3`
+hat-box: the `u`-marginal of the sphere is uniform) holds *by definition*.
+Integral collapse: `∫ f d(radialMixture₃ μ̃) = ∫∫∫ f(s•Φ(u,φ)) (4π)⁻¹ dφ du dμ̃`
+by `integral_map` + `integral_prod`.  Key algebra: `‖s•Φ(u,φ)‖ = s` (s ≥ 0,
+u ∈ [-1,1]), `⟪s•Φ, e₁⟫ = s·u`, and for the probe `x = r•e₁`:
+`d² = ‖r•e₁ - s•Φ‖² = r² + s² - 2rsu` — no φ-dependence, so every ray
+integrand collapses to a 1-d `u`-integral.
+
+**(F2) The `d`-substitution and the Matérn-ladder closed forms.**  For
+`r, s > 0`, substituting `u ↦ d = √(r²+s²-2rsu)` (`du = -(d/rs)·dd`, range
+`d : r+s → |r-s|`) turns every per-shell kernel into an elementary integral.
+With the ladder profiles
+
+```
+G₀(a) = e^{-a/τ},  G₁(a) = (a+τ)e^{-a/τ},  G₂(a) = (a²+3τa+3τ²)e^{-a/τ},
+G₃(a) = (a³+3τa²+6τ²a+6τ³)e^{-a/τ}   (∫ aᵏe^{-a/τ}-antiderivative ladder:
+∫ d·G₀ dd = -τG₁, ∫ (d²+τd)G₀-type dd = -τG₂, ∫ d³G₀ dd = -τG₃;
+ladder ODE: G₁'' = G₁/τ² - (2/τ)G₀,  G₂'' = G₂/τ² - (4/τ)G₁),
+```
+
+the five per-shell kernels (`E₁ := G-at-|r-s|`, `E₂ := G-at-(r+s)` structure;
+each is `(poly in r,s,τ)·e^{-|r-s|/τ} + (poly)·e^{-(r+s)/τ}`):
+
+```
+Z̄(r,s) := ⨍ e^{-d/τ}        = (τ/(2rs))·[G₁(|r-s|) - G₁(r+s)]
+C̄(r,s) := ⨍ (d+τ)e^{-d/τ}   = (τ/(2rs))·[G₂(|r-s|) - G₂(r+s)]  (companion)
+N̄(r,s) := ⨍ (1/d)e^{-d/τ}   = (τ/(2rs))·[G₀(|r-s|) - G₀(r+s)]  (Green; unused v1)
+B̄(r,s) := ⨍ (t-r)e^{-d/τ}   = (τ/(4r²s))·[(s²-r²)(G₁(|r-s|)-G₁(r+s))
+                                            - (G₃(|r-s|)-G₃(r+s))]  (drift)
+Q̄(r,s) := ⨍ (X²/d)e^{-d/τ}  = (1/(8r³s))·∫_{|r-s|}^{r+s}(s²-r²-d²)² e^{-d/τ} dd
+```
+
+(t = ⟨y,e₁⟩, X = t - r = (s²-r²-d²)/(2r) after substitution; ρ² = s²-t²;
+`s = 0` degenerates to `Z̄ = e^{-r/τ}` etc.)  **Crucial regularity bonus:
+`G₁(|·|) and G₂(|·|) are C² on ℝ** (`G₁(|a|) = τ + 0·|a| - a²/(2τ) + O(|a|³)` —
+the kink cancels; `G₂` likewise) — so `Z̄, C̄` are C² in `r` *everywhere
+including r = s*, for every shell.  All (R6) worries (`∫dμ/d`, shells through
+the probe, n=2-style log divergences) are gone at the source.  Uniform
+dominators for differentiation under `∫dμ̃`: the Lipschitz-pairing bound
+`(1/(2s))|G(|r-s|) - G(r+s)| ≤ Lip(G)·min(r,s)/s ≤ Lip(G)` handles `s → 0`.
+
+**(F3) Ray objects and the C¹ layer (all that's needed — no C² layer!).**
+`Z̃_μ(r) = ∫ Z̄(r,s) dμ̃`, `C̃_μ(r) = ∫ C̄ dμ̃`, `D̃_μ(r) = ∫ B̄ dμ̃`
+(= e₁-component of the drift numerator `∫ e^{-d/τ}(y - re₁) dμ(y)`; tangential
+components vanish by the trivial φ-integrals).  `Z̃ > 0` everywhere.
+Differentiation under the μ̃-integral (dominated, Lipschitz-pairing bounds)
+gives `Z̃, C̃, D̃ ∈ C¹((0,∞))` with `C̃' = D̃/τ` (per-shell: `∂_r C̄ = B̄/τ`,
+the ray restriction of L0's `∇ψ = D`).  The zero-drift reduction:
+`ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q` at `x = r•e₁` gives
+`D̃_p Z̃_q = D̃_q Z̃_p`, so `m̃ := D̃_p/Z̃_p = D̃_q/Z̃_q` is the common tilted
+displacement, `m̃ ∈ C¹` by quotient rule.  **The system never needs `Z̃''`,
+`w̃'`, or any second derivative** — see (F5).
+
+**(F4) The closure identity (the radial analogue of 1-d `C = τD' + 2τZ`).**
+Hand-derived and double-checked:
+
+```
+(CLOSURE, n=3)     C̃_μ = τ·D̃_μ' + 4τ·Z̃_μ + (2τ/r)·D̃_μ      on (0,∞)
+(general n:        C̃  = τD̃' + (n+1)τZ̃ + (n-1)τD̃/r ;  n=1 is the proven 1-d identity)
+```
+
+Lean route: per-shell algebraic identity `C̄ = τ·∂_r B̄ + 4τ·Z̄ + (2τ/r)·B̄`
+— pure polynomial–exponential algebra in the two atoms `e^{-|r-s|/τ}`,
+`e^{-(r+s)/τ}` (case split `r ≶ s`, then `ring`-normalizable per atom) — then
+integrate `dμ̃`.  **The tangential IBP (T) of (R2)/(R8) is therefore NEVER
+formalized as an IBP: it dissolves into this closed-form identity.**  Same for
+the (T)-corollaries used by the sign layer (F6).
+
+**(F5) The K̂-system (verified derivation).**  Set `w̃ := Z̃_p'Z̃_q - Z̃_q'Z̃_p`,
+`v := r²·w̃`, `K := C̃_pZ̃_q - C̃_qZ̃_p`, `K̂ := r²·K`.  Under zero drift, using
+only (F3)+(F4) and algebra:
+
+```
+K = τ·m̃·w̃            (companion defect = τ·m̃·Wronskian; so K̂ = τ·m̃·v)
+K' = C̃_pZ̃_q' - C̃_qZ̃_p' = -τ·(m̃' + 4 + 2m̃/r)·w̃
+K̂' = -τ·(m̃' + 4)·v     (the r²-weight absorbs the geometric term — (R3) verified)
+```
+
+On `{m̃ ≠ 0}`: `v = K̂/(τm̃)`, so `K̂' = -[(m̃'+4)/m̃]·K̂` — the Abel ODE with
+coefficient exactly of the 1-d wrappers' hard-coded shape `c = 2·μ̂/m̃` for
+**`μ̂ := (m̃'+4)/2`** (1-d had `(m'+2)/2`).  The LaplaceACPropagation layer
+(whose core lemmas are stated for a *general* coefficient `c`, with `2μ/m`
+only in thin wrappers) applies **unchanged** — no symbolic-pair edit needed.
+
+**(F6) Sign layer — better than (R5): the open region shrinks to `m̃ > r`.**
+Pointwise formulas (from (F3) quotient rule + the per-shell identity
+`∂_r B̄ = -Z̄ + Q̄/τ`, again pure algebra):
+`m̃' + 1 = (1/τ)·Cov_w(X, X/d)` where `Cov_w` is the `e^{-d/τ}·μ`-tilted
+covariance at probe `r`.  Then:
+
+- **Zero case (free):** `m̃(r) = 0 ⟹ m̃' + 1 = E_w[X²/d]/τ ≥ 0`, so `μ̂ ≥ 3/2`.
+- **`m̃ ≤ r` case (PROVED, unified — subsumes all of `m̃ ≤ 0`):**
+  Cauchy–Schwarz in `L²(w̄dμ)` gives `|m̃| ≤ E|X| ≤ √(E[X²/d]·E[d])`;
+  the (T)-corollary `E_w[d] = E_w[X²/d] + 2τ·c(r)/r` (`c := E_w[t] = r + m̃`;
+  per-shell algebra + `d = X²/d + ρ²/d` a.e.) with `m̃ ≤ r ⟹ c ≤ 2r` yields
+  `|m̃| ≤ Q + 2τ`, hence `Cov ≥ Q - m̃·|E[X/d]| ≥ -2τ`, i.e. **`m̃' ≥ -3` and
+  `μ̂ ≥ 1/2` pointwise on `{m̃ ≤ r}`** — full RSI strength with the same margin
+  as 1-d.  (`|X/d| ≤ 1`; `|X| = √(X²/d)·√d` off the μ-null axis.)
+- **`m̃ > r` (OPEN — the far-tilt regime, `E_w[t] > 2r`):** v1 ships the named
+  hypothesis **`RadialSlack₃ : ∀ r > 0, r < m̃ r → -3 ≤ m̃' r`** (μ̂ ≥ 1/2
+  there).  Within-shell covariance is ≥ 0 for every shell with `s > r`
+  (`X` and `X/d` co-monotone in `u` iff `t < s²/r`, always true for `s > r`),
+  so a violation needs cross-shell anticorrelation against the `2τ` buffer —
+  numerics spec: near+far shell mixtures, scan `Q + 2τ - m̃E[X/d]` and `m̃'+3`
+  directly, focused on configurations with `m̃ > r`.
+- `radialCentroid_nonneg (c ≥ 0)` is NOT on the critical path (dropped).
+
+**(F7) Trichotomy over `(0,∞)` — exact port map of :882–:1010.**  For
+`x₀ ∈ (0,∞)`:
+- `m̃(x₀) = 0`: `K̂(x₀) = τ·m̃·v = 0` directly.
+- `m̃(x₀) < 0`: if a zero of `m̃` exists in `[x₀,∞)`, take the infimum zero β:
+  on `(l₁, β)` use `abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower`
+  (edge at β; near β, `m̃` is small < r so μ̂ ≥ 1/2 is in the PROVED region;
+  `m̃ ≥ -L(β-t)` from local m̃'-boundedness via MVT).  Else `m̃ < 0` on the whole
+  ray: `abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg` with
+  `K̂ → 0 at ∞` (F8).
+- `m̃(x₀) > 0`: if a zero exists in `(0, x₀]`, take the supremum zero α: on
+  `(α, b)` (∀b) use `abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper`
+  (edge at α; near α proved-region μ̂ ≥ 1/2; `m̃ ≤ L(t-α)` via MVT).  Else
+  `m̃ > 0` on all of `(0, x₀]`: **r = 0 is the universal edge**: `m̃(0⁺) = 0`
+  with `m̃ ≤ L·r` near 0 (local m̃'-bound; no continuity of m̃' needed —
+  pointwise derivative bounds + MVT), μ̂ ≥ 1/2 near 0 (proved region if
+  `m̃ ≤ r`, RadialSlack₃ if `r < m̃ ≤ Lr`), so `c ≥ 1/(L·r)` — the same
+  log-singularity lemma fires with `a = 0`.  NO left-tail lemma exists or is
+  needed (`(0,∞)` has no `-∞` end; `m̃ > 0`-rays terminate at the r=0 edge).
+- Needed K̂ inputs: continuity on `(0,∞)` ✓(C¹); `HasDerivAt K̂ (-τ(m̃'+4)v)` ✓;
+  boundedness near each edge ✓; `|K̂| ≤ C·r²` near 0 (`|C̃|,|Z̃| ≤ const`,
+  `|D̃| ≤ τ/e`).
+
+**(F8) Boundary at ∞.**  `|K̂| ≤ r²(C̃_pZ̃_q + C̃_qZ̃_p)` and each factor
+splits `s ≶ r/2`: `Z̃_μ(r) ≤ G₁-scale·e^{-r/(2τ)} + μ̃([r/2,∞))`.  Under
+**first moments** (`∫ s dμ̃ < ∞`, both measures — the v1 hypothesis, =
+(n-1)/2-moments at n=3): `r·μ̃([r,∞)) = r∫1_{s≥r} ≤ ∫s·1_{s≥r} → 0` by
+dominated convergence — genuinely → 0, not just bounded — so
+`r²·tail_p(r/2)·tail_q(r/2) → 0` and `K̂ → 0` at ∞ **along the full filter**
+(no subsequence subtleties).
+
+**(F9) Endgame — ray-only up to the last step, then L4.**
+1. `K̂ ≡ 0 ⟹ v ≡ 0`: on `{m̃≠0}`, `v = K̂/(τm̃) = 0`; on `int{m̃=0}`,
+   `0 = K̂' = -τ(m̃'+4)v = -4τv`; the union is dense and `v` continuous —
+   reuse `continuous_eq_zero_of_dense_zeroSet` (LaplaceACPropagation:1343).
+2. `w̃ = v/r² ≡ 0 ⟹ (Z̃_p/Z̃_q)' ≡ 0 ⟹ Z̃_p = c·Z̃_q` on `(0,∞)`.
+3. **`c = 1` by the ray mass identity** (new, s-independent per shell —
+   verified): `∫₀^∞ r²·Z̄(r,s) dr = 2τ³` for every `s ≥ 0` (including s = 0),
+   via `∫₀^∞ r[G₁(|r-s|)-G₁(r+s)]dr = 2s∫₀^∞G₁ = 4sτ²`; Tonelli ⟹
+   `∫₀^∞ r²Z̃_μ = 2τ³` for EVERY radial-mixture probability μ — so `c = 1`.
+4. Rotation invariance ⟹ `Z_p = Z_q` on all of E: prove
+   `kernelNormalizer (laplaceKernel τ) (radialMixture₃ μ̃) x = Z̃(‖x‖)` from
+   O(3)-invariance of `radialMixture₃`, which follows from the **polar
+   formula** `∫_{ℝ³} f = ∫₀^∞ 3·vol(B₁)·s²·(⨍_{shell s} f) ds`-shape proved by
+   Fubini + `polarCoord` (Mathlib has `integral_comp_polarCoord`-form) + one
+   2-d change of variables `(R,u) ↦ (Ru, R√(1-u²))` (Jacobian `R/√(1-u²)`;
+   at n=3 the √ cancels exactly — Archimedes), THEN invariance of volume under
+   linear isometries transfers to the chart measure (for any isometry R fixing
+   0 and any radial-profile test slot).  Point-transport: Householder
+   reflection through the bisector hyperplane of `x` and `‖x‖e₁`
+   (`reflection` in Mathlib's InnerProductSpace/Projection) maps `‖x‖e₁ ↦ x`.
+5. Feed L4: `laplaceKernelNormalizer_injective_euclideanSpace_of_fourier_ne_zero`
+   / `laplaceSmoothingInjective_euclideanSpace` (ι := Fin 3) concludes
+   **`p = q`**.
+   Fallback if the polar/invariance CoV fights Lean: the half-line Green
+   uniqueness on `(1-τ²∂²)(rZ̃)`-data (kernel `e^{-|r-s|/τ} - e^{-(r+s)/τ}`,
+   Wronskian ≡ 1) or a 1-d charFun argument on the odd extension — both
+   ray-only, no invariance needed.
+
+**(F10) What is NOT built (dissolved layers).**  No `Measure.toSphere`, no
+zonal-density construction, no `Measure.bind`, no tangential-IBP lemma, no
+C²/Δ layer, no `∫dμ/d` local-uniform estimates, no second-derivative
+formulas, no `radialCentroid_nonneg`, no signed measures.  The only genuinely
+new analytic ingredients are: one interval `d`-CoV, dominated C¹
+differentiation with Lipschitz-pairing dominators, one L² Cauchy–Schwarz on
+`w̄dμ`, per-shell polynomial–exponential `ring` identities, and (for the
+endgame only) one 2-d CoV + linear-isometry volume invariance.
+
+**(F11) File plan (v1).**
+1. `LaplaceRadialShell3.lean` — chart, `radialMixture₃`, integral collapse,
+   `d`-CoV, the five closed forms + s=0 forms, per-shell identities
+   (closure (F4), `∂_rB̄ = -Z̄ + Q̄/τ`, (T)-corollary), Lipschitz-pairing
+   dominator lemmas, ray mass identity per shell.
+2. `LaplaceRadialRay3.lean` — `Z̃/C̃/D̃/m̃`, positivity, C¹ layer, mixture
+   closure, zero-drift ray reduction, `m̃'`-formula, sign layer
+   (zero case, `m̃ ≤ r` C–S case, `RadialSlack₃`), local m̃'-bounds/MVT
+   Lipschitz lemmas.
+3. `LaplaceRadialSystem3.lean` — `w̃, v, K, K̂`, the (F5) identities,
+   `|K̂| ≤ Cr²`, `K̂ → 0` at ∞ (first moments), trichotomy (F7) ⟹ `K̂ ≡ 0`,
+   endgame steps 1–3 (`Z̃_p = Z̃_q`).
+4. `LaplaceRadialInvariance3.lean` — polar formula, O(3)-invariance,
+   `Z_p(x) = Z̃_p(‖x‖)`, Householder transport.
+5. `LaplaceRadialConverse3.lean` — headline
+   `laplaceZeroDrift_identifies_of_radialMixture₃` (hypotheses:
+   `IsProbabilityMeasure μ̃_p/q`, supports in `[0,∞)`, first moments,
+   `RadialSlack₃` for both, `ZeroDrift`) + audit entries.  If numerics
+   confirm/prove `m̃ > r` later, drop `RadialSlack₃` for the unconditional
+   form.
+
+**Risks & fallbacks.**  (i) `RadialSlack₃` open — numerics decide honesty
+(conjectured-true hypothesis vs necessary); theorem is real either way.
+(ii) Endgame invariance CoV — bounded, with two ray-only fallbacks (F9.5).
+(iii) Mathlib L²-C-S form — worst case, elementary `(∫fg)² ≤ ∫f²∫g²` by
+expanding `∫∫(f(x)g(y)-f(y)g(x))² ≥ 0`.  (iv) The `!₂[..]` notation /
+EuclideanSpace-literal API — cosmetic only.
+
+---
+
 ## 6. Recon inventory (verified this pass)
 
 | asset | location | note |
