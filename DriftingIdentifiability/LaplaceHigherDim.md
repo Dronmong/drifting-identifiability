@@ -942,35 +942,75 @@ laplaceSmoothingInjective_euclideanSpace_of_fourier_ne_zero
 ```
 
 These theorems are axiom-free.  The Euclidean-space versions discharge
-integrability of `x ↦ exp (-‖x‖/τ)` by product domination in coordinates, so
-the remaining L4 gap is now precisely the radial Fourier
-nowhere-vanishing/positivity theorem from the subordination analysis above, not
-the profile-integrability, measure-cancellation, or characteristic-function
-uniqueness layers.
+integrability of `x ↦ exp (-‖x‖/τ)` by product domination in coordinates.  The
+remaining radial Fourier nowhere-vanishing/positivity layer described below has
+now also been discharged in `LaplaceRadialFourier.lean`.
 
-**Subordination crux, foundation started (2026-07-14, `LaplaceRadialFourier.lean`,
-machine-checked, axiom-free).**  The `hbase_ne` gap reduces to the Glasser
-integral `∫_{(0,∞)} e^{−x²−k²/x²} dx = (√π/2)e^{−2k}` (`k ≥ 0`).  Foundation
-proved: `integral_inv_sq_exp_neg_div_sq` — `∫_{(0,∞)} x⁻² e^{−c/x²} dx =
-√(π/c)/2` by the `x ↦ 1/x` substitution (`integral_comp_rpow_Ioi` at `p = −1`)
-reducing to `integral_gaussian_Ioi`; and `glasserKernel_integrableOn`
-(dominated by `e^{−x²}`).  The reciprocal-Gaussian value is exactly the integrable
-dominator for the differentiation-under-the-integral step below.
-Precise remaining route (est. ~250 lines):
-1. **Self-reciprocal substitution** `F(k) = k·∫_{(0,∞)} x⁻² e^{−x²−k²/x²} dx`
-   for `k > 0` — via `integral_comp_rpow_Ioi` (`p=−1`) + `integral_comp_mul_left_Ioi`
-   + the kernel symmetry `glasserKernel k (k/x) = glasserKernel k x`.
-2. **`F'(k) = −2 F(k)`** for `k > 0` — `hasDerivAt_integral_of_dominated_loc_of_deriv_le`
-   with `bound(x) = 3k₀·x⁻² e^{−(k₀/2)²/x²}` (integrable by
-   `integral_inv_sq_exp_neg_div_sq`), then `∫ ∂ₖ = −2k·(F(k)/k) = −2F(k)` by (1).
-3. **ODE** ⇒ `F(k) = (√π/2)e^{−2k}` (`constant_of_derivWithin_zero` on
-   `k ↦ F(k)e^{2k}`, `F(0) = √π/2` from `integral_gaussian_Ioi 1`).
-4. **Subordination** `e^{−a} = (2/√π)∫_{(0,∞)} e^{−s²} e^{−a²/(4s²)} ds`
-   (set `k = a/2` in the Glasser integral).
-5. **`hbase_ne`**: `𝓕(x↦e^{−‖x‖/τ})(w) = ∫_{(0,∞)} (2/√π)e^{−s²}·
-   𝓕(e^{−‖·‖²/(4τ²s²)})(w) ds > 0` by Tonelli +
-   `fourier_gaussian_innerProductSpace` (positive Gaussian FT), then feed
-   `laplaceSmoothingInjective_euclideanSpace_of_fourier_ne_zero`.
+**Subordination crux, scalar identity closed (2026-07-14,
+`LaplaceRadialFourier.lean`, machine-checked, axiom-free).**  The scalar
+Glasser/subordination engine is now implemented:
+
+```
+integral_inv_sq_exp_neg_div_sq
+integrableOn_inv_sq_exp_neg_div_sq
+glasserKernel_integrableOn
+integral_inv_sq_mul_glasserKernel_eq_inv_mul_integral
+glasserIntegral_eq_mul_integral_inv_sq_mul
+hasDerivAt_glasserIntegral
+glasserIntegral_zero
+hasDerivAt_glasserScaled
+glasserScaled_eq_of_pos
+tendsto_glasserIntegral_nhdsWithin_zero
+tendsto_glasserScaled_nhdsWithin_zero
+glasserIntegral_eq_closed_of_pos
+subordination_integral_eq_of_pos
+exp_neg_eq_subordination_of_pos
+```
+
+In words: the reciprocal-Gaussian dominator is integrable; the
+self-reciprocal substitution proves
+`F(k) = k·∫ x⁻² e^{−x²−k²/x²}`; dominated differentiation gives
+`F'(k) = −2F(k)` on `(0,∞)`; the ODE plus the right-limit at `0` gives
+`F(k) = (√π/2)e^{−2k}`; and setting `k = a/2` gives the normalized
+subordination identity
+`e^{−a} = (2/√π)∫_{(0,∞)} e^{−s²}e^{−a²/(4s²)} ds` for `a > 0`.
+
+Status refinement (2026-07-14, Codex pass).  The scalar crux and global Fourier
+packaging have now been pushed through to the final `hbase_ne` theorem in
+`LaplaceRadialFourier.lean`, still axiom-free:
+
+```
+exp_neg_eq_subordination_of_nonneg
+fourier_gaussian_sq_norm_eq_real
+fourier_gaussian_sq_norm_re_pos
+fourier_gaussian_sq_norm_ne_zero
+laplaceRadialSubordinationScalar
+laplaceEuclideanFourierBase_eq_subordination_integral
+laplaceRadialSubordinationScalar_eq_gaussian
+laplaceRadialSubordinationGaussianCoeff_pos
+laplaceRadialSubordinationGaussianMass_factor
+integrableOn_laplaceRadialSubordinationGaussianMass
+integral_norm_laplaceRadialSubordination_fourier_slice
+integrable_laplaceRadialSubordination_fourier_slice
+integrable_laplaceRadialSubordination_fourier_product
+laplaceRadialSubordination_inner_fourier_eq
+laplaceRadialSubordination_inner_fourier_re_pos
+fourier_laplaceEuclideanFourierBase_eq_subordination_integral
+integrable_laplaceRadialSubordination_inner_fourier
+fourier_laplaceEuclideanFourierBase_re_pos
+fourier_laplaceEuclideanFourierBase_ne_zero
+laplaceSmoothingInjective_euclideanSpace
+```
+
+The closed path is exactly the intended one: product integrability of the
+phase-weighted subordination integrand follows from the exact spatial norm
+integral and the `s^n e^{-s²}` Gaussian-mass estimate; Fubini identifies the
+Fourier transform of the radial Laplace profile with the positive `s`-integral
+of positive Gaussian Fourier transforms; strict positivity gives nonvanishing;
+and the existing `laplaceSmoothingInjective_euclideanSpace_of_fourier_ne_zero`
+gate yields the fully discharged predicate theorem
+`laplaceSmoothingInjective_euclideanSpace`.  No new axiom or conditional theorem
+has been introduced.
 
 **L5 — radial-measure converse (D2.b).**  *Superseded by the deep-dive plan
 §4.9(R8) — kept for the original reasoning; the §4.9 version eliminates the
