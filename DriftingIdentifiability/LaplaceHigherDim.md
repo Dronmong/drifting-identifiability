@@ -1396,6 +1396,15 @@ session-handoff spec).**
   `Pₖ' = zᵏe^{-z/τ}` (k ≤ 4) and per-exponential-atom `ring`/
   `linear_combination`.  `ρ²(z) = [(z²-(r-s)²)((r+s)²-z²)]/(4r²)` vanishes
   at both endpoints.  The u-IBP route to T₃ is abandoned (√-singularity).
+- 2026-07-15 (S-layer, drift component — **committed after green build**):
+  `shellD` is implemented in `LaplaceRadialShell3.lean`, together with the
+  public coordinate bound for `laplaceWeightedDisplacement`, the chart collapse
+  `(laplaceWeightedDisplacement τ (rayProbe r) (s • sphereChart u φ)) 0 =
+  exp (-(1/τ)·shellDist r s u)·(s·u-r)`, and the ray drift-coordinate mixture
+  theorem `laplaceWeightedDisplacement_coord_radialMixture₃`.  This completes
+  the three basic ray object formulas `Z̃`, `C̃`, and `D̃` as `ν`-mixtures of
+  per-shell zonal averages.  Remaining S-layer: T₃ per-shell identity and the
+  ray-mass identity.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

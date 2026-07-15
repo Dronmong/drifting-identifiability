@@ -343,4 +343,98 @@ lemma kernelNormalizer_companion_radialMixture₃ (τ : ℝ) (hτ : 0 < τ)
     rw [chartMap_mk_pair]
     exact laplaceCompanionKernel_rayProbe_chart hu2 τ r s φ
 
+/-! ## Ray objects: the drift numerator profile -/
+
+/-- Per-shell zonal average of the first coordinate of the Laplace-weighted
+displacement:
+`D̄(r,s) = (1/2)∫_{-1}^{1} e^{-d(r,s,u)/τ}(s u - r) du`. -/
+noncomputable def shellD (τ r s : ℝ) : ℝ :=
+  (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+    Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r)
+
+lemma continuous_laplaceWeightedDisplacement_rayProbe_coord (τ r : ℝ) :
+    Continuous fun y : EuclideanSpace ℝ (Fin 3) =>
+      (laplaceWeightedDisplacement τ (rayProbe r) y) 0 := by
+  unfold laplaceWeightedDisplacement laplaceKernel
+  fun_prop
+
+/-- Public local replacement for the private bound in `LaplaceCompanion.lean`:
+the first coordinate of the weighted displacement is uniformly bounded by
+`τ`. -/
+lemma abs_laplaceWeightedDisplacement_rayProbe_coord_le
+    (τ : ℝ) (hτ : 0 < τ) (r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
+    |(laplaceWeightedDisplacement τ (rayProbe r) y) 0| ≤ τ := by
+  have hcoord :
+      |(laplaceWeightedDisplacement τ (rayProbe r) y) 0| ≤
+        ‖laplaceWeightedDisplacement τ (rayProbe r) y‖ := by
+    simpa [Real.norm_eq_abs] using
+      (PiLp.norm_apply_le (laplaceWeightedDisplacement τ (rayProbe r) y) (0 : Fin 3))
+  refine hcoord.trans ?_
+  unfold laplaceWeightedDisplacement laplaceKernel
+  rw [norm_smul, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+  rw [norm_sub_rev y (rayProbe r)]
+  set d := ‖rayProbe r - y‖
+  have hmul : d * Real.exp (-d / τ) ≤ τ * Real.exp (-1) :=
+    mul_exp_neg_div_le hτ (norm_nonneg _)
+  have he : Real.exp (-1 : ℝ) ≤ 1 := by
+    rw [Real.exp_le_one_iff]
+    norm_num
+  have hτe : τ * Real.exp (-1 : ℝ) ≤ τ := by
+    nlinarith [mul_le_mul_of_nonneg_left he hτ.le]
+  have harg : -(1 / τ) * d = -d / τ := by ring
+  rw [harg]
+  calc
+    Real.exp (-d / τ) * d = d * Real.exp (-d / τ) := by ring
+    _ ≤ τ * Real.exp (-1) := hmul
+    _ ≤ τ := hτe
+
+lemma laplaceWeightedDisplacement_rayProbe_chart_coord {u : ℝ} (hu : u ^ 2 ≤ 1)
+    (τ r s φ : ℝ) :
+    (laplaceWeightedDisplacement τ (rayProbe r) (s • sphereChart u φ)) 0 =
+      Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r) := by
+  unfold laplaceWeightedDisplacement
+  rw [PiLp.smul_apply, PiLp.sub_apply, laplaceKernel_rayProbe_chart hu τ r s φ]
+  simp only [PiLp.smul_apply, sphereChart_apply_zero, rayProbe_apply_zero, smul_eq_mul]
+
+/-- **The first coordinate of the drift numerator is a `ν`-mixture of per-shell
+zonal displacement averages.** -/
+lemma laplaceWeightedDisplacement_coord_radialMixture₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    (∫ y, laplaceWeightedDisplacement τ (rayProbe r) y ∂(radialMixture₃ ν)) 0
+      = ∫ s, shellD τ r s ∂ν := by
+  let F : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3) :=
+    fun y => laplaceWeightedDisplacement τ (rayProbe r) y
+  have hFint : Integrable F (radialMixture₃ ν) :=
+    laplaceWeightedDisplacement_integrable τ hτ (radialMixture₃ ν) (rayProbe r)
+  have hcoord :
+      (∫ y, F y ∂(radialMixture₃ ν)) 0 =
+        ∫ y, (F y) 0 ∂(radialMixture₃ ν) := by
+    have hproj :=
+      (EuclideanSpace.proj (0 : Fin 3)).integral_comp_comm (μ := radialMixture₃ ν) hFint
+    simpa [F, EuclideanSpace.coe_proj] using hproj.symm
+  change (∫ y, F y ∂(radialMixture₃ ν)) 0 = ∫ s, shellD τ r s ∂ν
+  rw [hcoord]
+  have hf : Integrable (fun y : EuclideanSpace ℝ (Fin 3) => (F y) 0) (radialMixture₃ ν) :=
+    ⟨(continuous_laplaceWeightedDisplacement_rayProbe_coord τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ)
+        (ae_of_all _ (fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceWeightedDisplacement_rayProbe_coord_le τ hτ r y))⟩
+  rw [integral_radialMixture₃ ν hf]
+  refine integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))
+  change (∫ w : ℝ × ℝ, (F (chartMap (s, w))) 0 ∂chartBase) = shellD τ r s
+  unfold shellD
+  refine integral_chartBase_zonal
+    (G := fun w : ℝ × ℝ => (F (chartMap (s, w))) 0)
+    (g := fun u => Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r))
+    (C := τ) ?_ ?_ ?_
+  · exact (continuous_laplaceWeightedDisplacement_rayProbe_coord τ r).comp
+      (continuous_chartMap.comp (by fun_prop))
+  · intro w
+    exact abs_laplaceWeightedDisplacement_rayProbe_coord_le τ hτ r _
+  · intro u φ hu
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    rw [chartMap_mk_pair]
+    exact laplaceWeightedDisplacement_rayProbe_chart_coord hu2 τ r s φ
+
 end DriftingIdentifiability
