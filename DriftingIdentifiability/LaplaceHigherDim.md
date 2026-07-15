@@ -1431,6 +1431,12 @@ session-handoff spec).**
   integrals defining `shellT` and `shellRhoSqOverDist` into interval integrals,
   apply `intervalIntegral.integral_comp_mul_deriv'` to `shellDistSubst`, and
   finish with `shellRhoPoly_integral_identity`.
+- 2026-07-15 (S-layer, set-to-interval bridge — **green focused build**): added
+  the generic rewrite `integral_Ioc_neg_one_one_eq_interval` and shell-specific
+  interval forms `shellT_eq_intervalIntegral` and
+  `shellRhoSqOverDist_eq_intervalIntegral`.  The remaining T₃ proof can now
+  start from interval integrals on `[-1,1]` and apply the already-certified
+  reverse-distance substitution algebra directly.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

@@ -159,9 +159,11 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   The reverse-distance substitution algebra is also in place:
   `u(z)=(r²+s²-z²)/(2rs)`, `u'=-z/(rs)`, endpoints `u(|r-s|)=1`,
   `u(r+s)=-1`, distance recovery `shellDist r s (u(z))=z`, and the pullbacks
-  for `ρ²` and `s·u(z)`.  **Current S-layer location:** formalize the
-  set-integral/interval change-of-variables layer to prove the original T₃
-  shell identity, then prove the ray-mass identity.
+  for `ρ²` and `s·u(z)`.  The set-integral bridge is also done:
+  `shellT_eq_intervalIntegral` and `shellRhoSqOverDist_eq_intervalIntegral`.
+  **Current S-layer location:** apply `intervalIntegral.integral_comp_mul_deriv'`
+  with `shellDistSubst` to prove the original T₃ shell identity, then prove the
+  ray-mass identity.
 
 ---
 

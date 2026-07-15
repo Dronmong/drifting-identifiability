@@ -373,6 +373,24 @@ noncomputable def shellRhoSqOverDist (τ r s : ℝ) : ℝ :=
   (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
     Real.exp (-(1 / τ) * shellDist r s u) * (shellRhoSq s u / shellDist r s u)
 
+lemma integral_Ioc_neg_one_one_eq_interval (f : ℝ → ℝ) :
+    (∫ u in Ioc (-1 : ℝ) 1, f u) = ∫ u in (-1 : ℝ)..1, f u := by
+  rw [← intervalIntegral.integral_of_le (show (-1 : ℝ) ≤ 1 by norm_num)]
+
+lemma shellT_eq_intervalIntegral (τ r s : ℝ) :
+    shellT τ r s =
+      (1 / 2) * ∫ u in (-1 : ℝ)..1,
+        Real.exp (-(1 / τ) * shellDist r s u) * (s * u) := by
+  unfold shellT
+  rw [integral_Ioc_neg_one_one_eq_interval]
+
+lemma shellRhoSqOverDist_eq_intervalIntegral (τ r s : ℝ) :
+    shellRhoSqOverDist τ r s =
+      (1 / 2) * ∫ u in (-1 : ℝ)..1,
+        Real.exp (-(1 / τ) * shellDist r s u) * (shellRhoSq s u / shellDist r s u) := by
+  unfold shellRhoSqOverDist
+  rw [integral_Ioc_neg_one_one_eq_interval]
+
 /-- The polynomial numerator for `ρ²` after the reverse distance substitution
 `u = (r²+s²-z²)/(2rs)`:
 `ρ² = ((z²-(r-s)²)((r+s)²-z²))/(4r²)`. -/
