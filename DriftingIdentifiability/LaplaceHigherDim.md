@@ -930,6 +930,24 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
   LaplaceSmoothingInjective (EuclideanSpace ℝ ι) τ` (the predicate from
   LaplaceInjectivity.lean:439 — defined generically, anticipating exactly this).
 
+Status note (2026-07-14).  The profile-integrability and Fourier-cancellation
+shell are now implemented in `LaplaceEuclideanInjectivity.lean`:
+
+```
+laplaceEuclideanFourierBase_integrable
+laplaceKernelNormalizer_injective_euclidean_of_fourier_ne_zero
+laplaceSmoothingInjective_euclidean_of_fourier_ne_zero
+laplaceKernelNormalizer_injective_euclideanSpace_of_fourier_ne_zero
+laplaceSmoothingInjective_euclideanSpace_of_fourier_ne_zero
+```
+
+These theorems are axiom-free.  The Euclidean-space versions discharge
+integrability of `x ↦ exp (-‖x‖/τ)` by product domination in coordinates, so
+the remaining L4 gap is now precisely the radial Fourier
+nowhere-vanishing/positivity theorem from the subordination analysis above, not
+the profile-integrability, measure-cancellation, or characteristic-function
+uniqueness layers.
+
 **L5 — radial-measure converse (D2.b).**  *Superseded by the deep-dive plan
 §4.9(R8) — kept for the original reasoning; the §4.9 version eliminates the
 Δ-layer via the tangential IBP identity, fixes the origin boundary condition
