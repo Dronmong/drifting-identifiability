@@ -948,6 +948,30 @@ nowhere-vanishing/positivity theorem from the subordination analysis above, not
 the profile-integrability, measure-cancellation, or characteristic-function
 uniqueness layers.
 
+**Subordination crux, foundation started (2026-07-14, `LaplaceRadialFourier.lean`,
+machine-checked, axiom-free).**  The `hbase_ne` gap reduces to the Glasser
+integral `∫_{(0,∞)} e^{−x²−k²/x²} dx = (√π/2)e^{−2k}` (`k ≥ 0`).  Foundation
+proved: `integral_inv_sq_exp_neg_div_sq` — `∫_{(0,∞)} x⁻² e^{−c/x²} dx =
+√(π/c)/2` by the `x ↦ 1/x` substitution (`integral_comp_rpow_Ioi` at `p = −1`)
+reducing to `integral_gaussian_Ioi`; and `glasserKernel_integrableOn`
+(dominated by `e^{−x²}`).  The reciprocal-Gaussian value is exactly the integrable
+dominator for the differentiation-under-the-integral step below.
+Precise remaining route (est. ~250 lines):
+1. **Self-reciprocal substitution** `F(k) = k·∫_{(0,∞)} x⁻² e^{−x²−k²/x²} dx`
+   for `k > 0` — via `integral_comp_rpow_Ioi` (`p=−1`) + `integral_comp_mul_left_Ioi`
+   + the kernel symmetry `glasserKernel k (k/x) = glasserKernel k x`.
+2. **`F'(k) = −2 F(k)`** for `k > 0` — `hasDerivAt_integral_of_dominated_loc_of_deriv_le`
+   with `bound(x) = 3k₀·x⁻² e^{−(k₀/2)²/x²}` (integrable by
+   `integral_inv_sq_exp_neg_div_sq`), then `∫ ∂ₖ = −2k·(F(k)/k) = −2F(k)` by (1).
+3. **ODE** ⇒ `F(k) = (√π/2)e^{−2k}` (`constant_of_derivWithin_zero` on
+   `k ↦ F(k)e^{2k}`, `F(0) = √π/2` from `integral_gaussian_Ioi 1`).
+4. **Subordination** `e^{−a} = (2/√π)∫_{(0,∞)} e^{−s²} e^{−a²/(4s²)} ds`
+   (set `k = a/2` in the Glasser integral).
+5. **`hbase_ne`**: `𝓕(x↦e^{−‖x‖/τ})(w) = ∫_{(0,∞)} (2/√π)e^{−s²}·
+   𝓕(e^{−‖·‖²/(4τ²s²)})(w) ds > 0` by Tonelli +
+   `fourier_gaussian_innerProductSpace` (positive Gaussian FT), then feed
+   `laplaceSmoothingInjective_euclideanSpace_of_fourier_ne_zero`.
+
 **L5 — radial-measure converse (D2.b).**  *Superseded by the deep-dive plan
 §4.9(R8) — kept for the original reasoning; the §4.9 version eliminates the
 Δ-layer via the tangential IBP identity, fixes the origin boundary condition
