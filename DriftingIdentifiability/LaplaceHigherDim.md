@@ -1347,6 +1347,26 @@ session-handoff spec).**
   explicit single-shell bound `Cov_shell ≥ -τ/8`-ish for `s < r` (closed
   forms exist) + cross-shell mean-monotonicity — all elementary but gnarly;
   not v1.
+- 2026-07-15 (pre-implementation refinement): two further simplifications.
+  (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
+  all follow from dominated differentiation of the integrals over
+  `radialMixture₃ μ̃` itself, with GLOBAL constant dominators
+  (`|∂_r e^{-d/τ}| ≤ 1/τ`, `|∂_r(X e^{-d/τ})| ≤ 1 + sup(a·e^{-a/τ})/τ`, etc.)
+  — differentiability holds for all `r > 0` at every `y` off the positive
+  axis, and the off-origin axis `{u = ±1, s > 0}` is chartBase-null while
+  `y = 0` has `d(r) = r`, smooth.  No per-shell differentiation, no
+  Lipschitz-pairing dominators needed.  (b) **Only ONE per-shell identity
+  is needed: T₃** (`∫(ρ²/d)w̄ = (2τ/r)∫ t·w̄` per shell).  Given T₃-mixture
+  and the y-level formula `D̃' = -Z̃ + (1/τ)∫(X²/d)w̄ dμ`, the closure (F4)
+  is y-level algebra (`d = X²/d + ρ²/d` a.e.), so the closed forms of
+  `C̄, B̄, Q̄` are never needed.  Closed forms needed: `Z̄` (mass identity
+  only) and the two T₃ kernels (`ρ²/d` and `t`).  T₃'s per-shell proof:
+  the reverse `d`-substitution `u(z) = (r²+s²-z²)/(2rs)` (POLYNOMIAL — no
+  √-singularity even at `r = s`, avoiding all endpoint case splits) via
+  `intervalIntegral.integral_comp_mul_deriv'`, then primitives
+  `Pₖ' = zᵏe^{-z/τ}` (k ≤ 4) and per-exponential-atom `ring`/
+  `linear_combination`.  `ρ²(z) = [(z²-(r-s)²)((r+s)²-z²)]/(4r²)` vanishes
+  at both endpoints.  The u-IBP route to T₃ is abandoned (√-singularity).
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal
