@@ -170,4 +170,104 @@ lemma integral_radialMixture₃ (ν : Measure ℝ) [IsProbabilityMeasure ν]
   rw [radialMixture₃, integral_map hmap hf.aestronglyMeasurable]
   exact integral_prod _ hint
 
+/-- **The zonal (φ-) collapse.**  If `G` is continuous, bounded, and depends only
+on `w.1 = u` (through `g`) on the chart support `u ∈ (-1,1]`, then its
+`chartBase`-integral is the uniform `u`-average `(1/2)∫_{-1}^{1} g`.  The `4π`
+normalisation and the trivial `2π` azimuth integral cancel. -/
+lemma integral_chartBase_zonal {G : ℝ × ℝ → ℝ} {g : ℝ → ℝ} {C : ℝ}
+    (hG : Continuous G) (hC : ∀ w, |G w| ≤ C)
+    (hEq : ∀ u φ, u ∈ Ioc (-1 : ℝ) 1 → G (u, φ) = g u) :
+    ∫ w : ℝ × ℝ, G w ∂chartBase = (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, g u := by
+  have hAvol : volume (Ioc (-1 : ℝ) 1) = ENNReal.ofReal 2 := by
+    rw [Real.volume_Ioc]; norm_num
+  have hBvol : volume (Ioc (-Real.pi) Real.pi) = ENNReal.ofReal (2 * Real.pi) := by
+    rw [Real.volume_Ioc]; congr 1; ring
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ, hAvol]; exact ENNReal.ofReal_lt_top⟩
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-Real.pi) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, hBvol]; exact ENNReal.ofReal_lt_top⟩
+  have hint : Integrable G
+      ((volume.restrict (Ioc (-1 : ℝ) 1)).prod (volume.restrict (Ioc (-Real.pi) Real.pi))) :=
+    ⟨hG.aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := C)
+        (ae_of_all _ (fun w => by rw [Real.norm_eq_abs]; exact hC w))⟩
+  rw [chartBase, integral_smul_measure, integral_prod _ hint]
+  have hcong : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      ∫ φ in Ioc (-Real.pi) Real.pi, G (u, φ) ∂volume = 2 * Real.pi * g u := by
+    intro u hu
+    rw [setIntegral_congr_fun measurableSet_Ioc (fun φ _ => hEq u φ hu), setIntegral_const,
+      Real.volume_real_Ioc_of_le (by linarith [Real.pi_pos]), smul_eq_mul]
+    ring
+  rw [setIntegral_congr_fun measurableSet_Ioc hcong, integral_const_mul]
+  rw [ENNReal.toReal_inv, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
+  have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
+  field_simp
+  ring
+
+/-! ## Ray objects: the normalizer profile -/
+
+/-- The probe-to-shell distance `d(r,s,u) = √(r² + s² - 2rsu)`. -/
+noncomputable def shellDist (r s u : ℝ) : ℝ := Real.sqrt (r ^ 2 + s ^ 2 - 2 * r * s * u)
+
+/-- Per-shell zonal average of the Laplace kernel:
+`Z̄(r,s) = (1/2)∫_{-1}^{1} e^{-d(r,s,u)/τ} du`. -/
+noncomputable def shellZ (τ r s : ℝ) : ℝ :=
+  (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * shellDist r s u)
+
+lemma laplaceKernel_rayProbe_nonneg (τ r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
+    0 ≤ laplaceKernel τ (rayProbe r) y := (Real.exp_pos _).le
+
+lemma laplaceKernel_rayProbe_le_one (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) : laplaceKernel τ (rayProbe r) y ≤ 1 := by
+  have h0 : -(1 / τ) * ‖rayProbe r - y‖ ≤ 0 := by
+    have hnn : 0 ≤ (1 / τ) * ‖rayProbe r - y‖ :=
+      mul_nonneg (one_div_pos.mpr hτ).le (norm_nonneg _)
+    linarith [neg_mul (1 / τ) (‖rayProbe r - y‖)]
+  simp only [laplaceKernel]
+  have hle := Real.exp_le_exp.mpr h0
+  rwa [Real.exp_zero] at hle
+
+lemma continuous_laplaceKernel_rayProbe (τ r : ℝ) :
+    Continuous (fun y : EuclideanSpace ℝ (Fin 3) => laplaceKernel τ (rayProbe r) y) := by
+  simp only [laplaceKernel]
+  exact Real.continuous_exp.comp (((continuous_const.sub continuous_id).norm).const_mul (-(1 / τ)))
+
+/-- The Laplace kernel from the ray probe to a chart point collapses to a function
+of the distance alone (φ-independent) on the chart support. -/
+lemma laplaceKernel_rayProbe_chart {u : ℝ} (hu : u ^ 2 ≤ 1) (τ r s φ : ℝ) :
+    laplaceKernel τ (rayProbe r) (s • sphereChart u φ)
+      = Real.exp (-(1 / τ) * shellDist r s u) := by
+  have hnorm : ‖rayProbe r - s • sphereChart u φ‖ = shellDist r s u := by
+    rw [shellDist, ← dist_sq_rayProbe_smul_sphereChart hu r s φ]
+    exact (Real.sqrt_sq (norm_nonneg _)).symm
+  simp only [laplaceKernel]
+  rw [hnorm]
+
+/-- **The ray normalizer is a `ν`-mixture of per-shell zonal kernel averages.**
+`Z̃_ν(r) = Z_{radialMixture₃ ν}(r•e₁) = ∫ shellZ τ r s dν`. -/
+lemma kernelNormalizer_radialMixture₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    kernelNormalizer (laplaceKernel τ) (radialMixture₃ ν) (rayProbe r)
+      = ∫ s, shellZ τ r s ∂ν := by
+  have hf : Integrable (fun y => laplaceKernel τ (rayProbe r) y) (radialMixture₃ ν) :=
+    ⟨(continuous_laplaceKernel_rayProbe τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := 1)
+        (ae_of_all _ (fun y => by
+          rw [Real.norm_eq_abs, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+          exact laplaceKernel_rayProbe_le_one τ hτ r y))⟩
+  rw [kernelNormalizer, integral_radialMixture₃ ν hf]
+  refine integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))
+  refine integral_chartBase_zonal
+    (G := fun w : ℝ × ℝ => laplaceKernel τ (rayProbe r) (chartMap (s, w)))
+    (g := fun u => Real.exp (-(1 / τ) * shellDist r s u)) (C := 1) ?_ ?_ ?_
+  · exact (continuous_laplaceKernel_rayProbe τ r).comp
+      (continuous_chartMap.comp (by fun_prop))
+  · intro w
+    rw [abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r _)]
+    exact laplaceKernel_rayProbe_le_one τ hτ r _
+  · intro u φ hu
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    rw [chartMap_mk_pair]
+    exact laplaceKernel_rayProbe_chart hu2 τ r s φ
+
 end DriftingIdentifiability
