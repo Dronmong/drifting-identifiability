@@ -164,10 +164,12 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   Generic substitution through `shellDistSubst` is done
   (`integral_comp_shellDistSubst_mul_deriv`, positive-orientation variant), and
   `shellT` has its factored z-form
-  `(4r²s)⁻¹∫z(r²+s²-z²)e^{-z/τ}dz`.  **Current S-layer location:** prove the
-  analogous `shellRhoSqOverDist` z-form, then combine it with
-  `shellRhoPoly_integral_identity` and `shellT_eq_polynomial_distance_integral`
-  to finish T₃; after that, prove the ray-mass identity.
+  `(4r²s)⁻¹∫z(r²+s²-z²)e^{-z/τ}dz`.  The non-collision `ρ²/d` z-form and T₃
+  theorem are done:
+  `shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT_of_ne`.
+  **Current S-layer location:** close the removable collision case `r=s>0` for
+  `shellRhoSqOverDist`; then upgrade T₃ to the unconditional positive-radius
+  theorem and prove the ray-mass identity.
 
 ---
 
@@ -218,9 +220,9 @@ file split (each downstream file imports the previous):
    `kernelNormalizer_radialMixture₃`.
 2. **T₃ per-shell identity** and the **ray-mass identity** `∫₀^∞ r²Z̄ dr = 2τ³`.
    The polynomial FTC core, reverse-substitution algebra, set-to-interval bridge,
-   generic substitution lemma, and `shellT` z-form are DONE.  Remaining T₃ route
-   (§4.10 refinement bullet, 2026-07-15): prove the `shellRhoSqOverDist` z-form
-   using the **reverse polynomial**
+   generic substitution lemma, `shellT` z-form, and non-collision T₃ theorem are
+   DONE.  Remaining T₃ route (§4.10 refinement bullet, 2026-07-15): close the
+   removable collision case using the **reverse polynomial**
    `d`-substitution `u(z) = (r²+s²−z²)/(2rs)` (NO √-singularity, no endpoint
    case split) via `intervalIntegral.integral_comp_mul_deriv'` with primitives
    `Pₖ' = zᵏe^{−z/τ}` (`k ≤ 4`), then per-exponential-atom `ring`.

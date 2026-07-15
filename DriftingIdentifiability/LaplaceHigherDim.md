@@ -1450,6 +1450,12 @@ session-handoff spec).**
   endpoint collision, so use the weaker
   `intervalIntegral.integral_comp_mul_deriv'''` route (continuous on the open
   image + integrable on the closed image), not the global-continuity wrapper.
+- 2026-07-15 (S-layer, non-collision `ρ²/d` and T₃ — **green focused build**):
+  added image-continuity substitution wrappers and proved the `ρ²/d` z-form
+  when `r ≠ s`, then combined it with `shellRhoPoly_integral_identity` and
+  `shellT_eq_polynomial_distance_integral` to certify
+  `shellRhoSqOverDist τ r s = (2τ/r)·shellT τ r s` for `τ,r,s>0` and `r≠s`.
+  The remaining T₃ gap is now exactly the removable collision case `r=s>0`.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal
