@@ -157,14 +157,44 @@ Follow `LaplaceHigherDim.md §4.10 (F3–F11)` and the file plan §4.10(F11).  S
 file split (each downstream file imports the previous):
 
 ### 5a. Finish `LaplaceRadialShell3.lean` (S-layer)
-1. **`shellC`** (companion) and **`shellD`** (drift e₁-component) profiles, and
-   `kernelNormalizer (laplaceCompanionKernel τ) (radialMixture₃ ν) (rayProbe r)`
-   / drift-numerator-component analogues of `kernelNormalizer_radialMixture₃`.
-   For the drift component you need `⟨s·Φ(u,φ) − r·e₁, e₁⟩ = s·u − r`, i.e.
-   `(s • sphereChart u φ − rayProbe r) 0 = s*u − r` (via `PiLp.sub_apply`,
-   `PiLp.smul_apply`, `sphereChart_apply_zero`, `rayProbe_apply_zero`).  Use the
-   same `integral_radialMixture₃` + `integral_chartBase_zonal` pattern as
-   `kernelNormalizer_radialMixture₃` (that lemma is your template).
+1. **`shellC` (companion) is DONE** (`kernelNormalizer_companion_radialMixture₃`).
+   **`shellD`** (drift e₁-component) is the next lemma — all its API is already
+   scouted (do NOT re-research):
+   ```
+   noncomputable def shellD (τ r s : ℝ) : ℝ :=
+     (1/2) * ∫ u in Ioc (-1:ℝ) 1, Real.exp (-(1/τ) * shellDist r s u) * (s*u - r)
+   -- target:
+   -- (∫ y, laplaceWeightedDisplacement τ (rayProbe r) y ∂(radialMixture₃ ν)) 0
+   --   = ∫ s, shellD τ r s ∂ν
+   ```
+   - **Integrability of the vector drift numerator is PUBLIC:**
+     `laplaceWeightedDisplacement_integrable τ hτ (radialMixture₃ ν) (rayProbe r)`
+     (`LaplaceCompanion.lean:222`, any `[IsFiniteMeasure p]`; needs
+     `[BorelSpace] [CompleteSpace] [SecondCountableTopology]`, all hold for
+     `EuclideanSpace ℝ (Fin 3)`).  `laplaceWeightedDisplacement τ x y =
+     laplaceKernel τ x y • (y − x)` (`LaplaceCompanion.lean:201`).
+   - **Component-0 extraction** (commute eval past the Bochner integral): the
+     coordinate CLM is `EuclideanSpace.proj (0 : Fin 3) : StrongDual ℝ …`
+     (`Analysis/InnerProductSpace/PiL2.lean:284`), simp lemma
+     `EuclideanSpace.proj_apply` (`proj i y = y i`).  Use
+     `(ContinuousLinearMap.integral_comp_comm (EuclideanSpace.proj 0) hFint).symm :
+     (EuclideanSpace.proj 0) (∫ F) = ∫ y, (EuclideanSpace.proj 0) (F y)`, then
+     `simpa [EuclideanSpace.proj_apply]` ⇒ `(∫ F) 0 = ∫ y, (F y) 0`.
+   - **The integrand's 0-component:** `(laplaceKernel τ (rayProbe r) y • (y −
+     rayProbe r)) 0 = laplaceKernel τ (rayProbe r) y * (y 0 − r)` via
+     `PiLp.smul_apply`, `PiLp.sub_apply`, `rayProbe_apply_zero`.  On a chart point
+     `(s • sphereChart u φ) 0 = s * u` (`PiLp.smul_apply` + `sphereChart_apply_zero`),
+     so it collapses to `exp(−(1/τ)·shellDist r s u)·(s·u − r)` (φ-independent).
+   - **Bound for the zonal `hC`** (the 0-component of the drift vector, needed to
+     invoke `integral_chartBase_zonal`): `|(v) 0| ≤ ‖v‖` and
+     `‖laplaceKernel • (y − rayProbe r)‖ = d·e^{−d/τ} ≤ τ·e⁻¹` via the **PUBLIC**
+     `mul_exp_neg_div_le hτ (ht : 0 ≤ t) : t·exp(−t/τ) ≤ τ·exp(−1)`
+     (`LaplaceRadialFoundations.lean:73`).  (`norm_laplaceWeightedDisplacement_le`
+     and `mul_exp_neg_le` in `LaplaceCompanion.lean` are **PRIVATE** — reprove the
+     `≤ τ·e⁻¹` bound from `mul_exp_neg_div_le` instead.)  So `hC` uses `C = τ·e⁻¹`
+     (or any `C ≥` that; `τ` also works).
+   Then reuse the exact `integral_radialMixture₃` + `integral_congr_ae` +
+   `integral_chartBase_zonal` skeleton of `kernelNormalizer_radialMixture₃`.
 2. **T₃ per-shell identity** and the **ray-mass identity** `∫₀^∞ r²Z̄ dr = 2τ³`.
    T₃ route (§4.10 refinement bullet, 2026-07-15): the **reverse polynomial**
    `d`-substitution `u(z) = (r²+s²−z²)/(2rs)` (NO √-singularity, no endpoint
