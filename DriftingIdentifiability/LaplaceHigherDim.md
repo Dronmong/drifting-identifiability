@@ -1405,6 +1405,14 @@ session-handoff spec).**
   the three basic ray object formulas `Z̃`, `C̃`, and `D̃` as `ν`-mixtures of
   per-shell zonal averages.  Remaining S-layer: T₃ per-shell identity and the
   ray-mass identity.
+- 2026-07-15 (S-layer, T₃ support infrastructure — **committed after
+  `--wfail` build**): added the T₃ vocabulary in `LaplaceRadialShell3.lean`:
+  `shellAxial`, `shellRhoSq`, `shellT`, `shellRhoSqOverDist`, the chart
+  coordinate simp lemma, nonnegativity of `ρ²`, the algebraic cylindrical
+  decomposition `shellDist² = shellAxial² + shellRhoSq`, and the useful
+  relation `shellD = shellT - r·shellZ`.  Remaining S-layer hard analysis:
+  the actual T₃ integral identity via the reverse `d`-substitution and the
+  ray-mass identity.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

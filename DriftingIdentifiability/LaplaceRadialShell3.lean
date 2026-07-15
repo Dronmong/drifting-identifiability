@@ -352,6 +352,108 @@ noncomputable def shellD (τ r s : ℝ) : ℝ :=
   (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
     Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r)
 
+/-- The axial displacement coordinate `X = t-r = s u-r` along the probe ray. -/
+noncomputable def shellAxial (r s u : ℝ) : ℝ := s * u - r
+
+/-- The squared tangential radius `ρ² = s²(1-u²)` of a shell point relative to
+the probe axis. -/
+noncomputable def shellRhoSq (s u : ℝ) : ℝ := s ^ 2 * (1 - u ^ 2)
+
+/-- Per-shell zonal average of the axial coordinate `t = s u`, weighted by the
+Laplace kernel.  This is the right-hand side kernel in the `T₃` identity. -/
+noncomputable def shellT (τ r s : ℝ) : ℝ :=
+  (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+    Real.exp (-(1 / τ) * shellDist r s u) * (s * u)
+
+/-- Per-shell zonal average of `ρ²/d`, weighted by the Laplace kernel.  This is
+the left-hand side kernel in the `T₃` identity.  Division is Lean's total real
+division; downstream `r,s>0` identities handle the collision point separately
+through the polynomial `d`-substitution. -/
+noncomputable def shellRhoSqOverDist (τ r s : ℝ) : ℝ :=
+  (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+    Real.exp (-(1 / τ) * shellDist r s u) * (shellRhoSq s u / shellDist r s u)
+
+@[simp] lemma chartMap_mk_pair_apply_zero (s u φ : ℝ) :
+    chartMap (s, (u, φ)) 0 = s * u := by
+  simp [chartMap_mk_pair]
+
+lemma shellRhoSq_nonneg {u : ℝ} (hu : u ^ 2 ≤ 1) (s : ℝ) :
+    0 ≤ shellRhoSq s u := by
+  unfold shellRhoSq
+  positivity
+
+lemma shellDist_sq_eq {u : ℝ} (hu : u ^ 2 ≤ 1) (r s : ℝ) :
+    shellDist r s u ^ 2 = r ^ 2 + s ^ 2 - 2 * r * s * u := by
+  unfold shellDist
+  have hnonneg : 0 ≤ r ^ 2 + s ^ 2 - 2 * r * s * u := by
+    rw [← dist_sq_rayProbe_smul_sphereChart hu r s 0]
+    positivity
+  exact Real.sq_sqrt hnonneg
+
+/-- The elementary cylindrical decomposition `d² = X² + ρ²` on the chart
+support. -/
+lemma shellDist_sq_eq_axial_add_rho {u : ℝ} (hu : u ^ 2 ≤ 1) (r s : ℝ) :
+    shellDist r s u ^ 2 = shellAxial r s u ^ 2 + shellRhoSq s u := by
+  rw [shellDist_sq_eq hu r s]
+  unfold shellAxial shellRhoSq
+  ring
+
+lemma shellD_eq_shellT_sub_r_mul_shellZ (τ r s : ℝ) :
+    shellD τ r s = shellT τ r s - r * shellZ τ r s := by
+  have hIntT :
+      IntegrableOn
+        (fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u) * (s * u))
+        (Ioc (-1 : ℝ) 1) := by
+    have hc : Continuous
+        (fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u) * (s * u)) := by
+      unfold shellDist
+      fun_prop
+    exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+  have hIntZ :
+      IntegrableOn
+        (fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u))
+        (Ioc (-1 : ℝ) 1) := by
+    have hc : Continuous
+        (fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u)) := by
+      unfold shellDist
+      fun_prop
+    exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+  unfold shellD shellT shellZ
+  calc
+    (1 / 2) *
+        ∫ u in Ioc (-1 : ℝ) 1,
+          Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r)
+        =
+      (1 / 2) *
+        ∫ u in Ioc (-1 : ℝ) 1,
+          (Real.exp (-(1 / τ) * shellDist r s u) * (s * u)
+            - r * Real.exp (-(1 / τ) * shellDist r s u)) := by
+          congr 1
+          apply setIntegral_congr_fun measurableSet_Ioc
+          intro u _
+          ring
+    _ =
+      (1 / 2) *
+        ((∫ u in Ioc (-1 : ℝ) 1,
+          Real.exp (-(1 / τ) * shellDist r s u) * (s * u))
+          - ∫ u in Ioc (-1 : ℝ) 1,
+            r * Real.exp (-(1 / τ) * shellDist r s u)) := by
+          rw [integral_sub hIntT (hIntZ.const_mul r)]
+    _ =
+      (1 / 2) *
+        ((∫ u in Ioc (-1 : ℝ) 1,
+          Real.exp (-(1 / τ) * shellDist r s u) * (s * u))
+          - r * ∫ u in Ioc (-1 : ℝ) 1,
+            Real.exp (-(1 / τ) * shellDist r s u)) := by
+          rw [integral_const_mul]
+    _ =
+      (1 / 2) *
+        (∫ u in Ioc (-1 : ℝ) 1,
+          Real.exp (-(1 / τ) * shellDist r s u) * (s * u))
+        - r *
+          ((1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+            Real.exp (-(1 / τ) * shellDist r s u)) := by ring
+
 lemma continuous_laplaceWeightedDisplacement_rayProbe_coord (τ r : ℝ) :
     Continuous fun y : EuclideanSpace ℝ (Fin 3) =>
       (laplaceWeightedDisplacement τ (rayProbe r) y) 0 := by
