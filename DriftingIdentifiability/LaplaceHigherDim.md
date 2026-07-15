@@ -1422,6 +1422,15 @@ session-handoff spec).**
   `[|r-s|, r+s]`.  Remaining T₃ work: push this through the reverse
   `d`-substitution to identify the two original zonal shell integrals
   `shellRhoSqOverDist` and `shellT`; then prove the ray-mass identity.
+- 2026-07-15 (S-layer, reverse-distance substitution algebra — **green focused
+  build**): added `shellDistSubst r s z = (r²+s²-z²)/(2rs)`, its derivative
+  `u'(z)=-z/(rs)`, endpoint values `u(|r-s|)=1`, `u(r+s)=-1`, the exact
+  distance recovery `shellDist r s (u(z)) = z` for `z ≥ 0`, and the algebraic
+  pullbacks for `ρ²` and `s·u(z)`.  Remaining T₃ work is now specifically the
+  measure/interval change-of-variables layer: convert the `Ioc(-1,1)` set
+  integrals defining `shellT` and `shellRhoSqOverDist` into interval integrals,
+  apply `intervalIntegral.integral_comp_mul_deriv'` to `shellDistSubst`, and
+  finish with `shellRhoPoly_integral_identity`.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

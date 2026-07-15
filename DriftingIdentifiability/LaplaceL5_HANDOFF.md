@@ -156,9 +156,12 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   polynomial core is now certified: `shellRhoPoly`, endpoint vanishing,
   `P'(z)=4z(r²+s²-z²)`, and
   `∫ P(z)e^{-z/τ} dz = 4τ∫ z(r²+s²-z²)e^{-z/τ} dz` over `[|r-s|,r+s]`.
-  **Current S-layer location:** push that polynomial identity through the
-  reverse `d`-substitution to prove the original T₃ shell identity, then prove
-  the ray-mass identity.
+  The reverse-distance substitution algebra is also in place:
+  `u(z)=(r²+s²-z²)/(2rs)`, `u'=-z/(rs)`, endpoints `u(|r-s|)=1`,
+  `u(r+s)=-1`, distance recovery `shellDist r s (u(z))=z`, and the pullbacks
+  for `ρ²` and `s·u(z)`.  **Current S-layer location:** formalize the
+  set-integral/interval change-of-variables layer to prove the original T₃
+  shell identity, then prove the ray-mass identity.
 
 ---
 
@@ -208,8 +211,9 @@ file split (each downstream file imports the previous):
    `integral_congr_ae` + `integral_chartBase_zonal` skeleton of
    `kernelNormalizer_radialMixture₃`.
 2. **T₃ per-shell identity** and the **ray-mass identity** `∫₀^∞ r²Z̄ dr = 2τ³`.
-   The polynomial FTC core of the T₃ route is DONE.  Remaining T₃ route
-   (§4.10 refinement bullet, 2026-07-15): the **reverse polynomial**
+   The polynomial FTC core and reverse-substitution algebra of the T₃ route are
+   DONE.  Remaining T₃ route (§4.10 refinement bullet, 2026-07-15): use the
+   **reverse polynomial**
    `d`-substitution `u(z) = (r²+s²−z²)/(2rs)` (NO √-singularity, no endpoint
    case split) via `intervalIntegral.integral_comp_mul_deriv'` with primitives
    `Pₖ' = zᵏe^{−z/τ}` (`k ≤ 4`), then per-exponential-atom `ring`.

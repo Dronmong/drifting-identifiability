@@ -552,6 +552,60 @@ lemma shellRhoPoly_integral_identity
       _ = 4 * τ * I := by ring
   simpa [I, J, F, G] using hmain
 
+/-- Reverse distance substitution for a shell at radius `s` and a probe at
+radius `r`: `u = (r²+s²-z²)/(2rs)`. -/
+noncomputable def shellDistSubst (r s z : ℝ) : ℝ :=
+  (r ^ 2 + s ^ 2 - z ^ 2) / (2 * r * s)
+
+lemma hasDerivAt_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z : ℝ) :
+    HasDerivAt (fun x : ℝ => shellDistSubst r s x) (-(z / (r * s))) z := by
+  unfold shellDistSubst
+  have hnum : HasDerivAt (fun x : ℝ => r ^ 2 + s ^ 2 - x ^ 2) (-(2 * z)) z := by
+    simpa using (hasDerivAt_pow 2 z).const_sub (r ^ 2 + s ^ 2)
+  have hscale :
+      HasDerivAt (fun x : ℝ => (r ^ 2 + s ^ 2 - x ^ 2) * (2 * r * s)⁻¹)
+        (-(2 * z) * (2 * r * s)⁻¹) z := hnum.mul_const _
+  convert hscale using 1
+  · ext x
+    field_simp [hr, hs]
+  · field_simp [hr, hs]
+
+@[simp] lemma shellDistSubst_right_endpoint {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) :
+    shellDistSubst r s (r + s) = -1 := by
+  unfold shellDistSubst
+  field_simp [hr, hs]
+  ring
+
+@[simp] lemma shellDistSubst_abs_left_endpoint {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) :
+    shellDistSubst r s |r - s| = 1 := by
+  unfold shellDistSubst
+  rw [sq_abs]
+  field_simp [hr, hs]
+  ring
+
+lemma shellDist_sq_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z : ℝ) :
+    r ^ 2 + s ^ 2 - 2 * r * s * shellDistSubst r s z = z ^ 2 := by
+  unfold shellDistSubst
+  field_simp [hr, hs]
+  ring
+
+lemma shellDist_shellDistSubst {r s z : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (hz : 0 ≤ z) :
+    shellDist r s (shellDistSubst r s z) = z := by
+  unfold shellDist
+  rw [shellDist_sq_shellDistSubst hr hs z]
+  exact Real.sqrt_sq hz
+
+lemma shellRhoSq_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z : ℝ) :
+    shellRhoSq s (shellDistSubst r s z) = shellRhoPoly r s z / (4 * r ^ 2) := by
+  unfold shellRhoSq shellDistSubst shellRhoPoly
+  field_simp [hr, hs]
+  ring
+
+lemma shellT_coord_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z : ℝ) :
+    s * shellDistSubst r s z = (r ^ 2 + s ^ 2 - z ^ 2) / (2 * r) := by
+  unfold shellDistSubst
+  field_simp [hr, hs]
+
 @[simp] lemma chartMap_mk_pair_apply_zero (s u φ : ℝ) :
     chartMap (s, (u, φ)) 0 = s * u := by
   simp [chartMap_mk_pair]
