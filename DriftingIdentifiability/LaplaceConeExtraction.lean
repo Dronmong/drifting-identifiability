@@ -601,6 +601,8 @@ lemma abs_sub_setAverage_le_of_forall_abs_sub_le
       rw [hs]
       exact measure_ball_lt_top
     exact hVltTop.ne
+  have hVpos : 0 < (volume : Measure E).real s :=
+    ENNReal.toReal_pos hVne hVlt
   set V : ℝ := (volume : Measure E).real s with hVdef
   have hVpos : 0 < V := ENNReal.toReal_pos hVne hVlt
   have hint_phi : IntegrableOn φ s volume := by
@@ -1543,6 +1545,495 @@ lemma tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementField
       (𝓝[>] (0 : ℝ)) (𝓝 (0 : E)) := by
   simpa [integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel_eq_displacementField hτ a]
     using tendsto_integral_kernelAverageConeCoeffWVec_laplaceDisplacementKernel hτ a μ
+
+/-! ### Product-rule estimates for `Z_ν • D_μ` -/
+
+set_option linter.unusedSectionVars false in
+/-- The Laplace normalizer is globally Lipschitz, with the explicit finite-mass
+constant obtained by integrating the single-kernel Lipschitz bound. -/
+lemma abs_kernelNormalizer_laplace_sub_le
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] (x a : E) :
+    |kernelNormalizer (laplaceKernel τ) μ x -
+        kernelNormalizer (laplaceKernel τ) μ a| ≤
+      ((μ Set.univ).toReal / τ) * ‖x - a‖ := by
+  have hx : Integrable (fun y : E => laplaceKernelPt τ y x) μ :=
+    integrable_laplaceKernelPt_fixed hτ μ x
+  have ha : Integrable (fun y : E => laplaceKernelPt τ y a) μ :=
+    integrable_laplaceKernelPt_fixed hτ μ a
+  rw [kernelNormalizer_laplace_eq_integral_laplaceKernelPt τ μ x,
+    kernelNormalizer_laplace_eq_integral_laplaceKernelPt τ μ a,
+    ← integral_sub hx ha]
+  have hnorm :
+      |∫ y, laplaceKernelPt τ y x - laplaceKernelPt τ y a ∂μ| ≤
+        ∫ y, |laplaceKernelPt τ y x - laplaceKernelPt τ y a| ∂μ := by
+    simpa [Real.norm_eq_abs] using
+      (norm_integral_le_integral_norm
+        (fun y : E => laplaceKernelPt τ y x - laplaceKernelPt τ y a)
+        (μ := μ))
+  have hmono :
+      ∫ y, |laplaceKernelPt τ y x - laplaceKernelPt τ y a| ∂μ ≤
+        ∫ _y, (1 / τ) * ‖x - a‖ ∂μ := by
+    apply integral_mono
+    · exact (hx.sub ha).norm
+    · exact integrable_const _
+    · intro y
+      simpa [abs_sub_comm, norm_sub_rev] using
+        abs_laplaceKernelPt_sub_le hτ y x a
+  calc |∫ y, laplaceKernelPt τ y x - laplaceKernelPt τ y a ∂μ|
+      ≤ ∫ y, |laplaceKernelPt τ y x - laplaceKernelPt τ y a| ∂μ := hnorm
+    _ ≤ ∫ _y, (1 / τ) * ‖x - a‖ ∂μ := hmono
+    _ = ((μ Set.univ).toReal / τ) * ‖x - a‖ := by
+        rw [integral_const]
+        simp [Measure.real, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc]
+
+set_option linter.unusedSectionVars false in
+/-- The Laplace displacement numerator is globally Lipschitz, with a coarse
+constant sufficient for the product-rule cross term. -/
+lemma norm_laplaceDisplacementField_sub_le
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] (x a : E) :
+    ‖laplaceDisplacementField τ μ x - laplaceDisplacementField τ μ a‖ ≤
+      (3 * (μ Set.univ).toReal) * ‖x - a‖ := by
+  have hx : Integrable (fun y : E => laplaceKernelPt τ y x • (y - x)) μ :=
+    (integrable_laplaceDisplacementField_integrand hτ μ x).congr
+      (ae_of_all μ fun y => by
+        dsimp
+        rw [laplaceKernel_eq_exp]
+        rfl)
+  have ha : Integrable (fun y : E => laplaceKernelPt τ y a • (y - a)) μ :=
+    (integrable_laplaceDisplacementField_integrand hτ μ a).congr
+      (ae_of_all μ fun y => by
+        dsimp
+        rw [laplaceKernel_eq_exp]
+        rfl)
+  rw [laplaceDisplacementField_eq_integral_laplaceKernelPt τ μ x,
+    laplaceDisplacementField_eq_integral_laplaceKernelPt τ μ a,
+    ← integral_sub hx ha]
+  have hnorm :
+      ‖∫ y,
+          laplaceKernelPt τ y x • (y - x) -
+            laplaceKernelPt τ y a • (y - a) ∂μ‖ ≤
+        ∫ y,
+          ‖laplaceKernelPt τ y x • (y - x) -
+            laplaceKernelPt τ y a • (y - a)‖ ∂μ := by
+    exact norm_integral_le_integral_norm _
+  have hmono :
+      ∫ y,
+          ‖laplaceKernelPt τ y x • (y - x) -
+            laplaceKernelPt τ y a • (y - a)‖ ∂μ ≤
+        ∫ _y, 3 * ‖x - a‖ ∂μ := by
+    apply integral_mono
+    · exact (hx.sub ha).norm
+    · exact integrable_const _
+    · intro y
+      simpa [norm_sub_rev]
+        using norm_laplaceDisplacementKernelPt_sub_le hτ a x y
+  calc ‖∫ y,
+          laplaceKernelPt τ y x • (y - x) -
+            laplaceKernelPt τ y a • (y - a) ∂μ‖
+      ≤ ∫ y,
+          ‖laplaceKernelPt τ y x • (y - x) -
+            laplaceKernelPt τ y a • (y - a)‖ ∂μ := hnorm
+    _ ≤ ∫ _y, 3 * ‖x - a‖ ∂μ := hmono
+    _ = (3 * (μ Set.univ).toReal) * ‖x - a‖ := by
+        rw [integral_const]
+        simp [Measure.real, mul_comm, mul_assoc]
+
+set_option linter.unusedSectionVars false in
+/-- Product expansion for the `w`-normalized vector cone coefficient.  The last
+term is quadratic in the oscillations of `f` and `g`; the subsequent estimate
+shows it vanishes for `f = Z_ν`, `g = D_μ`. -/
+lemma kernelAverageConeCoeffWVec_smul_product_eq
+    {τ : ℝ} (a : E) {ε : ℝ} (hε : 0 < ε)
+    {f : E → ℝ} {g : E → E} (hf : Continuous f) (hg : Continuous g) :
+    kernelAverageConeCoeffWVec τ a (fun x => f x • g x) ε =
+      (kernelAverageConeCoeffW τ a f ε) • g a +
+        f a • kernelAverageConeCoeffWVec τ a g ε -
+          (kernelAverageDefect τ a ε)⁻¹ •
+            (⨍ x in Metric.ball a ε,
+              (f x - f a) • (g x - g a) ∂(volume : Measure E)) := by
+  set s := Metric.ball a ε with hs
+  have hs_meas : MeasurableSet s := by rw [hs]; exact measurableSet_ball
+  have hVne : (volume : Measure E) s ≠ 0 := by
+    rw [hs]
+    exact (measure_ball_pos _ a hε).ne'
+  have hVlt : (volume : Measure E) s ≠ ⊤ := by
+    have hVltTop : (volume : Measure E) s < ⊤ := by
+      rw [hs]
+      exact measure_ball_lt_top
+    exact hVltTop.ne
+  have hVpos : 0 < (volume : Measure E).real s :=
+    ENNReal.toReal_pos hVne hVlt
+  have hf_int : IntegrableOn f s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous hf a ε
+  have hg_int : IntegrableOn g s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous hg a ε
+  have hfg_int : IntegrableOn (fun x => f x • g x) s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous (hf.smul hg) a ε
+  have hcross_int : IntegrableOn
+      (fun x => (f x - f a) • (g x - g a)) s volume := by
+    rw [hs]
+    exact integrableOn_ball_of_continuous
+      ((hf.sub continuous_const).smul (hg.sub continuous_const)) a ε
+  have hconst_int : IntegrableOn (fun _ : E => f a • g a) s volume :=
+    integrableOn_const hVlt
+  have hdfga_int : IntegrableOn (fun x => (f a - f x) • g a) s volume :=
+    by
+      rw [hs]
+      exact integrableOn_ball_of_continuous
+        ((continuous_const.sub hf).smul continuous_const) a ε
+  have hfadg_int : IntegrableOn (fun x => f a • (g a - g x)) s volume :=
+    by
+      rw [hs]
+      exact integrableOn_ball_of_continuous
+        (continuous_const.smul (continuous_const.sub hg)) a ε
+  have hdecomp :
+      (fun x : E => f a • g a - f x • g x) =ᵐ[(volume : Measure E).restrict s]
+        fun x => (f a - f x) • g a +
+          f a • (g a - g x) -
+            (f x - f a) • (g x - g a) := by
+    exact ae_of_all _ fun x => by
+      module
+  have hint_sub : IntegrableOn (fun x => f a • g a - f x • g x) s volume :=
+    hconst_int.sub hfg_int
+  have hmain_int :
+      ∫ x in s, f a • g a - f x • g x ∂(volume : Measure E) =
+        ∫ x in s, (f a - f x) • g a ∂(volume : Measure E) +
+          ∫ x in s, f a • (g a - g x) ∂(volume : Measure E) -
+            ∫ x in s, (f x - f a) • (g x - g a) ∂(volume : Measure E) := by
+    calc ∫ x in s, f a • g a - f x • g x ∂(volume : Measure E)
+        = ∫ x in s, (f a - f x) • g a +
+            f a • (g a - g x) -
+              (f x - f a) • (g x - g a) ∂(volume : Measure E) := by
+          exact integral_congr_ae hdecomp
+      _ = ∫ x in s, ((f a - f x) • g a +
+            f a • (g a - g x)) ∂(volume : Measure E) -
+            ∫ x in s, (f x - f a) • (g x - g a) ∂(volume : Measure E) := by
+          rw [integral_sub]
+          · exact (hdfga_int.add hfadg_int)
+          · exact hcross_int
+      _ = ∫ x in s, (f a - f x) • g a ∂(volume : Measure E) +
+            ∫ x in s, f a • (g a - g x) ∂(volume : Measure E) -
+            ∫ x in s, (f x - f a) • (g x - g a) ∂(volume : Measure E) := by
+          rw [integral_add hdfga_int hfadg_int]
+  have hdfga :
+      ∫ x in s, (f a - f x) • g a ∂(volume : Measure E) =
+        (∫ x in s, f a - f x ∂(volume : Measure E)) • g a := by
+    simpa using
+      (integral_smul_const
+        (μ := (volume : Measure E).restrict s)
+        (fun x : E => f a - f x) (g a))
+  have hfadg :
+      ∫ x in s, f a • (g a - g x) ∂(volume : Measure E) =
+        f a • (∫ x in s, g a - g x ∂(volume : Measure E)) := by
+    simpa using
+      (integral_smul
+        (μ := (volume : Measure E).restrict s)
+        (f a) (fun x : E => g a - g x))
+  have hf_sub :
+      ∫ x in s, f a - f x ∂(volume : Measure E) =
+        (volume : Measure E).real s * f a -
+          ∫ x in s, f x ∂(volume : Measure E) := by
+    rw [integral_sub
+      (μ := (volume : Measure E).restrict s)
+      (f := fun _ : E => f a) (g := f)
+      (integrableOn_const hVlt) hf_int, setIntegral_const]
+    simp [smul_eq_mul, mul_comm]
+  have hg_sub :
+      ∫ x in s, g a - g x ∂(volume : Measure E) =
+        (volume : Measure E).real s • g a -
+          ∫ x in s, g x ∂(volume : Measure E) := by
+    rw [integral_sub
+      (μ := (volume : Measure E).restrict s)
+      (f := fun _ : E => g a) (g := g)
+      (integrableOn_const hVlt) hg_int, setIntegral_const]
+  rw [hs] at *
+  have hprod_diff :
+      f a • g a -
+          ((volume : Measure E).real (Metric.ball a ε))⁻¹ •
+            ∫ x in Metric.ball a ε, f x • g x ∂(volume : Measure E) =
+        ((volume : Measure E).real (Metric.ball a ε))⁻¹ •
+          ∫ x in Metric.ball a ε,
+            f a • g a - f x • g x ∂(volume : Measure E) := by
+    rw [integral_sub
+      (μ := (volume : Measure E).restrict (Metric.ball a ε))
+      (f := fun _ : E => f a • g a) (g := fun x : E => f x • g x)
+      hconst_int hfg_int, setIntegral_const]
+    rw [smul_sub, smul_smul, inv_mul_cancel₀ (ne_of_gt hVpos), one_smul]
+  have hf_diff :
+      f a -
+          ((volume : Measure E).real (Metric.ball a ε))⁻¹ *
+            ∫ x in Metric.ball a ε, f x ∂(volume : Measure E) =
+        ((volume : Measure E).real (Metric.ball a ε))⁻¹ *
+          ∫ x in Metric.ball a ε, f a - f x ∂(volume : Measure E) := by
+    rw [hf_sub]
+    field_simp [ne_of_gt hVpos]
+  have hg_diff :
+      g a -
+          ((volume : Measure E).real (Metric.ball a ε))⁻¹ •
+            ∫ x in Metric.ball a ε, g x ∂(volume : Measure E) =
+        ((volume : Measure E).real (Metric.ball a ε))⁻¹ •
+          ∫ x in Metric.ball a ε, g a - g x ∂(volume : Measure E) := by
+    rw [hg_sub]
+    rw [smul_sub, smul_smul, inv_mul_cancel₀ (ne_of_gt hVpos), one_smul]
+  by_cases hw : kernelAverageDefect τ a ε = 0
+  · unfold kernelAverageConeCoeffWVec kernelAverageConeCoeffW
+    simp [hw]
+  unfold kernelAverageConeCoeffWVec kernelAverageConeCoeffW
+  simp_rw [setAverage_eq, smul_eq_mul]
+  rw [hprod_diff, hf_diff, hg_diff]
+  rw [hmain_int]
+  rw [hdfga, hfadg]
+  module
+
+set_option linter.unusedSectionVars false in
+/-- Continuity of the Laplace normalizer, obtained from the explicit Lipschitz
+bound above. -/
+lemma continuous_kernelNormalizer_laplace_of_finite
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] :
+    Continuous (fun x : E => kernelNormalizer (laplaceKernel τ) μ x) := by
+  have hlip : LipschitzWith
+      (Real.toNNReal (((μ Set.univ).toReal / τ)))
+      (fun x : E => kernelNormalizer (laplaceKernel τ) μ x) := by
+    refine LipschitzWith.of_dist_le' ?_
+    intro x y
+    rw [Real.dist_eq, dist_eq_norm]
+    simpa [Real.norm_eq_abs] using
+      abs_kernelNormalizer_laplace_sub_le hτ μ x y
+  exact hlip.continuous
+
+set_option linter.unusedSectionVars false in
+/-- Continuity of the Laplace displacement numerator, obtained from the explicit
+Lipschitz bound above. -/
+lemma continuous_laplaceDisplacementField_of_finite
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] :
+    Continuous (fun x : E => laplaceDisplacementField τ μ x) := by
+  have hlip : LipschitzWith
+      (Real.toNNReal (3 * (μ Set.univ).toReal))
+      (fun x : E => laplaceDisplacementField τ μ x) := by
+    refine LipschitzWith.of_dist_le' ?_
+    intro x y
+    simpa [dist_eq_norm] using norm_laplaceDisplacementField_sub_le hτ μ x y
+  exact hlip.continuous
+
+set_option linter.unusedSectionVars false in
+/-- The quadratic product-rule remainder is `O(ε²/w(ε))`, hence `O(ε)`, for
+the Laplace normalizer/displacement pair. -/
+lemma norm_kernelAverageProductRemainder_laplace_le
+    {τ : ℝ} (hτ : 0 < τ) (a : E)
+    (ν μ : Measure E) [IsFiniteMeasure ν] [IsFiniteMeasure μ]
+    {ε : ℝ} (hε : 0 < ε) (hετ : ε ≤ 2 * τ) :
+    ‖(kernelAverageDefect τ a ε)⁻¹ •
+        (⨍ x in Metric.ball a ε,
+          (kernelNormalizer (laplaceKernel τ) ν x -
+              kernelNormalizer (laplaceKernel τ) ν a) •
+            (laplaceDisplacementField τ μ x -
+              laplaceDisplacementField τ μ a) ∂(volume : Measure E))‖ ≤
+      (((ν Set.univ).toReal / τ) * (3 * (μ Set.univ).toReal)) *
+        (4 * Real.exp 1 * τ) * ε := by
+  set LZ : ℝ := (ν Set.univ).toReal / τ with hLZ
+  set LD : ℝ := 3 * (μ Set.univ).toReal with hLD
+  set M : ℝ := LZ * LD * ε ^ 2 with hM
+  have hLZ_nonneg : 0 ≤ LZ := by
+    rw [hLZ]
+    positivity
+  have hLD_nonneg : 0 ≤ LD := by
+    rw [hLD]
+    positivity
+  have hM_nonneg : 0 ≤ M := by
+    rw [hM]
+    positivity
+  have hcross_cont : Continuous
+      (fun x : E =>
+        (kernelNormalizer (laplaceKernel τ) ν x -
+            kernelNormalizer (laplaceKernel τ) ν a) •
+          (laplaceDisplacementField τ μ x -
+            laplaceDisplacementField τ μ a)) := by
+    exact
+      (((continuous_kernelNormalizer_laplace_of_finite hτ ν).sub continuous_const).smul
+        ((continuous_laplaceDisplacementField_of_finite hτ μ).sub continuous_const))
+  have havg_bound :
+      ‖⨍ x in Metric.ball a ε,
+          (kernelNormalizer (laplaceKernel τ) ν x -
+              kernelNormalizer (laplaceKernel τ) ν a) •
+            (laplaceDisplacementField τ μ x -
+              laplaceDisplacementField τ μ a) ∂(volume : Measure E)‖ ≤ M := by
+    have h :=
+      norm_sub_setAverage_le_of_forall_norm_sub_le
+        (φ := fun x : E =>
+          (kernelNormalizer (laplaceKernel τ) ν x -
+              kernelNormalizer (laplaceKernel τ) ν a) •
+            (laplaceDisplacementField τ μ x -
+              laplaceDisplacementField τ μ a))
+        (a := a) hcross_cont hε
+        (M := M) (by
+          intro x hx
+          have hxle : ‖x - a‖ ≤ ε := by
+            rw [← dist_eq_norm]
+            exact le_of_lt (Metric.mem_ball.mp hx)
+          have hz :
+              |kernelNormalizer (laplaceKernel τ) ν x -
+                  kernelNormalizer (laplaceKernel τ) ν a| ≤ LZ * ‖x - a‖ := by
+            simpa [LZ, hLZ] using abs_kernelNormalizer_laplace_sub_le hτ ν x a
+          have hd :
+              ‖laplaceDisplacementField τ μ x -
+                  laplaceDisplacementField τ μ a‖ ≤ LD * ‖x - a‖ := by
+            simpa [LD, hLD] using norm_laplaceDisplacementField_sub_le hτ μ x a
+          simp only [sub_self, zero_smul, zero_sub, norm_neg]
+          rw [norm_smul, Real.norm_eq_abs]
+          have hnorm_nonneg : 0 ≤ ‖x - a‖ := norm_nonneg _
+          calc |kernelNormalizer (laplaceKernel τ) ν x -
+                  kernelNormalizer (laplaceKernel τ) ν a| *
+                  ‖laplaceDisplacementField τ μ x -
+                    laplaceDisplacementField τ μ a‖
+              ≤ (LZ * ‖x - a‖) * (LD * ‖x - a‖) := by
+                exact mul_le_mul hz hd (norm_nonneg _)
+                  (mul_nonneg hLZ_nonneg hnorm_nonneg)
+            _ ≤ (LZ * ε) * (LD * ε) := by
+                gcongr
+            _ = M := by
+                rw [hM]
+                ring)
+    simpa using h
+  have hwpos : 0 < kernelAverageDefect τ a ε :=
+    kernelAverageDefect_pos hτ a hε hετ
+  have hratio := inv_kernelAverageDefect_mul_radius_le hτ a hε hετ
+  calc ‖(kernelAverageDefect τ a ε)⁻¹ •
+        (⨍ x in Metric.ball a ε,
+          (kernelNormalizer (laplaceKernel τ) ν x -
+              kernelNormalizer (laplaceKernel τ) ν a) •
+            (laplaceDisplacementField τ μ x -
+              laplaceDisplacementField τ μ a) ∂(volume : Measure E))‖
+      = (kernelAverageDefect τ a ε)⁻¹ *
+          ‖⨍ x in Metric.ball a ε,
+            (kernelNormalizer (laplaceKernel τ) ν x -
+                kernelNormalizer (laplaceKernel τ) ν a) •
+              (laplaceDisplacementField τ μ x -
+                laplaceDisplacementField τ μ a) ∂(volume : Measure E)‖ := by
+        rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hwpos)]
+    _ ≤ (kernelAverageDefect τ a ε)⁻¹ * M := by
+        exact mul_le_mul_of_nonneg_left havg_bound (inv_nonneg.mpr hwpos.le)
+    _ = (LZ * LD) * ((kernelAverageDefect τ a ε)⁻¹ * ε) * ε := by
+        rw [hM]
+        ring
+    _ ≤ (LZ * LD) * (4 * Real.exp 1 * τ) * ε := by
+        gcongr
+    _ = (((ν Set.univ).toReal / τ) * (3 * (μ Set.univ).toReal)) *
+        (4 * Real.exp 1 * τ) * ε := by
+        rw [hLZ, hLD]
+
+set_option linter.unusedSectionVars false in
+/-- The product-rule cross term tends to zero for the Laplace normalizer and
+displacement numerator. -/
+lemma tendsto_kernelAverageProductRemainder_laplace
+    {τ : ℝ} (hτ : 0 < τ) (a : E)
+    (ν μ : Measure E) [IsFiniteMeasure ν] [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        (kernelAverageDefect τ a ε)⁻¹ •
+          (⨍ x in Metric.ball a ε,
+            (kernelNormalizer (laplaceKernel τ) ν x -
+                kernelNormalizer (laplaceKernel τ) ν a) •
+              (laplaceDisplacementField τ μ x -
+                laplaceDisplacementField τ μ a) ∂(volume : Measure E)))
+      (𝓝[>] (0 : ℝ)) (𝓝 (0 : E)) := by
+  set K : ℝ :=
+    (((ν Set.univ).toReal / τ) * (3 * (μ Set.univ).toReal)) *
+      (4 * Real.exp 1 * τ) with hK
+  have hK_nonneg : 0 ≤ K := by
+    rw [hK]
+    positivity
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  refine squeeze_zero'
+    (f := fun ε : ℝ =>
+      ‖(kernelAverageDefect τ a ε)⁻¹ •
+          (⨍ x in Metric.ball a ε,
+            (kernelNormalizer (laplaceKernel τ) ν x -
+                kernelNormalizer (laplaceKernel τ) ν a) •
+              (laplaceDisplacementField τ μ x -
+                laplaceDisplacementField τ μ a) ∂(volume : Measure E))‖)
+    (g := fun ε : ℝ => K * ε)
+    (Eventually.of_forall fun ε => norm_nonneg _) ?_ ?_
+  · have hsmall : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε ≤ 2 * τ :=
+      eventually_nhdsWithin_of_eventually_nhds <| by
+        filter_upwards [Iio_mem_nhds (show (0 : ℝ) < 2 * τ by positivity)] with ε hεlt
+        exact le_of_lt hεlt
+    filter_upwards [self_mem_nhdsWithin, hsmall] with ε hεpos hεle
+    simpa [K, hK] using
+      norm_kernelAverageProductRemainder_laplace_le hτ a ν μ hεpos hεle
+  · have hε0 : Tendsto (fun ε : ℝ => ε) (𝓝[>] (0 : ℝ)) (𝓝 0) :=
+      tendsto_nhdsWithin_of_tendsto_nhds tendsto_id
+    simpa using (tendsto_const_nhds.mul hε0 : Tendsto (fun ε : ℝ => K * ε)
+      (𝓝[>] (0 : ℝ)) (𝓝 (K * 0)))
+
+set_option linter.unusedSectionVars false in
+/-- **Product rule for the Laplace atom cone coefficient.**  The actual
+`w`-normalized cone coefficient of `Z_ν • D_μ` extracts exactly the atom mass
+of `ν` times the displacement numerator of `μ` at the centre. -/
+lemma tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct
+    {τ : ℝ} (hτ : 0 < τ) (a : E)
+    (ν μ : Measure E) [IsFiniteMeasure ν] [IsFiniteMeasure μ] :
+    Tendsto
+      (fun ε : ℝ =>
+        kernelAverageConeCoeffWVec τ a
+          (laplaceNormalizerDisplacementProduct τ ν μ) ε)
+      (𝓝[>] (0 : ℝ))
+      (𝓝 (atomMassReal ν a • laplaceDisplacementField τ μ a)) := by
+  have hZ :=
+    tendsto_kernelAverageConeCoeffW_kernelNormalizer_laplace hτ a ν
+  have hD :=
+    tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementField hτ a μ
+  have hR :=
+    tendsto_kernelAverageProductRemainder_laplace hτ a ν μ
+  have hprod :
+      Tendsto
+        (fun ε : ℝ =>
+          (kernelAverageConeCoeffW τ a
+            (fun x => kernelNormalizer (laplaceKernel τ) ν x) ε) •
+              laplaceDisplacementField τ μ a +
+            kernelNormalizer (laplaceKernel τ) ν a •
+              kernelAverageConeCoeffWVec τ a
+                (fun x => laplaceDisplacementField τ μ x) ε -
+            (kernelAverageDefect τ a ε)⁻¹ •
+              (⨍ x in Metric.ball a ε,
+                (kernelNormalizer (laplaceKernel τ) ν x -
+                    kernelNormalizer (laplaceKernel τ) ν a) •
+                  (laplaceDisplacementField τ μ x -
+                    laplaceDisplacementField τ μ a) ∂(volume : Measure E)))
+        (𝓝[>] (0 : ℝ))
+        (𝓝 (atomMassReal ν a • laplaceDisplacementField τ μ a)) := by
+    have hfirst :
+        Tendsto
+          (fun ε : ℝ =>
+            (kernelAverageConeCoeffW τ a
+              (fun x => kernelNormalizer (laplaceKernel τ) ν x) ε) •
+                laplaceDisplacementField τ μ a)
+          (𝓝[>] (0 : ℝ))
+          (𝓝 (atomMassReal ν a • laplaceDisplacementField τ μ a)) :=
+      hZ.smul tendsto_const_nhds
+    have hsecond :
+        Tendsto
+          (fun ε : ℝ =>
+            kernelNormalizer (laplaceKernel τ) ν a •
+              kernelAverageConeCoeffWVec τ a
+                (fun x => laplaceDisplacementField τ μ x) ε)
+          (𝓝[>] (0 : ℝ)) (𝓝 (0 : E)) := by
+      have hconst :
+          Tendsto (fun _ : ℝ => kernelNormalizer (laplaceKernel τ) ν a)
+            (𝓝[>] (0 : ℝ)) (𝓝 (kernelNormalizer (laplaceKernel τ) ν a)) :=
+        tendsto_const_nhds
+      simpa using hconst.smul hD
+    simpa [sub_eq_add_neg] using (hfirst.add hsecond).sub hR
+  refine hprod.congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with ε hεpos
+  symm
+  unfold laplaceNormalizerDisplacementProduct
+  exact kernelAverageConeCoeffWVec_smul_product_eq
+    (τ := τ) a hεpos
+    (continuous_kernelNormalizer_laplace_of_finite hτ ν)
+    (continuous_laplaceDisplacementField_of_finite hτ μ)
 
 end WNormalized
 

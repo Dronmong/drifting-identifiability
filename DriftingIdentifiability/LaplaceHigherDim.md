@@ -848,8 +848,12 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 > `tendsto_kernelAverageConeCoeffWVec_laplaceDisplacementField` proves that the
 > actual `w`-normalized ball-average defect of `D_μ` tends to `0`, using a
 > vector DCT theorem and a Fubini bridge back to `laplaceDisplacementField`.
-> What still remains for full L3 is the product rule for `Z_ν · D_μ` and the
-> final unconditional discharge of `LaplaceAtomConeProductData`.
+> The product rule is closed as well:
+> `tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct`
+> proves that the actual `w`-normalized cone coefficient of `Z_ν · D_μ`
+> converges to `ν({a}) · D_μ(a)`, using explicit Lipschitz bounds for `Z_ν`
+> and `D_μ` plus a quadratic cross-term estimate.  What still remains for full
+> L3 is the final unconditional discharge of `LaplaceAtomConeProductData`.
 >
 > **The `w(ε)`-normalizer route (recommended; avoids the exact `⨍‖x‖`
 > constant).**  Codex's `laplaceAtomConeCoeff` hard-codes the scale
