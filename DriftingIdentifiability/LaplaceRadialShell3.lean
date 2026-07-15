@@ -624,6 +624,111 @@ lemma shellT_coord_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z :
   unfold shellDistSubst
   field_simp [hr, hs]
 
+lemma integral_comp_shellDistSubst_mul_deriv
+    {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (g : ℝ → ℝ) (hg : Continuous g) :
+    (∫ z in |r - s|..(r + s),
+      g (shellDistSubst r s z) * (-(z / (r * s)))) =
+      ∫ u in (1 : ℝ)..(-1), g u := by
+  have hderiv :
+      ∀ z ∈ Set.uIcc |r - s| (r + s),
+        HasDerivAt (fun x : ℝ => shellDistSubst r s x) (-(z / (r * s))) z := by
+    intro z _
+    exact hasDerivAt_shellDistSubst hr hs z
+  have hderiv_cont :
+      ContinuousOn (fun z : ℝ => -(z / (r * s))) (Set.uIcc |r - s| (r + s)) := by
+    fun_prop
+  have hcov := intervalIntegral.integral_comp_mul_deriv
+    (a := |r - s|) (b := r + s)
+    (f := fun z : ℝ => shellDistSubst r s z)
+    (f' := fun z : ℝ => -(z / (r * s))) (g := g)
+    hderiv hderiv_cont hg
+  simpa [Function.comp, shellDistSubst_abs_left_endpoint hr hs,
+    shellDistSubst_right_endpoint hr hs] using hcov
+
+lemma integral_comp_shellDistSubst_mul_pos
+    {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (g : ℝ → ℝ) (hg : Continuous g) :
+    (∫ z in |r - s|..(r + s),
+      g (shellDistSubst r s z) * (z / (r * s))) =
+      ∫ u in (-1 : ℝ)..1, g u := by
+  have hneg := integral_comp_shellDistSubst_mul_deriv hr hs g hg
+  calc
+    (∫ z in |r - s|..(r + s),
+      g (shellDistSubst r s z) * (z / (r * s)))
+        = ∫ z in |r - s|..(r + s),
+            -(g (shellDistSubst r s z) * (-(z / (r * s)))) := by
+            apply intervalIntegral.integral_congr
+            intro z _
+            ring
+    _ = -∫ z in |r - s|..(r + s),
+          g (shellDistSubst r s z) * (-(z / (r * s))) := by
+            rw [intervalIntegral.integral_neg]
+    _ = -∫ u in (1 : ℝ)..(-1), g u := by
+            rw [hneg]
+    _ = ∫ u in (-1 : ℝ)..1, g u := by
+            rw [intervalIntegral.integral_symm]
+            simp
+
+lemma shellT_eq_distance_intervalIntegral
+    {τ r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
+    shellT τ r s =
+      (1 / 2) * ∫ z in |r - s|..(r + s),
+        Real.exp (-(1 / τ) * z) * ((r ^ 2 + s ^ 2 - z ^ 2) / (2 * r))
+          * (z / (r * s)) := by
+  let g : ℝ → ℝ := fun u =>
+    Real.exp (-(1 / τ) * shellDist r s u) * (s * u)
+  have hg : Continuous g := by
+    dsimp [g, shellDist]
+    fun_prop
+  have hcov := integral_comp_shellDistSubst_mul_pos hr.ne' hs.ne' g hg
+  rw [shellT_eq_intervalIntegral]
+  rw [← hcov]
+  congr 1
+  apply intervalIntegral.integral_congr
+  intro z hz
+  have hle : |r - s| ≤ r + s := by
+    rw [abs_le]
+    constructor <;> linarith
+  have hzIcc : z ∈ Icc |r - s| (r + s) := by
+    simpa [Set.uIcc_of_le hle] using hz
+  have hz_nonneg : 0 ≤ z := le_trans (abs_nonneg (r - s)) hzIcc.1
+  dsimp [g]
+  rw [shellDist_shellDistSubst hr.ne' hs.ne' hz_nonneg,
+    shellT_coord_shellDistSubst hr.ne' hs.ne']
+
+lemma shellT_eq_polynomial_distance_integral
+    {τ r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
+    shellT τ r s =
+      (1 / (4 * r ^ 2 * s)) *
+        ∫ z in |r - s|..(r + s),
+          z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z) := by
+  rw [shellT_eq_distance_intervalIntegral hr hs]
+  let F : ℝ → ℝ := fun z =>
+    z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z)
+  have hFint : IntervalIntegrable F volume |r - s| (r + s) := by
+    apply Continuous.intervalIntegrable
+    dsimp [F]
+    fun_prop
+  calc
+    (1 / 2) * (∫ z in |r - s|..(r + s),
+        Real.exp (-(1 / τ) * z) * ((r ^ 2 + s ^ 2 - z ^ 2) / (2 * r))
+          * (z / (r * s)))
+        = (1 / 2) * (∫ z in |r - s|..(r + s), (1 / (2 * r ^ 2 * s)) * F z) := by
+            congr 1
+            apply intervalIntegral.integral_congr
+            intro z _
+            dsimp [F]
+            field_simp [hr.ne', hs.ne']
+    _ = (1 / 2) * ((1 / (2 * r ^ 2 * s)) *
+          ∫ z in |r - s|..(r + s), F z) := by
+            rw [intervalIntegral.integral_const_mul]
+    _ = (1 / (4 * r ^ 2 * s)) *
+          ∫ z in |r - s|..(r + s), F z := by
+            ring
+    _ = (1 / (4 * r ^ 2 * s)) *
+        ∫ z in |r - s|..(r + s),
+          z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z) := by
+            rfl
+
 @[simp] lemma chartMap_mk_pair_apply_zero (s u φ : ℝ) :
     chartMap (s, (u, φ)) 0 = s * u := by
   simp [chartMap_mk_pair]

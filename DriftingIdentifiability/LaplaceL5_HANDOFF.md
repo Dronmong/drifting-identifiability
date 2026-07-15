@@ -161,9 +161,13 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   `u(r+s)=-1`, distance recovery `shellDist r s (u(z))=z`, and the pullbacks
   for `ρ²` and `s·u(z)`.  The set-integral bridge is also done:
   `shellT_eq_intervalIntegral` and `shellRhoSqOverDist_eq_intervalIntegral`.
-  **Current S-layer location:** apply `intervalIntegral.integral_comp_mul_deriv'`
-  with `shellDistSubst` to prove the original T₃ shell identity, then prove the
-  ray-mass identity.
+  Generic substitution through `shellDistSubst` is done
+  (`integral_comp_shellDistSubst_mul_deriv`, positive-orientation variant), and
+  `shellT` has its factored z-form
+  `(4r²s)⁻¹∫z(r²+s²-z²)e^{-z/τ}dz`.  **Current S-layer location:** prove the
+  analogous `shellRhoSqOverDist` z-form, then combine it with
+  `shellRhoPoly_integral_identity` and `shellT_eq_polynomial_distance_integral`
+  to finish T₃; after that, prove the ray-mass identity.
 
 ---
 
@@ -213,9 +217,10 @@ file split (each downstream file imports the previous):
    `integral_congr_ae` + `integral_chartBase_zonal` skeleton of
    `kernelNormalizer_radialMixture₃`.
 2. **T₃ per-shell identity** and the **ray-mass identity** `∫₀^∞ r²Z̄ dr = 2τ³`.
-   The polynomial FTC core and reverse-substitution algebra of the T₃ route are
-   DONE.  Remaining T₃ route (§4.10 refinement bullet, 2026-07-15): use the
-   **reverse polynomial**
+   The polynomial FTC core, reverse-substitution algebra, set-to-interval bridge,
+   generic substitution lemma, and `shellT` z-form are DONE.  Remaining T₃ route
+   (§4.10 refinement bullet, 2026-07-15): prove the `shellRhoSqOverDist` z-form
+   using the **reverse polynomial**
    `d`-substitution `u(z) = (r²+s²−z²)/(2rs)` (NO √-singularity, no endpoint
    case split) via `intervalIntegral.integral_comp_mul_deriv'` with primitives
    `Pₖ' = zᵏe^{−z/τ}` (`k ≤ 4`), then per-exponential-atom `ring`.

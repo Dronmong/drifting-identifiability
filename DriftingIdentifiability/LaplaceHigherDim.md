@@ -1437,6 +1437,19 @@ session-handoff spec).**
   `shellRhoSqOverDist_eq_intervalIntegral`.  The remaining T₃ proof can now
   start from interval integrals on `[-1,1]` and apply the already-certified
   reverse-distance substitution algebra directly.
+- 2026-07-15 (S-layer, substitution bridge for `shellT` — **green focused
+  build**): added the generic change-of-variables lemmas
+  `integral_comp_shellDistSubst_mul_deriv` and
+  `integral_comp_shellDistSubst_mul_pos`, then applied them to `shellT`.
+  Certified formulas:
+  `shellT_eq_distance_intervalIntegral` and the factored
+  `shellT_eq_polynomial_distance_integral =
+  (4r²s)⁻¹ ∫ z(r²+s²-z²)e^{-z/τ} dz`.  Remaining T₃ proof: prove the analogous
+  `shellRhoSqOverDist` z-form.  This is the one subtle endpoint-singularity
+  step: for `r=s`, the `ρ²/d` integrand has a total-division value at the
+  endpoint collision, so use the weaker
+  `intervalIntegral.integral_comp_mul_deriv'''` route (continuous on the open
+  image + integrable on the closed image), not the global-continuity wrapper.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal
