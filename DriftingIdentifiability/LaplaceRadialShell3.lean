@@ -1,4 +1,5 @@
 import DriftingIdentifiability.LaplaceRadialFoundations
+import DriftingIdentifiability.LaplaceCompanion
 
 /-!
 # Radial Laplace converse, milestone L5 (v1, `n = 3`): the shell layer
@@ -214,6 +215,13 @@ noncomputable def shellDist (r s u : ℝ) : ℝ := Real.sqrt (r ^ 2 + s ^ 2 - 2 
 noncomputable def shellZ (τ r s : ℝ) : ℝ :=
   (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * shellDist r s u)
 
+/-- The probe-to-chart norm collapses to the shell distance on the chart
+support `u² ≤ 1`. -/
+lemma norm_rayProbe_sub_smul_sphereChart {u : ℝ} (hu : u ^ 2 ≤ 1) (r s φ : ℝ) :
+    ‖rayProbe r - s • sphereChart u φ‖ = shellDist r s u := by
+  rw [shellDist, ← dist_sq_rayProbe_smul_sphereChart hu r s φ]
+  exact (Real.sqrt_sq (norm_nonneg _)).symm
+
 lemma laplaceKernel_rayProbe_nonneg (τ r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
     0 ≤ laplaceKernel τ (rayProbe r) y := (Real.exp_pos _).le
 
@@ -237,11 +245,8 @@ of the distance alone (φ-independent) on the chart support. -/
 lemma laplaceKernel_rayProbe_chart {u : ℝ} (hu : u ^ 2 ≤ 1) (τ r s φ : ℝ) :
     laplaceKernel τ (rayProbe r) (s • sphereChart u φ)
       = Real.exp (-(1 / τ) * shellDist r s u) := by
-  have hnorm : ‖rayProbe r - s • sphereChart u φ‖ = shellDist r s u := by
-    rw [shellDist, ← dist_sq_rayProbe_smul_sphereChart hu r s φ]
-    exact (Real.sqrt_sq (norm_nonneg _)).symm
   simp only [laplaceKernel]
-  rw [hnorm]
+  rw [norm_rayProbe_sub_smul_sphereChart hu]
 
 /-- **The ray normalizer is a `ν`-mixture of per-shell zonal kernel averages.**
 `Z̃_ν(r) = Z_{radialMixture₃ ν}(r•e₁) = ∫ shellZ τ r s dν`. -/
@@ -269,5 +274,73 @@ lemma kernelNormalizer_radialMixture₃ (τ : ℝ) (hτ : 0 < τ)
     have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
     rw [chartMap_mk_pair]
     exact laplaceKernel_rayProbe_chart hu2 τ r s φ
+
+/-! ## Ray objects: the companion normalizer profile -/
+
+/-- Per-shell zonal average of the companion kernel:
+`C̄(r,s) = (1/2)∫_{-1}^{1} (τ + d)·e^{-d/τ} du` (Matérn-3/2 profile). -/
+noncomputable def shellC (τ r s : ℝ) : ℝ :=
+  (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+    (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u)
+
+lemma laplaceCompanionKernel_rayProbe_nonneg (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) : 0 ≤ laplaceCompanionKernel τ (rayProbe r) y := by
+  simp only [laplaceCompanionKernel]
+  exact mul_nonneg (add_nonneg hτ.le (norm_nonneg _)) (laplaceKernel_rayProbe_nonneg τ r y)
+
+/-- The companion kernel `(τ+d)e^{-d/τ}` is bounded by `τ` (max at `d = 0`), via
+`1 + x ≤ eˣ`. -/
+lemma laplaceCompanionKernel_rayProbe_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) : laplaceCompanionKernel τ (rayProbe r) y ≤ τ := by
+  simp only [laplaceCompanionKernel, laplaceKernel]
+  set d := ‖rayProbe r - y‖ with hd
+  have h1 : τ + d ≤ τ * Real.exp (d / τ) := by
+    have hle : d / τ + 1 ≤ Real.exp (d / τ) := Real.add_one_le_exp (d / τ)
+    have hcancel : τ * (d / τ + 1) = τ + d := by field_simp [hτ.ne']; ring
+    nlinarith [mul_le_mul_of_nonneg_left hle hτ.le, hcancel]
+  have hcancel2 : Real.exp (d / τ) * Real.exp (-(1 / τ) * d) = 1 := by
+    rw [← Real.exp_add, show d / τ + -(1 / τ) * d = 0 by ring, Real.exp_zero]
+  have h3 := mul_le_mul_of_nonneg_right h1 (Real.exp_pos (-(1 / τ) * d)).le
+  rw [mul_assoc, hcancel2, mul_one] at h3
+  exact h3
+
+lemma continuous_laplaceCompanionKernel_rayProbe (τ r : ℝ) :
+    Continuous (fun y : EuclideanSpace ℝ (Fin 3) => laplaceCompanionKernel τ (rayProbe r) y) := by
+  simp only [laplaceCompanionKernel]
+  exact (continuous_const.add ((continuous_const.sub continuous_id).norm)).mul
+    (continuous_laplaceKernel_rayProbe τ r)
+
+lemma laplaceCompanionKernel_rayProbe_chart {u : ℝ} (hu : u ^ 2 ≤ 1) (τ r s φ : ℝ) :
+    laplaceCompanionKernel τ (rayProbe r) (s • sphereChart u φ)
+      = (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) := by
+  simp only [laplaceCompanionKernel]
+  rw [norm_rayProbe_sub_smul_sphereChart hu, laplaceKernel_rayProbe_chart hu]
+
+/-- **The companion normalizer is a `ν`-mixture of per-shell zonal companion
+averages.**  `C̃_ν(r) = ∫ shellC τ r s dν`. -/
+lemma kernelNormalizer_companion_radialMixture₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    kernelNormalizer (laplaceCompanionKernel τ) (radialMixture₃ ν) (rayProbe r)
+      = ∫ s, shellC τ r s ∂ν := by
+  have hf : Integrable (fun y => laplaceCompanionKernel τ (rayProbe r) y) (radialMixture₃ ν) :=
+    ⟨(continuous_laplaceCompanionKernel_rayProbe τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ)
+        (ae_of_all _ (fun y => by
+          rw [Real.norm_eq_abs, abs_of_nonneg (laplaceCompanionKernel_rayProbe_nonneg τ hτ r y)]
+          exact laplaceCompanionKernel_rayProbe_le τ hτ r y))⟩
+  rw [kernelNormalizer, integral_radialMixture₃ ν hf]
+  refine integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))
+  refine integral_chartBase_zonal
+    (G := fun w : ℝ × ℝ => laplaceCompanionKernel τ (rayProbe r) (chartMap (s, w)))
+    (g := fun u => (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u)) (C := τ) ?_ ?_ ?_
+  · exact (continuous_laplaceCompanionKernel_rayProbe τ r).comp
+      (continuous_chartMap.comp (by fun_prop))
+  · intro w
+    rw [abs_of_nonneg (laplaceCompanionKernel_rayProbe_nonneg τ hτ r _)]
+    exact laplaceCompanionKernel_rayProbe_le τ hτ r _
+  · intro u φ hu
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    rw [chartMap_mk_pair]
+    exact laplaceCompanionKernel_rayProbe_chart hu2 τ r s φ
 
 end DriftingIdentifiability

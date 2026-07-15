@@ -1361,6 +1361,21 @@ session-handoff spec).**
   ENNReal`; `.comp` needs explicit `(f := …)`; `Matrix.cons_val_two` is `rfl`.
   Remaining S-layer: zonal φ-collapse `∫ w ∂chartBase → (1/2)∫_{-1}^1`, inner
   `⟪s•Φ,e₁⟫ = su`, ray-object distance forms, T₃ identity, ray-mass identity.
+- 2026-07-15 (S-layer parts 2–3 — **committed, green**): `integral_chartBase_zonal`
+  (the φ-collapse); `shellDist`, `shellZ`, `shellC`;
+  `norm_rayProbe_sub_smul_sphereChart`; kernel/companion continuity + nonneg +
+  bounds (`≤ 1`, `≤ τ` via `1+x ≤ eˣ`); distance-collapse chart lemmas;
+  **`kernelNormalizer_radialMixture₃`** (`Z̃_ν(r) = ∫ shellZ τ r s dν`) and
+  **`kernelNormalizer_companion_radialMixture₃`** (`C̃_ν(r) = ∫ shellC τ r s dν`).
+  So Z̃ and C̃ ray objects have clean ν-mixture closed forms.  More gotchas:
+  `setIntegral_const` gives `μ.real s` (use `Real.volume_real_Ioc_of_le`);
+  `rw [← Real.exp_zero]` clobbers the `1` in `1/τ` (rewrite in a hyp instead);
+  `HasFiniteIntegral.of_bounded` + `Measure.isProbabilityMeasure_map` (dot forms);
+  `field_simp [hτ.ne']; ring` for `τ(d/τ+1)=τ+d`.  **A full session-handoff doc
+  now exists: `LaplaceL5_HANDOFF.md`** (self-contained; new agents start there).
+  Remaining S-layer: drift e₁-component `shellD` (needs the eval-CLM /
+  `ContinuousLinearMap.integral_comp_comm` to extract component 0 of the vector
+  drift numerator), T₃ identity, ray-mass identity.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over
