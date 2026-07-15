@@ -1347,6 +1347,20 @@ session-handoff spec).**
   explicit single-shell bound `Cov_shell ≥ -τ/8`-ish for `s < r` (closed
   forms exist) + cross-shell mean-monotonicity — all elementary but gnarly;
   not v1.
+- 2026-07-15 (S-layer, part 1 — **committed, green**): `LaplaceRadialShell3.lean`
+  created.  Done: `sphereChart`/`rayProbe` + component `rfl` lemmas;
+  `continuous_sphereChart` (via `continuous_pi` + `change` + `fun_prop`, and
+  `PiLp.continuous_toLp` found by `fun_prop`); `sphereChart_normSq = 1`;
+  **`dist_sq_rayProbe_smul_sphereChart`** (`‖r•e₁ - s•Φ(u,φ)‖² = r²+s²-2rsu`,
+  the φ-independence heart); `chartBase` (+ `IsProbabilityMeasure`, mass
+  `4π·(4π)⁻¹ = 1`); `chartMap`, `radialMixture₃` (+ `IsProbabilityMeasure` via
+  `Measure.isProbabilityMeasure_map`); **`integral_radialMixture₃`** (master
+  collapse `∫ f d(radialMixture₃ ν) = ∫ s ∫ w f(chartMap(s,w)) dchartBase dν`
+  via `integral_map` + `integral_prod`).  Gotchas recorded: `μ̃` (μ+combining
+  tilde) is NOT a valid Lean identifier — use `ν`; `ℝ≥0∞` needs `open scoped
+  ENNReal`; `.comp` needs explicit `(f := …)`; `Matrix.cons_val_two` is `rfl`.
+  Remaining S-layer: zonal φ-collapse `∫ w ∂chartBase → (1/2)∫_{-1}^1`, inner
+  `⟪s•Φ,e₁⟫ = su`, ray-object distance forms, T₃ identity, ray-mass identity.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over
