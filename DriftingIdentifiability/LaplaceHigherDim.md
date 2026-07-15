@@ -852,8 +852,16 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 > `tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct`
 > proves that the actual `w`-normalized cone coefficient of `Z_ν · D_μ`
 > converges to `ν({a}) · D_μ(a)`, using explicit Lipschitz bounds for `Z_ν`
-> and `D_μ` plus a quadratic cross-term estimate.  What still remains for full
-> L3 is the final unconditional discharge of `LaplaceAtomConeProductData`.
+> and `D_μ` plus a quadratic cross-term estimate.  The final `w`-normalized
+> discharge is closed:
+> `laplaceZeroDrift_atomAlignment_of_coneExtraction` proves atom alignment
+> directly from zero drift, and
+> `laplaceZeroDrift_atomMassRatio_of_coneExtraction` /
+> `laplaceZeroDrift_atomMass_zero_iff_of_coneExtraction` provide the downstream
+> ratio and atom-rigidity corollaries.  The older fixed-scale
+> `LaplaceAtomConeProductData` interface remains as a legacy gate; the certified
+> L3 route now bypasses it rather than instantiating its hard-coded
+> `((n+1)τ)/(nε)` scale.
 >
 > **The `w(ε)`-normalizer route (recommended; avoids the exact `⨍‖x‖`
 > constant).**  Codex's `laplaceAtomConeCoeff` hard-codes the scale
@@ -888,8 +896,10 @@ lines over ~5 sessions; L5 ≈ 1000–1800 lines gated on one open lemma.
 > 7. **Discharge**: combine with `Z_q·D_p = Z_p·D_q` (zero drift,
 >    `zeroDrift_displacementAligned`, L0) — the `w`-normalized coefficients are
 >    equal for every `ε`, so their common limit gives
->    `q({a})·D_p(a) = p({a})·D_q(a)` **unconditionally** (replacing the
->    `LaplaceAtomConeProductData` hypothesis with a theorem for `2 ≤ finrank`).
+>    `q({a})·D_p(a) = p({a})·D_q(a)` **unconditionally**.  Implemented as
+>    `laplaceZeroDrift_atomAlignment_of_coneExtraction`; the fixed-scale
+>    `LaplaceAtomConeProductData` gate is now a legacy formulation, not the
+>    active discharge route.
 > All ingredients verified present in Mathlib (`addHaar_ball`, `measure_diff`,
 > `lintegral`/`integral_eq_integral_meas_lt` layer cake — used only for (3)'s
 > bound, `Measure.measurePreserving_neg`, `integral_integral_swap`,

@@ -3,9 +3,12 @@ import DriftingIdentifiability.LaplaceAtomAlignment
 /-!
 # Higher-dimensional Laplace converse, milestone L3: ball-average cone extraction
 
-This file develops the analytic content that discharges the
-`LaplaceAtomConeProductData` hypothesis of `LaplaceAtomAlignment.lean`, following
-the `w(ε)`-normalizer route recorded in `LaplaceHigherDim.md` §4.8 (L3).
+This file develops the analytic content that discharges the atom-alignment
+conclusion of `LaplaceAtomAlignment.lean`, following the `w(ε)`-normalizer route
+recorded in `LaplaceHigherDim.md` §4.8 (L3).  The older
+`LaplaceAtomConeProductData` gate remains as a fixed-scale legacy interface;
+the final theorem here bypasses that interface with the certified
+`w`-normalized cone coefficient.
 
 Foundational geometric facts first: the ball is symmetric about its centre, so
 the centred coordinate `x - a` integrates to zero over `B(a, ε)`, and hence the
@@ -2034,6 +2037,110 @@ lemma tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct
     (τ := τ) a hεpos
     (continuous_kernelNormalizer_laplace_of_finite hτ ν)
     (continuous_laplaceDisplacementField_of_finite hτ μ)
+
+/-! ### Unconditional `w`-normalized L3 discharge -/
+
+set_option linter.unusedSectionVars false in
+/-- **L3 atom alignment, discharged.**  The `w(ε)`-normalized cone-extraction
+theorem supplies the analytic input directly: under zero raw Laplace drift, the
+atom masses and displacement numerators align at every point.
+
+This is the unconditional replacement for the earlier legacy
+`LaplaceAtomConeProductData` gate, whose statement used the old fixed
+`((n+1)τ)/(nε)` scale. -/
+theorem laplaceZeroDrift_atomAlignment_of_coneExtraction
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q] (a : E)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) :
+    atomMassReal q a • laplaceDisplacementField τ p a =
+      atomMassReal p a • laplaceDisplacementField τ q a := by
+  have hfun := laplaceNormalizerDisplacementProduct_eq_of_zeroDrift hτ p q hzero
+  have hleft :
+      Tendsto
+        (fun ε : ℝ =>
+          kernelAverageConeCoeffWVec τ a
+            (laplaceNormalizerDisplacementProduct τ q p) ε)
+        (𝓝[>] (0 : ℝ))
+        (𝓝 (atomMassReal q a • laplaceDisplacementField τ p a)) :=
+    tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct hτ a q p
+  have hright :
+      Tendsto
+        (fun ε : ℝ =>
+          kernelAverageConeCoeffWVec τ a
+            (laplaceNormalizerDisplacementProduct τ q p) ε)
+        (𝓝[>] (0 : ℝ))
+        (𝓝 (atomMassReal p a • laplaceDisplacementField τ q a)) := by
+    refine
+      (tendsto_kernelAverageConeCoeffWVec_laplaceNormalizerDisplacementProduct
+        hτ a p q).congr' ?_
+    exact Eventually.of_forall fun ε => by
+      rw [hfun]
+  exact tendsto_nhds_unique hleft hright
+
+set_option linter.unusedSectionVars false in
+/-- Scalar mass-ratio consequence of the discharged L3 atom alignment. -/
+theorem laplaceZeroDrift_atomMassRatio_of_coneExtraction
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q] (a : E)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hDp_ne : laplaceDisplacementField τ p a ≠ 0) :
+    atomMassReal q a * kernelNormalizer (laplaceKernel τ) p a =
+      atomMassReal p a * kernelNormalizer (laplaceKernel τ) q a := by
+  set Zp := kernelNormalizer (laplaceKernel τ) p a with hZp
+  set Zq := kernelNormalizer (laplaceKernel τ) q a with hZq
+  set Dp := laplaceDisplacementField τ p a with hDp_def
+  set Dq := laplaceDisplacementField τ q a with hDq_def
+  have hDp_ne' : Dp ≠ 0 := by
+    rw [hDp_def]
+    exact hDp_ne
+  have hZp_pos : 0 < Zp := by
+    rw [hZp]
+    exact laplaceKernelNormalizer_pos p τ hτ a
+  have hdisp : Zq • Dp = Zp • Dq := by
+    rw [hZp, hZq, hDp_def, hDq_def]
+    exact zeroDrift_displacementAligned hτ p q hzero a
+  have hDq : Dq = (Zp⁻¹ * Zq) • Dp := by
+    calc Dq = Zp⁻¹ • (Zp • Dq) := by
+          rw [inv_smul_smul₀ hZp_pos.ne']
+      _ = Zp⁻¹ • (Zq • Dp) := by rw [hdisp]
+      _ = (Zp⁻¹ * Zq) • Dp := by rw [smul_smul]
+  have halign : atomMassReal q a • Dp = atomMassReal p a • Dq := by
+    rw [hDp_def, hDq_def]
+    exact laplaceZeroDrift_atomAlignment_of_coneExtraction hτ p q a hzero
+  rw [hDq] at halign
+  rw [smul_smul] at halign
+  have hscalar :
+      atomMassReal q a = atomMassReal p a * (Zp⁻¹ * Zq) :=
+    smul_left_injective ℝ hDp_ne' halign
+  calc atomMassReal q a * Zp
+      = (atomMassReal p a * (Zp⁻¹ * Zq)) * Zp := by rw [hscalar]
+    _ = atomMassReal p a * Zq := by
+        field_simp [hZp_pos.ne']
+
+set_option linter.unusedSectionVars false in
+/-- Nonzero-displacement atom-rigidity consequence of the discharged L3 atom
+alignment. -/
+theorem laplaceZeroDrift_atomMass_zero_iff_of_coneExtraction
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q] (a : E)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    (hDp_ne : laplaceDisplacementField τ p a ≠ 0) :
+    atomMassReal p a = 0 ↔ atomMassReal q a = 0 := by
+  have hratio := laplaceZeroDrift_atomMassRatio_of_coneExtraction
+    hτ p q a hzero hDp_ne
+  have hZp_pos : 0 < kernelNormalizer (laplaceKernel τ) p a :=
+    laplaceKernelNormalizer_pos p τ hτ a
+  have hZq_pos : 0 < kernelNormalizer (laplaceKernel τ) q a :=
+    laplaceKernelNormalizer_pos q τ hτ a
+  constructor
+  · intro hp
+    have h : atomMassReal q a * kernelNormalizer (laplaceKernel τ) p a = 0 := by
+      rw [hratio, hp, zero_mul]
+    exact (mul_eq_zero.mp h).resolve_right hZp_pos.ne'
+  · intro hq
+    have h : atomMassReal p a * kernelNormalizer (laplaceKernel τ) q a = 0 := by
+      rw [← hratio, hq, zero_mul]
+    exact (mul_eq_zero.mp h).resolve_right hZq_pos.ne'
 
 end WNormalized
 
