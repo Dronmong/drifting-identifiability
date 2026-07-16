@@ -165,6 +165,85 @@ lemma zeroDrift_C_eq (hτ : 0 < τ)
   rw [hclosure, hQ, hD]
   ring
 
+omit [IsProbabilityMeasure νp] in
+/-- `D̃_ν = m̃·Z̃_ν` for any mixture sharing the tilted displacement. -/
+lemma zeroDrift_D_eq (hτ : 0 < τ)
+    (ν' : Measure ℝ) [IsProbabilityMeasure ν']
+    (hM : ∀ x : ℝ, radialRayM₃ τ νp x = radialRayM₃ τ ν' x) (r : ℝ) :
+    radialRayD₃ τ ν' r = radialRayM₃ τ νp r * radialRayZ₃ τ ν' r := by
+  rw [hM r, radialRayM₃, div_mul_cancel₀]
+  exact (radialRayZ₃_pos τ hτ ν' r).ne'
+
+/-- **`K̂ = τ·m̃·v`** under zero drift: the companion alignment defect is the
+tilted displacement times the geometric Wronskian weight (F5, first leg). -/
+theorem radialRayKhat₃_eq_M_mul_V (hτ : 0 < τ)
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) {r : ℝ} (hr : 0 < r) :
+    radialRayKhat₃ τ νp νq r
+      = τ * radialRayM₃ τ νp r * radialRayV₃ τ νp νq r := by
+  have gp := zeroDrift_C_eq τ νp hτ νp hsp (fun _ => rfl) hr
+  have gq := zeroDrift_C_eq τ νp hτ νq hsq
+    (fun x => zeroDrift_ray_M_eq τ νp νq hτ hzero x) hr
+  rw [radialRayKhat₃, radialRayK₃, radialRayV₃, radialRayW₃, gp, gq]
+  field_simp
+  ring
+
+/-- **`K̂' = −τ·(m̃'+4)·v`** under zero drift (F5, second leg): the Abel system
+with exactly the `2μ̂/m̃` coefficient shape (`μ̂ = (m̃'+4)/2`) consumed by the
+1-d propagation layer. -/
+theorem hasDerivAt_radialRayKhat₃ (hτ : 0 < τ)
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayKhat₃ τ νp νq)
+      (-(τ * (radialRayMDeriv₃ τ νp r + 4)) * radialRayV₃ τ νp νq r) r := by
+  have hCp := hasDerivAt_radialRayC₃ τ hτ νp hr
+  have hCq := hasDerivAt_radialRayC₃ τ hτ νq hr
+  have hZp := hasDerivAt_radialRayZ₃ τ hτ νp hr
+  have hZq := hasDerivAt_radialRayZ₃ τ hτ νq hr
+  have hr2 : HasDerivAt (fun x : ℝ => x ^ 2) (2 * r) r := by
+    simpa using hasDerivAt_pow 2 r
+  have hK := ((hCp.mul hZq).sub (hCq.mul hZp) :
+    HasDerivAt (fun x => radialRayC₃ τ νp x * radialRayZ₃ τ νq x
+        - radialRayC₃ τ νq x * radialRayZ₃ τ νp x)
+      (((1 / τ) * radialRayD₃ τ νp r * radialRayZ₃ τ νq r
+          + radialRayC₃ τ νp r * ((1 / τ) * radialRayZd₃ τ νq r))
+        - ((1 / τ) * radialRayD₃ τ νq r * radialRayZ₃ τ νp r
+          + radialRayC₃ τ νq r * ((1 / τ) * radialRayZd₃ τ νp r))) r)
+  have hKhat := (hr2.mul hK :
+    HasDerivAt (fun x => x ^ 2
+        * (radialRayC₃ τ νp x * radialRayZ₃ τ νq x
+          - radialRayC₃ τ νq x * radialRayZ₃ τ νp x))
+      (2 * r * (radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+          - radialRayC₃ τ νq r * radialRayZ₃ τ νp r)
+        + r ^ 2 * (((1 / τ) * radialRayD₃ τ νp r * radialRayZ₃ τ νq r
+            + radialRayC₃ τ νp r * ((1 / τ) * radialRayZd₃ τ νq r))
+          - ((1 / τ) * radialRayD₃ τ νq r * radialRayZ₃ τ νp r
+            + radialRayC₃ τ νq r * ((1 / τ) * radialRayZd₃ τ νp r)))) r)
+  have hfe : radialRayKhat₃ τ νp νq
+      = fun x => x ^ 2 * (radialRayC₃ τ νp x * radialRayZ₃ τ νq x
+          - radialRayC₃ τ νq x * radialRayZ₃ τ νp x) := rfl
+  rw [hfe]
+  have gp := zeroDrift_C_eq τ νp hτ νp hsp (fun _ => rfl) hr
+  have gq := zeroDrift_C_eq τ νp hτ νq hsq
+    (fun x => zeroDrift_ray_M_eq τ νp νq hτ hzero x) hr
+  have hDp := zeroDrift_D_eq τ νp hτ νp (fun _ => rfl) r
+  have hDq := zeroDrift_D_eq τ νp hτ νq
+    (fun x => zeroDrift_ray_M_eq τ νp νq hτ hzero x) r
+  have hval : (2 * r * (radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+          - radialRayC₃ τ νq r * radialRayZ₃ τ νp r)
+        + r ^ 2 * (((1 / τ) * radialRayD₃ τ νp r * radialRayZ₃ τ νq r
+            + radialRayC₃ τ νp r * ((1 / τ) * radialRayZd₃ τ νq r))
+          - ((1 / τ) * radialRayD₃ τ νq r * radialRayZ₃ τ νp r
+            + radialRayC₃ τ νq r * ((1 / τ) * radialRayZd₃ τ νp r))))
+      = -(τ * (radialRayMDeriv₃ τ νp r + 4)) * radialRayV₃ τ νp νq r := by
+    rw [radialRayV₃, radialRayW₃, gp, gq, hDp, hDq]
+    field_simp
+    ring
+  rw [hval] at hKhat
+  exact hKhat
+
 end System
 
 end DriftingIdentifiability
