@@ -1456,6 +1456,14 @@ session-handoff spec).**
   `shellT_eq_polynomial_distance_integral` to certify
   `shellRhoSqOverDist τ r s = (2τ/r)·shellT τ r s` for `τ,r,s>0` and `r≠s`.
   The remaining T₃ gap is now exactly the removable collision case `r=s>0`.
+- 2026-07-15 (S-layer, full positive-radius T₃ — **green focused build**):
+  closed the removable collision case `r=s>0`.  Added the continuous regularized
+  collision integrand, proved it agrees with the total-division integrand
+  a.e. on `[-1,1]`, pushed it through the reverse-distance substitution, and
+  derived the collision polynomial formula.  The final wrapper
+  `shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT` now proves T₃ for all
+  `τ,r,s>0`.  Remaining S-layer item: the ray-mass identity
+  `∫₀∞ r² shellZ τ r s dr = 2τ³`.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

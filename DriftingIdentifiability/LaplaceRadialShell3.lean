@@ -373,6 +373,17 @@ noncomputable def shellRhoSqOverDist (τ r s : ℝ) : ℝ :=
   (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
     Real.exp (-(1 / τ) * shellDist r s u) * (shellRhoSq s u / shellDist r s u)
 
+/-- Continuous extension of the collision-case (`s=r`) integrand
+`exp(-d/τ)·ρ²/d` at the removable endpoint `u=1`. -/
+noncomputable def shellRhoSqOverDistSelfRegIntegrand (τ r u : ℝ) : ℝ :=
+  Real.exp (-(1 / τ) * (r * Real.sqrt (2 * (1 - u)))) *
+    (r * (1 + u) * Real.sqrt ((1 - u) / 2))
+
+lemma continuous_shellRhoSqOverDistSelfRegIntegrand (τ r : ℝ) :
+    Continuous (fun u : ℝ => shellRhoSqOverDistSelfRegIntegrand τ r u) := by
+  dsimp [shellRhoSqOverDistSelfRegIntegrand]
+  fun_prop
+
 lemma integral_Ioc_neg_one_one_eq_interval (f : ℝ → ℝ) :
     (∫ u in Ioc (-1 : ℝ) 1, f u) = ∫ u in (-1 : ℝ)..1, f u := by
   rw [← intervalIntegral.integral_of_le (show (-1 : ℝ) ≤ 1 by norm_num)]
@@ -613,6 +624,62 @@ lemma shellDist_shellDistSubst {r s z : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (hz :
   rw [shellDist_sq_shellDistSubst hr hs z]
   exact Real.sqrt_sq hz
 
+lemma shellDist_self_eq {r u : ℝ} (hr : 0 < r) (hu : u ≤ 1) :
+    shellDist r r u = r * Real.sqrt (2 * (1 - u)) := by
+  unfold shellDist
+  have hnonneg : 0 ≤ 2 * (1 - u) := by nlinarith
+  have hsq : r ^ 2 + r ^ 2 - 2 * r * r * u = r ^ 2 * (2 * (1 - u)) := by ring
+  rw [hsq, Real.sqrt_mul (sq_nonneg r), Real.sqrt_sq hr.le]
+
+lemma sqrt_half_mul_sqrt_two_mul {u : ℝ} (hu : u ≤ 1) :
+    Real.sqrt ((1 - u) / 2) * Real.sqrt (2 * (1 - u)) = 1 - u := by
+  have hhalf : 0 ≤ (1 - u) / 2 := by positivity
+  have hmul :
+      ((1 - u) / 2) * (2 * (1 - u)) = (1 - u) ^ 2 := by ring
+  rw [← Real.sqrt_mul hhalf, hmul, Real.sqrt_sq (sub_nonneg.mpr hu)]
+
+lemma shellRhoSq_div_shellDist_self_eq {r u : ℝ} (hr : 0 < r) (hu : u < 1) :
+    shellRhoSq r u / shellDist r r u =
+      r * (1 + u) * Real.sqrt ((1 - u) / 2) := by
+  have hu_le : u ≤ 1 := le_of_lt hu
+  have hdist : shellDist r r u = r * Real.sqrt (2 * (1 - u)) :=
+    shellDist_self_eq hr hu_le
+  have hsqrt_pos : 0 < Real.sqrt (2 * (1 - u)) := by
+    exact Real.sqrt_pos.2 (by nlinarith)
+  have hprod := sqrt_half_mul_sqrt_two_mul hu_le
+  unfold shellRhoSq
+  rw [hdist]
+  field_simp [hr.ne', hsqrt_pos.ne']
+  calc
+    1 - u ^ 2 = (1 + u) * (1 - u) := by ring
+    _ = (1 + u) * (Real.sqrt ((1 - u) / 2) * Real.sqrt (2 * (1 - u))) := by
+      rw [hprod]
+    _ = Real.sqrt (2 * (1 - u)) * (1 + u) * Real.sqrt ((1 - u) / 2) := by
+      ring
+
+lemma shellRhoSqOverDist_self_integrand_eq_reg
+    {τ r u : ℝ} (hr : 0 < r) (hu : u < 1) :
+    Real.exp (-(1 / τ) * shellDist r r u) *
+        (shellRhoSq r u / shellDist r r u) =
+      shellRhoSqOverDistSelfRegIntegrand τ r u := by
+  rw [shellRhoSq_div_shellDist_self_eq hr hu, shellDist_self_eq hr hu.le]
+  rfl
+
+lemma shellRhoSqOverDist_self_eq_reg_interval
+    {τ r : ℝ} (hr : 0 < r) :
+    shellRhoSqOverDist τ r r =
+      (1 / 2) * ∫ u in (-1 : ℝ)..1,
+        shellRhoSqOverDistSelfRegIntegrand τ r u := by
+  rw [shellRhoSqOverDist_eq_intervalIntegral]
+  congr 1
+  apply intervalIntegral.integral_congr_ae
+  filter_upwards [show ∀ᵐ u : ℝ, u ≠ (1 : ℝ) by
+    simp [ae_iff, measure_singleton]] with u hu_ne huI
+  have huIoc : u ∈ Ioc (-1 : ℝ) 1 := by
+    simpa [Set.uIoc_of_le (show (-1 : ℝ) ≤ 1 by norm_num)] using huI
+  have hu_lt : u < 1 := lt_of_le_of_ne huIoc.2 hu_ne
+  exact shellRhoSqOverDist_self_integrand_eq_reg hr hu_lt
+
 lemma shellRhoSq_shellDistSubst {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) (z : ℝ) :
     shellRhoSq s (shellDistSubst r s z) = shellRhoPoly r s z / (4 * r ^ 2) := by
   unfold shellRhoSq shellDistSubst shellRhoPoly
@@ -716,6 +783,67 @@ lemma integral_comp_shellDistSubst_mul_pos_on
             rw [intervalIntegral.integral_symm]
             simp
 
+lemma shellRhoSqOverDist_self_eq_reg_distance_intervalIntegral
+    {τ r : ℝ} (hr : 0 < r) :
+    shellRhoSqOverDist τ r r =
+      (1 / 2) * ∫ z in (0 : ℝ)..(2 * r),
+        shellRhoSqOverDistSelfRegIntegrand τ r (shellDistSubst r r z) *
+          (z / (r * r)) := by
+  rw [shellRhoSqOverDist_self_eq_reg_interval hr]
+  have hcov := integral_comp_shellDistSubst_mul_pos hr.ne' hr.ne'
+    (fun u : ℝ => shellRhoSqOverDistSelfRegIntegrand τ r u)
+    (continuous_shellRhoSqOverDistSelfRegIntegrand τ r)
+  rw [← hcov]
+  congr 2
+  · simp
+  · ring
+
+lemma shellRhoSqOverDist_eq_polynomial_distance_integral_self
+    {τ r : ℝ} (hr : 0 < r) :
+    shellRhoSqOverDist τ r r =
+      (1 / (8 * r ^ 4)) *
+        ∫ z in (0 : ℝ)..(2 * r),
+          shellRhoPoly r r z * Real.exp (-(1 / τ) * z) := by
+  rw [shellRhoSqOverDist_self_eq_reg_distance_intervalIntegral hr]
+  let G : ℝ → ℝ := fun z => shellRhoPoly r r z * Real.exp (-(1 / τ) * z)
+  have hGint : IntervalIntegrable G volume (0 : ℝ) (2 * r) := by
+    apply Continuous.intervalIntegrable
+    dsimp [G, shellRhoPoly]
+    fun_prop
+  calc
+    (1 / 2) * (∫ z in (0 : ℝ)..(2 * r),
+        shellRhoSqOverDistSelfRegIntegrand τ r (shellDistSubst r r z) *
+          (z / (r * r)))
+        = (1 / 2) * (∫ z in (0 : ℝ)..(2 * r),
+            (1 / (4 * r ^ 4)) * G z) := by
+            congr 1
+            apply intervalIntegral.integral_congr_ae
+            filter_upwards [show ∀ᵐ z : ℝ, z ≠ (0 : ℝ) by
+              simp [ae_iff, measure_singleton]] with z hz_ne hzI
+            have hzIoc : z ∈ Ioc (0 : ℝ) (2 * r) := by
+              simpa [Set.uIoc_of_le (show (0 : ℝ) ≤ 2 * r by positivity)] using hzI
+            have hz_pos : 0 < z := hzIoc.1
+            have hu_lt : shellDistSubst r r z < 1 := by
+              unfold shellDistSubst
+              have hden_pos : 0 < 2 * r * r := by positivity
+              rw [div_lt_iff₀ hden_pos]
+              nlinarith [sq_pos_of_ne_zero hz_ne]
+            rw [← shellRhoSqOverDist_self_integrand_eq_reg hr hu_lt,
+              shellDist_shellDistSubst hr.ne' hr.ne' hz_pos.le,
+              shellRhoSq_shellDistSubst hr.ne' hr.ne']
+            dsimp [G]
+            field_simp [hr.ne', hz_ne]
+    _ = (1 / 2) * ((1 / (4 * r ^ 4)) *
+          ∫ z in (0 : ℝ)..(2 * r), G z) := by
+            rw [intervalIntegral.integral_const_mul]
+    _ = (1 / (8 * r ^ 4)) *
+          ∫ z in (0 : ℝ)..(2 * r), G z := by
+            ring
+    _ = (1 / (8 * r ^ 4)) *
+        ∫ z in (0 : ℝ)..(2 * r),
+          shellRhoPoly r r z * Real.exp (-(1 / τ) * z) := by
+            rfl
+
 lemma shellT_eq_distance_intervalIntegral
     {τ r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
     shellT τ r s =
@@ -776,6 +904,27 @@ lemma shellT_eq_polynomial_distance_integral
         ∫ z in |r - s|..(r + s),
           z * (r ^ 2 + s ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z) := by
             rfl
+
+lemma shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT_self
+    {τ r : ℝ} (hτ : 0 < τ) (hr : 0 < r) :
+    shellRhoSqOverDist τ r r = (2 * τ / r) * shellT τ r r := by
+  rw [shellRhoSqOverDist_eq_polynomial_distance_integral_self hr,
+    shellT_eq_polynomial_distance_integral hr hr]
+  have hpoly := shellRhoPoly_integral_identity hτ r r
+  simp only [sub_self, abs_zero] at hpoly ⊢
+  rw [show r + r = 2 * r by ring] at hpoly ⊢
+  let I : ℝ :=
+    ∫ z in (0 : ℝ)..(2 * r),
+      z * (r ^ 2 + r ^ 2 - z ^ 2) * Real.exp (-(1 / τ) * z)
+  have hJ :
+      (∫ z in (0 : ℝ)..(2 * r),
+        shellRhoPoly r r z * Real.exp (-(1 / τ) * z)) = 4 * τ * I := by
+    simpa [I] using hpoly
+  rw [hJ]
+  change (1 / (8 * r ^ 4)) * (4 * τ * I) =
+    (2 * τ / r) * ((1 / (4 * r ^ 2 * r)) * I)
+  field_simp [hr.ne']
+  ring_nf
 
 lemma shellRhoSqOverDist_eq_distance_intervalIntegral_of_ne
     {τ r s : ℝ} (hr : 0 < r) (hs : 0 < s) (hrs : r ≠ s) :
@@ -878,6 +1027,14 @@ lemma shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT_of_ne
     shellRhoPoly_integral_identity hτ]
   field_simp [hr.ne', hs.ne']
   ring
+
+lemma shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT
+    {τ r s : ℝ} (hτ : 0 < τ) (hr : 0 < r) (hs : 0 < s) :
+    shellRhoSqOverDist τ r s = (2 * τ / r) * shellT τ r s := by
+  by_cases hrs : r = s
+  · subst s
+    exact shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT_self hτ hr
+  · exact shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT_of_ne hτ hr hs hrs
 
 @[simp] lemma chartMap_mk_pair_apply_zero (s u φ : ℝ) :
     chartMap (s, (u, φ)) 0 = s * u := by
