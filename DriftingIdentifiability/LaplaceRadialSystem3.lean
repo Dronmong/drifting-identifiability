@@ -246,4 +246,78 @@ theorem hasDerivAt_radialRayKhat₃ (hτ : 0 < τ)
 
 end System
 
+/-! ## Range bounds and the near-edge estimate `|K̂| ≤ τ·r²` -/
+
+lemma radialRayZ₃_nonneg (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    0 ≤ radialRayZ₃ τ ν r := (radialRayZ₃_pos τ hτ ν r).le
+
+lemma radialRayZ₃_le_one (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayZ₃ τ ν r ≤ 1 := by
+  rw [radialRayZ₃_eq_kernelNormalizer τ hτ ν r, kernelNormalizer]
+  calc (∫ y, laplaceKernel τ (rayProbe r) y ∂(radialMixture₃ ν))
+      ≤ ∫ _, (1 : ℝ) ∂(radialMixture₃ ν) :=
+        integral_mono (integrable_laplaceKernel_rayProbe τ hτ _ r)
+          (integrable_const 1) (fun y => laplaceKernel_rayProbe_le_one τ hτ r y)
+    _ = 1 := by simp
+
+lemma radialRayC₃_nonneg (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    0 ≤ radialRayC₃ τ ν r := by
+  rw [radialRayC₃_eq_companionNormalizer τ hτ ν r, kernelNormalizer]
+  exact integral_nonneg fun y => laplaceCompanionKernel_rayProbe_nonneg τ hτ r y
+
+lemma radialRayC₃_le (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayC₃ τ ν r ≤ τ := by
+  rw [radialRayC₃_eq_companionNormalizer τ hτ ν r, kernelNormalizer]
+  have hint : Integrable (fun y => laplaceCompanionKernel τ (rayProbe r) y)
+      (radialMixture₃ ν) :=
+    ⟨(continuous_laplaceCompanionKernel_rayProbe τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ)
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs,
+            abs_of_nonneg (laplaceCompanionKernel_rayProbe_nonneg τ hτ r y)]
+          exact laplaceCompanionKernel_rayProbe_le τ hτ r y)⟩
+  calc (∫ y, laplaceCompanionKernel τ (rayProbe r) y ∂(radialMixture₃ ν))
+      ≤ ∫ _, τ ∂(radialMixture₃ ν) :=
+        integral_mono hint (integrable_const τ)
+          (fun y => laplaceCompanionKernel_rayProbe_le τ hτ r y)
+    _ = τ := by simp
+
+/-- **The near-edge estimate** `|K̂| ≤ τ·r²`: super-linear vanishing at the
+`r = 0` universal edge, and boundedness near every interior edge. -/
+lemma abs_radialRayKhat₃_le (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (r : ℝ) :
+    |radialRayKhat₃ τ νp νq r| ≤ τ * r ^ 2 := by
+  have hCp0 := radialRayC₃_nonneg τ hτ νp r
+  have hCq0 := radialRayC₃_nonneg τ hτ νq r
+  have hCpτ := radialRayC₃_le τ hτ νp r
+  have hCqτ := radialRayC₃_le τ hτ νq r
+  have hZp0 := radialRayZ₃_nonneg τ hτ νp r
+  have hZq0 := radialRayZ₃_nonneg τ hτ νq r
+  have hZp1 := radialRayZ₃_le_one τ hτ νp r
+  have hZq1 := radialRayZ₃_le_one τ hτ νq r
+  have hK : |radialRayK₃ τ νp νq r| ≤ τ := by
+    rw [radialRayK₃, abs_sub_le_iff]
+    constructor
+    · have h1 : radialRayC₃ τ νp r * radialRayZ₃ τ νq r ≤ τ * 1 :=
+        mul_le_mul hCpτ hZq1 hZq0 hτ.le
+      have h2 : 0 ≤ radialRayC₃ τ νq r * radialRayZ₃ τ νp r :=
+        mul_nonneg hCq0 hZp0
+      linarith
+    · have h1 : radialRayC₃ τ νq r * radialRayZ₃ τ νp r ≤ τ * 1 :=
+        mul_le_mul hCqτ hZp1 hZp0 hτ.le
+      have h2 : 0 ≤ radialRayC₃ τ νp r * radialRayZ₃ τ νq r :=
+        mul_nonneg hCp0 hZq0
+      linarith
+  calc |radialRayKhat₃ τ νp νq r|
+      = r ^ 2 * |radialRayK₃ τ νp νq r| := by
+        rw [radialRayKhat₃, abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ r ^ 2)]
+    _ ≤ r ^ 2 * τ :=
+        mul_le_mul_of_nonneg_left hK (by positivity)
+    _ = τ * r ^ 2 := by ring
+
 end DriftingIdentifiability
