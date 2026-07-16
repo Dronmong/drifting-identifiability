@@ -1466,6 +1466,29 @@ session-handoff spec).**
   Gotchas: section-variable instances unused in a lemma are hard errors
   (`omit [...] in`); the repo linter forbids goal-changing `show` (use
   `change`); beta-reduction under `EventuallyEq` needs `change` before `rw`.
+- 2026-07-15 (system layer COMPLETE — **committed, green**):
+  `LaplaceRadialSystem3.lean` now carries the full F5/F8 system:
+  **`radialRayKhat₃_eq_M_mul_V`** (`K̂ = τm̃v`) and
+  **`hasDerivAt_radialRayKhat₃`** (`K̂' = −τ(m̃'+4)v`) — proven by assembling
+  the R-layer derivative theorems and reducing with the `g_ν`-form; the
+  coefficient matches the 1-d wrappers' `2μ̂/m̃` with `μ̂ = (m̃'+4)/2`.
+  Boundary: **`abs_radialRayKhat₃_le`** (`|K̂| ≤ τr²`, the r = 0 universal
+  edge) and **`tendsto_radialRayKhat₃_atTop`** (`K̂ → 0` under first moments)
+  via: `tendsto_mul_measureReal_Ici_atTop` (the tail lemma, dominated
+  convergence on the truncated first moment), per-shell decay
+  (`shellZ_le_exp`, `shellC_le_matern` with `matern_antitone` from
+  `1+x ≤ eˣ`), `continuous_shellZ/C` (via `continuous_of_dominated`), the
+  mixture split bounds `radialRayZ₃_le_split`/`radialRayC₃_le_split`, a
+  pointwise envelope (`abs_radialRayKhat₃_le_envelope`) and
+  `tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero` + `squeeze_zero_norm'`.
+  Gotchas: `set x := e with h` REWRITES `e` in all hypotheses (a later
+  `rw [← h]` then fails — already folded); `simpa [Function.comp]` on a
+  `.comp`-tendsto can fail (`h.congr fun r => rfl` is robust);
+  `ENNReal.toReal_one` (not `one_toReal`); the repo linter forbids flexible
+  `simp at h` (name the lemmas or use `rw`); `hasDerivAt_pow 2 r` + `simpa`
+  for `(x²)' = 2r`.  NEXT: the trichotomy (F7 — mirror
+  `LaplaceUnconditionalConverse.lean:882–1010` with `LaplaceACPropagation`
+  lemmas), endgame steps 1–3, ray-mass identity, invariance, headline.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over

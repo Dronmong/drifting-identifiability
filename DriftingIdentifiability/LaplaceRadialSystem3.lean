@@ -645,4 +645,156 @@ lemma radialRayC₃_le_split (τ : ℝ) (hτ : 0 < τ)
       _ = (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) := one_mul _
   linarith
 
+/-! ## `K̂ → 0` at infinity -/
+
+/-- Natural-power version of the polynomial×exponential decay. -/
+lemma tendsto_nat_pow_mul_exp_neg_mul (n : ℕ) {c : ℝ} (hc : 0 < c) :
+    Tendsto (fun r : ℝ => r ^ n * Real.exp (-c * r)) atTop (𝓝 0) := by
+  have h := tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (n : ℝ) c hc
+  refine h.congr' ?_
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with r hr
+  rw [Real.rpow_natCast]
+
+/-- The scaled tail vanishes: `(r/2)·ν([r/2,∞)) → 0` under a first moment. -/
+lemma tendsto_half_mul_tail (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hmom : Integrable id ν) :
+    Tendsto (fun r : ℝ => (r / 2) * ν.real (Ici (r / 2))) atTop (𝓝 0) := by
+  have hhalf : Tendsto (fun r : ℝ => r / 2) atTop atTop :=
+    tendsto_atTop_atTop.mpr fun b => ⟨2 * b, fun a ha => by linarith⟩
+  have h := (tendsto_mul_measureReal_Ici_atTop ν hmom).comp hhalf
+  exact h.congr fun r => rfl
+
+/-- The pointwise decay envelope for `K̂`. -/
+lemma abs_radialRayKhat₃_le_envelope (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    {r : ℝ} (hr : 0 ≤ r) :
+    ‖radialRayKhat₃ τ νp νq r‖
+      ≤ 2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r))
+          + (1 / 2) * (r ^ 3 * Real.exp (-(1 / (2 * τ)) * r)))
+        + (2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r))
+            + (1 / 2) * (r ^ 3 * Real.exp (-(1 / (2 * τ)) * r)))
+          + (2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r)))
+            + 2 * (4 * τ * ((r / 2) * νp.real (Ici (r / 2))
+              * ((r / 2) * νq.real (Ici (r / 2))))))) := by
+  have hEexp : Real.exp (-(1 / τ) * (r / 2)) = Real.exp (-(1 / (2 * τ)) * r) := by
+    congr 1
+    field_simp
+  set E : ℝ := Real.exp (-(1 / (2 * τ)) * r) with hEdef
+  set Tp : ℝ := νp.real (Ici (r / 2)) with hTpdef
+  set Tq : ℝ := νq.real (Ici (r / 2)) with hTqdef
+  have hE0 : 0 < E := Real.exp_pos _
+  have hE1 : E ≤ 1 := by
+    rw [hEdef, Real.exp_le_one_iff]
+    have hc : (0 : ℝ) < 1 / (2 * τ) := by positivity
+    nlinarith
+  have hTp0 : 0 ≤ Tp := ENNReal.toReal_nonneg
+  have hTq0 : 0 ≤ Tq := ENNReal.toReal_nonneg
+  have hTp1 : Tp ≤ 1 := prob_measureReal_le_one _
+  have hTq1 : Tq ≤ 1 := prob_measureReal_le_one _
+  have hZp := radialRayZ₃_le_split τ hτ νp hsp hr
+  have hZq := radialRayZ₃_le_split τ hτ νq hsq hr
+  have hCp := radialRayC₃_le_split τ hτ νp hsp hr
+  have hCq := radialRayC₃_le_split τ hτ νq hsq hr
+  rw [hEexp] at hZp hZq hCp hCq
+  have hZp0 := radialRayZ₃_nonneg τ hτ νp r
+  have hZq0 := radialRayZ₃_nonneg τ hτ νq r
+  have hCp0 := radialRayC₃_nonneg τ hτ νp r
+  have hCq0 := radialRayC₃_nonneg τ hτ νq r
+  have hKabs : ‖radialRayKhat₃ τ νp νq r‖
+      ≤ r ^ 2 * (radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+        + radialRayC₃ τ νq r * radialRayZ₃ τ νp r) := by
+    rw [Real.norm_eq_abs, radialRayKhat₃, radialRayK₃, abs_mul,
+      abs_of_nonneg (by positivity : (0:ℝ) ≤ r ^ 2)]
+    refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+    calc |radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+          - radialRayC₃ τ νq r * radialRayZ₃ τ νp r|
+        ≤ |radialRayC₃ τ νp r * radialRayZ₃ τ νq r|
+          + |radialRayC₃ τ νq r * radialRayZ₃ τ νp r| := abs_sub _ _
+      _ = radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+          + radialRayC₃ τ νq r * radialRayZ₃ τ νp r := by
+          rw [abs_of_nonneg (mul_nonneg hCp0 hZq0),
+            abs_of_nonneg (mul_nonneg hCq0 hZp0)]
+  have hτr : (0 : ℝ) ≤ τ + r / 2 := by positivity
+  have hprod1 : radialRayC₃ τ νp r * radialRayZ₃ τ νq r
+      ≤ ((τ + r / 2) * E + τ * Tp) * (E + Tq) := by
+    refine mul_le_mul hCp hZq hZq0 ?_
+    positivity
+  have hprod2 : radialRayC₃ τ νq r * radialRayZ₃ τ νp r
+      ≤ ((τ + r / 2) * E + τ * Tq) * (E + Tp) := by
+    refine mul_le_mul hCq hZp hZp0 ?_
+    positivity
+  have hmid : ‖radialRayKhat₃ τ νp νq r‖
+      ≤ r ^ 2 * (((τ + r / 2) * E + τ * Tp) * (E + Tq)
+        + ((τ + r / 2) * E + τ * Tq) * (E + Tp)) := by
+    refine hKabs.trans ?_
+    refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+    exact add_le_add hprod1 hprod2
+  refine hmid.trans ?_
+  have e1 : r ^ 2 * ((τ + r / 2) * E * E) ≤ r ^ 2 * ((τ + r / 2) * E) := by
+    have hEE : (τ + r / 2) * E * E ≤ (τ + r / 2) * E * 1 := by
+      refine mul_le_mul_of_nonneg_left hE1 ?_
+      positivity
+    nlinarith
+  have e2 : r ^ 2 * ((τ + r / 2) * E * Tq) ≤ r ^ 2 * ((τ + r / 2) * E) := by
+    have hET : (τ + r / 2) * E * Tq ≤ (τ + r / 2) * E * 1 := by
+      refine mul_le_mul_of_nonneg_left hTq1 ?_
+      positivity
+    nlinarith
+  have e2' : r ^ 2 * ((τ + r / 2) * E * Tp) ≤ r ^ 2 * ((τ + r / 2) * E) := by
+    have hET : (τ + r / 2) * E * Tp ≤ (τ + r / 2) * E * 1 := by
+      refine mul_le_mul_of_nonneg_left hTp1 ?_
+      positivity
+    nlinarith
+  have e3 : r ^ 2 * (τ * Tp * E) ≤ r ^ 2 * (τ * E) := by
+    have hTE : τ * Tp * E ≤ τ * 1 * E := by
+      refine mul_le_mul_of_nonneg_right ?_ hE0.le
+      exact mul_le_mul_of_nonneg_left hTp1 hτ.le
+    nlinarith
+  have e3' : r ^ 2 * (τ * Tq * E) ≤ r ^ 2 * (τ * E) := by
+    have hTE : τ * Tq * E ≤ τ * 1 * E := by
+      refine mul_le_mul_of_nonneg_right ?_ hE0.le
+      exact mul_le_mul_of_nonneg_left hTq1 hτ.le
+    nlinarith
+  nlinarith [e1, e2, e2', e3, e3']
+
+/-- **`K̂ → 0` at infinity** under first moments on both radial profiles —
+the full-filter decay of `LaplaceHigherDim.md §4.10 (F8)`. -/
+theorem tendsto_radialRayKhat₃_atTop (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq) :
+    Tendsto (radialRayKhat₃ τ νp νq) atTop (𝓝 0) := by
+  have hcpos : (0 : ℝ) < 1 / (2 * τ) := by positivity
+  have hQ1 : Tendsto (fun r : ℝ => τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r))
+      + (1 / 2) * (r ^ 3 * Real.exp (-(1 / (2 * τ)) * r))) atTop (𝓝 0) := by
+    have h1 := (tendsto_nat_pow_mul_exp_neg_mul 2 hcpos).const_mul τ
+    have h2 := (tendsto_nat_pow_mul_exp_neg_mul 3 hcpos).const_mul (1 / 2 : ℝ)
+    have h := h1.add h2
+    simpa using h
+  have hQ3 : Tendsto (fun r : ℝ => τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r)))
+      atTop (𝓝 0) := by
+    have h := (tendsto_nat_pow_mul_exp_neg_mul 2 hcpos).const_mul τ
+    simpa using h
+  have hP4 : Tendsto (fun r : ℝ => 4 * τ * ((r / 2) * νp.real (Ici (r / 2))
+      * ((r / 2) * νq.real (Ici (r / 2))))) atTop (𝓝 0) := by
+    have h := ((tendsto_half_mul_tail νp hmp).mul
+      (tendsto_half_mul_tail νq hmq)).const_mul (4 * τ)
+    simpa using h
+  have hΨ : Tendsto (fun r : ℝ =>
+      2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r))
+          + (1 / 2) * (r ^ 3 * Real.exp (-(1 / (2 * τ)) * r)))
+        + (2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r))
+            + (1 / 2) * (r ^ 3 * Real.exp (-(1 / (2 * τ)) * r)))
+          + (2 * (τ * (r ^ 2 * Real.exp (-(1 / (2 * τ)) * r)))
+            + 2 * (4 * τ * ((r / 2) * νp.real (Ici (r / 2))
+              * ((r / 2) * νq.real (Ici (r / 2)))))))) atTop (𝓝 0) := by
+    have h := (hQ1.const_mul 2).add
+      ((hQ1.const_mul 2).add ((hQ3.const_mul 2).add (hP4.const_mul 2)))
+    simpa using h
+  refine squeeze_zero_norm' ?_ hΨ
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+  exact abs_radialRayKhat₃_le_envelope τ hτ νp νq hsp hsq hr
+
 end DriftingIdentifiability
+
