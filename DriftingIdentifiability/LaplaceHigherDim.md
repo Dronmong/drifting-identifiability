@@ -1376,6 +1376,31 @@ session-handoff spec).**
   Remaining S-layer: drift e₁-component `shellD` (needs the eval-CLM /
   `ContinuousLinearMap.integral_comp_comm` to extract component 0 of the vector
   drift numerator), T₃ identity, ray-mass identity.
+- 2026-07-15 (R-layer C¹ — **committed, green; THE C¹ RISK ITEM IS CLOSED**):
+  `LaplaceRadialRay3.lean` now has the full C¹ layer.  Pointwise:
+  `norm_rayProbe_sub_eq_sqrt`, junk-safe bounds (`|X|≤d`, `|X/d|≤1`, `X²/d≤d`),
+  `hasDerivAt_norm_rayProbe_sub` (via `HasDerivAt.sqrt`), and the three kernel
+  probe-derivatives (`hasDerivAt_laplace{,Companion}Kernel_rayProbe'`,
+  `hasDerivAt_laplaceKernel_mul_coord'`), all conditioned only on
+  `‖rayProbe r − y‖ ≠ 0`.  Measure: `radialMixture₃_ae_probe_ne` (the collision
+  set is null — its chart preimage sits in the `u = 1` chartBase-null slice).
+  Dominated differentiation (`hasDerivAt_integral_of_dominated_loc_of_deriv_le`
+  with `s := Ioi 0` via `Ioi_mem_nhds`, global constant dominators `1/τ`,
+  `e⁻¹`, `e⁻¹+1`): **`hasDerivAt_radialRayZ₃`** (`Z̃' = (1/τ)·radialRayZd₃`),
+  **`hasDerivAt_radialRayC₃`** (`C̃' = (1/τ)·D̃` — the closure's first leg),
+  **`hasDerivAt_radialRayD₃`** (`D̃' = (1/τ)·radialRayQ₃ − Z̃`).  New y-level
+  payload objects `radialRayZd₃ := ∫(X/d)w̄`, `radialRayQ₃ := ∫(X²/d)w̄`;
+  helper `radialRayD₃_eq_integral_coord` (component 0 commuted through the
+  Bochner integral via `EuclideanSpace.proj` + `integral_comp_comm` +
+  `EuclideanSpace.coe_proj`).  Lean gotchas: `HasDerivAt.sqrt` exists (never
+  fight `.comp` with `√·`); value-massaging via
+  `have hval : v₁ = v₂ := by ring` then `rw [hval] at h` is far more robust
+  than `convert h using 1`; `not_imp` is ambiguous (use `by_contra` + direct
+  λ-construction); `push_neg` is deprecated here (`not_le.mp`/`not_forall.mp`);
+  `field_simp` needs explicit `[hne, hτ.ne']`; `mul_div_mul_left _ _
+  two_ne_zero` cleans `2a/(2b) = a/b`.  Remaining R-layer: T̃/P y-level bridges
+  (P needs a measurable-G variant of `integral_chartBase_zonal` for the `ρ²/d`
+  collision), closure identity, sign layer.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over

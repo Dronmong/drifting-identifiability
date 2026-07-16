@@ -376,4 +376,225 @@ theorem hasDerivAt_radialRayZ₃ (τ : ℝ) (hτ : 0 < τ)
     rw [radialRayZd₃, integral_const_mul]
   exact hval ▸ key.2
 
+/-- The axial weighted-displacement integrand is uniformly bounded by `τ·e⁻¹`. -/
+lemma abs_laplaceKernel_mul_coord_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) :
+    |laplaceKernel τ (rayProbe r) y * (y 0 - r)| ≤ τ * Real.exp (-1) := by
+  rw [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+  calc laplaceKernel τ (rayProbe r) y * |y 0 - r|
+      ≤ laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ :=
+        mul_le_mul_of_nonneg_left (abs_coord_sub_le_norm_rayProbe_sub r y)
+          (laplaceKernel_rayProbe_nonneg τ r y)
+    _ = ‖rayProbe r - y‖ * Real.exp (-‖rayProbe r - y‖ / τ) := by
+        simp only [laplaceKernel]
+        rw [show -(1 / τ) * ‖rayProbe r - y‖ = -‖rayProbe r - y‖ / τ by ring]
+        ring
+    _ ≤ τ * Real.exp (-1) := mul_exp_neg_div_le hτ (norm_nonneg _)
+
+/-- The `X²/d`-weighted kernel integrand is uniformly bounded by `τ·e⁻¹`. -/
+lemma abs_laplaceKernel_mul_sq_div_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) :
+    |laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)|
+      ≤ τ * Real.exp (-1) := by
+  have hK := laplaceKernel_rayProbe_nonneg τ r y
+  have hdiv : (0 : ℝ) ≤ (y 0 - r) ^ 2 / ‖rayProbe r - y‖ :=
+    div_nonneg (by positivity) (norm_nonneg _)
+  rw [abs_mul, abs_of_nonneg hK, abs_of_nonneg hdiv]
+  calc laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+      ≤ laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ :=
+        mul_le_mul_of_nonneg_left (sq_coord_div_norm_rayProbe_le r y) hK
+    _ = ‖rayProbe r - y‖ * Real.exp (-‖rayProbe r - y‖ / τ) := by
+        simp only [laplaceKernel]
+        rw [show -(1 / τ) * ‖rayProbe r - y‖ = -‖rayProbe r - y‖ / τ by ring]
+        ring
+    _ ≤ τ * Real.exp (-1) := mul_exp_neg_div_le hτ (norm_nonneg _)
+
+lemma measurable_laplaceKernel_mul_sq_div (τ r : ℝ) :
+    Measurable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)) := by
+  have hcoord : Measurable fun y : EuclideanSpace ℝ (Fin 3) => (y 0 - r) ^ 2 := by
+    have : Continuous fun y : EuclideanSpace ℝ (Fin 3) => (y 0 - r) ^ 2 := by fun_prop
+    exact this.measurable
+  have hnorm : Measurable fun y : EuclideanSpace ℝ (Fin 3) => ‖rayProbe r - y‖ :=
+    ((continuous_const.sub continuous_id).norm).measurable
+  exact ((continuous_laplaceKernel_rayProbe τ r).measurable).mul (hcoord.div hnorm)
+
+/-- `D̃` in its raw axial-integral form (component-0 of the drift numerator,
+commuted through the Bochner integral). -/
+lemma radialRayD₃_eq_integral_coord (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayD₃ τ ν r
+      = ∫ y, laplaceKernel τ (rayProbe r) y * (y 0 - r) ∂(radialMixture₃ ν) := by
+  rw [radialRayD₃_eq_weightedDisplacementCoord τ hτ ν r]
+  have hFint : Integrable (fun y => laplaceWeightedDisplacement τ (rayProbe r) y)
+      (radialMixture₃ ν) :=
+    laplaceWeightedDisplacement_integrable τ hτ (radialMixture₃ ν) (rayProbe r)
+  have hproj :=
+    (EuclideanSpace.proj (0 : Fin 3)).integral_comp_comm (μ := radialMixture₃ ν) hFint
+  have hcoord : (∫ y, laplaceWeightedDisplacement τ (rayProbe r) y
+        ∂(radialMixture₃ ν)) 0
+      = ∫ y, (laplaceWeightedDisplacement τ (rayProbe r) y) 0
+        ∂(radialMixture₃ ν) := by
+    simpa [EuclideanSpace.coe_proj] using hproj.symm
+  rw [hcoord]
+  refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+  simp only [laplaceWeightedDisplacement, PiLp.smul_apply, PiLp.sub_apply,
+    rayProbe_apply_zero, smul_eq_mul]
+
+lemma integrable_laplaceKernel_mul_coord (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 3))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceKernel τ (rayProbe r) y * (y 0 - r)) μ := by
+  have hc : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * (y 0 - r)) := by
+    have h0 : Continuous fun y : EuclideanSpace ℝ (Fin 3) => y 0 - r := by fun_prop
+    exact (continuous_laplaceKernel_rayProbe τ r).mul h0
+  exact ⟨hc.aestronglyMeasurable,
+    HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+      (ae_of_all _ fun y => by
+        rw [Real.norm_eq_abs]
+        exact abs_laplaceKernel_mul_coord_le τ hτ r y)⟩
+
+/-- **`C̃` is differentiable on the open ray with `C̃' = (1/τ)·D̃`** — the
+integrated companion-derivative identity, and the first leg of the closure. -/
+theorem hasDerivAt_radialRayC₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayC₃ τ ν) ((1 / τ) * radialRayD₃ τ ν r) r := by
+  have hfe : radialRayC₃ τ ν
+      = fun x => ∫ y, laplaceCompanionKernel τ (rayProbe x) y ∂(radialMixture₃ ν) := by
+    funext x
+    rw [radialRayC₃_eq_companionNormalizer τ hτ ν x]
+    rfl
+  have hmeasF' : AEStronglyMeasurable
+      (fun y : EuclideanSpace ℝ (Fin 3) =>
+        (1 / τ) * (laplaceKernel τ (rayProbe r) y * (y 0 - r))) (radialMixture₃ ν) := by
+    have h0 : Continuous fun y : EuclideanSpace ℝ (Fin 3) =>
+        (1 / τ) * (laplaceKernel τ (rayProbe r) y * (y 0 - r)) := by
+      have := continuous_laplaceKernel_rayProbe τ r
+      fun_prop
+    exact h0.aestronglyMeasurable
+  have hCint : Integrable (fun y => laplaceCompanionKernel τ (rayProbe r) y)
+      (radialMixture₃ ν) :=
+    ⟨(continuous_laplaceCompanionKernel_rayProbe τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ)
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs,
+            abs_of_nonneg (laplaceCompanionKernel_rayProbe_nonneg τ hτ r y)]
+          exact laplaceCompanionKernel_rayProbe_le τ hτ r y)⟩
+  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (μ := radialMixture₃ ν) (x₀ := r)
+    (F := fun x (y : EuclideanSpace ℝ (Fin 3)) => laplaceCompanionKernel τ (rayProbe x) y)
+    (F' := fun x (y : EuclideanSpace ℝ (Fin 3)) =>
+      (1 / τ) * (laplaceKernel τ (rayProbe x) y * (y 0 - x)))
+    (bound := fun _ => Real.exp (-1))
+    (Ioi_mem_nhds hr)
+    (Filter.Eventually.of_forall fun x =>
+      (continuous_laplaceCompanionKernel_rayProbe τ x).aestronglyMeasurable)
+    hCint
+    hmeasF'
+    (ae_of_all _ fun y => by
+      intro x _
+      rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ 1 / τ)]
+      have hb := abs_laplaceKernel_mul_coord_le τ hτ x y
+      calc 1 / τ * |laplaceKernel τ (rayProbe x) y * (y 0 - x)|
+          ≤ 1 / τ * (τ * Real.exp (-1)) :=
+            mul_le_mul_of_nonneg_left hb (by positivity)
+        _ = Real.exp (-1) := by field_simp)
+    (integrable_const _)
+    (by
+      filter_upwards [radialMixture₃_ae_probe_ne ν] with y hy
+      intro x hx
+      exact hasDerivAt_laplaceCompanionKernel_rayProbe' hτ (hy x hx))
+  rw [hfe]
+  have hval : (∫ y, (1 / τ) * (laplaceKernel τ (rayProbe r) y * (y 0 - r))
+      ∂(radialMixture₃ ν)) = (1 / τ) * radialRayD₃ τ ν r := by
+    rw [integral_const_mul, radialRayD₃_eq_integral_coord τ hτ ν r]
+  exact hval ▸ key.2
+
+/-- **`D̃` is differentiable on the open ray with
+`D̃' = (1/τ)·Q̃ − Z̃`** — the second-moment derivative formula feeding both the
+closure identity and the sign layer. -/
+theorem hasDerivAt_radialRayD₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayD₃ τ ν)
+      ((1 / τ) * radialRayQ₃ τ ν r - radialRayZ₃ τ ν r) r := by
+  have hfe : radialRayD₃ τ ν
+      = fun x => ∫ y, laplaceKernel τ (rayProbe x) y * (y 0 - x)
+          ∂(radialMixture₃ ν) := by
+    funext x
+    exact radialRayD₃_eq_integral_coord τ hτ ν x
+  have hmeasF' : AEStronglyMeasurable
+      (fun y : EuclideanSpace ℝ (Fin 3) =>
+        (1 / τ) * (laplaceKernel τ (rayProbe r) y
+          * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+          - laplaceKernel τ (rayProbe r) y) (radialMixture₃ ν) := by
+    exact (((measurable_laplaceKernel_mul_sq_div τ r).const_mul _).sub
+      (continuous_laplaceKernel_rayProbe τ r).measurable).aestronglyMeasurable
+  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (μ := radialMixture₃ ν) (x₀ := r)
+    (F := fun x (y : EuclideanSpace ℝ (Fin 3)) =>
+      laplaceKernel τ (rayProbe x) y * (y 0 - x))
+    (F' := fun x (y : EuclideanSpace ℝ (Fin 3)) =>
+      (1 / τ) * (laplaceKernel τ (rayProbe x) y
+        * ((y 0 - x) ^ 2 / ‖rayProbe x - y‖))
+        - laplaceKernel τ (rayProbe x) y)
+    (bound := fun _ => Real.exp (-1) + 1)
+    (Ioi_mem_nhds hr)
+    (Filter.Eventually.of_forall fun x => by
+      have h0 : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+          laplaceKernel τ (rayProbe x) y * (y 0 - x)) := by
+        have := continuous_laplaceKernel_rayProbe τ x
+        fun_prop
+      exact h0.aestronglyMeasurable)
+    (integrable_laplaceKernel_mul_coord τ hτ _ r)
+    hmeasF'
+    (ae_of_all _ fun y => by
+      intro x _
+      have hA : |(1 / τ) * (laplaceKernel τ (rayProbe x) y
+          * ((y 0 - x) ^ 2 / ‖rayProbe x - y‖))| ≤ Real.exp (-1) := by
+        rw [abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ 1 / τ)]
+        have hb := abs_laplaceKernel_mul_sq_div_le τ hτ x y
+        calc 1 / τ * |laplaceKernel τ (rayProbe x) y
+            * ((y 0 - x) ^ 2 / ‖rayProbe x - y‖)|
+            ≤ 1 / τ * (τ * Real.exp (-1)) :=
+              mul_le_mul_of_nonneg_left hb (by positivity)
+          _ = Real.exp (-1) := by field_simp
+      have hK : |laplaceKernel τ (rayProbe x) y| ≤ 1 := by
+        rw [abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ x y)]
+        exact laplaceKernel_rayProbe_le_one τ hτ x y
+      rw [Real.norm_eq_abs]
+      calc |(1 / τ) * (laplaceKernel τ (rayProbe x) y
+            * ((y 0 - x) ^ 2 / ‖rayProbe x - y‖))
+            - laplaceKernel τ (rayProbe x) y|
+          ≤ |(1 / τ) * (laplaceKernel τ (rayProbe x) y
+            * ((y 0 - x) ^ 2 / ‖rayProbe x - y‖))|
+            + |laplaceKernel τ (rayProbe x) y| := abs_sub _ _
+        _ ≤ Real.exp (-1) + 1 := add_le_add hA hK)
+    (integrable_const _)
+    (by
+      filter_upwards [radialMixture₃_ae_probe_ne ν] with y hy
+      intro x hx
+      exact hasDerivAt_laplaceKernel_mul_coord' (hy x hx))
+  rw [hfe]
+  have hint1 : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      (1 / τ) * (laplaceKernel τ (rayProbe r) y
+        * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))) (radialMixture₃ ν) :=
+    ⟨((measurable_laplaceKernel_mul_sq_div τ r).const_mul _).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ 1 / τ)]
+          have hb := abs_laplaceKernel_mul_sq_div_le τ hτ r y
+          calc 1 / τ * |laplaceKernel τ (rayProbe r) y
+              * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)|
+              ≤ 1 / τ * (τ * Real.exp (-1)) :=
+                mul_le_mul_of_nonneg_left hb (by positivity)
+            _ = Real.exp (-1) := by field_simp)⟩
+  have hval : (∫ y, ((1 / τ) * (laplaceKernel τ (rayProbe r) y
+      * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+      - laplaceKernel τ (rayProbe r) y) ∂(radialMixture₃ ν))
+      = (1 / τ) * radialRayQ₃ τ ν r - radialRayZ₃ τ ν r := by
+    rw [integral_sub hint1 (integrable_laplaceKernel_rayProbe τ hτ _ r),
+      integral_const_mul, radialRayZ₃_eq_kernelNormalizer τ hτ ν r]
+    rfl
+  exact hval ▸ key.2
+
 end DriftingIdentifiability
