@@ -1401,6 +1401,29 @@ session-handoff spec).**
   two_ne_zero` cleans `2a/(2b) = a/b`.  Remaining R-layer: T̃/P y-level bridges
   (P needs a measurable-G variant of `integral_chartBase_zonal` for the `ρ²/d`
   collision), closure identity, sign layer.
+- 2026-07-15 (closure identity — **committed, green**): `LaplaceRadialRay3.lean`
+  now proves **`radialRayC₃_closure`**: `C̃ = Q̃ + 3τ·Z̃ + (2τ/r)·D̃` on the
+  open ray for radial mixtures supported on `[0,∞)` — together with
+  `hasDerivAt_radialRayD₃` this is exactly the F4 closure
+  `C̃ = τD̃' + 4τZ̃ + (2τ/r)D̃`.  Supporting chain, all new and green:
+  `norm_rayProbe_sub_sq_eq` (`d² = X² + ρ²` in coordinates);
+  `rhoSq_div_norm_rayProbe_le` + `abs_laplaceKernel_mul_rhoSq_div_le` (`ρ²/d ≤
+  d`, `K·ρ²/d ≤ τe⁻¹`, junk-safe); **`integral_chartBase_zonal_measurable`**
+  (the measurable-G φ-collapse, needed because the `ρ²/d` chart section is
+  discontinuous at the collision `s = r, u = 1`); the two y-level bridges
+  **`radialRayT₃_eq_integral`** (`T̃ = ∫K·y₀`) and
+  **`radialRayRhoSqOverDist₃_eq_integral`** (`P̃ = ∫K·(ρ²/d)`); the **mixture
+  T₃** `radialRayRhoSqOverDist₃_eq_T` (`P̃ = (2τ/r)·T̃`; per-shell T₃ + zero
+  contribution of the `s = 0` origin atom via `shellT_zero_right`/
+  `shellRhoSqOverDist_zero_right` + `radial_ae_nonneg` from `hsupp`); and the
+  axial split `radialRayT₃_eq_D_add_Z` (`T̃ = D̃ + r·Z̃`).  Gotchas: `abs_add`
+  → `abs_add_le` in this Mathlib; `div_add_div_same` does not exist (use
+  `← add_div`); `pow_two` not `sq` as a rewrite; `LE.le.eq_or_gt` dot-resolves
+  into `Real.le` (use `eq_or_lt_of_le`); `nlinarith` cannot prove equalities
+  (use `linear_combination`); collision branches close with
+  `simp only [h0, div_zero, mul_zero, add_zero]` (rw fights beta-reduction).
+  Remaining R-layer: sign layer (`Z̃ > 0`, `m̃`, C–S `m̃ ≤ r` case, zero case,
+  `RadialSlack₃`), then the system file.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over

@@ -597,4 +597,325 @@ theorem hasDerivAt_radialRayD₃ (τ : ℝ) (hτ : 0 < τ)
     rfl
   exact hval ▸ key.2
 
+/-! ## The closure identity `C̃ = Q̃ + 3τ·Z̃ + (2τ/r)·D̃`
+
+This is the `n = 3` closure (F4 of `LaplaceHigherDim.md §4.10`) in its algebraic
+form; combined with `hasDerivAt_radialRayD₃` it yields
+`C̃ = τ·D̃' + 4τ·Z̃ + (2τ/r)·D̃`.  The proof chains: the companion split
+`C̃ = τZ̃ + ∫d·w̄`, the pointwise cylindrical split `d = X²/d + ρ²/d`
+(junk-safe), the T₃ mixture `P̃ = (2τ/r)·T̃`, and the axial split
+`T̃ = D̃ + r·Z̃`. -/
+
+/-- The cylindrical norm split `d² = X² + ρ²` in coordinates. -/
+lemma norm_rayProbe_sub_sq_eq (r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
+    ‖rayProbe r - y‖ ^ 2 = (y 0 - r) ^ 2 + ((y 1) ^ 2 + (y 2) ^ 2) := by
+  rw [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_three]
+  simp only [PiLp.sub_apply, rayProbe_apply_zero, rayProbe_apply_one, rayProbe_apply_two]
+  ring
+
+/-- `ρ²/d ≤ d`, junk-safe at collisions. -/
+lemma rhoSq_div_norm_rayProbe_le (r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
+    ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖ ≤ ‖rayProbe r - y‖ := by
+  rcases eq_or_ne (‖rayProbe r - y‖) 0 with h0 | hne
+  · rw [h0, div_zero]
+  · have hpos : 0 < ‖rayProbe r - y‖ := (norm_nonneg _).lt_of_ne' hne
+    rw [div_le_iff₀ hpos]
+    nlinarith [norm_rayProbe_sub_sq_eq r y, sq_nonneg (y 0 - r)]
+
+/-- The `ρ²/d`-weighted kernel integrand is uniformly bounded by `τ·e⁻¹`. -/
+lemma abs_laplaceKernel_mul_rhoSq_div_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 3)) :
+    |laplaceKernel τ (rayProbe r) y * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)|
+      ≤ τ * Real.exp (-1) := by
+  have hK := laplaceKernel_rayProbe_nonneg τ r y
+  have hdiv : (0 : ℝ) ≤ ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖ :=
+    div_nonneg (by positivity) (norm_nonneg _)
+  rw [abs_mul, abs_of_nonneg hK, abs_of_nonneg hdiv]
+  calc laplaceKernel τ (rayProbe r) y * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)
+      ≤ laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ :=
+        mul_le_mul_of_nonneg_left (rhoSq_div_norm_rayProbe_le r y) hK
+    _ = ‖rayProbe r - y‖ * Real.exp (-‖rayProbe r - y‖ / τ) := by
+        simp only [laplaceKernel]
+        rw [show -(1 / τ) * ‖rayProbe r - y‖ = -‖rayProbe r - y‖ / τ by ring]
+        ring
+    _ ≤ τ * Real.exp (-1) := mul_exp_neg_div_le hτ (norm_nonneg _)
+
+lemma measurable_laplaceKernel_mul_rhoSq_div (τ r : ℝ) :
+    Measurable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y
+        * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)) := by
+  have hrho : Measurable fun y : EuclideanSpace ℝ (Fin 3) => (y 1) ^ 2 + (y 2) ^ 2 := by
+    have : Continuous fun y : EuclideanSpace ℝ (Fin 3) => (y 1) ^ 2 + (y 2) ^ 2 := by
+      fun_prop
+    exact this.measurable
+  have hnorm : Measurable fun y : EuclideanSpace ℝ (Fin 3) => ‖rayProbe r - y‖ :=
+    ((continuous_const.sub continuous_id).norm).measurable
+  exact ((continuous_laplaceKernel_rayProbe τ r).measurable).mul (hrho.div hnorm)
+
+/-- Measurable-integrand generalisation of `integral_chartBase_zonal` (needed for
+the `ρ²/d` integrand, whose chart section is discontinuous at the collision
+`s = r, u = 1`). -/
+lemma integral_chartBase_zonal_measurable {G : ℝ × ℝ → ℝ} {g : ℝ → ℝ} {C : ℝ}
+    (hG : Measurable G) (hC : ∀ w, |G w| ≤ C)
+    (hEq : ∀ u φ, u ∈ Ioc (-1 : ℝ) 1 → G (u, φ) = g u) :
+    ∫ w : ℝ × ℝ, G w ∂chartBase = (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, g u := by
+  have hBvol : volume (Ioc (-Real.pi) Real.pi) = ENNReal.ofReal (2 * Real.pi) := by
+    rw [Real.volume_Ioc]; congr 1; ring
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-Real.pi) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, hBvol]; exact ENNReal.ofReal_lt_top⟩
+  have hint : Integrable G
+      ((volume.restrict (Ioc (-1 : ℝ) 1)).prod (volume.restrict (Ioc (-Real.pi) Real.pi))) :=
+    ⟨hG.aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := C)
+        (ae_of_all _ (fun w => by rw [Real.norm_eq_abs]; exact hC w))⟩
+  rw [chartBase, integral_smul_measure, integral_prod _ hint]
+  have hcong : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      ∫ φ in Ioc (-Real.pi) Real.pi, G (u, φ) ∂volume = 2 * Real.pi * g u := by
+    intro u hu
+    rw [setIntegral_congr_fun measurableSet_Ioc (fun φ _ => hEq u φ hu), setIntegral_const,
+      Real.volume_real_Ioc_of_le (by linarith [Real.pi_pos]), smul_eq_mul]
+    ring
+  rw [setIntegral_congr_fun measurableSet_Ioc hcong, integral_const_mul]
+  rw [ENNReal.toReal_inv, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
+  have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
+  field_simp
+  ring
+
+/-- **`T̃` bridge**: the axial ray profile is the y-level integral `∫ K·y₀`. -/
+lemma radialRayT₃_eq_integral (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayT₃ τ ν r
+      = ∫ y, laplaceKernel τ (rayProbe r) y * y 0 ∂(radialMixture₃ ν) := by
+  have hcont : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * y 0) := by
+    have := continuous_laplaceKernel_rayProbe τ r
+    fun_prop
+  have habs : ∀ y : EuclideanSpace ℝ (Fin 3),
+      |laplaceKernel τ (rayProbe r) y * y 0| ≤ τ * Real.exp (-1) + |r| := by
+    intro y
+    have h1 : |y 0| ≤ |y 0 - r| + |r| := by
+      calc |y 0| = |(y 0 - r) + r| := by ring_nf
+        _ ≤ |y 0 - r| + |r| := abs_add_le _ _
+    have hK := laplaceKernel_rayProbe_nonneg τ r y
+    have hK1 := laplaceKernel_rayProbe_le_one τ hτ r y
+    rw [abs_mul, abs_of_nonneg hK]
+    calc laplaceKernel τ (rayProbe r) y * |y 0|
+        ≤ laplaceKernel τ (rayProbe r) y * (|y 0 - r| + |r|) :=
+          mul_le_mul_of_nonneg_left h1 hK
+      _ = laplaceKernel τ (rayProbe r) y * |y 0 - r|
+          + laplaceKernel τ (rayProbe r) y * |r| := by ring
+      _ ≤ τ * Real.exp (-1) + 1 * |r| := by
+          refine add_le_add ?_ (mul_le_mul_of_nonneg_right hK1 (abs_nonneg _))
+          have := abs_laplaceKernel_mul_coord_le τ hτ r y
+          rwa [abs_mul, abs_of_nonneg hK] at this
+      _ = τ * Real.exp (-1) + |r| := by ring
+  have hf : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * y 0) (radialMixture₃ ν) :=
+    ⟨hcont.aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1) + |r|)
+        (ae_of_all _ fun y => by rw [Real.norm_eq_abs]; exact habs y)⟩
+  rw [radialRayT₃, integral_radialMixture₃ ν hf]
+  refine (integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))).symm
+  refine integral_chartBase_zonal
+    (G := fun w : ℝ × ℝ => laplaceKernel τ (rayProbe r) (chartMap (s, w))
+      * (chartMap (s, w)) 0)
+    (g := fun u => Real.exp (-(1 / τ) * shellDist r s u) * (s * u))
+    (C := τ * Real.exp (-1) + |r|) ?_ ?_ ?_
+  · exact hcont.comp (continuous_chartMap.comp (f := fun w : ℝ × ℝ => ((s, w) : ℝ × ℝ × ℝ))
+      (by fun_prop))
+  · intro w
+    exact habs _
+  · intro u φ hu
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    simp only [chartMap_mk_pair, laplaceKernel_rayProbe_chart hu2 τ r s φ,
+      PiLp.smul_apply, sphereChart_apply_zero, smul_eq_mul]
+
+/-- **`P̃` bridge**: the tangential `ρ²/d` ray profile is the y-level integral
+`∫ K·(ρ²/d)`. -/
+lemma radialRayRhoSqOverDist₃_eq_integral (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayRhoSqOverDist₃ τ ν r
+      = ∫ y, laplaceKernel τ (rayProbe r) y
+          * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) ∂(radialMixture₃ ν) := by
+  have hmeas := measurable_laplaceKernel_mul_rhoSq_div τ r
+  have hf : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y
+        * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)) (radialMixture₃ ν) :=
+    ⟨hmeas.aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_rhoSq_div_le τ hτ r y)⟩
+  rw [radialRayRhoSqOverDist₃, integral_radialMixture₃ ν hf]
+  refine (integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))).symm
+  refine integral_chartBase_zonal_measurable
+    (G := fun w : ℝ × ℝ => laplaceKernel τ (rayProbe r) (chartMap (s, w))
+      * ((((chartMap (s, w)) 1) ^ 2 + ((chartMap (s, w)) 2) ^ 2)
+        / ‖rayProbe r - chartMap (s, w)‖))
+    (g := fun u => Real.exp (-(1 / τ) * shellDist r s u)
+      * (shellRhoSq s u / shellDist r s u))
+    (C := τ * Real.exp (-1)) ?_ ?_ ?_
+  · have hsec : Measurable (fun w : ℝ × ℝ => chartMap (s, w)) :=
+      (continuous_chartMap.comp (f := fun w : ℝ × ℝ => ((s, w) : ℝ × ℝ × ℝ))
+        (by fun_prop)).measurable
+    exact hmeas.comp hsec
+  · intro w
+    exact abs_laplaceKernel_mul_rhoSq_div_le τ hτ r _
+  · intro u φ hu
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    have h1u : (0 : ℝ) ≤ 1 - u ^ 2 := by linarith
+    rw [chartMap_mk_pair, laplaceKernel_rayProbe_chart hu2 τ r s φ,
+      norm_rayProbe_sub_smul_sphereChart hu2]
+    congr 2
+    have hsq : Real.sqrt (1 - u ^ 2) ^ 2 = 1 - u ^ 2 := Real.sq_sqrt h1u
+    have hcs : Real.cos φ ^ 2 + Real.sin φ ^ 2 = 1 := Real.cos_sq_add_sin_sq φ
+    simp only [PiLp.smul_apply, sphereChart_apply_one, sphereChart_apply_two, smul_eq_mul]
+    unfold shellRhoSq
+    linear_combination (s ^ 2 * (Real.cos φ ^ 2 + Real.sin φ ^ 2)) * hsq
+      + (s ^ 2 * (1 - u ^ 2)) * hcs
+
+lemma shellT_zero_right (τ r : ℝ) : shellT τ r 0 = 0 := by
+  unfold shellT
+  simp
+
+lemma shellRhoSqOverDist_zero_right (τ r : ℝ) : shellRhoSqOverDist τ r 0 = 0 := by
+  unfold shellRhoSqOverDist shellRhoSq
+  simp
+
+/-- Supported-on-`[0,∞)` gives a.e. nonnegativity of the shell radius. -/
+lemma radial_ae_nonneg {ν : Measure ℝ} (hsupp : ν (Iio 0) = 0) :
+    ∀ᵐ s ∂ν, 0 ≤ s := by
+  rw [ae_iff]
+  convert hsupp using 2
+  ext s
+  simp [not_le]
+
+/-- **The mixture T₃ identity**: `P̃ = (2τ/r)·T̃` for radial mixtures supported
+on `[0,∞)`.  Per-shell this is the closed T₃ theorem of the shell layer; the
+`s = 0` origin atom contributes zero to both sides. -/
+theorem radialRayRhoSqOverDist₃_eq_T (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 < r) :
+    radialRayRhoSqOverDist₃ τ ν r = (2 * τ / r) * radialRayT₃ τ ν r := by
+  rw [radialRayRhoSqOverDist₃, radialRayT₃, ← integral_const_mul]
+  refine integral_congr_ae ?_
+  filter_upwards [radial_ae_nonneg hsupp] with s hs
+  rcases eq_or_lt_of_le hs with h0 | hs0
+  · rw [← h0, shellRhoSqOverDist_zero_right, shellT_zero_right, mul_zero]
+  · exact shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT hτ hr hs0
+
+/-- **The axial split**: `T̃ = D̃ + r·Z̃`. -/
+lemma radialRayT₃_eq_D_add_Z (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayT₃ τ ν r = radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r := by
+  rw [radialRayT₃_eq_integral τ hτ ν r, radialRayD₃_eq_integral_coord τ hτ ν r,
+    radialRayZ₃_eq_kernelNormalizer τ hτ ν r]
+  have hZint : Integrable (fun y => laplaceKernel τ (rayProbe r) y) (radialMixture₃ ν) :=
+    integrable_laplaceKernel_rayProbe τ hτ _ r
+  have hDint : Integrable (fun y => laplaceKernel τ (rayProbe r) y * (y 0 - r))
+      (radialMixture₃ ν) := integrable_laplaceKernel_mul_coord τ hτ _ r
+  have hsplit : (∫ y, laplaceKernel τ (rayProbe r) y * y 0 ∂(radialMixture₃ ν))
+      = (∫ y, (laplaceKernel τ (rayProbe r) y * (y 0 - r)
+          + r * laplaceKernel τ (rayProbe r) y) ∂(radialMixture₃ ν)) := by
+    refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+    ring
+  rw [hsplit, integral_add hDint (hZint.const_mul r), integral_const_mul]
+  rfl
+
+/-- **The closure identity (F4), algebraic form**:
+`C̃ = Q̃ + 3τ·Z̃ + (2τ/r)·D̃` on the open ray, for radial mixtures supported on
+`[0,∞)`.  With `hasDerivAt_radialRayD₃` this is exactly
+`C̃ = τ·D̃' + 4τ·Z̃ + (2τ/r)·D̃`. -/
+theorem radialRayC₃_closure (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 < r) :
+    radialRayC₃ τ ν r
+      = radialRayQ₃ τ ν r + 3 * τ * radialRayZ₃ τ ν r
+        + (2 * τ / r) * radialRayD₃ τ ν r := by
+  have hZint : Integrable (fun y => laplaceKernel τ (rayProbe r) y) (radialMixture₃ ν) :=
+    integrable_laplaceKernel_rayProbe τ hτ _ r
+  have hQint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+      (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_sq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_sq_div_le τ hτ r y)⟩
+  have hPint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y
+        * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)) (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_rhoSq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_rhoSq_div_le τ hτ r y)⟩
+  -- Step 1: the companion split `C̃ = τ·Z̃ + ∫ K·d`.
+  have hCsplit : radialRayC₃ τ ν r
+      = τ * radialRayZ₃ τ ν r
+        + ∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ ∂(radialMixture₃ ν) := by
+    rw [radialRayC₃_eq_companionNormalizer τ hτ ν r,
+      radialRayZ₃_eq_kernelNormalizer τ hτ ν r]
+    have hdint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+        laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) (radialMixture₃ ν) := by
+      refine ⟨?_, HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => ?_)⟩
+      · have : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+            laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) := by
+          have h1 := continuous_laplaceKernel_rayProbe τ r
+          have h2 : Continuous fun y : EuclideanSpace ℝ (Fin 3) => ‖rayProbe r - y‖ :=
+            (continuous_const.sub continuous_id).norm
+          exact h1.mul h2
+        exact this.aestronglyMeasurable
+      · rw [Real.norm_eq_abs, abs_mul,
+          abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y),
+          abs_of_nonneg (norm_nonneg _)]
+        calc laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+            = ‖rayProbe r - y‖ * Real.exp (-‖rayProbe r - y‖ / τ) := by
+              simp only [laplaceKernel]
+              rw [show -(1 / τ) * ‖rayProbe r - y‖ = -‖rayProbe r - y‖ / τ by ring]
+              ring
+          _ ≤ τ * Real.exp (-1) := mul_exp_neg_div_le hτ (norm_nonneg _)
+    have hsplit : kernelNormalizer (laplaceCompanionKernel τ) (radialMixture₃ ν) (rayProbe r)
+        = ∫ y, (τ * laplaceKernel τ (rayProbe r) y
+            + laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) ∂(radialMixture₃ ν) := by
+      refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+      simp only [laplaceCompanionKernel]
+      ring
+    rw [hsplit, integral_add (hZint.const_mul τ) hdint, integral_const_mul]
+    rfl
+  -- Step 2: the cylindrical split `∫ K·d = Q̃ + P̃` (junk-safe pointwise).
+  have hdsplit : (∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+        ∂(radialMixture₃ ν))
+      = radialRayQ₃ τ ν r
+        + ∫ y, laplaceKernel τ (rayProbe r) y
+            * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) ∂(radialMixture₃ ν) := by
+    rw [radialRayQ₃, ← integral_add hQint hPint]
+    refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+    rcases eq_or_ne (‖rayProbe r - y‖) 0 with h0 | hne
+    · simp only [h0, div_zero, mul_zero, add_zero]
+    · have hd : (y 0 - r) ^ 2 / ‖rayProbe r - y‖
+          + ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖ = ‖rayProbe r - y‖ := by
+        rw [← add_div, ← norm_rayProbe_sub_sq_eq r y, pow_two, mul_div_assoc,
+          div_self hne, mul_one]
+      calc laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+          = laplaceKernel τ (rayProbe r) y
+            * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖
+              + ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) := by rw [hd]
+        _ = laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+            + laplaceKernel τ (rayProbe r) y
+              * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) := by ring
+  -- Step 3: assemble via the T₃ mixture and the axial split.
+  have hP : (∫ y, laplaceKernel τ (rayProbe r) y
+        * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) ∂(radialMixture₃ ν))
+      = (2 * τ / r) * (radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r) := by
+    rw [← radialRayRhoSqOverDist₃_eq_integral τ hτ ν r,
+      radialRayRhoSqOverDist₃_eq_T τ hτ ν hsupp hr,
+      radialRayT₃_eq_D_add_Z τ hτ ν r]
+  rw [hCsplit, hdsplit, hP]
+  field_simp
+  ring
+
 end DriftingIdentifiability
