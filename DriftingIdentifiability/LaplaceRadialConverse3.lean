@@ -550,4 +550,222 @@ lemma radialRayKhat₃_bounded_near_zero (τ : ℝ) (hτ : 0 < τ)
     _ ≤ τ * 1 := mul_le_mul_of_nonneg_left hr2 hτ.le
     _ = τ := mul_one τ
 
+/-! ## The trichotomy driver: `K̂ ≡ 0` on the open ray -/
+
+/-- **The alignment defect vanishes identically**: under zero drift (with
+supports in `[0,∞)`, first moments, and `RadialSlack₃`), `K̂ ≡ 0` on `(0,∞)` —
+the radial port of the 1-d trichotomy
+(`LaplaceUnconditionalConverse.lean:882–1010`). -/
+theorem radialRayKhat₃_eq_zero (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) :
+    ∀ x : ℝ, 0 < x → radialRayKhat₃ τ νp νq x = 0 := by
+  intro x₀ hx₀
+  by_cases hmx₀ : radialRayM₃ τ νp x₀ = 0
+  · rw [radialRayKhat₃_eq_M_mul_V τ νp νq hτ hsp hsq hzero hx₀, hmx₀]
+    ring
+  rcases lt_or_gt_of_ne hmx₀ with hneg | hpos
+  · -- `m̃(x₀) < 0`: propagate rightward
+    by_cases hS : ∃ t : ℝ, x₀ ≤ t ∧ radialRayM₃ τ νp t = 0
+    · obtain ⟨t₀, ht₀x, ht₀0⟩ := hS
+      have hSne : Set.Nonempty {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} :=
+        ⟨t₀, ht₀x, ht₀0⟩
+      have hSbdd : BddBelow {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} :=
+        ⟨x₀, fun t ht => ht.1⟩
+      have hβx : x₀ ≤ sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} :=
+        le_csInf hSne fun t ht => ht.1
+      have hβ0 : 0 < sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} :=
+        lt_of_lt_of_le hx₀ hβx
+      have hmβ : radialRayM₃ τ νp
+          (sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0}) = 0 := by
+        have hβcl := csInf_mem_closure hSne hSbdd
+        have himg := (continuousAt_radialRayM₃ τ hτ νp
+          hβ0).continuousWithinAt.mem_closure_image hβcl
+        have hsub : radialRayM₃ τ νp '' {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0}
+            ⊆ {0} := by
+          rintro y ⟨t, ht, rfl⟩
+          exact ht.2
+        have h0 := closure_mono hsub himg
+        rwa [closure_singleton, mem_singleton_iff] at h0
+      have hβgt : x₀ < sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} := by
+        rcases eq_or_lt_of_le hβx with heq | hlt
+        · exfalso
+          apply hneg.ne
+          rw [heq]
+          exact hmβ
+        · exact hlt
+      have hmid : ∀ t : ℝ, x₀ ≤ t →
+          t < sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} →
+          radialRayM₃ τ νp t < 0 := by
+        intro t hxt htβ
+        rcases lt_trichotomy (radialRayM₃ τ νp t) 0 with hlt | heq | hgt
+        · exact hlt
+        · exact absurd (csInf_le hSbdd ⟨hxt, heq⟩) (not_le.mpr htβ)
+        · exfalso
+          have hcont : ContinuousOn (radialRayM₃ τ νp) (Icc x₀ t) := fun z hz =>
+            (continuousAt_radialRayM₃ τ hτ νp
+              (lt_of_lt_of_le hx₀ hz.1)).continuousWithinAt
+          have h0mem : (0:ℝ) ∈ Icc (radialRayM₃ τ νp x₀) (radialRayM₃ τ νp t) :=
+            ⟨hneg.le, hgt.le⟩
+          obtain ⟨z, hzIcc, hz0⟩ := intermediate_value_Icc hxt hcont h0mem
+          have hzβ := csInf_le hSbdd ⟨hzIcc.1, hz0⟩
+          linarith [hzIcc.2]
+      have hnb : (radialRayM₃ τ νp) ⁻¹' (Iio 0) ∈ 𝓝 x₀ :=
+        (continuousAt_radialRayM₃ τ hτ νp hx₀) (isOpen_Iio.mem_nhds hneg)
+      obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hnb
+      have hl₁0 : 0 < max (x₀ - ε / 2) (x₀ / 2) :=
+        lt_max_of_lt_right (by linarith)
+      have hl₁x : max (x₀ - ε / 2) (x₀ / 2) < x₀ :=
+        max_lt (by linarith) (by linarith)
+      have hl₁neg : ∀ t : ℝ, max (x₀ - ε / 2) (x₀ / 2) < t → t ≤ x₀ →
+          radialRayM₃ τ νp t < 0 := by
+        intro t hlt hle
+        have ht1 : x₀ - ε / 2 < t := lt_of_le_of_lt (le_max_left _ _) hlt
+        apply hball
+        rw [Metric.mem_ball, Real.dist_eq, abs_sub_lt_iff]
+        exact ⟨by linarith, by linarith⟩
+      have hmneg_ext : ∀ t : ℝ, max (x₀ - ε / 2) (x₀ / 2) < t →
+          t < sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} →
+          radialRayM₃ τ νp t < 0 := by
+        intro t hlt htβ
+        rcases le_or_gt t x₀ with hle | hgt
+        · exact hl₁neg t hlt hle
+        · exact hmid t hgt.le htβ
+      obtain ⟨l₂, _, L, hl₁l₂, hl₂β, _, _, hL, hlin, _⟩ :=
+        exists_Ioo_linear_bound_of_hasDerivAt_zero (f := radialRayM₃ τ νp)
+          (a := sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0})
+          (lower := max (x₀ - ε / 2) (x₀ / 2))
+          (upper := sInf {t : ℝ | x₀ ≤ t ∧ radialRayM₃ τ νp t = 0} + 1)
+          (lt_of_lt_of_le hl₁x hβx) (lt_add_one _)
+          (hasDerivAt_radialRayM₃ τ hτ νp hβ0) hmβ
+      exact radialRayKhat₃_eq_zero_on_Ioo_of_rightEdge τ νp νq hτ hsp hsq
+        hslackp hzero hl₁0 (lt_of_lt_of_le hl₁x hβx) hl₁l₂ hl₂β hL
+        hmneg_ext hlin x₀ hl₁x hβgt
+    · have hmray : ∀ t : ℝ, x₀ ≤ t → radialRayM₃ τ νp t < 0 := by
+        intro t hxt
+        rcases lt_trichotomy (radialRayM₃ τ νp t) 0 with hlt | heq | hgt
+        · exact hlt
+        · exact absurd ⟨t, hxt, heq⟩ hS
+        · exfalso
+          have hcont : ContinuousOn (radialRayM₃ τ νp) (Icc x₀ t) := fun z hz =>
+            (continuousAt_radialRayM₃ τ hτ νp
+              (lt_of_lt_of_le hx₀ hz.1)).continuousWithinAt
+          have h0mem : (0:ℝ) ∈ Icc (radialRayM₃ τ νp x₀) (radialRayM₃ τ νp t) :=
+            ⟨hneg.le, hgt.le⟩
+          obtain ⟨z, hzIcc, hz0⟩ := intermediate_value_Icc hxt hcont h0mem
+          exact hS ⟨z, hzIcc.1, hz0⟩
+      exact radialRayKhat₃_eq_zero_on_ray τ νp νq hτ hsp hsq hmp hmq hslackp
+        hzero hx₀ hmray x₀ le_rfl
+  · -- `m̃(x₀) > 0`: propagate leftward to an interior zero or the origin edge
+    have hnb : (radialRayM₃ τ νp) ⁻¹' (Ioi 0) ∈ 𝓝 x₀ :=
+      (continuousAt_radialRayM₃ τ hτ νp hx₀) (isOpen_Ioi.mem_nhds hpos)
+    obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hnb
+    have hxr₁ : x₀ < x₀ + ε / 2 := by linarith
+    have hposr : ∀ t : ℝ, x₀ ≤ t → t < x₀ + ε / 2 → 0 < radialRayM₃ τ νp t := by
+      intro t hxt htr
+      have := hball (show t ∈ Metric.ball x₀ ε by
+        rw [Metric.mem_ball, Real.dist_eq, abs_sub_lt_iff]
+        constructor
+        · linarith
+        · linarith)
+      exact this
+    by_cases hS : ∃ t : ℝ, 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0
+    · obtain ⟨t₀, ht₀0, ht₀x, ht₀z⟩ := hS
+      have hSne : Set.Nonempty {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} :=
+        ⟨t₀, ht₀0, ht₀x, ht₀z⟩
+      have hSbdd : BddAbove {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} :=
+        ⟨x₀, fun t ht => ht.2.1⟩
+      have hαx : sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} ≤ x₀ :=
+        csSup_le hSne fun t ht => ht.2.1
+      have hα0 : 0 < sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} :=
+        lt_of_lt_of_le ht₀0 (le_csSup hSbdd ⟨ht₀0, ht₀x, ht₀z⟩)
+      have hmα : radialRayM₃ τ νp
+          (sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0}) = 0 := by
+        have hαcl := csSup_mem_closure hSne hSbdd
+        have himg := (continuousAt_radialRayM₃ τ hτ νp
+          hα0).continuousWithinAt.mem_closure_image hαcl
+        have hsub : radialRayM₃ τ νp ''
+            {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} ⊆ {0} := by
+          rintro y ⟨t, ht, rfl⟩
+          exact ht.2.2
+        have h0 := closure_mono hsub himg
+        rwa [closure_singleton, mem_singleton_iff] at h0
+      have hαlt : sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} < x₀ := by
+        rcases eq_or_lt_of_le hαx with heq | hlt
+        · exfalso
+          apply hpos.ne'
+          rw [← heq]
+          exact hmα
+        · exact hlt
+      have hmid : ∀ t : ℝ,
+          sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} < t →
+          t ≤ x₀ → 0 < radialRayM₃ τ νp t := by
+        intro t hαt htx
+        have ht0 : 0 < t := lt_trans hα0 hαt
+        rcases lt_trichotomy (radialRayM₃ τ νp t) 0 with hlt | heq | hgt
+        · exfalso
+          have hcont : ContinuousOn (radialRayM₃ τ νp) (Icc t x₀) := fun z hz =>
+            (continuousAt_radialRayM₃ τ hτ νp
+              (lt_of_lt_of_le ht0 hz.1)).continuousWithinAt
+          have h0mem : (0:ℝ) ∈ Icc (radialRayM₃ τ νp t) (radialRayM₃ τ νp x₀) :=
+            ⟨hlt.le, hpos.le⟩
+          obtain ⟨z, hzIcc, hz0⟩ := intermediate_value_Icc htx hcont h0mem
+          have hzα := le_csSup hSbdd
+            ⟨lt_of_lt_of_le ht0 hzIcc.1, hzIcc.2, hz0⟩
+          linarith [hzIcc.1]
+        · exact absurd (le_csSup hSbdd ⟨ht0, htx, heq⟩) (not_le.mpr hαt)
+        · exact hgt
+      have hmpos_ext : ∀ t : ℝ,
+          sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0} < t →
+          t < x₀ + ε / 2 → 0 < radialRayM₃ τ νp t := by
+        intro t hαt htr
+        rcases le_or_gt t x₀ with hle | hgt
+        · exact hmid t hαt hle
+        · exact hposr t hgt.le htr
+      obtain ⟨_, r₂, L, _, _, hαr₂, hr₂r₁, hL, _, hlin'⟩ :=
+        exists_Ioo_linear_bound_of_hasDerivAt_zero (f := radialRayM₃ τ νp)
+          (a := sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0})
+          (lower := 0) (upper := x₀ + ε / 2)
+          hα0 (lt_trans hαlt hxr₁)
+          (hasDerivAt_radialRayM₃ τ hτ νp hα0) hmα
+      have hKbdd : IsBoundedUnder (· ≤ ·)
+          (𝓝[>] (sSup {t : ℝ | 0 < t ∧ t ≤ x₀ ∧ radialRayM₃ τ νp t = 0}))
+          (norm ∘ radialRayKhat₃ τ νp νq) :=
+        (((hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero
+          hα0).continuousAt).norm.isBoundedUnder_le).mono nhdsWithin_le_nhds
+      exact radialRayKhat₃_eq_zero_on_Ioo_of_leftEdge τ νp νq hτ hsp hsq
+        hslackp hzero hα0.le (lt_trans hαlt hxr₁) hαr₂ hr₂r₁ hL hmpos_ext
+        (fun t h1 h2 => hlin' t h1 h2.le) hKbdd x₀ hαlt hxr₁
+    · -- the `r = 0` universal edge
+      have hmray : ∀ t : ℝ, 0 < t → t ≤ x₀ → 0 < radialRayM₃ τ νp t := by
+        intro t ht0 htx
+        rcases lt_trichotomy (radialRayM₃ τ νp t) 0 with hlt | heq | hgt
+        · exfalso
+          have hcont : ContinuousOn (radialRayM₃ τ νp) (Icc t x₀) := fun z hz =>
+            (continuousAt_radialRayM₃ τ hτ νp
+              (lt_of_lt_of_le ht0 hz.1)).continuousWithinAt
+          have h0mem : (0:ℝ) ∈ Icc (radialRayM₃ τ νp t) (radialRayM₃ τ νp x₀) :=
+            ⟨hlt.le, hpos.le⟩
+          obtain ⟨z, hzIcc, hz0⟩ := intermediate_value_Icc htx hcont h0mem
+          exact hS ⟨z, lt_of_lt_of_le ht0 hzIcc.1, hzIcc.2, hz0⟩
+        · exact absurd ⟨t, ht0, htx, heq⟩ hS
+        · exact hgt
+      have hmpos_ext : ∀ t : ℝ, 0 < t → t < x₀ + ε / 2 →
+          0 < radialRayM₃ τ νp t := by
+        intro t ht0 htr
+        rcases le_or_gt t x₀ with hle | hgt
+        · exact hmray t ht0 hle
+        · exact hposr t hgt.le htr
+      obtain ⟨L, hL, hlin⟩ := radialRayM₃_le_linear τ hτ νp hx₀
+      refine radialRayKhat₃_eq_zero_on_Ioo_of_leftEdge τ νp νq hτ hsp hsq
+        hslackp hzero (le_refl 0) (lt_trans hx₀ hxr₁) hx₀ hxr₁ hL
+        hmpos_ext ?_ (radialRayKhat₃_bounded_near_zero τ hτ νp νq) x₀ hx₀ hxr₁
+      intro t ht0 htx
+      have := hlin t ht0 htx.le
+      rwa [sub_zero]
+
 end DriftingIdentifiability
