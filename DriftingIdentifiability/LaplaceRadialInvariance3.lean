@@ -810,4 +810,96 @@ lemma chartBase_tilted_eq_shellZ (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
   have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
   field_simp
 
+/-- Collision-extended tilted per-shell identity (for a positive probe radius,
+by continuity in the shell radius). -/
+lemma chartBase_tilted_eq_shellZ' (τ : ℝ) (hτ : 0 < τ) {R : ℝ} (hR : 0 < R)
+    {s : ℝ} (hs : 0 ≤ s) (θ₀ ψ : ℝ) :
+    (∫ w : ℝ × ℝ, tiltKernel τ R s (Real.cos θ₀ * w.1
+      + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) ∂chartBase)
+      = shellZ τ R s := by
+  rcases ne_or_eq R s with hne | heq
+  · exact chartBase_tilted_eq_shellZ τ hτ hR.le hs hne θ₀ ψ
+  · subst heq
+    have hcontL : ContinuousAt (fun s' : ℝ =>
+        ∫ w : ℝ × ℝ, tiltKernel τ R s' (Real.cos θ₀ * w.1
+          + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ))
+          ∂chartBase) R := by
+      refine continuousAt_of_dominated (bound := fun _ => (1 : ℝ))
+        (Filter.Eventually.of_forall fun s' => ?_)
+        (Filter.Eventually.of_forall fun s' => ae_of_all _ fun w => ?_)
+        (integrable_const 1) (ae_of_all _ fun w => ?_)
+      · have hc : Continuous fun w : ℝ × ℝ => tiltKernel τ R s' (Real.cos θ₀ * w.1
+            + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) := by
+          unfold tiltKernel
+          fun_prop
+        exact hc.aestronglyMeasurable
+      · rw [Real.norm_eq_abs, abs_of_pos (tiltKernel_pos τ R s' _)]
+        exact tiltKernel_le_one τ hτ R s' _
+      · have hc : Continuous fun s' : ℝ => tiltKernel τ R s' (Real.cos θ₀ * w.1
+            + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) := by
+          unfold tiltKernel
+          fun_prop
+        exact hc.continuousAt
+    have hcontR : ContinuousAt (shellZ τ R) R :=
+      (continuous_shellZ τ hτ R).continuousAt
+    have heq' : (fun s' : ℝ => ∫ w : ℝ × ℝ, tiltKernel τ R s' (Real.cos θ₀ * w.1
+        + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) ∂chartBase)
+        =ᶠ[𝓝[≠] R] shellZ τ R := by
+      have hpos0 : ∀ᶠ s' in 𝓝 R, 0 < s' := Ioi_mem_nhds hR
+      have hpos : ∀ᶠ s' in 𝓝[≠] R, 0 < s' := hpos0.filter_mono nhdsWithin_le_nhds
+      filter_upwards [hpos, self_mem_nhdsWithin] with s' hs' hne'
+      exact chartBase_tilted_eq_shellZ τ hτ hR.le hs'.le
+        (Ne.symm hne') θ₀ ψ
+    exact tendsto_nhds_unique_of_eventuallyEq
+      (hcontL.tendsto.mono_left nhdsWithin_le_nhds)
+      (hcontR.tendsto.mono_left nhdsWithin_le_nhds) heq'
+
+/-! ## The master radiality theorem -/
+
+lemma integral_chartBase_congr {G H : ℝ × ℝ → ℝ}
+    (h : ∀ u φ : ℝ, u ∈ Ioc (-1 : ℝ) 1 → G (u, φ) = H (u, φ)) :
+    ∫ w : ℝ × ℝ, G w ∂chartBase = ∫ w : ℝ × ℝ, H w ∂chartBase := by
+  rw [chartBase]
+  refine integral_congr_ae ?_
+  have hnull : ((volume.restrict (Ioc (-1 : ℝ) 1)).prod
+      (volume.restrict (Ioc (-Real.pi) Real.pi)))
+      {w : ℝ × ℝ | w.1 ∉ Ioc (-1 : ℝ) 1} = 0 := by
+    have hsub : {w : ℝ × ℝ | w.1 ∉ Ioc (-1 : ℝ) 1}
+        ⊆ (Ioc (-1 : ℝ) 1)ᶜ ×ˢ (univ : Set ℝ) := by
+      rintro ⟨u, φ⟩ hu
+      exact ⟨hu, mem_univ _⟩
+    refine measure_mono_null hsub ?_
+    rw [Measure.prod_prod, Measure.restrict_apply (measurableSet_Ioc.compl)]
+    rw [compl_inter_self, measure_empty, zero_mul]
+  have hae : ∀ᵐ w : ℝ × ℝ ∂((volume.restrict (Ioc (-1 : ℝ) 1)).prod
+      (volume.restrict (Ioc (-Real.pi) Real.pi))), w.1 ∈ Ioc (-1 : ℝ) 1 := by
+    rw [ae_iff]
+    exact hnull
+  exact Measure.ae_smul_measure (hae.mono fun w hw => h w.1 w.2 hw) _
+
+/-- Coordinates are dominated by the norm. -/
+lemma abs_coord_le_norm (x : EuclideanSpace ℝ (Fin 3)) (i : Fin 3) :
+    |x i| ≤ ‖x‖ := by
+  have := PiLp.norm_apply_le x i
+  simpa [Real.norm_eq_abs] using this
+
+/-- The general probe-to-chart distance expansion. -/
+lemma dist_sq_smul_sphereChart {u : ℝ} (hu : u ^ 2 ≤ 1)
+    (x : EuclideanSpace ℝ (Fin 3)) (s φ : ℝ) :
+    ‖x - s • sphereChart u φ‖ ^ 2
+      = ‖x‖ ^ 2 + s ^ 2 - 2 * s * (x 0 * u
+        + Real.sqrt (1 - u ^ 2) * (x 1 * Real.cos φ + x 2 * Real.sin φ)) := by
+  rw [EuclideanSpace.real_norm_sq_eq, EuclideanSpace.real_norm_sq_eq (x := x),
+    Fin.sum_univ_three, Fin.sum_univ_three]
+  simp only [PiLp.sub_apply, PiLp.smul_apply, sphereChart_apply_zero,
+    sphereChart_apply_one, sphereChart_apply_two, smul_eq_mul]
+  have hsq : Real.sqrt (1 - u ^ 2) ^ 2 = 1 - u ^ 2 := Real.sq_sqrt (by linarith)
+  have hcs := Real.cos_sq_add_sin_sq φ
+  linear_combination (s ^ 2 * (Real.cos φ ^ 2 + Real.sin φ ^ 2)) * hsq
+    + (s ^ 2 * (1 - u ^ 2)) * hcs
+
+lemma rayProbe_zero_eq : rayProbe 0 = (0 : EuclideanSpace ℝ (Fin 3)) := by
+  ext i
+  fin_cases i <;> rfl
+
 end DriftingIdentifiability
