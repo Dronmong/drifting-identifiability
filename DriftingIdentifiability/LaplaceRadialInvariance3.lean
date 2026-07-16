@@ -196,4 +196,135 @@ lemma tiltW_generator (θ t φ : ℝ) :
   have hcs := Real.sin_sq_add_cos_sq φ
   linear_combination (Real.sin θ * Real.sin t * Real.cos t) * hcs
 
+/-! ## The tilted zonal average is constant in the tilt -/
+
+/-- The (un-normalised) polar-angle box measure `[0,π] × [−π,π]`. -/
+noncomputable def tiltBase : Measure (ℝ × ℝ) :=
+  (volume.restrict (Ioc (0 : ℝ) Real.pi)).prod
+    (volume.restrict (Ioc (-Real.pi) Real.pi))
+
+instance : IsFiniteMeasure tiltBase := by
+  haveI h1 : IsFiniteMeasure (volume.restrict (Ioc (0 : ℝ) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  haveI h2 : IsFiniteMeasure (volume.restrict (Ioc (-Real.pi) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  unfold tiltBase
+  infer_instance
+
+/-- The tilted zonal average `J(θ)` in polar-angle coordinates. -/
+noncomputable def tiltJ (τ R s θ : ℝ) : ℝ :=
+  ∫ z : ℝ × ℝ, Real.sin z.1 * tiltKernel τ R s (tiltW θ z.1 z.2) ∂tiltBase
+
+/-- Its formal θ-derivative. -/
+noncomputable def tiltJderiv (τ R s θ : ℝ) : ℝ :=
+  ∫ z : ℝ × ℝ, Real.sin z.1 * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+    * (-Real.sin θ * Real.cos z.1 + Real.cos θ * Real.sin z.1 * Real.cos z.2)) ∂tiltBase
+
+lemma continuous_tiltW₂ (θ : ℝ) :
+    Continuous fun z : ℝ × ℝ => tiltW θ z.1 z.2 := by
+  unfold tiltW
+  fun_prop
+
+lemma continuous_tiltKernel_comp (τ R s θ : ℝ) :
+    Continuous fun z : ℝ × ℝ => tiltKernel τ R s (tiltW θ z.1 z.2) := by
+  unfold tiltKernel tiltW
+  fun_prop
+
+lemma continuous_tiltKernel'_comp (τ R s : ℝ) (hR : 0 ≤ R) (hs : 0 ≤ s)
+    (hRs : R ≠ s) (θ : ℝ) :
+    Continuous fun z : ℝ × ℝ => tiltKernel' τ R s (tiltW θ z.1 z.2) := by
+  have hne : ∀ z : ℝ × ℝ,
+      Real.sqrt (R ^ 2 + s ^ 2 - 2 * R * s * tiltW θ z.1 z.2) ≠ 0 := by
+    intro z
+    exact (Real.sqrt_pos.mpr (radicand_pos hR hs hRs (abs_tiltW_le_one θ z.1 z.2))).ne'
+  unfold tiltKernel'
+  refine Continuous.div ?_ ?_ hne
+  · have h1 : Continuous fun z : ℝ × ℝ =>
+        Real.sqrt (R ^ 2 + s ^ 2 - 2 * R * s * tiltW θ z.1 z.2) := by
+      unfold tiltW
+      fun_prop
+    exact continuous_const.mul (Real.continuous_exp.comp (h1.const_mul _))
+  · unfold tiltW
+    fun_prop
+
+lemma abs_tiltWtheta_le_two (θ t φ : ℝ) :
+    |-Real.sin θ * Real.cos t + Real.cos θ * Real.sin t * Real.cos φ| ≤ 2 := by
+  have h1 := Real.abs_sin_le_one θ
+  have h2 := Real.abs_cos_le_one t
+  have h3 := Real.abs_cos_le_one θ
+  have h4 := Real.abs_sin_le_one t
+  have h5 := Real.abs_cos_le_one φ
+  calc |-Real.sin θ * Real.cos t + Real.cos θ * Real.sin t * Real.cos φ|
+      ≤ |-Real.sin θ * Real.cos t| + |Real.cos θ * Real.sin t * Real.cos φ| :=
+        abs_add_le _ _
+    _ = |Real.sin θ| * |Real.cos t| + |Real.cos θ| * |Real.sin t| * |Real.cos φ| := by
+        rw [abs_mul, abs_mul, abs_mul, abs_neg]
+    _ ≤ 1 + 1 := by
+        refine add_le_add ?_ ?_
+        · nlinarith [abs_nonneg (Real.sin θ), abs_nonneg (Real.cos t)]
+        · nlinarith [abs_nonneg (Real.cos θ), abs_nonneg (Real.sin t),
+            abs_nonneg (Real.cos φ), mul_nonneg (abs_nonneg (Real.cos θ)) (abs_nonneg (Real.sin t))]
+    _ = 2 := by norm_num
+
+lemma continuous_sin_fst_mul_kernel (τ R s θ : ℝ) :
+    Continuous fun z : ℝ × ℝ => Real.sin z.1 * tiltKernel τ R s (tiltW θ z.1 z.2) := by
+  have h := continuous_tiltKernel_comp τ R s θ
+  fun_prop
+
+/-- `J` is differentiable with the formal derivative (dominated
+differentiation; the radicand is uniformly positive off the collision). -/
+lemma hasDerivAt_tiltJ (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
+    (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s) (θ : ℝ) :
+    HasDerivAt (tiltJ τ R s) (tiltJderiv τ R s θ) θ := by
+  have hfe : tiltJ τ R s = fun θ =>
+      ∫ z : ℝ × ℝ, Real.sin z.1 * tiltKernel τ R s (tiltW θ z.1 z.2) ∂tiltBase := rfl
+  have hCK : (0 : ℝ) ≤ R * s / τ / |R - s| := by positivity
+  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (μ := tiltBase) (x₀ := θ)
+    (F := fun θ (z : ℝ × ℝ) => Real.sin z.1 * tiltKernel τ R s (tiltW θ z.1 z.2))
+    (F' := fun θ (z : ℝ × ℝ) => Real.sin z.1 * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+      * (-Real.sin θ * Real.cos z.1 + Real.cos θ * Real.sin z.1 * Real.cos z.2)))
+    (bound := fun _ => (R * s / τ / |R - s|) * 2)
+    (s := univ) univ_mem
+    (Filter.Eventually.of_forall fun θ' =>
+      (continuous_sin_fst_mul_kernel τ R s θ').aestronglyMeasurable)
+    ?_ ?_ ?_ ?_ ?_
+  · rw [hfe]
+    exact key.2
+  · -- integrability of F θ
+    refine ⟨(continuous_sin_fst_mul_kernel τ R s θ).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun z => ?_)⟩
+    rw [Real.norm_eq_abs, abs_mul, abs_of_pos (tiltKernel_pos τ R s _)]
+    calc |Real.sin z.1| * tiltKernel τ R s (tiltW θ z.1 z.2)
+        ≤ 1 * 1 := mul_le_mul (Real.abs_sin_le_one _)
+          (tiltKernel_le_one τ hτ R s _) (tiltKernel_pos τ R s _).le zero_le_one
+      _ = 1 := by ring
+  · -- measurability of F' θ
+    have hc : Continuous fun z : ℝ × ℝ =>
+        Real.sin z.1 * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+          * (-Real.sin θ * Real.cos z.1 + Real.cos θ * Real.sin z.1 * Real.cos z.2)) := by
+      have h1 := continuous_tiltKernel'_comp τ R s hR hs hRs θ
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · -- uniform bound
+    refine ae_of_all _ fun z => ?_
+    intro θ' _
+    rw [Real.norm_eq_abs, abs_mul, abs_mul]
+    have hK' := abs_tiltKernel'_le τ hτ hR hs hRs (abs_tiltW_le_one θ' z.1 z.2)
+    have hWθ := abs_tiltWtheta_le_two θ' z.1 z.2
+    calc |Real.sin z.1| * (|tiltKernel' τ R s (tiltW θ' z.1 z.2)|
+          * |-Real.sin θ' * Real.cos z.1 + Real.cos θ' * Real.sin z.1 * Real.cos z.2|)
+        ≤ 1 * ((R * s / τ / |R - s|) * 2) := by
+          refine mul_le_mul (Real.abs_sin_le_one _) ?_ (by positivity) zero_le_one
+          exact mul_le_mul hK' hWθ (abs_nonneg _) hCK
+      _ = (R * s / τ / |R - s|) * 2 := by ring
+  · exact integrable_const _
+  · -- pointwise differentiability
+    refine ae_of_all _ fun z => ?_
+    intro θ' _
+    have hpos := radicand_pos hR hs hRs (abs_tiltW_le_one θ' z.1 z.2)
+    have hK := hasDerivAt_tiltKernel τ R s hpos
+    have hW := hasDerivAt_tiltW_theta θ' z.1 z.2
+    exact (hK.comp θ' hW).const_mul (Real.sin z.1)
+
 end DriftingIdentifiability
