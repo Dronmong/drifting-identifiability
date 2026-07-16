@@ -159,4 +159,208 @@ theorem hasDerivAt_radialRayKhat₃_abel (τ : ℝ) (hτ : 0 < τ)
   rw [hval] at hK
   exact hK
 
+/-! ## The propagation trichotomy: edge lemmas -/
+
+section Trichotomy
+
+variable (τ : ℝ) (νp νq : Measure ℝ)
+  [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+
+/-- **Right-interval propagation from a left edge** (an interior zero of `m̃`
+or the origin): if `m̃ > 0` on `(a,b)` with the linear bound `m̃ ≤ L(t−a)`
+near `a` and `K̂` bounded as `t → a⁺`, then `K̂ ≡ 0` on `(a,b)`. -/
+lemma radialRayKhat₃_eq_zero_on_Ioo_of_leftEdge (hτ : 0 < τ)
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq))
+    {a b r₂ L : ℝ} (ha : 0 ≤ a) (hab : a < b) (har₂ : a < r₂) (hr₂b : r₂ < b)
+    (hL : 0 < L)
+    (hmpos : ∀ t : ℝ, a < t → t < b → 0 < radialRayM₃ τ νp t)
+    (hlin : ∀ t : ℝ, a < t → t < r₂ → radialRayM₃ τ νp t ≤ L * (t - a))
+    (hKbdd : IsBoundedUnder (· ≤ ·) (𝓝[>] a)
+      (norm ∘ radialRayKhat₃ τ νp νq)) :
+    ∀ x : ℝ, a < x → x < b → radialRayKhat₃ τ νp νq x = 0 := by
+  have hccontAt : ∀ t ∈ Ioo a b, ContinuousAt
+      (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t) t := by
+    intro t ht
+    have ht0 : 0 < t := lt_of_le_of_lt ha ht.1
+    have hMne : radialRayM₃ τ νp t ≠ 0 := (hmpos t ht.1 ht.2).ne'
+    refine ContinuousAt.div ?_ (continuousAt_radialRayM₃ τ hτ νp ht0) hMne
+    exact (((continuousAt_radialRayMDeriv₃ τ hτ νp ht0).add
+      continuousAt_const).div_const 2).const_mul 2
+  have hcOn : ContinuousOn
+      (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t)
+      (Ioo a b) := fun t ht => (hccontAt t ht).continuousWithinAt
+  have hcint : ∀ u v : ℝ, u ∈ Ioo a b → v ∈ Ioo a b →
+      IntervalIntegrable (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2))
+        / radialRayM₃ τ νp t) volume u v := by
+    intro u v hu hv
+    exact ContinuousOn.intervalIntegrable
+      (hcOn.mono (OrdConnected.uIcc_subset inferInstance hu hv))
+  have hAderiv : ∀ t ∈ Ioo a b, HasDerivAt
+      (fun z => ∫ s in r₂..z, (2 * ((radialRayMDeriv₃ τ νp s + 4) / 2))
+        / radialRayM₃ τ νp s)
+      ((2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t) t := by
+    intro t ht
+    exact intervalIntegral.integral_hasDerivAt_right
+      (hcint r₂ t ⟨har₂, hr₂b⟩ ht)
+      (hcOn.stronglyMeasurableAtFilter isOpen_Ioo t ht)
+      (hccontAt t ht)
+  refine abel_right_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_upper
+    (W := radialRayKhat₃ τ νp νq)
+    (A := fun z => ∫ s in r₂..z, (2 * ((radialRayMDeriv₃ τ νp s + 4) / 2))
+      / radialRayM₃ τ νp s)
+    (μDeriv := fun t => (radialRayMDeriv₃ τ νp t + 4) / 2)
+    (m := radialRayM₃ τ νp)
+    (a := a) (b := b) (r := r₂) (δ := 1 / 2) (L := L)
+    hab har₂ hr₂b (by norm_num) hL ?_ ?_ ?_ ?_ hKbdd ?_ ?_ ?_
+  · intro x y hx hxy hy
+    have hsub : Icc x y ⊆ Ioo a b := fun t ht =>
+      ⟨lt_of_lt_of_le hx ht.1, lt_of_le_of_lt ht.2 hy⟩
+    refine ContinuousOn.mul ?_ (Real.continuous_exp.comp_continuousOn ?_)
+    · intro t ht
+      have ht0 : 0 < t := lt_of_le_of_lt ha (hsub ht).1
+      exact ((hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero
+        ht0).continuousAt).continuousWithinAt
+    · intro t ht
+      exact ((hAderiv t (hsub ht)).continuousAt).continuousWithinAt
+  · intro x y hx hxy hy t ht
+    have ht' : t ∈ Ioo a b := ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+    have ht0 : 0 < t := lt_of_le_of_lt ha ht'.1
+    have hMne : radialRayM₃ τ νp t ≠ 0 := (hmpos t ht'.1 ht'.2).ne'
+    exact (hasDerivAt_radialRayKhat₃_abel τ hτ νp νq hsp hsq hzero
+      ht0 hMne).hasDerivWithinAt
+  · intro x y hx hxy hy t ht
+    have ht' : t ∈ Ioo a b := ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+    exact (hAderiv t ht').hasDerivWithinAt
+  · intro x y hx hxy hy
+    have hsub : Icc x y ⊆ Ioo a b := fun t ht =>
+      ⟨lt_of_lt_of_le hx ht.1, lt_of_le_of_lt ht.2 hy⟩
+    intro t ht
+    exact ((hAderiv t (hsub ht)).continuousAt).continuousWithinAt
+  · intro t hat htr
+    have ht0 : 0 < t := lt_of_le_of_lt ha hat
+    have h3 := radialRayMDeriv₃_ge τ hτ νp hsp hslackp ht0
+    linarith
+  · intro t hat htr
+    exact hmpos t hat (lt_trans htr hr₂b)
+  · exact hlin
+
+/-- **Left-interval propagation from a right edge** (an interior zero of `m̃`
+at `b`): if `m̃ < 0` on `(a,b)` with the linear bound `−L(b−t) ≤ m̃` near `b`,
+then `K̂ ≡ 0` on `(a,b)`. -/
+lemma radialRayKhat₃_eq_zero_on_Ioo_of_rightEdge (hτ : 0 < τ)
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq))
+    {a b l₂ L : ℝ} (ha : 0 < a) (hab : a < b) (hal₂ : a < l₂) (hl₂b : l₂ < b)
+    (hL : 0 < L)
+    (hmneg : ∀ t : ℝ, a < t → t < b → radialRayM₃ τ νp t < 0)
+    (hlin : ∀ t : ℝ, l₂ ≤ t → t < b → -(L * (b - t)) ≤ radialRayM₃ τ νp t) :
+    ∀ x : ℝ, a < x → x < b → radialRayKhat₃ τ νp νq x = 0 := by
+  have hccontAt : ∀ t ∈ Ioo a b, ContinuousAt
+      (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t) t := by
+    intro t ht
+    have ht0 : 0 < t := lt_trans ha ht.1
+    have hMne : radialRayM₃ τ νp t ≠ 0 := (hmneg t ht.1 ht.2).ne
+    refine ContinuousAt.div ?_ (continuousAt_radialRayM₃ τ hτ νp ht0) hMne
+    exact (((continuousAt_radialRayMDeriv₃ τ hτ νp ht0).add
+      continuousAt_const).div_const 2).const_mul 2
+  have hcOn : ContinuousOn
+      (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t)
+      (Ioo a b) := fun t ht => (hccontAt t ht).continuousWithinAt
+  have hcint : ∀ u v : ℝ, u ∈ Ioo a b → v ∈ Ioo a b →
+      IntervalIntegrable (fun t => (2 * ((radialRayMDeriv₃ τ νp t + 4) / 2))
+        / radialRayM₃ τ νp t) volume u v := by
+    intro u v hu hv
+    exact ContinuousOn.intervalIntegrable
+      (hcOn.mono (OrdConnected.uIcc_subset inferInstance hu hv))
+  have hAderiv : ∀ t ∈ Ioo a b, HasDerivAt
+      (fun z => ∫ s in l₂..z, (2 * ((radialRayMDeriv₃ τ νp s + 4) / 2))
+        / radialRayM₃ τ νp s)
+      ((2 * ((radialRayMDeriv₃ τ νp t + 4) / 2)) / radialRayM₃ τ νp t) t := by
+    intro t ht
+    exact intervalIntegral.integral_hasDerivAt_right
+      (hcint l₂ t ⟨hal₂, hl₂b⟩ ht)
+      (hcOn.stronglyMeasurableAtFilter isOpen_Ioo t ht)
+      (hccontAt t ht)
+  have hb0 : 0 < b := lt_trans ha hab
+  have hKbdd : IsBoundedUnder (· ≤ ·) (𝓝[<] b)
+      (norm ∘ radialRayKhat₃ τ νp νq) :=
+    (((hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero
+      hb0).continuousAt).norm.isBoundedUnder_le).mono nhdsWithin_le_nhds
+  refine abel_left_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_lower
+    (W := radialRayKhat₃ τ νp νq)
+    (A := fun z => ∫ s in l₂..z, (2 * ((radialRayMDeriv₃ τ νp s + 4) / 2))
+      / radialRayM₃ τ νp s)
+    (μDeriv := fun t => (radialRayMDeriv₃ τ νp t + 4) / 2)
+    (m := radialRayM₃ τ νp)
+    (a := a) (b := b) (l := l₂) (δ := 1 / 2) (L := L)
+    hab hal₂ hl₂b (by norm_num) hL ?_ ?_ ?_ ?_ hKbdd ?_ ?_ ?_
+  · intro x y hx hxy hy
+    have hsub : Icc x y ⊆ Ioo a b := fun t ht =>
+      ⟨lt_of_lt_of_le hx ht.1, lt_of_le_of_lt ht.2 hy⟩
+    refine ContinuousOn.mul ?_ (Real.continuous_exp.comp_continuousOn ?_)
+    · intro t ht
+      have ht0 : 0 < t := lt_trans ha (hsub ht).1
+      exact ((hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero
+        ht0).continuousAt).continuousWithinAt
+    · intro t ht
+      exact ((hAderiv t (hsub ht)).continuousAt).continuousWithinAt
+  · intro x y hx hxy hy t ht
+    have ht' : t ∈ Ioo a b := ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+    have ht0 : 0 < t := lt_trans ha ht'.1
+    have hMne : radialRayM₃ τ νp t ≠ 0 := (hmneg t ht'.1 ht'.2).ne
+    exact (hasDerivAt_radialRayKhat₃_abel τ hτ νp νq hsp hsq hzero
+      ht0 hMne).hasDerivWithinAt
+  · intro x y hx hxy hy t ht
+    have ht' : t ∈ Ioo a b := ⟨lt_of_lt_of_le hx ht.1, lt_trans ht.2 hy⟩
+    exact (hAderiv t ht').hasDerivWithinAt
+  · intro x y hx hxy hy
+    have hsub : Icc x y ⊆ Ioo a b := fun t ht =>
+      ⟨lt_of_lt_of_le hx ht.1, lt_of_le_of_lt ht.2 hy⟩
+    intro t ht
+    exact ((hAderiv t (hsub ht)).continuousAt).continuousWithinAt
+  · intro t hlt htb
+    have ht0 : 0 < t := lt_trans ha (lt_of_lt_of_le hal₂ hlt)
+    have h3 := radialRayMDeriv₃_ge τ hτ νp hsp hslackp ht0
+    linarith
+  · intro t hlt htb
+    exact hmneg t (lt_of_lt_of_le hal₂ hlt) htb
+  · exact hlin
+
+/-- **Outer-ray propagation**: if `m̃ < 0` on all of `[a,∞)` then `K̂ ≡ 0`
+there (the square/tail mechanism with `K̂ → 0` at `∞`). -/
+lemma radialRayKhat₃_eq_zero_on_ray (hτ : 0 < τ)
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq))
+    {a : ℝ} (ha : 0 < a)
+    (hmneg : ∀ t : ℝ, a ≤ t → radialRayM₃ τ νp t < 0) :
+    ∀ x : ℝ, a ≤ x → radialRayKhat₃ τ νp νq x = 0 := by
+  refine abel_right_outer_zero_of_muDeriv_nonneg_of_m_neg
+    (W := radialRayKhat₃ τ νp νq)
+    (muDeriv := fun t => (radialRayMDeriv₃ τ νp t + 4) / 2)
+    (m := radialRayM₃ τ νp) (a := a) ?_ ?_ ?_ hmneg
+    (tendsto_radialRayKhat₃_atTop τ hτ νp νq hsp hsq hmp hmq)
+  · intro x b hax hxb t ht
+    have ht0 : 0 < t := lt_of_lt_of_le ha (le_trans hax ht.1)
+    exact ((hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero
+      ht0).continuousAt).continuousWithinAt
+  · intro x b hax hxb t ht
+    have ht0 : 0 < t := lt_of_lt_of_le ha (le_trans hax ht.1)
+    have hMne : radialRayM₃ τ νp t ≠ 0 := (hmneg t (le_trans hax ht.1)).ne
+    exact (hasDerivAt_radialRayKhat₃_abel τ hτ νp νq hsp hsq hzero
+      ht0 hMne).hasDerivWithinAt
+  · intro t hat
+    have ht0 : 0 < t := lt_of_lt_of_le ha hat
+    have h3 := radialRayMDeriv₃_ge τ hτ νp hsp hslackp ht0
+    linarith
+
+end Trichotomy
+
 end DriftingIdentifiability
