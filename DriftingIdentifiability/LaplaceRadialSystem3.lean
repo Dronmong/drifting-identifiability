@@ -320,4 +320,184 @@ lemma abs_radialRayKhat₃_le (τ : ℝ) (hτ : 0 < τ)
         mul_le_mul_of_nonneg_left hK (by positivity)
     _ = τ * r ^ 2 := by ring
 
+/-! ## Decay at infinity: the tail lemma and per-shell decay bounds -/
+
+/-- **The tail lemma**: `r·ν([r,∞)) → 0` for probability measures with a first
+moment — genuinely to zero, by dominated convergence on the truncated first
+moment (`LaplaceHigherDim.md §4.10 (F8)`). -/
+lemma tendsto_mul_measureReal_Ici_atTop (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hmom : Integrable id ν) :
+    Tendsto (fun r : ℝ => r * ν.real (Ici r)) atTop (𝓝 0) := by
+  have hupper : Tendsto (fun r : ℝ => ∫ s in Ici r, s ∂ν) atTop (𝓝 0) := by
+    have h := tendsto_integral_filter_of_dominated_convergence (μ := ν)
+      (l := atTop) (F := fun (r : ℝ) (s : ℝ) => Set.indicator (Ici r) id s)
+      (f := fun _ => 0) (bound := fun s => |s|)
+      (Filter.Eventually.of_forall fun _ =>
+        (measurable_id.indicator measurableSet_Ici).aestronglyMeasurable)
+      (Filter.Eventually.of_forall fun _ => ae_of_all _ fun s => by
+        simpa [Real.norm_eq_abs] using norm_indicator_le_norm_self (f := (id : ℝ → ℝ)) s)
+      hmom.abs
+      (ae_of_all _ fun s => by
+        have hev : ∀ᶠ r : ℝ in atTop, Set.indicator (Ici r) (id : ℝ → ℝ) s = 0 := by
+          filter_upwards [eventually_gt_atTop s] with r hr
+          exact Set.indicator_of_notMem (by simpa using not_le.mpr hr) _
+        exact tendsto_const_nhds.congr' (hev.mono fun r h => h.symm))
+    simp only [integral_zero] at h
+    refine h.congr fun r => ?_
+    exact integral_indicator measurableSet_Ici
+  have hnn : ∀ᶠ r : ℝ in atTop, 0 ≤ r * ν.real (Ici r) := by
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+    exact mul_nonneg hr ENNReal.toReal_nonneg
+  have hle : ∀ᶠ r : ℝ in atTop, r * ν.real (Ici r) ≤ ∫ s in Ici r, s ∂ν := by
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with r _
+    have hmono : (∫ _ in Ici r, r ∂ν) ≤ ∫ s in Ici r, s ∂ν :=
+      setIntegral_mono_on ((integrable_const r).integrableOn)
+        (hmom.integrableOn) measurableSet_Ici (fun s hs => hs)
+    calc r * ν.real (Ici r) = ν.real (Ici r) • r := by rw [smul_eq_mul]; ring
+      _ = ∫ _ in Ici r, r ∂ν := (setIntegral_const r).symm
+      _ ≤ ∫ s in Ici r, s ∂ν := hmono
+  exact squeeze_zero' hnn hle hupper
+
+/-- The shell distance dominates the radial gap when `r, s ≥ 0`. -/
+lemma abs_sub_le_shellDist {r s u : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s) (hu : u ≤ 1) :
+    |r - s| ≤ shellDist r s u := by
+  rw [shellDist, ← Real.sqrt_sq_eq_abs]
+  apply Real.sqrt_le_sqrt
+  nlinarith [mul_nonneg hr hs]
+
+lemma shellZ_le_one (τ : ℝ) (hτ : 0 < τ) (r s : ℝ) : shellZ τ r s ≤ 1 := by
+  rw [shellZ]
+  have hbound : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      Real.exp (-(1 / τ) * shellDist r s u) ≤ 1 := by
+    intro u _
+    rw [Real.exp_le_one_iff]
+    have hd : 0 ≤ shellDist r s u := Real.sqrt_nonneg _
+    have h1τ : 0 ≤ 1 / τ := by positivity
+    nlinarith
+  calc (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * shellDist r s u)
+      ≤ (1 / 2) * ∫ _ in Ioc (-1 : ℝ) 1, (1 : ℝ) := by
+        refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+        refine setIntegral_mono_on ?_
+          (continuous_const.integrableOn_Icc.mono_set Ioc_subset_Icc_self)
+          measurableSet_Ioc hbound
+        have hc : Continuous fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u) := by
+          unfold shellDist
+          fun_prop
+        exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+    _ = 1 := by
+        rw [setIntegral_const, Real.volume_real_Ioc_of_le (by norm_num), smul_eq_mul]
+        ring
+
+lemma shellZ_nonneg (τ r s : ℝ) : 0 ≤ shellZ τ r s := by
+  rw [shellZ]
+  refine mul_nonneg (by norm_num) (integral_nonneg fun u => (Real.exp_pos _).le)
+
+/-- Per-shell decay: `shellZ ≤ e^{−|r−s|/τ}` for nonnegative radii. -/
+lemma shellZ_le_exp (τ : ℝ) (hτ : 0 < τ) {r s : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s) :
+    shellZ τ r s ≤ Real.exp (-(1 / τ) * |r - s|) := by
+  rw [shellZ]
+  have hbound : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      Real.exp (-(1 / τ) * shellDist r s u) ≤ Real.exp (-(1 / τ) * |r - s|) := by
+    intro u hu
+    apply Real.exp_le_exp.mpr
+    have h := abs_sub_le_shellDist hr hs hu.2
+    have h1τ : (0 : ℝ) ≤ 1 / τ := by positivity
+    nlinarith
+  calc (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * shellDist r s u)
+      ≤ (1 / 2) * ∫ _ in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * |r - s|) := by
+        refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+        refine setIntegral_mono_on ?_
+          (continuous_const.integrableOn_Icc.mono_set Ioc_subset_Icc_self)
+          measurableSet_Ioc hbound
+        have hc : Continuous fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u) := by
+          unfold shellDist
+          fun_prop
+        exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+    _ = Real.exp (-(1 / τ) * |r - s|) := by
+        rw [setIntegral_const, Real.volume_real_Ioc_of_le (by norm_num), smul_eq_mul]
+        ring
+
+/-- The Matérn-3/2 style profile `(τ+d)e^{−d/τ}` is antitone on `[0,∞)`. -/
+lemma matern_antitone (τ : ℝ) (hτ : 0 < τ) {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) :
+    (τ + b) * Real.exp (-(1 / τ) * b) ≤ (τ + a) * Real.exp (-(1 / τ) * a) := by
+  have hc : 0 ≤ b - a := by linarith
+  have hexp : (b - a) / τ + 1 ≤ Real.exp ((b - a) / τ) := Real.add_one_le_exp _
+  have key : τ + b ≤ (τ + a) * Real.exp ((b - a) / τ) := by
+    have h1 : (τ + a) * ((b - a) / τ + 1) ≤ (τ + a) * Real.exp ((b - a) / τ) :=
+      mul_le_mul_of_nonneg_left hexp (by linarith)
+    have h2 : τ + b ≤ (τ + a) * ((b - a) / τ + 1) := by
+      have hexpand : (τ + a) * ((b - a) / τ + 1) = τ + b + a * (b - a) / τ := by
+        field_simp
+        ring
+      have hnn : 0 ≤ a * (b - a) / τ := by positivity
+      linarith
+    linarith
+  have hmul := mul_le_mul_of_nonneg_right key (Real.exp_pos (-(1 / τ) * b)).le
+  rw [mul_assoc, ← Real.exp_add] at hmul
+  have harg : (b - a) / τ + -(1 / τ) * b = -(1 / τ) * a := by
+    field_simp
+    ring
+  rwa [harg] at hmul
+
+/-- The Matérn-3/2 style profile is bounded by `τ` on `[0,∞)`. -/
+lemma matern_le (τ : ℝ) (hτ : 0 < τ) {d : ℝ} (hd : 0 ≤ d) :
+    (τ + d) * Real.exp (-(1 / τ) * d) ≤ τ := by
+  have h := matern_antitone τ hτ (le_refl 0) hd
+  simpa using h
+
+/-- Per-shell companion decay: `shellC ≤ (τ+|r−s|)e^{−|r−s|/τ}` for nonnegative
+radii. -/
+lemma shellC_le_matern (τ : ℝ) (hτ : 0 < τ) {r s : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s) :
+    shellC τ r s ≤ (τ + |r - s|) * Real.exp (-(1 / τ) * |r - s|) := by
+  rw [shellC]
+  have hbound : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u)
+        ≤ (τ + |r - s|) * Real.exp (-(1 / τ) * |r - s|) := by
+    intro u hu
+    exact matern_antitone τ hτ (abs_nonneg _) (abs_sub_le_shellDist hr hs hu.2)
+  calc (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+        (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u)
+      ≤ (1 / 2) * ∫ _ in Ioc (-1 : ℝ) 1,
+          (τ + |r - s|) * Real.exp (-(1 / τ) * |r - s|) := by
+        refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+        refine setIntegral_mono_on ?_
+          (continuous_const.integrableOn_Icc.mono_set Ioc_subset_Icc_self)
+          measurableSet_Ioc hbound
+        have hc : Continuous fun u : ℝ =>
+            (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) := by
+          unfold shellDist
+          fun_prop
+        exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+    _ = (τ + |r - s|) * Real.exp (-(1 / τ) * |r - s|) := by
+        rw [setIntegral_const, Real.volume_real_Ioc_of_le (by norm_num), smul_eq_mul]
+        ring
+
+lemma shellC_nonneg (τ : ℝ) (hτ : 0 < τ) (r s : ℝ) : 0 ≤ shellC τ r s := by
+  rw [shellC]
+  refine mul_nonneg (by norm_num) (integral_nonneg fun u => ?_)
+  have hd : 0 ≤ shellDist r s u := Real.sqrt_nonneg _
+  positivity
+
+lemma shellC_le (τ : ℝ) (hτ : 0 < τ) (r s : ℝ) : shellC τ r s ≤ τ := by
+  rw [shellC]
+  have hbound : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) ≤ τ := by
+    intro u _
+    exact matern_le τ hτ (Real.sqrt_nonneg _)
+  calc (1 / 2) * ∫ u in Ioc (-1 : ℝ) 1,
+        (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u)
+      ≤ (1 / 2) * ∫ _ in Ioc (-1 : ℝ) 1, τ := by
+        refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+        refine setIntegral_mono_on ?_
+          (continuous_const.integrableOn_Icc.mono_set Ioc_subset_Icc_self)
+          measurableSet_Ioc hbound
+        have hc : Continuous fun u : ℝ =>
+            (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) := by
+          unfold shellDist
+          fun_prop
+        exact hc.integrableOn_Icc.mono_set Ioc_subset_Icc_self
+    _ = τ := by
+        rw [setIntegral_const, Real.volume_real_Ioc_of_le (by norm_num), smul_eq_mul]
+        ring
+
 end DriftingIdentifiability
