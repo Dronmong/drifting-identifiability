@@ -711,4 +711,103 @@ lemma tiltJ_zero_eq (τ : ℝ) (hτ : 0 < τ) (R s : ℝ) :
   rw [hcong, shellZ]
   ring
 
+/-! ## The tilted per-shell identity -/
+
+lemma continuous_phi_slice (τ : ℝ) (hτ : 0 < τ) (R s θ₀ : ℝ) :
+    Continuous fun u : ℝ => ∫ φ in Ioc (-Real.pi) Real.pi,
+      tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos φ) := by
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-Real.pi) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  refine continuous_of_dominated (bound := fun _ => (1 : ℝ)) (fun u => ?_) (fun u => ?_) ?_ ?_
+  · have hc : Continuous fun φ : ℝ => tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos φ) := by
+      unfold tiltKernel
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · refine ae_of_all _ fun φ => ?_
+    rw [Real.norm_eq_abs, abs_of_pos (tiltKernel_pos τ R s _)]
+    exact tiltKernel_le_one τ hτ R s _
+  · exact integrable_const 1
+  · refine ae_of_all _ fun φ => ?_
+    have hc : Continuous fun u : ℝ => tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos φ) := by
+      unfold tiltKernel
+      fun_prop
+    exact hc
+
+/-- **The tilted per-shell identity** (non-collision): the chart average of the
+tilted kernel about ANY axis equals the polar shell average. -/
+lemma chartBase_tilted_eq_shellZ (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
+    (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s) (θ₀ ψ : ℝ) :
+    (∫ w : ℝ × ℝ, tiltKernel τ R s (Real.cos θ₀ * w.1
+      + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) ∂chartBase)
+      = shellZ τ R s := by
+  haveI hfin1 : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  haveI hfin2 : IsFiniteMeasure (volume.restrict (Ioc (-Real.pi) Real.pi)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  have hint : Integrable (fun w : ℝ × ℝ => tiltKernel τ R s (Real.cos θ₀ * w.1
+      + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)))
+      ((volume.restrict (Ioc (-1 : ℝ) 1)).prod
+        (volume.restrict (Ioc (-Real.pi) Real.pi))) := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun w => ?_)⟩
+    · have hc : Continuous fun w : ℝ × ℝ => tiltKernel τ R s (Real.cos θ₀ * w.1
+          + Real.sin θ₀ * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) := by
+        unfold tiltKernel
+        fun_prop
+      exact hc.aestronglyMeasurable
+    · rw [Real.norm_eq_abs, abs_of_pos (tiltKernel_pos τ R s _)]
+      exact tiltKernel_le_one τ hτ R s _
+  rw [chartBase, MeasureTheory.integral_smul_measure, integral_prod _ hint]
+  have hshift : ∀ u : ℝ, (∫ φ in Ioc (-Real.pi) Real.pi,
+      tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos (φ - ψ)))
+      = ∫ φ in Ioc (-Real.pi) Real.pi, tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos φ) := fun u =>
+    integral_Ioc_cos_shift (fun c => tiltKernel τ R s (Real.cos θ₀ * u
+      + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * c)) ψ
+  rw [setIntegral_congr_fun measurableSet_Ioc (fun u _ => hshift u)]
+  have hintJ : Integrable (fun z : ℝ × ℝ =>
+      Real.sin z.1 * tiltKernel τ R s (tiltW θ₀ z.1 z.2))
+      ((volume.restrict (Ioc (0 : ℝ) Real.pi)).prod
+        (volume.restrict (Ioc (-Real.pi) Real.pi))) := by
+    refine ⟨(continuous_sin_fst_mul_kernel τ R s θ₀).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun z => ?_)⟩
+    rw [Real.norm_eq_abs, abs_mul, abs_of_pos (tiltKernel_pos τ R s _)]
+    calc |Real.sin z.1| * tiltKernel τ R s (tiltW θ₀ z.1 z.2)
+        ≤ 1 * 1 := mul_le_mul (Real.abs_sin_le_one _)
+          (tiltKernel_le_one τ hτ R s _) (tiltKernel_pos τ R s _).le zero_le_one
+      _ = 1 := by ring
+  have htJ : tiltJ τ R s θ₀ = ∫ u in Ioc (-1 : ℝ) 1,
+      (∫ φ in Ioc (-Real.pi) Real.pi, tiltKernel τ R s (Real.cos θ₀ * u
+        + Real.sin θ₀ * Real.sqrt (1 - u ^ 2) * Real.cos φ)) := by
+    have hfe : tiltJ τ R s θ₀ = ∫ z : ℝ × ℝ, Real.sin z.1
+        * tiltKernel τ R s (tiltW θ₀ z.1 z.2)
+        ∂((volume.restrict (Ioc (0 : ℝ) Real.pi)).prod
+          (volume.restrict (Ioc (-Real.pi) Real.pi))) := rfl
+    rw [hfe, integral_prod _ hintJ]
+    have hinner : ∀ t ∈ Ioc (0 : ℝ) Real.pi,
+        (∫ φ in Ioc (-Real.pi) Real.pi,
+          Real.sin t * tiltKernel τ R s (tiltW θ₀ t φ))
+        = Real.sin t * ∫ φ in Ioc (-Real.pi) Real.pi, tiltKernel τ R s
+            (Real.cos θ₀ * Real.cos t
+              + Real.sin θ₀ * Real.sqrt (1 - Real.cos t ^ 2) * Real.cos φ) := by
+      intro t ht
+      have hsin : Real.sqrt (1 - Real.cos t ^ 2) = Real.sin t := by
+        rw [show (1 : ℝ) - Real.cos t ^ 2 = Real.sin t ^ 2 by
+          linear_combination -(Real.sin_sq_add_cos_sq t)]
+        exact Real.sqrt_sq (Real.sin_nonneg_of_nonneg_of_le_pi ht.1.le ht.2)
+      rw [← MeasureTheory.integral_const_mul]
+      refine setIntegral_congr_fun measurableSet_Ioc fun φ _ => ?_
+      rw [hsin, tiltW]
+    rw [setIntegral_congr_fun measurableSet_Ioc hinner,
+      ← intervalIntegral.integral_of_le Real.pi_pos.le,
+      integral_sin_mul_comp_cos _ (continuous_phi_slice τ hτ R s θ₀),
+      intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
+  rw [← htJ, tiltJ_const τ hτ hR hs hRs θ₀, tiltJ_zero_eq τ hτ R s,
+    ENNReal.toReal_inv, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
+  have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
+  field_simp
+
 end DriftingIdentifiability
