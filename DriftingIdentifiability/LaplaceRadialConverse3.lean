@@ -363,4 +363,191 @@ lemma radialRayKhat₃_eq_zero_on_ray (hτ : 0 < τ)
 
 end Trichotomy
 
+/-! ## The `r = 0` universal edge: providers -/
+
+/-- The axial displacement average vanishes at the origin probe (odd
+`u`-integrand). -/
+lemma shellD_zero_left (τ s : ℝ) : shellD τ 0 s = 0 := by
+  unfold shellD
+  have hdist : ∀ u : ℝ, shellDist 0 s u = |s| := by
+    intro u
+    unfold shellDist
+    rw [show (0:ℝ) ^ 2 + s ^ 2 - 2 * 0 * s * u = s ^ 2 by ring]
+    exact Real.sqrt_sq_eq_abs s
+  have hcong : (∫ u in Ioc (-1 : ℝ) 1,
+        Real.exp (-(1 / τ) * shellDist 0 s u) * (s * u - 0))
+      = ∫ u in Ioc (-1 : ℝ) 1, (Real.exp (-(1 / τ) * |s|) * s) * u := by
+    refine setIntegral_congr_fun measurableSet_Ioc fun u _ => ?_
+    rw [hdist u]
+    ring
+  rw [hcong, integral_const_mul, integral_Ioc_neg_one_one_eq_interval]
+  rw [integral_id]
+  norm_num
+
+/-- `D̃(0) = 0`: the drift numerator vanishes at the origin. -/
+lemma radialRayD₃_zero (τ : ℝ) (ν : Measure ℝ) : radialRayD₃ τ ν 0 = 0 := by
+  rw [radialRayD₃]
+  have : (fun s => shellD τ 0 s) = fun _ => (0 : ℝ) := funext fun s => shellD_zero_left τ s
+  rw [this]
+  simp
+
+/-- The second-moment payload is globally bounded: `|Q̃| ≤ τ·e⁻¹`. -/
+lemma abs_radialRayQ₃_le (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    |radialRayQ₃ τ ν r| ≤ τ * Real.exp (-1) := by
+  rw [radialRayQ₃]
+  have hint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+      (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_sq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_sq_div_le τ hτ r y)⟩
+  have h1 := norm_integral_le_integral_norm (μ := radialMixture₃ ν)
+    (f := fun y => laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+  simp only [Real.norm_eq_abs] at h1
+  refine h1.trans ?_
+  calc (∫ y, |laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)|
+        ∂(radialMixture₃ ν))
+      ≤ ∫ _, τ * Real.exp (-1) ∂(radialMixture₃ ν) :=
+        integral_mono hint.abs (integrable_const _)
+          (fun y => abs_laplaceKernel_mul_sq_div_le τ hτ r y)
+    _ = τ * Real.exp (-1) := by simp
+
+/-- `Z̃` is globally continuous. -/
+lemma continuous_radialRayZ₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    Continuous (radialRayZ₃ τ ν) := by
+  have hfe : radialRayZ₃ τ ν
+      = fun x => ∫ y, laplaceKernel τ (rayProbe x) y ∂(radialMixture₃ ν) := by
+    funext x
+    rw [radialRayZ₃_eq_kernelNormalizer τ hτ ν x]
+    rfl
+  rw [hfe]
+  refine continuous_of_dominated (bound := fun _ => (1 : ℝ)) (fun x => ?_) (fun x => ?_) ?_ ?_
+  · exact (continuous_laplaceKernel_rayProbe τ x).aestronglyMeasurable
+  · refine ae_of_all _ fun y => ?_
+    rw [Real.norm_eq_abs, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ x y)]
+    exact laplaceKernel_rayProbe_le_one τ hτ x y
+  · exact integrable_const 1
+  · exact ae_of_all _ fun y => continuous_laplaceKernel_rayProbe_left τ y
+
+/-- `D̃` is globally continuous. -/
+lemma continuous_radialRayD₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    Continuous (radialRayD₃ τ ν) := by
+  have hfe : radialRayD₃ τ ν
+      = fun x => ∫ y, laplaceKernel τ (rayProbe x) y * (y 0 - x)
+          ∂(radialMixture₃ ν) := by
+    funext x
+    exact radialRayD₃_eq_integral_coord τ hτ ν x
+  rw [hfe]
+  refine continuous_of_dominated (bound := fun _ => τ * Real.exp (-1))
+    (fun x => ?_) (fun x => ?_) ?_ ?_
+  · have hc : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+        laplaceKernel τ (rayProbe x) y * (y 0 - x)) := by
+      have := continuous_laplaceKernel_rayProbe τ x
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · refine ae_of_all _ fun y => ?_
+    rw [Real.norm_eq_abs]
+    exact abs_laplaceKernel_mul_coord_le τ hτ x y
+  · exact integrable_const _
+  · refine ae_of_all _ fun y => ?_
+    have h1 := continuous_laplaceKernel_rayProbe_left τ y
+    fun_prop
+
+/-- **The origin linear bound**: `|D̃(t)| ≤ (e⁻¹+1)·t` for `t ≥ 0`, from the
+global derivative bound `|D̃'| ≤ e⁻¹+1` and `D̃(0) = 0`. -/
+lemma abs_radialRayD₃_le_linear (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {t : ℝ} (ht : 0 < t) :
+    |radialRayD₃ τ ν t| ≤ (Real.exp (-1) + 1) * t := by
+  have hC : (0 : ℝ) ≤ Real.exp (-1) + 1 := by positivity
+  have hbound : ∀ x : ℝ, 0 < x →
+      ‖(1 / τ) * radialRayQ₃ τ ν x - radialRayZ₃ τ ν x‖ ≤ Real.exp (-1) + 1 := by
+    intro x _
+    rw [Real.norm_eq_abs]
+    have h1 : |(1 / τ) * radialRayQ₃ τ ν x| ≤ Real.exp (-1) := by
+      rw [abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ 1 / τ)]
+      have := abs_radialRayQ₃_le τ hτ ν x
+      calc (1 / τ) * |radialRayQ₃ τ ν x| ≤ (1 / τ) * (τ * Real.exp (-1)) :=
+            mul_le_mul_of_nonneg_left this (by positivity)
+        _ = Real.exp (-1) := by field_simp
+    have h2 : |radialRayZ₃ τ ν x| ≤ 1 := by
+      rw [abs_of_nonneg (radialRayZ₃_nonneg τ hτ ν x)]
+      exact radialRayZ₃_le_one τ hτ ν x
+    calc |(1 / τ) * radialRayQ₃ τ ν x - radialRayZ₃ τ ν x|
+        ≤ |(1 / τ) * radialRayQ₃ τ ν x| + |radialRayZ₃ τ ν x| := abs_sub _ _
+      _ ≤ Real.exp (-1) + 1 := add_le_add h1 h2
+  have hev : ∀ᶠ ε in 𝓝[>] (0 : ℝ), |radialRayD₃ τ ν t|
+      ≤ |radialRayD₃ τ ν ε| + (Real.exp (-1) + 1) * t := by
+    filter_upwards [Ioo_mem_nhdsGT ht] with ε hε
+    have hMVT : ‖radialRayD₃ τ ν t - radialRayD₃ τ ν ε‖
+        ≤ (Real.exp (-1) + 1) * ‖t - ε‖ := by
+      refine Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+        (f' := fun x => (1 / τ) * radialRayQ₃ τ ν x - radialRayZ₃ τ ν x)
+        (fun x hx => ?_) (fun x hx => hbound x (lt_of_lt_of_le hε.1 hx.1))
+        (convex_Icc ε t) (left_mem_Icc.mpr hε.2.le) (right_mem_Icc.mpr hε.2.le)
+      exact (hasDerivAt_radialRayD₃ τ hτ ν
+        (lt_of_lt_of_le hε.1 hx.1)).hasDerivWithinAt
+    rw [Real.norm_eq_abs, Real.norm_eq_abs,
+      abs_of_nonneg (by linarith [hε.2] : (0:ℝ) ≤ t - ε)] at hMVT
+    calc |radialRayD₃ τ ν t|
+        ≤ |radialRayD₃ τ ν ε| + |radialRayD₃ τ ν t - radialRayD₃ τ ν ε| := by
+          have := abs_sub_abs_le_abs_sub (radialRayD₃ τ ν t) (radialRayD₃ τ ν ε)
+          linarith [abs_nonneg (radialRayD₃ τ ν ε)]
+      _ ≤ |radialRayD₃ τ ν ε| + (Real.exp (-1) + 1) * (t - ε) := by linarith
+      _ ≤ |radialRayD₃ τ ν ε| + (Real.exp (-1) + 1) * t := by nlinarith [hε.1]
+  have htend : Tendsto (fun ε : ℝ => |radialRayD₃ τ ν ε| + (Real.exp (-1) + 1) * t)
+      (𝓝[>] (0 : ℝ)) (𝓝 ((Real.exp (-1) + 1) * t)) := by
+    have h0 : Tendsto (fun ε : ℝ => |radialRayD₃ τ ν ε|) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+      have hc : ContinuousAt (fun ε : ℝ => |radialRayD₃ τ ν ε|) 0 :=
+        ((continuous_radialRayD₃ τ hτ ν).abs).continuousAt
+      have h1 : Tendsto (fun ε : ℝ => |radialRayD₃ τ ν ε|) (𝓝[>] (0 : ℝ))
+          (𝓝 |radialRayD₃ τ ν 0|) :=
+        hc.tendsto.mono_left nhdsWithin_le_nhds
+      rwa [radialRayD₃_zero, abs_zero] at h1
+    have := h0.add (tendsto_const_nhds (α := ℝ) (x := (Real.exp (-1) + 1) * t)
+      (f := 𝓝[>] (0:ℝ)))
+    simpa using this
+  exact ge_of_tendsto htend hev
+
+/-- **The origin linear `m̃`-bound**: on `(0, b]`, `m̃(t) ≤ L·t` with
+`L = (e⁻¹+1)/min Z̃`. -/
+lemma radialRayM₃_le_linear (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {b : ℝ} (hb : 0 < b) :
+    ∃ L : ℝ, 0 < L ∧ ∀ t : ℝ, 0 < t → t ≤ b → radialRayM₃ τ ν t ≤ L * t := by
+  obtain ⟨z₀, hz₀mem, hz₀min⟩ := isCompact_Icc.exists_isMinOn
+    (Set.nonempty_Icc.mpr hb.le) ((continuous_radialRayZ₃ τ hτ ν).continuousOn)
+  have hZmin : 0 < radialRayZ₃ τ ν z₀ := radialRayZ₃_pos τ hτ ν z₀
+  refine ⟨(Real.exp (-1) + 1) / radialRayZ₃ τ ν z₀, by positivity, ?_⟩
+  intro t ht htb
+  have hZt : radialRayZ₃ τ ν z₀ ≤ radialRayZ₃ τ ν t :=
+    hz₀min (Set.mem_Icc.mpr ⟨ht.le, htb⟩)
+  have hZtpos : 0 < radialRayZ₃ τ ν t := radialRayZ₃_pos τ hτ ν t
+  have hD := abs_radialRayD₃_le_linear τ hτ ν ht
+  rw [radialRayM₃, div_le_iff₀ hZtpos]
+  calc radialRayD₃ τ ν t ≤ |radialRayD₃ τ ν t| := le_abs_self _
+    _ ≤ (Real.exp (-1) + 1) * t := hD
+    _ = ((Real.exp (-1) + 1) / radialRayZ₃ τ ν z₀) * t * radialRayZ₃ τ ν z₀ := by
+        field_simp
+    _ ≤ ((Real.exp (-1) + 1) / radialRayZ₃ τ ν z₀) * t * radialRayZ₃ τ ν t := by
+        refine mul_le_mul_of_nonneg_left hZt ?_
+        positivity
+
+/-- `K̂` is bounded as `r → 0⁺` (indeed `≤ τ` on `(0,1)`). -/
+lemma radialRayKhat₃_bounded_near_zero (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq] :
+    IsBoundedUnder (· ≤ ·) (𝓝[>] (0 : ℝ)) (norm ∘ radialRayKhat₃ τ νp νq) := by
+  refine ⟨τ, ?_⟩
+  rw [Filter.eventually_map]
+  filter_upwards [Ioo_mem_nhdsGT one_pos] with r hr
+  have h := abs_radialRayKhat₃_le τ hτ νp νq r
+  have hr2 : r ^ 2 ≤ 1 := by nlinarith [hr.1, hr.2]
+  calc ‖radialRayKhat₃ τ νp νq r‖ = |radialRayKhat₃ τ νp νq r| := Real.norm_eq_abs _
+    _ ≤ τ * r ^ 2 := h
+    _ ≤ τ * 1 := mul_le_mul_of_nonneg_left hr2 hτ.le
+    _ = τ := mul_one τ
+
 end DriftingIdentifiability
