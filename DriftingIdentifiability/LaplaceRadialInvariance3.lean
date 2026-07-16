@@ -327,4 +327,296 @@ lemma hasDerivAt_tiltJ (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
     have hW := hasDerivAt_tiltW_theta θ' z.1 z.2
     exact (hK.comp θ' hW).const_mul (Real.sin z.1)
 
+/-- The polar-angle integration by parts: `∫₀^π sin t·∂ₜG dt = −∫₀^π cos t·G dt`
+(boundary terms vanish at `sin 0 = sin π = 0`). -/
+lemma tilt_IBP_t (τ : ℝ) {R s : ℝ} (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s)
+    (θ φ : ℝ) :
+    (∫ t in Ioc (0 : ℝ) Real.pi, Real.sin t * (tiltKernel' τ R s (tiltW θ t φ)
+      * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ)))
+    = -∫ t in Ioc (0 : ℝ) Real.pi, Real.cos t * tiltKernel τ R s (tiltW θ t φ) := by
+  have hle : (0 : ℝ) ≤ Real.pi := Real.pi_pos.le
+  rw [← intervalIntegral.integral_of_le hle, ← intervalIntegral.integral_of_le hle]
+  have hIBP := intervalIntegral.integral_mul_deriv_eq_deriv_mul
+    (u := Real.sin) (u' := Real.cos)
+    (v := fun t => tiltKernel τ R s (tiltW θ t φ))
+    (v' := fun t => tiltKernel' τ R s (tiltW θ t φ)
+      * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ))
+    (a := 0) (b := Real.pi)
+    (fun x _ => Real.hasDerivAt_sin x)
+    (fun x _ => by
+      have hpos := radicand_pos hR hs hRs (abs_tiltW_le_one θ x φ)
+      have h := (hasDerivAt_tiltKernel τ R s hpos).comp x (hasDerivAt_tiltW_t θ x φ)
+      exact h)
+    (Real.continuous_cos.intervalIntegrable 0 Real.pi)
+    (by
+      have hc : Continuous fun t : ℝ => tiltKernel' τ R s (tiltW θ t φ)
+          * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ) := by
+        have h1 : Continuous fun t : ℝ => tiltKernel' τ R s (tiltW θ t φ) := by
+          have h2 := continuous_tiltKernel'_comp τ R s hR hs hRs θ
+          exact h2.comp (f := fun t : ℝ => ((t, φ) : ℝ × ℝ)) (by fun_prop)
+        fun_prop
+      exact hc.intervalIntegrable 0 Real.pi)
+  rw [hIBP, Real.sin_pi, Real.sin_zero]
+  ring
+
+/-- The azimuthal integration by parts: `∫_{−π}^π sin φ·∂φG dφ = −∫ cos φ·G dφ`
+(boundary terms vanish at `sin(±π) = 0`). -/
+lemma tilt_IBP_phi (τ : ℝ) {R s : ℝ} (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s)
+    (θ t : ℝ) :
+    (∫ φ in Ioc (-Real.pi) Real.pi, Real.sin φ * (tiltKernel' τ R s (tiltW θ t φ)
+      * (Real.sin θ * Real.sin t * -Real.sin φ)))
+    = -∫ φ in Ioc (-Real.pi) Real.pi, Real.cos φ * tiltKernel τ R s (tiltW θ t φ) := by
+  have hle : -Real.pi ≤ Real.pi := by linarith [Real.pi_pos]
+  rw [← intervalIntegral.integral_of_le hle, ← intervalIntegral.integral_of_le hle]
+  have hIBP := intervalIntegral.integral_mul_deriv_eq_deriv_mul
+    (u := Real.sin) (u' := Real.cos)
+    (v := fun φ => tiltKernel τ R s (tiltW θ t φ))
+    (v' := fun φ => tiltKernel' τ R s (tiltW θ t φ)
+      * (Real.sin θ * Real.sin t * -Real.sin φ))
+    (a := -Real.pi) (b := Real.pi)
+    (fun x _ => Real.hasDerivAt_sin x)
+    (fun x _ => by
+      have hpos := radicand_pos hR hs hRs (abs_tiltW_le_one θ t x)
+      have h := (hasDerivAt_tiltKernel τ R s hpos).comp x (hasDerivAt_tiltW_phi θ t x)
+      exact h)
+    (Real.continuous_cos.intervalIntegrable _ _)
+    (by
+      have hc : Continuous fun φ : ℝ => tiltKernel' τ R s (tiltW θ t φ)
+          * (Real.sin θ * Real.sin t * -Real.sin φ) := by
+        have h1 : Continuous fun φ : ℝ => tiltKernel' τ R s (tiltW θ t φ) := by
+          have h2 := continuous_tiltKernel'_comp τ R s hR hs hRs θ
+          exact h2.comp (f := fun φ : ℝ => ((t, φ) : ℝ × ℝ)) (by fun_prop)
+        fun_prop
+      exact hc.intervalIntegrable _ _)
+  rw [hIBP, Real.sin_pi, Real.sin_neg, Real.sin_pi]
+  ring
+
+lemma abs_tiltWt_le_two (θ t φ : ℝ) :
+    |-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ| ≤ 2 := by
+  have h1 := Real.abs_cos_le_one θ
+  have h2 := Real.abs_sin_le_one t
+  have h3 := Real.abs_sin_le_one θ
+  have h4 := Real.abs_cos_le_one t
+  have h5 := Real.abs_cos_le_one φ
+  calc |-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ|
+      ≤ |-(Real.cos θ * Real.sin t)| + |Real.sin θ * Real.cos t * Real.cos φ| :=
+        abs_add_le _ _
+    _ = |Real.cos θ| * |Real.sin t| + |Real.sin θ| * |Real.cos t| * |Real.cos φ| := by
+        rw [abs_neg, abs_mul, abs_mul, abs_mul]
+    _ ≤ 1 + 1 := by
+        refine add_le_add ?_ ?_
+        · nlinarith [abs_nonneg (Real.cos θ), abs_nonneg (Real.sin t)]
+        · nlinarith [abs_nonneg (Real.sin θ), abs_nonneg (Real.cos t),
+            abs_nonneg (Real.cos φ),
+            mul_nonneg (abs_nonneg (Real.sin θ)) (abs_nonneg (Real.cos t))]
+    _ = 2 := by norm_num
+
+lemma abs_tiltWphi_le_two (θ t φ : ℝ) :
+    |Real.sin θ * Real.sin t * -Real.sin φ| ≤ 2 := by
+  have h1 := Real.abs_sin_le_one θ
+  have h2 := Real.abs_sin_le_one t
+  have h3 := Real.abs_sin_le_one φ
+  have habs : |Real.sin θ * Real.sin t * -Real.sin φ|
+      = |Real.sin θ| * |Real.sin t| * |Real.sin φ| := by
+    rw [abs_mul, abs_mul, abs_neg]
+  rw [habs]
+  nlinarith [abs_nonneg (Real.sin θ), abs_nonneg (Real.sin t), abs_nonneg (Real.sin φ),
+    mul_nonneg (abs_nonneg (Real.sin θ)) (abs_nonneg (Real.sin t))]
+
+/-- **The flow derivative vanishes**: the two integrations by parts produce the
+same bulk term `∫∫ cos t·cos φ·G` with opposite signs. -/
+lemma tiltJderiv_eq_zero (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
+    (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s) (θ : ℝ) :
+    tiltJderiv τ R s θ = 0 := by
+  have hCK : (0 : ℝ) ≤ R * s / τ / |R - s| := by positivity
+  -- the three product-level integrands
+  have hcontK' := continuous_tiltKernel'_comp τ R s hR hs hRs θ
+  have hcontG := continuous_tiltKernel_comp τ R s θ
+  have hfA : Integrable (fun z : ℝ × ℝ => Real.sin z.1 * Real.cos z.2
+      * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+        * (-(Real.cos θ * Real.sin z.1) + Real.sin θ * Real.cos z.1 * Real.cos z.2)))
+      tiltBase := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded
+      (C := (R * s / τ / |R - s|) * 2) (ae_of_all _ fun z => ?_)⟩
+    · have hc : Continuous fun z : ℝ × ℝ => Real.sin z.1 * Real.cos z.2
+          * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+            * (-(Real.cos θ * Real.sin z.1) + Real.sin θ * Real.cos z.1 * Real.cos z.2)) := by
+        fun_prop
+      exact hc.aestronglyMeasurable
+    · rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_mul]
+      have hK' := abs_tiltKernel'_le τ hτ hR hs hRs (abs_tiltW_le_one θ z.1 z.2)
+      have hWt := abs_tiltWt_le_two θ z.1 z.2
+      calc |Real.sin z.1| * |Real.cos z.2|
+            * (|tiltKernel' τ R s (tiltW θ z.1 z.2)|
+              * |-(Real.cos θ * Real.sin z.1) + Real.sin θ * Real.cos z.1 * Real.cos z.2|)
+          ≤ 1 * 1 * ((R * s / τ / |R - s|) * 2) := by
+            refine mul_le_mul ?_ ?_ (by positivity) (by norm_num)
+            · exact mul_le_mul (Real.abs_sin_le_one _) (Real.abs_cos_le_one _)
+                (abs_nonneg _) zero_le_one
+            · exact mul_le_mul hK' hWt (abs_nonneg _) hCK
+        _ = (R * s / τ / |R - s|) * 2 := by ring
+  have hfB : Integrable (fun z : ℝ × ℝ => Real.cos z.1 * Real.sin z.2
+      * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+        * (Real.sin θ * Real.sin z.1 * -Real.sin z.2))) tiltBase := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded
+      (C := (R * s / τ / |R - s|) * 2) (ae_of_all _ fun z => ?_)⟩
+    · have hc : Continuous fun z : ℝ × ℝ => Real.cos z.1 * Real.sin z.2
+          * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+            * (Real.sin θ * Real.sin z.1 * -Real.sin z.2)) := by
+        fun_prop
+      exact hc.aestronglyMeasurable
+    · rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_mul]
+      have hK' := abs_tiltKernel'_le τ hτ hR hs hRs (abs_tiltW_le_one θ z.1 z.2)
+      have hWφ := abs_tiltWphi_le_two θ z.1 z.2
+      calc |Real.cos z.1| * |Real.sin z.2|
+            * (|tiltKernel' τ R s (tiltW θ z.1 z.2)|
+              * |Real.sin θ * Real.sin z.1 * -Real.sin z.2|)
+          ≤ 1 * 1 * ((R * s / τ / |R - s|) * 2) := by
+            refine mul_le_mul ?_ ?_ (by positivity) (by norm_num)
+            · exact mul_le_mul (Real.abs_cos_le_one _) (Real.abs_sin_le_one _)
+                (abs_nonneg _) zero_le_one
+            · exact mul_le_mul hK' hWφ (abs_nonneg _) hCK
+        _ = (R * s / τ / |R - s|) * 2 := by ring
+  have hfX : Integrable (fun z : ℝ × ℝ => Real.cos z.1 * Real.cos z.2
+      * tiltKernel τ R s (tiltW θ z.1 z.2)) tiltBase := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun z => ?_)⟩
+    · have hc : Continuous fun z : ℝ × ℝ => Real.cos z.1 * Real.cos z.2
+          * tiltKernel τ R s (tiltW θ z.1 z.2) := by
+        fun_prop
+      exact hc.aestronglyMeasurable
+    · rw [Real.norm_eq_abs, abs_mul, abs_mul,
+        abs_of_pos (tiltKernel_pos τ R s _)]
+      calc |Real.cos z.1| * |Real.cos z.2| * tiltKernel τ R s (tiltW θ z.1 z.2)
+          ≤ 1 * 1 * 1 := by
+            refine mul_le_mul ?_ (tiltKernel_le_one τ hτ R s _)
+              (tiltKernel_pos τ R s _).le (by norm_num)
+            exact mul_le_mul (Real.abs_cos_le_one _) (Real.abs_cos_le_one _)
+              (abs_nonneg _) zero_le_one
+        _ = 1 := by norm_num
+  -- split the derivative integrand along the generator identity
+  have hsplit : tiltJderiv τ R s θ
+      = -(∫ z : ℝ × ℝ, Real.sin z.1 * Real.cos z.2
+          * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+            * (-(Real.cos θ * Real.sin z.1) + Real.sin θ * Real.cos z.1 * Real.cos z.2))
+          ∂tiltBase)
+        + ∫ z : ℝ × ℝ, Real.cos z.1 * Real.sin z.2
+          * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+            * (Real.sin θ * Real.sin z.1 * -Real.sin z.2)) ∂tiltBase := by
+    calc tiltJderiv τ R s θ
+        = ∫ z : ℝ × ℝ, (-(Real.sin z.1 * Real.cos z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (-(Real.cos θ * Real.sin z.1)
+                + Real.sin θ * Real.cos z.1 * Real.cos z.2)))
+          + Real.cos z.1 * Real.sin z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (Real.sin θ * Real.sin z.1 * -Real.sin z.2))) ∂tiltBase := by
+          rw [tiltJderiv]
+          refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
+          have hgen := tiltW_generator θ z.1 z.2
+          linear_combination tiltKernel' τ R s (tiltW θ z.1 z.2) * hgen
+      _ = (∫ z : ℝ × ℝ, -(Real.sin z.1 * Real.cos z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (-(Real.cos θ * Real.sin z.1)
+                + Real.sin θ * Real.cos z.1 * Real.cos z.2))) ∂tiltBase)
+          + ∫ z : ℝ × ℝ, Real.cos z.1 * Real.sin z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (Real.sin θ * Real.sin z.1 * -Real.sin z.2)) ∂tiltBase :=
+          MeasureTheory.integral_add hfA.neg hfB
+      _ = -(∫ z : ℝ × ℝ, Real.sin z.1 * Real.cos z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (-(Real.cos θ * Real.sin z.1)
+                + Real.sin θ * Real.cos z.1 * Real.cos z.2)) ∂tiltBase)
+          + ∫ z : ℝ × ℝ, Real.cos z.1 * Real.sin z.2
+            * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+              * (Real.sin θ * Real.sin z.1 * -Real.sin z.2)) ∂tiltBase := by
+          rw [MeasureTheory.integral_neg]
+  -- both pieces equal −∫∫ cos t · cos φ · G
+  have hA : (∫ z : ℝ × ℝ, Real.sin z.1 * Real.cos z.2
+      * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+        * (-(Real.cos θ * Real.sin z.1) + Real.sin θ * Real.cos z.1 * Real.cos z.2))
+      ∂tiltBase)
+      = -∫ z : ℝ × ℝ, Real.cos z.1 * Real.cos z.2
+          * tiltKernel τ R s (tiltW θ z.1 z.2) ∂tiltBase := by
+    rw [tiltBase] at hfA hfX ⊢
+    rw [integral_prod_symm _ hfA, integral_prod_symm _ hfX,
+      ← MeasureTheory.integral_neg]
+    refine integral_congr_ae (Filter.Eventually.of_forall fun φ => ?_)
+    change (∫ t in Ioc (0 : ℝ) Real.pi, Real.sin t * Real.cos φ
+        * (tiltKernel' τ R s (tiltW θ t φ)
+          * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ)))
+      = -(∫ t in Ioc (0 : ℝ) Real.pi, Real.cos t * Real.cos φ
+          * tiltKernel τ R s (tiltW θ t φ))
+    have hstep1 : (∫ t in Ioc (0 : ℝ) Real.pi, Real.sin t * Real.cos φ
+        * (tiltKernel' τ R s (tiltW θ t φ)
+          * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ)))
+        = Real.cos φ * ∫ t in Ioc (0 : ℝ) Real.pi, Real.sin t
+          * (tiltKernel' τ R s (tiltW θ t φ)
+            * (-(Real.cos θ * Real.sin t) + Real.sin θ * Real.cos t * Real.cos φ)) := by
+      rw [← MeasureTheory.integral_const_mul]
+      refine setIntegral_congr_fun measurableSet_Ioc fun t _ => ?_
+      ring
+    have hstep3 : (∫ t in Ioc (0 : ℝ) Real.pi, Real.cos t * Real.cos φ
+        * tiltKernel τ R s (tiltW θ t φ))
+        = Real.cos φ * ∫ t in Ioc (0 : ℝ) Real.pi, Real.cos t
+          * tiltKernel τ R s (tiltW θ t φ) := by
+      rw [← MeasureTheory.integral_const_mul]
+      refine setIntegral_congr_fun measurableSet_Ioc fun t _ => ?_
+      ring
+    rw [hstep1, tilt_IBP_t τ hR hs hRs θ φ, hstep3]
+    ring
+  have hB : (∫ z : ℝ × ℝ, Real.cos z.1 * Real.sin z.2
+      * (tiltKernel' τ R s (tiltW θ z.1 z.2)
+        * (Real.sin θ * Real.sin z.1 * -Real.sin z.2)) ∂tiltBase)
+      = -∫ z : ℝ × ℝ, Real.cos z.1 * Real.cos z.2
+          * tiltKernel τ R s (tiltW θ z.1 z.2) ∂tiltBase := by
+    rw [tiltBase] at hfB hfX ⊢
+    rw [integral_prod _ hfB, integral_prod _ hfX,
+      ← MeasureTheory.integral_neg]
+    refine integral_congr_ae (Filter.Eventually.of_forall fun t => ?_)
+    change (∫ φ in Ioc (-Real.pi) Real.pi, Real.cos t * Real.sin φ
+        * (tiltKernel' τ R s (tiltW θ t φ)
+          * (Real.sin θ * Real.sin t * -Real.sin φ)))
+      = -(∫ φ in Ioc (-Real.pi) Real.pi, Real.cos t * Real.cos φ
+          * tiltKernel τ R s (tiltW θ t φ))
+    have hstep1 : (∫ φ in Ioc (-Real.pi) Real.pi, Real.cos t * Real.sin φ
+        * (tiltKernel' τ R s (tiltW θ t φ)
+          * (Real.sin θ * Real.sin t * -Real.sin φ)))
+        = Real.cos t * ∫ φ in Ioc (-Real.pi) Real.pi, Real.sin φ
+          * (tiltKernel' τ R s (tiltW θ t φ)
+            * (Real.sin θ * Real.sin t * -Real.sin φ)) := by
+      rw [← MeasureTheory.integral_const_mul]
+      refine setIntegral_congr_fun measurableSet_Ioc fun φ _ => ?_
+      ring
+    have hstep3 : (∫ φ in Ioc (-Real.pi) Real.pi, Real.cos t * Real.cos φ
+        * tiltKernel τ R s (tiltW θ t φ))
+        = Real.cos t * ∫ φ in Ioc (-Real.pi) Real.pi, Real.cos φ
+          * tiltKernel τ R s (tiltW θ t φ) := by
+      rw [← MeasureTheory.integral_const_mul]
+      refine setIntegral_congr_fun measurableSet_Ioc fun φ _ => ?_
+      ring
+    rw [hstep1, tilt_IBP_phi τ hR hs hRs θ t, hstep3]
+    ring
+  rw [hsplit, hA, hB]
+  ring
+
+/-- **The tilted zonal average is constant**: `J(θ) = J(0)` for every tilt. -/
+theorem tiltJ_const (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
+    (hR : 0 ≤ R) (hs : 0 ≤ s) (hRs : R ≠ s) (θ : ℝ) :
+    tiltJ τ R s θ = tiltJ τ R s 0 := by
+  have hderiv : ∀ θ' : ℝ, HasDerivAt (tiltJ τ R s) 0 θ' := by
+    intro θ'
+    have h := hasDerivAt_tiltJ τ hτ hR hs hRs θ'
+    rwa [tiltJderiv_eq_zero τ hτ hR hs hRs θ'] at h
+  have hMVT := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+    (f := tiltJ τ R s) (f' := fun _ => (0 : ℝ))
+    (s := Icc (min θ 0) (max θ 0)) (C := 0)
+    (fun x _ => (hderiv x).hasDerivWithinAt)
+    (fun x _ => by simp) (convex_Icc _ _)
+    (Set.mem_Icc.mpr ⟨min_le_right θ 0, le_max_right θ 0⟩)
+    (Set.mem_Icc.mpr ⟨min_le_left θ 0, le_max_left θ 0⟩)
+  rw [zero_mul] at hMVT
+  have h0 := norm_le_zero_iff.mp hMVT
+  have := sub_eq_zero.mp h0
+  linarith [this]
+
 end DriftingIdentifiability
