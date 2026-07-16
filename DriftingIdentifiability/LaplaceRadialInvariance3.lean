@@ -619,4 +619,96 @@ theorem tiltJ_const (τ : ℝ) (hτ : 0 < τ) {R s : ℝ}
   have := sub_eq_zero.mp h0
   linarith [this]
 
+/-! ## Evaluation of `J` at `θ = 0` and the azimuth shift -/
+
+/-- The polar-angle pullback `∫₀^π sin t·h(cos t) dt = ∫_{−1}^1 h`. -/
+lemma integral_sin_mul_comp_cos (h : ℝ → ℝ) (hh : Continuous h) :
+    (∫ t in (0 : ℝ)..Real.pi, Real.sin t * h (Real.cos t))
+      = ∫ u in (-1 : ℝ)..1, h u := by
+  have hCoV := intervalIntegral.integral_comp_mul_deriv
+    (f := Real.cos) (f' := fun t => -Real.sin t) (g := h)
+    (a := 0) (b := Real.pi)
+    (fun x _ => Real.hasDerivAt_cos x)
+    (Real.continuous_sin.neg.continuousOn) hh
+  rw [Real.cos_zero, Real.cos_pi] at hCoV
+  have hL : (∫ t in (0 : ℝ)..Real.pi, (h ∘ Real.cos) t * -Real.sin t)
+      = -∫ t in (0 : ℝ)..Real.pi, Real.sin t * h (Real.cos t) := by
+    rw [← intervalIntegral.integral_neg]
+    refine intervalIntegral.integral_congr fun t _ => ?_
+    simp only [Function.comp_apply]
+    ring
+  have hR : (∫ u in (1 : ℝ)..(-1), h u) = -∫ u in (-1 : ℝ)..1, h u :=
+    intervalIntegral.integral_symm _ _
+  rw [hL, hR] at hCoV
+  linarith [hCoV]
+
+/-- The azimuth-shift invariance of the circle integral. -/
+lemma integral_Ioc_cos_shift (F : ℝ → ℝ) (ψ : ℝ) :
+    (∫ φ in Ioc (-Real.pi) Real.pi, F (Real.cos (φ - ψ)))
+      = ∫ φ in Ioc (-Real.pi) Real.pi, F (Real.cos φ) := by
+  have hle : -Real.pi ≤ Real.pi := by linarith [Real.pi_pos]
+  rw [← intervalIntegral.integral_of_le hle, ← intervalIntegral.integral_of_le hle]
+  have h1 : (∫ φ in (-Real.pi)..Real.pi, F (Real.cos (φ - ψ)))
+      = ∫ φ in (-Real.pi - ψ)..(Real.pi - ψ), F (Real.cos φ) :=
+    intervalIntegral.integral_comp_sub_right (fun φ => F (Real.cos φ)) ψ
+  have hper : Function.Periodic (fun φ => F (Real.cos φ)) (2 * Real.pi) :=
+    Real.cos_periodic.comp F
+  have h2 := hper.intervalIntegral_add_eq (-Real.pi - ψ) (-Real.pi)
+  rw [show -Real.pi - ψ + 2 * Real.pi = Real.pi - ψ by ring,
+    show -Real.pi + 2 * Real.pi = Real.pi by ring] at h2
+  rw [h1]
+  exact h2
+
+lemma continuous_tiltKernel (τ R s : ℝ) : Continuous (tiltKernel τ R s) := by
+  unfold tiltKernel
+  fun_prop
+
+lemma tiltKernel_eq_shellDist_exp (τ R s u : ℝ) :
+    tiltKernel τ R s u = Real.exp (-(1 / τ) * shellDist R s u) := rfl
+
+/-- `J(0) = 4π·shellZ`: the polar zonal average is the shell kernel average. -/
+lemma tiltJ_zero_eq (τ : ℝ) (hτ : 0 < τ) (R s : ℝ) :
+    tiltJ τ R s 0 = 4 * Real.pi * shellZ τ R s := by
+  have hπ : (0 : ℝ) ≤ Real.pi := Real.pi_pos.le
+  have hW0 : ∀ t φ : ℝ, tiltW 0 t φ = Real.cos t := by
+    intro t φ
+    rw [tiltW, Real.cos_zero, Real.sin_zero]
+    ring
+  have hint : Integrable (fun z : ℝ × ℝ =>
+      Real.sin z.1 * tiltKernel τ R s (tiltW 0 z.1 z.2))
+      ((volume.restrict (Ioc (0 : ℝ) Real.pi)).prod
+        (volume.restrict (Ioc (-Real.pi) Real.pi))) := by
+    refine ⟨(continuous_sin_fst_mul_kernel τ R s 0).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun z => ?_)⟩
+    rw [Real.norm_eq_abs, abs_mul, abs_of_pos (tiltKernel_pos τ R s _)]
+    calc |Real.sin z.1| * tiltKernel τ R s (tiltW 0 z.1 z.2)
+        ≤ 1 * 1 := mul_le_mul (Real.abs_sin_le_one _)
+          (tiltKernel_le_one τ hτ R s _) (tiltKernel_pos τ R s _).le zero_le_one
+      _ = 1 := by ring
+  have hfe : tiltJ τ R s 0 = ∫ z : ℝ × ℝ,
+      Real.sin z.1 * tiltKernel τ R s (tiltW 0 z.1 z.2)
+      ∂((volume.restrict (Ioc (0 : ℝ) Real.pi)).prod
+        (volume.restrict (Ioc (-Real.pi) Real.pi))) := rfl
+  rw [hfe, integral_prod _ hint]
+  have hinner : ∀ t : ℝ, (∫ φ in Ioc (-Real.pi) Real.pi,
+        Real.sin t * tiltKernel τ R s (tiltW 0 t φ))
+      = (2 * Real.pi) * (Real.sin t * tiltKernel τ R s (Real.cos t)) := by
+    intro t
+    have hc : ∀ φ ∈ Ioc (-Real.pi) Real.pi,
+        Real.sin t * tiltKernel τ R s (tiltW 0 t φ)
+          = Real.sin t * tiltKernel τ R s (Real.cos t) := fun φ _ => by rw [hW0]
+    rw [setIntegral_congr_fun measurableSet_Ioc hc, setIntegral_const,
+      Real.volume_real_Ioc_of_le (by linarith [Real.pi_pos]), smul_eq_mul]
+    ring
+  rw [setIntegral_congr_fun measurableSet_Ioc (fun t _ => hinner t),
+    MeasureTheory.integral_const_mul, ← intervalIntegral.integral_of_le hπ,
+    integral_sin_mul_comp_cos (tiltKernel τ R s) (continuous_tiltKernel τ R s),
+    intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
+  have hcong : (∫ u in Ioc (-1 : ℝ) 1, tiltKernel τ R s u)
+      = ∫ u in Ioc (-1 : ℝ) 1, Real.exp (-(1 / τ) * shellDist R s u) := by
+    refine setIntegral_congr_fun measurableSet_Ioc fun u _ => ?_
+    exact tiltKernel_eq_shellDist_exp τ R s u
+  rw [hcong, shellZ]
+  ring
+
 end DriftingIdentifiability
