@@ -174,6 +174,34 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   `radialRayRhoSqOverDist₃`, plus bridge lemmas to the shell-layer normalizer,
   companion-normalizer, and drift-coordinate formulas.  It intentionally does
   not yet assert C¹/system identities.
+- **Update 2026-07-15 (second wave — R-LAYER COMPLETE, SYSTEM STARTED):**
+  `LaplaceRadialRay3.lean` now contains, all green and committed:
+  - **The full C¹ layer**: pointwise probe-derivatives away from collisions
+    (`hasDerivAt_norm_rayProbe_sub`, `hasDerivAt_laplace{,Companion}Kernel_rayProbe'`,
+    `hasDerivAt_laplaceKernel_mul_coord'`), the collision-null lemma
+    `radialMixture₃_ae_probe_ne`, and the three dominated-differentiation
+    theorems **`hasDerivAt_radialRayZ₃`** (`Z̃' = (1/τ)Z̃d`),
+    **`hasDerivAt_radialRayC₃`** (`C̃' = (1/τ)D̃`),
+    **`hasDerivAt_radialRayD₃`** (`D̃' = (1/τ)Q̃ − Z̃`), with y-level payloads
+    `radialRayZd₃ = ∫K(X/d)`, `radialRayQ₃ = ∫K(X²/d)`.
+  - **The closure identity** `radialRayC₃_closure`:
+    `C̃ = Q̃ + 3τZ̃ + (2τ/r)D̃`, via `integral_chartBase_zonal_measurable`
+    (measurable-G φ-collapse), the bridges `radialRayT₃_eq_integral` /
+    `radialRayRhoSqOverDist₃_eq_integral`, the mixture T₃
+    `radialRayRhoSqOverDist₃_eq_T` (`P̃ = (2τ/r)T̃`), and
+    `radialRayT₃_eq_D_add_Z` (`T̃ = D̃ + rZ̃`).
+  - **The sign layer**: `radialRayZ₃_pos`, `abs_radialRayZd₃_le`,
+    `radialRayM₃`/`radialRayMDeriv₃`, `hasDerivAt_radialRayM₃`,
+    `radialRayMDeriv₃_cov`, **`radialRayMDeriv₃_ge_of_le`** (the PROVED
+    `m̃ ≤ r ⟹ m̃' ≥ −3` case — via pointwise AM–GM `2K|X| ≤ K(X²/d)+Kd`,
+    NO Cauchy–Schwarz), **`RadialSlack₃`** (the named far-tilt hypothesis),
+    `radialRayMDeriv₃_ge` (combined).
+  `LaplaceRadialSystem3.lean` (NEW) has the zero-drift foundation:
+  `zeroDrift_ray_D_mul_Z` (`D̃_pZ̃_q = D̃_qZ̃_p`), `zeroDrift_ray_M_eq` /
+  `zeroDrift_ray_MDeriv_eq` (common `m̃`, `m̃'`), `zeroDrift_D_deriv_bridge`
+  (covariance bridge by `HasDerivAt.unique`), system objects
+  `radialRayW₃/V₃/K₃/Khat₃`, and `zeroDrift_C_eq` (the `g_ν`-form
+  `C̃_ν = τm̃'Z̃_ν + m̃Z̃d_ν + 4τZ̃_ν + (2τ/r)m̃Z̃_ν`).
 
 ---
 
@@ -228,24 +256,42 @@ file split (each downstream file imports the previous):
    full positive-radius T₃ theorem are DONE.  Remaining S-layer item: the
    ray-mass identity `∫₀^∞ r²Z̄(r,s)dr = 2τ³`.
 
-### 5b. `LaplaceRadialRay3.lean` (R-layer)
-Ray objects as honest functions of `r`; **C¹ layer by dominated differentiation
-of the ν-mixture integrals** (global constant dominators — see §4.10 refinement
-(a): `|∂_r e^{−d/τ}| ≤ 1/τ`, etc.; differentiate under `∫ dν` with
-`hasDerivAt_integral_of_dominated_loc_of_deriv_le`); `Z̃>0`; `C̃' = D̃/τ`; the
-zero-drift ray reduction `D̃_pZ̃_q=D̃_qZ̃_p`; the closure identity (F4); the
-`m̃'`-formula and the sign layer (F6): the `m̃≤r` Cauchy–Schwarz case, the zero
-case, and the `RadialSlack₃` definition + `m̃>r` bridge.
+### 5b. `LaplaceRadialRay3.lean` (R-layer) — **DONE (2026-07-15, all green)**
+C¹ layer, closure identity, sign layer all committed; see the update bullet in
+§4.  Nothing remains here.
 
-### 5c. `LaplaceRadialSystem3.lean`
-`w̃, v, K, K̂`; the F5 identities; `|K̂|≤C·r²` near 0; `K̂→0` at ∞ (first
-moments); the **trichotomy** (F7) reusing `LaplaceACPropagation.lean` — mirror
-`LaplaceUnconditionalConverse.lean:882–1010` (the `m̃(x₀){=,<,>}0` case split,
-`sInf`/`sSup` of the zero set, edge lemmas
-`abel_{left,right}_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_{lower,upper}`
-and `abel_{right,left}_outer_zero_of_muDeriv_nonneg_of_m_{neg,pos}`).  Endgame
-steps 1–3 (`K̂≡0 ⟹ v≡0 ⟹ Z̃_p=cZ̃_q`, then `c=1` via the ray-mass identity;
-`continuous_eq_zero_of_dense_zeroSet` is at `LaplaceACPropagation.lean:1343`).
+### 5c. `LaplaceRadialSystem3.lean` — **STARTED (foundation green)**
+DONE: zero-drift ray reduction, common `m̃`/`m̃'`, covariance bridge,
+`radialRayW₃/V₃/K₃/Khat₃` defs, `zeroDrift_C_eq` (the `g_ν`-form).
+NEXT (in order — the first two are pure algebra over `zeroDrift_C_eq`):
+1. **`radialRayKhat₃_eq`: `K̂ = τ·m̃·v`** under zero drift (`hr : 0 < r`).
+   Proof sketch: unfold defs; `rw [zeroDrift_C_eq …(νp), zeroDrift_C_eq …(νq),
+   D=M·Z-facts]; field_simp [hr.ne', hτ.ne']; ring`.  (`hM` for νp is
+   `fun _ => rfl`-trivial; for νq it is `zeroDrift_ray_M_eq`.)
+2. **`hasDerivAt_radialRayKhat₃`: `K̂' = −τ(m̃'+4)·v`.**  Assemble the
+   HasDerivAt for `fun r => r²(C̃_pZ̃_q − C̃_qZ̃_p)` from the R-layer
+   derivative theorems by product rule (`(hasDerivAt_id r).pow 2`,
+   `.mul`, `.sub`), then rewrite the derivative VALUE into `−τ(m̃'+4)v` via
+   `zeroDrift_C_eq` (both measures) + `D = M·Z` + `field_simp; ring` (the
+   full paper computation is in the §4.10 status-log bullet "system file
+   started" — it is literally linear in the `g_ν`-facts).
+3. `|K̂| ≤ C·r²` near 0 (`|C̃| ≤ τ`, `|Z̃| ≤ 1`, so `|K̂| ≤ 2τr²`) and
+   `K̂ → 0` at ∞ under first moments (`Integrable id ν`; split `s ≶ r/2`,
+   `r·tail → 0` by dominated convergence — see §4.10(F8)).
+4. The **trichotomy** (F7) reusing `LaplaceACPropagation.lean` — mirror
+   `LaplaceUnconditionalConverse.lean:882–1010` (the `m̃(x₀){=,<,>}0` case
+   split, `sInf`/`sSup` of the zero set, edge lemmas
+   `abel_{left,right}_interval_zero_of_upwardCrossing_of_muDeriv_lower_m_{lower,upper}`
+   and `abel_{right,left}_outer_zero_of_muDeriv_nonneg_of_m_{neg,pos}`),
+   with `μ̂ := (m̃'+4)/2 ≥ ½` from `radialRayMDeriv₃_ge` and the `r = 0`
+   universal edge (`m̃ ≤ L·r` near 0 via local `m̃'`-bounds + MVT).
+   W-slot ← `radialRayKhat₃`; m-slot ← `radialRayM₃ τ νp`; muDeriv-slot ←
+   `fun t => (radialRayMDeriv₃ τ νp t + 4)/2` (matches the wrappers'
+   hard-coded `2μ/m` coefficient exactly).
+5. Endgame steps 1–3: `K̂≡0 ⟹ v≡0` (on `{m̃≠0}` divide; on `int{m̃=0}` use
+   `K̂' = 0 = −4τv`; glue with `continuous_eq_zero_of_dense_zeroSet`,
+   `LaplaceACPropagation.lean:1343`) `⟹ (Z̃_p/Z̃_q)' = 0 ⟹ Z̃_p = c·Z̃_q`,
+   then `c = 1` via the ray-mass identity (5a.2, still to prove).
 
 ### 5d. `LaplaceRadialInvariance3.lean`
 `Z_p(x) = Z̃_p(‖x‖)` from O(3)-invariance of `radialMixture₃` (polar formula +

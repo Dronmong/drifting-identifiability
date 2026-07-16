@@ -1444,6 +1444,28 @@ session-handoff spec).**
   (beta-reduction).  NEXT: `LaplaceRadialSystem3.lean` (K̂ system F5,
   trichotomy F7, endgame steps 1–3), the ray-mass identity, invariance file,
   converse assembly.
+- 2026-07-15 (system file started — **committed, green**):
+  `LaplaceRadialSystem3.lean` created with the zero-drift foundation:
+  `zeroDrift_ray_meanShift_eq` (ray evaluation of `ZeroDrift`),
+  **`zeroDrift_ray_D_mul_Z`** (`D̃_pZ̃_q = D̃_qZ̃_p` — component 0 of the
+  mean-shift equality through the bridges; note the `rfl`-haves folding the
+  raw `∫ k•(y−x)` into `laplaceWeightedDisplacement` before the bridge
+  rewrites), `zeroDrift_ray_M_eq` (common `m̃`), `zeroDrift_ray_MDeriv_eq`
+  (common `m̃'` via `HasDerivAt.unique` on eventually-equal functions),
+  **`zeroDrift_D_deriv_bridge`** (the covariance bridge: the two
+  representations of `D̃'` — the dominated-differentiation value
+  `(1/τ)Q̃−Z̃` and the product value `m̃'Z̃ + m̃(1/τ)Z̃d` — agree by
+  uniqueness; NO division algebra), the system objects
+  `radialRayW₃/V₃/K₃/Khat₃`, and **`zeroDrift_C_eq`** (the fully-substituted
+  first-order form `C̃_ν = τm̃'Z̃_ν + m̃Z̃d_ν + 4τZ̃_ν + (2τ/r)m̃Z̃_ν`, the
+  `g_ν`-form).  **The remaining K̂-theorems are pure `ring` algebra over
+  `zeroDrift_C_eq`** (see the paper derivation in this log): `K̂ = τm̃v` and
+  `hasDerivAt K̂ = −τ(m̃'+4)v` — the HasDerivAt for K̂ assembles from the
+  product rule on `r²(C̃_pZ̃_q − C̃_qZ̃_p)` with the four R-layer derivative
+  theorems, then rw [g_p, g_q, D=MZ-facts]; field_simp [hr.ne']; ring.
+  Gotchas: section-variable instances unused in a lemma are hard errors
+  (`omit [...] in`); the repo linter forbids goal-changing `show` (use
+  `change`); beta-reduction under `EventuallyEq` needs `change` before `rw`.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over
