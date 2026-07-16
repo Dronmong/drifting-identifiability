@@ -1464,6 +1464,14 @@ session-handoff spec).**
   `shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT` now proves T₃ for all
   `τ,r,s>0`.  Remaining S-layer item: the ray-mass identity
   `∫₀∞ r² shellZ τ r s dr = 2τ³`.
+- 2026-07-15 (R-layer start — **green focused build**): created
+  `LaplaceRadialRay3.lean`.  It packages the shell mixtures as ray-profile
+  functions `radialRayZ₃`, `radialRayC₃`, `radialRayD₃`, `radialRayT₃`, and
+  `radialRayRhoSqOverDist₃`, with bridge lemmas back to the kernel normalizer,
+  companion normalizer, and first-coordinate drift numerator.  No C¹/system
+  claims are made yet.  Next R-layer work after the ray-mass identity: add
+  integrability hypotheses for algebraic mixture identities and then the
+  dominated-differentiation layer.
 
 **(F0) Scope decision.**  v1 targets `E = EuclideanSpace ℝ (Fin 3)` exactly —
 the physically canonical dimension and the cleanest (`n = 3` makes the zonal

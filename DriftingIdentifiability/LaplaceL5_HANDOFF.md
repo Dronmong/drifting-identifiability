@@ -57,6 +57,7 @@ covering one open sign case; see §5(F6).  If it is later proved, drop it.)
 | **This handoff** | `DriftingIdentifiability/LaplaceL5_HANDOFF.md` |
 | **Full design record + all discoveries** | `DriftingIdentifiability/LaplaceHigherDim.md` — **§4.10 is the L5 v1 architecture (discoveries F0–F11); §4.9 is the earlier general-`n` derivation (R1–R8); the "Status log" bullets at the top of §4.10 track progress** |
 | **L5 S-layer (IN PROGRESS, builds green)** | `DriftingIdentifiability/LaplaceRadialShell3.lean` |
+| **L5 R-layer (STARTED, definitions/bridges green)** | `DriftingIdentifiability/LaplaceRadialRay3.lean` |
 | L0 (displacement potential `∇ψ=D`) | `DriftingIdentifiability/LaplaceRadialFoundations.lean` |
 | L1 (far field) | `DriftingIdentifiability/LaplaceRadialFarField.lean` |
 | L3 (atom alignment) | `DriftingIdentifiability/LaplaceAtomAlignment.lean`, `LaplaceConeExtraction.lean` |
@@ -168,6 +169,11 @@ Lean, in `LaplaceRadialShell3.lean` (commits `…S-layer part 1/2`):
   `ρ²/d` z-forms are done, and the full positive-radius T₃ theorem is certified:
   `shellRhoSqOverDist_eq_two_tau_div_r_mul_shellT`.
   **Current S-layer location:** prove the ray-mass identity.
+- **Update 2026-07-15:** `LaplaceRadialRay3.lean` now exists and builds.  It
+  defines `radialRayZ₃`, `radialRayC₃`, `radialRayD₃`, `radialRayT₃`, and
+  `radialRayRhoSqOverDist₃`, plus bridge lemmas to the shell-layer normalizer,
+  companion-normalizer, and drift-coordinate formulas.  It intentionally does
+  not yet assert C¹/system identities.
 
 ---
 
