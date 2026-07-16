@@ -1424,6 +1424,26 @@ session-handoff spec).**
   `simp only [h0, div_zero, mul_zero, add_zero]` (rw fights beta-reduction).
   Remaining R-layer: sign layer (`Z̃ > 0`, `m̃`, C–S `m̃ ≤ r` case, zero case,
   `RadialSlack₃`), then the system file.
+- 2026-07-15 (sign layer — **committed, green; THE R-LAYER (5b) IS COMPLETE**):
+  `LaplaceRadialRay3.lean` closes the sign layer.  **Discovery: no
+  Cauchy–Schwarz needed** — the C–S step of (F6) reduces to the pointwise
+  AM–GM `2·K·|X| ≤ K·(X²/d) + K·d` (i.e. `(|X|−d)² ≥ 0`, `two_mul_abs_coord_le`,
+  junk-safe), integrated to **`abs_radialRayD₃_le`**:
+  `|D̃| ≤ Q̃ + (τ/r)(D̃ + rZ̃)` via the T₃-corollary `integral_kernel_mul_norm_eq`
+  (`S̃ = Q̃ + (2τ/r)(D̃ + rZ̃)`).  Also green: `radialRayZ₃_pos` (support = univ
+  + `integral_pos_iff_support_of_nonneg`); `abs_radialRayZd₃_le` (`|Z̃d| ≤ Z̃`);
+  `radialRayM₃`/`radialRayMDeriv₃` defs; `hasDerivAt_radialRayM₃` (statement
+  rewritten by `rfl`-function-eq then `exact .div` — value is defeq);
+  `radialRayMDeriv₃_cov` (`τ(m̃'+1)Z̃² = Q̃Z̃ − D̃Z̃d`);
+  **`radialRayMDeriv₃_ge_of_le`** (`m̃ ≤ r ⟹ m̃' ≥ −3`, the PROVED sign case);
+  `RadialSlack₃` (the named far-tilt hypothesis, `∀r>0, r < m̃ r → −3 ≤ m̃' r`);
+  `radialRayMDeriv₃_ge` (combined).  Gotchas: `ENNReal.zero_lt_one` doesn't
+  exist (plain `zero_lt_one`); `le_or_lt` → `le_or_gt`; `rw [hfe] at h` on a
+  `HasDerivAt` function slot fails (use `rfl`-function-equation on the GOAL);
+  after `integral_congr_ae … fun y => ?_` use `simp only`, never `rw`
+  (beta-reduction).  NEXT: `LaplaceRadialSystem3.lean` (K̂ system F5,
+  trichotomy F7, endgame steps 1–3), the ray-mass identity, invariance file,
+  converse assembly.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over

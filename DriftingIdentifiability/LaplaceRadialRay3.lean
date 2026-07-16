@@ -918,4 +918,347 @@ theorem radialRayC₃_closure (τ : ℝ) (hτ : 0 < τ)
   field_simp
   ring
 
+/-! ## The sign layer
+
+`Z̃ > 0`, the common tilted displacement `m̃ = D̃/Z̃` with its derivative, and
+the **proved** sign bound `m̃' ≥ −3` on the region `m̃ ≤ r` — via the pointwise
+AM–GM `2|X|·d ≤ X² + d²` (no Cauchy–Schwarz/L² machinery needed) and the
+T₃-corollary `S̃ = Q̃ + (2τ/r)(D̃ + rZ̃)`.  The far-tilt region `m̃ > r` is the
+single numerically-verified open case, carried as `RadialSlack₃`. -/
+
+/-- The ray normalizer is strictly positive. -/
+lemma radialRayZ₃_pos (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    0 < radialRayZ₃ τ ν r := by
+  rw [radialRayZ₃_eq_kernelNormalizer τ hτ ν r]
+  have hint := integrable_laplaceKernel_rayProbe τ hτ (radialMixture₃ ν) r
+  have hpos : (0 : ℝ) < ∫ y, laplaceKernel τ (rayProbe r) y ∂(radialMixture₃ ν) := by
+    rw [integral_pos_iff_support_of_nonneg
+      (fun y => laplaceKernel_rayProbe_nonneg τ r y) hint]
+    have hsupp : Function.support (fun y : EuclideanSpace ℝ (Fin 3) =>
+        laplaceKernel τ (rayProbe r) y) = univ :=
+      Set.eq_univ_of_forall fun y =>
+        Function.mem_support.mpr (Real.exp_pos _).ne'
+    rw [hsupp, measure_univ]
+    exact zero_lt_one
+  exact hpos
+
+lemma measurable_laplaceKernel_mul_coord_div (τ r : ℝ) :
+    Measurable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) / ‖rayProbe r - y‖)) := by
+  have hcoord : Measurable fun y : EuclideanSpace ℝ (Fin 3) => y 0 - r := by
+    have : Continuous fun y : EuclideanSpace ℝ (Fin 3) => y 0 - r := by fun_prop
+    exact this.measurable
+  have hnorm : Measurable fun y : EuclideanSpace ℝ (Fin 3) => ‖rayProbe r - y‖ :=
+    ((continuous_const.sub continuous_id).norm).measurable
+  exact ((continuous_laplaceKernel_rayProbe τ r).measurable).mul (hcoord.div hnorm)
+
+lemma integrable_laplaceKernel_mul_coord_div (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 3))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceKernel τ (rayProbe r) y
+      * ((y 0 - r) / ‖rayProbe r - y‖)) μ :=
+  ⟨(measurable_laplaceKernel_mul_coord_div τ r).aestronglyMeasurable,
+    HasFiniteIntegral.of_bounded (C := 1)
+      (ae_of_all _ fun y => by
+        rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+        calc laplaceKernel τ (rayProbe r) y * |(y 0 - r) / ‖rayProbe r - y‖|
+            ≤ 1 * 1 := mul_le_mul (laplaceKernel_rayProbe_le_one τ hτ r y)
+              (abs_coord_div_norm_rayProbe_le_one r y) (abs_nonneg _) zero_le_one
+          _ = 1 := by ring)⟩
+
+/-- `|Z̃d| ≤ Z̃`: the `X/d`-weighted integral is dominated by the normalizer. -/
+lemma abs_radialRayZd₃_le (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    |radialRayZd₃ τ ν r| ≤ radialRayZ₃ τ ν r := by
+  rw [radialRayZd₃, radialRayZ₃_eq_kernelNormalizer τ hτ ν r]
+  have hint := integrable_laplaceKernel_mul_coord_div τ hτ (radialMixture₃ ν) r
+  have hZint := integrable_laplaceKernel_rayProbe τ hτ (radialMixture₃ ν) r
+  have h1 : |∫ y, laplaceKernel τ (rayProbe r) y * ((y 0 - r) / ‖rayProbe r - y‖)
+        ∂(radialMixture₃ ν)|
+      ≤ ∫ y, |laplaceKernel τ (rayProbe r) y * ((y 0 - r) / ‖rayProbe r - y‖)|
+        ∂(radialMixture₃ ν) := by
+    have := norm_integral_le_integral_norm (μ := radialMixture₃ ν)
+      (f := fun y => laplaceKernel τ (rayProbe r) y * ((y 0 - r) / ‖rayProbe r - y‖))
+    simp only [Real.norm_eq_abs] at this
+    exact this
+  refine h1.trans ?_
+  refine integral_mono hint.abs hZint fun y => ?_
+  rw [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+  calc laplaceKernel τ (rayProbe r) y * |(y 0 - r) / ‖rayProbe r - y‖|
+      ≤ laplaceKernel τ (rayProbe r) y * 1 :=
+        mul_le_mul_of_nonneg_left (abs_coord_div_norm_rayProbe_le_one r y)
+          (laplaceKernel_rayProbe_nonneg τ r y)
+    _ = laplaceKernel τ (rayProbe r) y := mul_one _
+
+/-- Pointwise AM–GM: `2·K·|X| ≤ K·(X²/d) + K·d`, junk-safe at collisions. -/
+lemma two_mul_abs_coord_le (τ r : ℝ) (y : EuclideanSpace ℝ (Fin 3)) :
+    2 * (laplaceKernel τ (rayProbe r) y * |y 0 - r|)
+      ≤ laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+        + laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ := by
+  have hK := laplaceKernel_rayProbe_nonneg τ r y
+  rcases eq_or_ne (‖rayProbe r - y‖) 0 with h0 | hne
+  · have hy : rayProbe r = y := norm_sub_eq_zero_iff.mp h0
+    have hX : y 0 - r = 0 := by
+      rw [← hy, rayProbe_apply_zero, sub_self]
+    rw [h0, hX]
+    simp
+  · have hpos : 0 < ‖rayProbe r - y‖ := (norm_nonneg _).lt_of_ne' hne
+    have hAM : 2 * |y 0 - r| ≤ (y 0 - r) ^ 2 / ‖rayProbe r - y‖ + ‖rayProbe r - y‖ := by
+      rw [← sub_nonneg]
+      have hkey : (y 0 - r) ^ 2 / ‖rayProbe r - y‖ + ‖rayProbe r - y‖ - 2 * |y 0 - r|
+          = (|y 0 - r| - ‖rayProbe r - y‖) ^ 2 / ‖rayProbe r - y‖ := by
+        field_simp
+        nlinarith [sq_abs (y 0 - r)]
+      rw [hkey]
+      positivity
+    calc 2 * (laplaceKernel τ (rayProbe r) y * |y 0 - r|)
+        = laplaceKernel τ (rayProbe r) y * (2 * |y 0 - r|) := by ring
+      _ ≤ laplaceKernel τ (rayProbe r) y
+          * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖ + ‖rayProbe r - y‖) :=
+          mul_le_mul_of_nonneg_left hAM hK
+      _ = laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+          + laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ := by ring
+
+/-- The kernel–distance integral `S̃ = ∫ K·d` in T₃-corollary form:
+`S̃ = Q̃ + (2τ/r)·(D̃ + r·Z̃)`. -/
+lemma integral_kernel_mul_norm_eq (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 < r) :
+    (∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖ ∂(radialMixture₃ ν))
+      = radialRayQ₃ τ ν r
+        + (2 * τ / r) * (radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r) := by
+  have hQint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+      (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_sq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_sq_div_le τ hτ r y)⟩
+  have hPint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y
+        * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖)) (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_rhoSq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_rhoSq_div_le τ hτ r y)⟩
+  have hdsplit : (∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+        ∂(radialMixture₃ ν))
+      = radialRayQ₃ τ ν r
+        + ∫ y, laplaceKernel τ (rayProbe r) y
+            * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) ∂(radialMixture₃ ν) := by
+    rw [radialRayQ₃, ← integral_add hQint hPint]
+    refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+    rcases eq_or_ne (‖rayProbe r - y‖) 0 with h0 | hne
+    · simp only [h0, div_zero, mul_zero, add_zero]
+    · have hd : (y 0 - r) ^ 2 / ‖rayProbe r - y‖
+          + ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖ = ‖rayProbe r - y‖ := by
+        rw [← add_div, ← norm_rayProbe_sub_sq_eq r y, pow_two, mul_div_assoc,
+          div_self hne, mul_one]
+      calc laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+          = laplaceKernel τ (rayProbe r) y
+            * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖
+              + ((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) := by rw [hd]
+        _ = laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+            + laplaceKernel τ (rayProbe r) y
+              * (((y 1) ^ 2 + (y 2) ^ 2) / ‖rayProbe r - y‖) := by ring
+  rw [hdsplit, ← radialRayRhoSqOverDist₃_eq_integral τ hτ ν r,
+    radialRayRhoSqOverDist₃_eq_T τ hτ ν hsupp hr, radialRayT₃_eq_D_add_Z τ hτ ν r]
+
+/-- **The AM–GM displacement bound**:
+`|D̃| ≤ Q̃ + (τ/r)·(D̃ + r·Z̃)` — the integrated form of `2|X|d ≤ X² + d²`
+combined with the T₃ corollary. -/
+lemma abs_radialRayD₃_le (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 < r) :
+    |radialRayD₃ τ ν r|
+      ≤ radialRayQ₃ τ ν r + (τ / r) * (radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r) := by
+  have hDint := integrable_laplaceKernel_mul_coord τ hτ (radialMixture₃ ν) r
+  have hQint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖))
+      (radialMixture₃ ν) :=
+    ⟨(measurable_laplaceKernel_mul_sq_div τ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+        (ae_of_all _ fun y => by
+          rw [Real.norm_eq_abs]
+          exact abs_laplaceKernel_mul_sq_div_le τ hτ r y)⟩
+  have hSint : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+      laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) (radialMixture₃ ν) := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+      (ae_of_all _ fun y => ?_)⟩
+    · have : Continuous (fun y : EuclideanSpace ℝ (Fin 3) =>
+          laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) :=
+        (continuous_laplaceKernel_rayProbe τ r).mul
+          ((continuous_const.sub continuous_id).norm)
+      exact this.aestronglyMeasurable
+    · rw [Real.norm_eq_abs, abs_mul,
+        abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y),
+        abs_of_nonneg (norm_nonneg _)]
+      calc laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+          = ‖rayProbe r - y‖ * Real.exp (-‖rayProbe r - y‖ / τ) := by
+            simp only [laplaceKernel]
+            rw [show -(1 / τ) * ‖rayProbe r - y‖ = -‖rayProbe r - y‖ / τ by ring]
+            ring
+        _ ≤ τ * Real.exp (-1) := mul_exp_neg_div_le hτ (norm_nonneg _)
+  have habs : |radialRayD₃ τ ν r|
+      ≤ ∫ y, laplaceKernel τ (rayProbe r) y * |y 0 - r| ∂(radialMixture₃ ν) := by
+    rw [radialRayD₃_eq_integral_coord τ hτ ν r]
+    have h1 := norm_integral_le_integral_norm (μ := radialMixture₃ ν)
+      (f := fun y => laplaceKernel τ (rayProbe r) y * (y 0 - r))
+    simp only [Real.norm_eq_abs] at h1
+    refine h1.trans (le_of_eq (integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)))
+    simp only [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+  have hAM : (∫ y, laplaceKernel τ (rayProbe r) y * |y 0 - r| ∂(radialMixture₃ ν))
+      ≤ (radialRayQ₃ τ ν r
+          + ∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+            ∂(radialMixture₃ ν)) / 2 := by
+    have hint_abs : Integrable (fun y : EuclideanSpace ℝ (Fin 3) =>
+        laplaceKernel τ (rayProbe r) y * |y 0 - r|) (radialMixture₃ ν) := by
+      have heq : (fun y : EuclideanSpace ℝ (Fin 3) =>
+          laplaceKernel τ (rayProbe r) y * |y 0 - r|)
+          = fun y => |laplaceKernel τ (rayProbe r) y * (y 0 - r)| := by
+        funext y
+        rw [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe_nonneg τ r y)]
+      rw [heq]
+      exact hDint.abs
+    have hle : ∀ y : EuclideanSpace ℝ (Fin 3),
+        laplaceKernel τ (rayProbe r) y * |y 0 - r|
+          ≤ (laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+            + laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) / 2 := by
+      intro y
+      have := two_mul_abs_coord_le τ r y
+      linarith
+    calc (∫ y, laplaceKernel τ (rayProbe r) y * |y 0 - r| ∂(radialMixture₃ ν))
+        ≤ ∫ y, (laplaceKernel τ (rayProbe r) y * ((y 0 - r) ^ 2 / ‖rayProbe r - y‖)
+            + laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖) / 2
+          ∂(radialMixture₃ ν) :=
+          integral_mono hint_abs ((hQint.add hSint).div_const 2) hle
+      _ = (radialRayQ₃ τ ν r
+          + ∫ y, laplaceKernel τ (rayProbe r) y * ‖rayProbe r - y‖
+            ∂(radialMixture₃ ν)) / 2 := by
+          rw [integral_div, integral_add hQint hSint, radialRayQ₃]
+  have hS := integral_kernel_mul_norm_eq τ hτ ν hsupp hr
+  rw [hS] at hAM
+  have := habs.trans hAM
+  have hgoal : (radialRayQ₃ τ ν r
+      + (radialRayQ₃ τ ν r
+        + 2 * τ / r * (radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r))) / 2
+      = radialRayQ₃ τ ν r
+        + (τ / r) * (radialRayD₃ τ ν r + r * radialRayZ₃ τ ν r) := by
+    field_simp
+    ring
+  linarith [hgoal ▸ this]
+
+/-! ### The common tilted displacement and its derivative -/
+
+/-- `m̃ = D̃/Z̃`: the tilted radial displacement of one radial mixture. -/
+noncomputable def radialRayM₃ (τ : ℝ) (ν : Measure ℝ) (r : ℝ) : ℝ :=
+  radialRayD₃ τ ν r / radialRayZ₃ τ ν r
+
+/-- The explicit quotient-rule derivative value of `m̃`. -/
+noncomputable def radialRayMDeriv₃ (τ : ℝ) (ν : Measure ℝ) (r : ℝ) : ℝ :=
+  (((1 / τ) * radialRayQ₃ τ ν r - radialRayZ₃ τ ν r) * radialRayZ₃ τ ν r
+    - radialRayD₃ τ ν r * ((1 / τ) * radialRayZd₃ τ ν r))
+    / (radialRayZ₃ τ ν r) ^ 2
+
+/-- `m̃` is differentiable on the open ray with the quotient-rule value. -/
+theorem hasDerivAt_radialRayM₃ (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayM₃ τ ν) (radialRayMDeriv₃ τ ν r) r := by
+  have hZne : radialRayZ₃ τ ν r ≠ 0 := (radialRayZ₃_pos τ hτ ν r).ne'
+  have hgoal : radialRayM₃ τ ν = fun x => radialRayD₃ τ ν x / radialRayZ₃ τ ν x := rfl
+  rw [hgoal]
+  exact (hasDerivAt_radialRayD₃ τ hτ ν hr).div (hasDerivAt_radialRayZ₃ τ hτ ν hr) hZne
+
+/-- **The covariance form of `τ(m̃'+1)`** (the F6 formula, cleared of
+denominators):
+`τ·(m̃' + 1)·Z̃² = Q̃·Z̃ − D̃·Z̃d`. -/
+lemma radialRayMDeriv₃_cov (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    τ * (radialRayMDeriv₃ τ ν r + 1) * (radialRayZ₃ τ ν r) ^ 2
+      = radialRayQ₃ τ ν r * radialRayZ₃ τ ν r
+        - radialRayD₃ τ ν r * radialRayZd₃ τ ν r := by
+  have hZne : radialRayZ₃ τ ν r ≠ 0 := (radialRayZ₃_pos τ hτ ν r).ne'
+  rw [radialRayMDeriv₃]
+  field_simp
+  ring
+
+/-- **The PROVED sign bound**: `m̃' ≥ −3` whenever `m̃ ≤ r` (which covers all of
+`m̃ ≤ 0` and the moderate-tilt band, hence all edge neighbourhoods of the
+trichotomy).  Chain: `Cov ≥ Q/Z − |m̃|` and `|m̃| ≤ Q/Z + 2τ` via the AM–GM
+displacement bound. -/
+theorem radialRayMDeriv₃_ge_of_le (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 < r) (hm : radialRayM₃ τ ν r ≤ r) :
+    -3 ≤ radialRayMDeriv₃ τ ν r := by
+  set Z := radialRayZ₃ τ ν r with hZ
+  set D := radialRayD₃ τ ν r with hD
+  set Q := radialRayQ₃ τ ν r with hQ
+  set Zd := radialRayZd₃ τ ν r with hZd
+  have hZpos : 0 < Z := radialRayZ₃_pos τ hτ ν r
+  have hQnonneg : 0 ≤ Q := by
+    rw [hQ, radialRayQ₃]
+    refine integral_nonneg fun y => ?_
+    exact mul_nonneg (laplaceKernel_rayProbe_nonneg τ r y)
+      (div_nonneg (by positivity) (norm_nonneg _))
+  have hDle : D ≤ r * Z := by
+    have := hm
+    rw [radialRayM₃, div_le_iff₀ hZpos] at this
+    exact this
+  have hDabs : |D| ≤ Q + (τ / r) * (D + r * Z) :=
+    abs_radialRayD₃_le τ hτ ν hsupp hr
+  have hDabs2 : |D| ≤ Q + 2 * τ * Z := by
+    have h1 : (τ / r) * (D + r * Z) ≤ (τ / r) * (2 * r * Z) := by
+      refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+      linarith
+    have h2 : (τ / r) * (2 * r * Z) = 2 * τ * Z := by
+      rw [div_mul_eq_mul_div, div_eq_iff hr.ne']
+      ring
+    linarith
+  have hZdabs : |Zd| ≤ Z := abs_radialRayZd₃_le τ hτ ν r
+  have hDZd : D * Zd ≤ |D| * Z := by
+    calc D * Zd ≤ |D * Zd| := le_abs_self _
+      _ = |D| * |Zd| := abs_mul _ _
+      _ ≤ |D| * Z := mul_le_mul_of_nonneg_left hZdabs (abs_nonneg _)
+  have hcov := radialRayMDeriv₃_cov τ hτ ν r
+  rw [← hZ, ← hD, ← hQ, ← hZd] at hcov
+  have hlower : -(2 * τ) * Z ^ 2 ≤ Q * Z - D * Zd := by
+    have : D * Zd ≤ (Q + 2 * τ * Z) * Z :=
+      hDZd.trans (mul_le_mul_of_nonneg_right hDabs2 hZpos.le)
+    nlinarith [hZpos]
+  have hkey : -(2 * τ) * Z ^ 2 ≤ τ * (radialRayMDeriv₃ τ ν r + 1) * Z ^ 2 := by
+    rw [hcov]
+    exact hlower
+  have hZsq : 0 < Z ^ 2 := by positivity
+  have hM : -(2 : ℝ) ≤ radialRayMDeriv₃ τ ν r + 1 := by
+    by_contra hcon
+    have hlt : radialRayMDeriv₃ τ ν r + 1 < -2 := lt_of_not_ge hcon
+    have : τ * (radialRayMDeriv₃ τ ν r + 1) * Z ^ 2 < -(2 * τ) * Z ^ 2 := by
+      have := mul_lt_mul_of_pos_right
+        (mul_lt_mul_of_pos_left hlt hτ) hZsq
+      calc τ * (radialRayMDeriv₃ τ ν r + 1) * Z ^ 2
+          < τ * (-2) * Z ^ 2 := this
+        _ = -(2 * τ) * Z ^ 2 := by ring
+    linarith
+  linarith
+
+/-- **`RadialSlack₃`** — the single open sign case of L5 v1: the slack bound on
+the far-tilt region `m̃ > r`.  Numerically verified with wide margin
+(`LaplaceHigherDim.md §4.10` status log): in 86k samples the covariance is
+strictly positive there.  A named hypothesis for v1; provable via the law of
+total covariance in v2. -/
+def RadialSlack₃ (τ : ℝ) (ν : Measure ℝ) : Prop :=
+  ∀ r : ℝ, 0 < r → r < radialRayM₃ τ ν r → -3 ≤ radialRayMDeriv₃ τ ν r
+
+/-- The combined sign bound: `m̃' ≥ −3` everywhere on the open ray, given
+`RadialSlack₃` for the far-tilt region. -/
+theorem radialRayMDeriv₃_ge (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    (hslack : RadialSlack₃ τ ν) {r : ℝ} (hr : 0 < r) :
+    -3 ≤ radialRayMDeriv₃ τ ν r := by
+  rcases le_or_gt (radialRayM₃ τ ν r) r with hm | hm
+  · exact radialRayMDeriv₃_ge_of_le τ hτ ν hsupp hr hm
+  · exact hslack r hr hm
+
 end DriftingIdentifiability
