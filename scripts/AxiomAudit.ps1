@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
 $lake = (& elan which lake).Trim()
@@ -197,6 +197,17 @@ $declarations = @(
   'DriftingIdentifiability.laplaceZeroDrift_identifies_real',
   'DriftingIdentifiability.laplaceRealConverseCondition_allowsDistinctPair',
   'DriftingIdentifiability.laplaceRealConverseCondition_isLegitimate',
+  'DriftingIdentifiability.kernelNormalizer_radialMixture₃',
+  'DriftingIdentifiability.radialRayC₃_closure',
+  'DriftingIdentifiability.hasDerivAt_radialRayKhat₃',
+  'DriftingIdentifiability.tendsto_radialRayKhat₃_atTop',
+  'DriftingIdentifiability.radialRayKhat₃_eq_zero',
+  'DriftingIdentifiability.radialRayV₃_eq_zero',
+  'DriftingIdentifiability.radialRayZ₃_proportional',
+  'DriftingIdentifiability.tiltJ_const',
+  'DriftingIdentifiability.chartBase_tilted_eq_shellZ''',
+  'DriftingIdentifiability.kernelNormalizer_radialMixture₃_radial',
+  'DriftingIdentifiability.laplaceZeroDrift_identifies_of_radialMixture₃',
   'DriftingIdentifiability.lowerExpMass_rightContinuous',
   'DriftingIdentifiability.upperExpMass_rightContinuous',
   'DriftingIdentifiability.laplaceKernelNormalizerRightDerivCoeff_measurable',

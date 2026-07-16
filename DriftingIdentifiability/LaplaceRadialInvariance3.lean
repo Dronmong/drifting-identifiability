@@ -1,4 +1,5 @@
 import DriftingIdentifiability.LaplaceRadialConverse3
+import DriftingIdentifiability.LaplaceRadialFourier
 
 /-!
 # Radial Laplace converse, milestone L5: rotation invariance (`n = 3`)
@@ -901,5 +902,230 @@ lemma dist_sq_smul_sphereChart {u : ℝ} (hu : u ^ 2 ≤ 1)
 lemma rayProbe_zero_eq : rayProbe 0 = (0 : EuclideanSpace ℝ (Fin 3)) := by
   ext i
   fin_cases i <;> rfl
+
+/-- **The master radiality theorem**: the normalizer of a radial mixture at any
+probe equals the ray profile at its radius. -/
+theorem kernelNormalizer_radialMixture₃_radial (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    (x : EuclideanSpace ℝ (Fin 3)) :
+    kernelNormalizer (laplaceKernel τ) (radialMixture₃ ν) x
+      = radialRayZ₃ τ ν ‖x‖ := by
+  by_cases hx : x = 0
+  · subst hx
+    rw [norm_zero, radialRayZ₃_eq_kernelNormalizer τ hτ ν 0, rayProbe_zero_eq]
+  -- spherical angles for x
+  have hR : 0 < ‖x‖ := norm_pos_iff.mpr hx
+  have hbound : |x 0 / ‖x‖| ≤ 1 := by
+    rw [abs_div, abs_of_pos hR, div_le_one hR]
+    exact abs_coord_le_norm x 0
+  have hcos : Real.cos (Real.arccos (x 0 / ‖x‖)) = x 0 / ‖x‖ :=
+    Real.cos_arccos (abs_le.mp hbound).1 (abs_le.mp hbound).2
+  have hsin : Real.sin (Real.arccos (x 0 / ‖x‖))
+      = Real.sqrt (1 - (x 0 / ‖x‖) ^ 2) := Real.sin_arccos _
+  have hsin0 : 0 ≤ Real.sin (Real.arccos (x 0 / ‖x‖)) := by
+    rw [hsin]
+    exact Real.sqrt_nonneg _
+  have hx0 : x 0 = ‖x‖ * Real.cos (Real.arccos (x 0 / ‖x‖)) := by
+    rw [hcos]
+    field_simp
+  have hrhoSq : ‖x‖ ^ 2 - (x 0) ^ 2 = (x 1) ^ 2 + (x 2) ^ 2 := by
+    have := EuclideanSpace.real_norm_sq_eq x
+    rw [Fin.sum_univ_three] at this
+    linarith
+  have hrho : ‖x‖ * Real.sin (Real.arccos (x 0 / ‖x‖))
+      = Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2) := by
+    have hsq : (‖x‖ * Real.sin (Real.arccos (x 0 / ‖x‖))) ^ 2
+        = (x 1) ^ 2 + (x 2) ^ 2 := by
+      rw [mul_pow, hsin, Real.sq_sqrt (by nlinarith [abs_le.mp hbound] :
+        (0 : ℝ) ≤ 1 - (x 0 / ‖x‖) ^ 2)]
+      have hexp : ‖x‖ ^ 2 * (1 - (x 0 / ‖x‖) ^ 2) = ‖x‖ ^ 2 - (x 0) ^ 2 := by
+        field_simp
+      rw [hexp, hrhoSq]
+    rw [← hsq, Real.sqrt_sq (mul_nonneg hR.le hsin0)]
+  -- the azimuth
+  have hpolar : ∃ ψ : ℝ,
+      x 1 = ‖x‖ * Real.sin (Real.arccos (x 0 / ‖x‖)) * Real.cos ψ
+      ∧ x 2 = ‖x‖ * Real.sin (Real.arccos (x 0 / ‖x‖)) * Real.sin ψ := by
+    by_cases hz : (⟨x 1, x 2⟩ : ℂ) = 0
+    · refine ⟨0, ?_, ?_⟩
+      · have h1 : x 1 = 0 := congrArg Complex.re hz
+        rw [h1, Real.cos_zero, mul_one]
+        have h2 : x 2 = 0 := congrArg Complex.im hz
+        rw [hrho, h1, h2]
+        simp
+      · have h2 : x 2 = 0 := congrArg Complex.im hz
+        rw [h2, Real.sin_zero, mul_zero]
+    · refine ⟨Complex.arg ⟨x 1, x 2⟩, ?_, ?_⟩
+      · have hc := Complex.cos_arg hz
+        have hre : (⟨x 1, x 2⟩ : ℂ).re = x 1 := rfl
+        have hnorm : ‖(⟨x 1, x 2⟩ : ℂ)‖ = Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2) :=
+          Complex.norm_eq_sqrt_sq_add_sq _
+        rw [hre, hnorm] at hc
+        have hne : Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2) ≠ 0 := by
+          rw [← hnorm]
+          exact norm_ne_zero_iff.mpr hz
+        have hval : Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2)
+            * (x 1 / Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2)) = x 1 := by
+          field_simp
+        rw [hrho, hc, hval]
+      · have hs := Complex.sin_arg (⟨x 1, x 2⟩ : ℂ)
+        have him : (⟨x 1, x 2⟩ : ℂ).im = x 2 := rfl
+        have hnorm : ‖(⟨x 1, x 2⟩ : ℂ)‖ = Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2) :=
+          Complex.norm_eq_sqrt_sq_add_sq _
+        rw [him, hnorm] at hs
+        have hne : Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2) ≠ 0 := by
+          rw [← hnorm]
+          exact norm_ne_zero_iff.mpr hz
+        have hval : Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2)
+            * (x 2 / Real.sqrt ((x 1) ^ 2 + (x 2) ^ 2)) = x 2 := by
+          field_simp
+        rw [hrho, hs, hval]
+  obtain ⟨ψ, hx1, hx2⟩ := hpolar
+  -- the collapse and per-shell identity
+  have hf : Integrable (fun y => laplaceKernel τ x y) (radialMixture₃ ν) := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun y => ?_)⟩
+    · have hc : Continuous fun y : EuclideanSpace ℝ (Fin 3) => laplaceKernel τ x y := by
+        simp only [laplaceKernel]
+        exact Real.continuous_exp.comp
+          (((continuous_const.sub continuous_id).norm).const_mul _)
+      exact hc.aestronglyMeasurable
+    · have hle : laplaceKernel τ x y ≤ 1 := by
+        have h0 : -(1 / τ) * ‖x - y‖ ≤ 0 := by
+          have hnn : 0 ≤ 1 / τ * ‖x - y‖ :=
+            mul_nonneg (one_div_pos.mpr hτ).le (norm_nonneg _)
+          linarith [neg_mul (1 / τ) ‖x - y‖]
+        simp only [laplaceKernel]
+        have h := Real.exp_le_exp.mpr h0
+        rwa [Real.exp_zero] at h
+      have hnonneg : 0 ≤ laplaceKernel τ x y := (Real.exp_pos _).le
+      rw [Real.norm_eq_abs, abs_of_nonneg hnonneg]
+      exact hle
+  rw [kernelNormalizer, integral_radialMixture₃ ν hf]
+  have hZform : radialRayZ₃ τ ν ‖x‖ = ∫ s, shellZ τ ‖x‖ s ∂ν := rfl
+  rw [hZform]
+  refine integral_congr_ae ?_
+  filter_upwards [radial_ae_nonneg hsupp] with s hs
+  have hcongr : (∫ w : ℝ × ℝ, laplaceKernel τ x (chartMap (s, w)) ∂chartBase)
+      = ∫ w : ℝ × ℝ, tiltKernel τ ‖x‖ s
+          (Real.cos (Real.arccos (x 0 / ‖x‖)) * w.1
+            + Real.sin (Real.arccos (x 0 / ‖x‖))
+              * Real.sqrt (1 - w.1 ^ 2) * Real.cos (w.2 - ψ)) ∂chartBase := by
+    refine integral_chartBase_congr fun u φ hu => ?_
+    have hu2 : u ^ 2 ≤ 1 := by nlinarith [hu.1, hu.2]
+    have hinner : x 0 * u + Real.sqrt (1 - u ^ 2)
+          * (x 1 * Real.cos φ + x 2 * Real.sin φ)
+        = ‖x‖ * (Real.cos (Real.arccos (x 0 / ‖x‖)) * u
+          + Real.sin (Real.arccos (x 0 / ‖x‖))
+            * Real.sqrt (1 - u ^ 2) * Real.cos (φ - ψ)) := by
+      rw [Real.cos_sub]
+      nth_rewrite 1 [hx0]
+      rw [hx1, hx2]
+      ring
+    have hdist : ‖x - s • sphereChart u φ‖
+        = Real.sqrt (‖x‖ ^ 2 + s ^ 2 - 2 * ‖x‖ * s
+          * (Real.cos (Real.arccos (x 0 / ‖x‖)) * u
+            + Real.sin (Real.arccos (x 0 / ‖x‖))
+              * Real.sqrt (1 - u ^ 2) * Real.cos (φ - ψ))) := by
+      rw [← Real.sqrt_sq (norm_nonneg (x - s • sphereChart u φ)),
+        dist_sq_smul_sphereChart hu2]
+      rw [hinner]
+      ring_nf
+    rw [chartMap_mk_pair]
+    simp only [laplaceKernel]
+    rw [hdist]
+    rfl
+  exact hcongr.trans
+    (chartBase_tilted_eq_shellZ' τ hτ hR hs (Real.arccos (x 0 / ‖x‖)) ψ)
+
+/-! ## The headline: the `n = 3` radial Laplace converse -/
+
+/-- Ray proportionality with a positive constant, extended to `r = 0` by
+continuity. -/
+lemma radialRayZ₃_proportional' (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) :
+    ∃ c : ℝ, 0 < c ∧ ∀ r : ℝ, 0 ≤ r →
+      radialRayZ₃ τ νp r = c * radialRayZ₃ τ νq r := by
+  obtain ⟨c, hprop⟩ := radialRayZ₃_proportional τ hτ νp νq hsp hsq hmp hmq
+    hslackp hzero
+  have hcpos : 0 < c := by
+    have h1 := hprop 1 one_pos
+    have hp1 := radialRayZ₃_pos τ hτ νp 1
+    have hq1 := radialRayZ₃_pos τ hτ νq 1
+    nlinarith
+  refine ⟨c, hcpos, fun r hr => ?_⟩
+  rcases eq_or_lt_of_le hr with h0 | hpos
+  · -- r = 0 by continuity from the right
+    subst h0
+    have hf : Tendsto (radialRayZ₃ τ νp) (𝓝[>] (0 : ℝ))
+        (𝓝 (radialRayZ₃ τ νp 0)) :=
+      ((continuous_radialRayZ₃ τ hτ νp).tendsto 0).mono_left nhdsWithin_le_nhds
+    have hg : Tendsto (fun r => c * radialRayZ₃ τ νq r) (𝓝[>] (0 : ℝ))
+        (𝓝 (c * radialRayZ₃ τ νq 0)) :=
+      (((continuous_radialRayZ₃ τ hτ νq).const_mul c).tendsto 0).mono_left
+        nhdsWithin_le_nhds
+    have heq : (radialRayZ₃ τ νp) =ᶠ[𝓝[>] (0 : ℝ)]
+        fun r => c * radialRayZ₃ τ νq r := by
+      filter_upwards [self_mem_nhdsWithin] with r hr'
+      exact hprop r hr'
+    exact tendsto_nhds_unique_of_eventuallyEq hf hg heq
+  · exact hprop r hpos
+
+/-- **THE HEADLINE (L5, `n = 3`)**: zero Laplace mean-shift drift identifies
+radial mixtures on `ℝ³` — for probability profiles supported in `[0,∞)` with
+first moments, under the (numerically verified, conjectured-true) far-tilt
+slack `RadialSlack₃`.  The final step feeds the closed L4 smoothing
+injectivity at the *finite-measure* level against `c•q`, and the total masses
+force `c = 1`. -/
+theorem laplaceZeroDrift_identifies_of_radialMixture₃
+    (τ : ℝ) (hτ : 0 < τ) (νp νq : Measure ℝ)
+    [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) :
+    radialMixture₃ νp = radialMixture₃ νq := by
+  obtain ⟨c, hcpos, hprop⟩ := radialRayZ₃_proportional' τ hτ νp νq hsp hsq
+    hmp hmq hslackp hzero
+  have hZ : ∀ x : EuclideanSpace ℝ (Fin 3),
+      kernelNormalizer (laplaceKernel τ) (radialMixture₃ νp) x
+        = kernelNormalizer (laplaceKernel τ)
+            ((ENNReal.ofReal c) • radialMixture₃ νq) x := by
+    intro x
+    have hsm : kernelNormalizer (laplaceKernel τ)
+        ((ENNReal.ofReal c) • radialMixture₃ νq) x
+        = c * kernelNormalizer (laplaceKernel τ) (radialMixture₃ νq) x := by
+      have h1 : kernelNormalizer (laplaceKernel τ)
+          ((ENNReal.ofReal c) • radialMixture₃ νq) x
+          = (ENNReal.ofReal c).toReal
+            * ∫ y, laplaceKernel τ x y ∂(radialMixture₃ νq) := by
+        have h2 := MeasureTheory.integral_smul_measure
+          (μ := radialMixture₃ νq) (f := fun y => laplaceKernel τ x y)
+          (c := ENNReal.ofReal c)
+        rw [smul_eq_mul] at h2
+        exact h2
+      rw [h1, ENNReal.toReal_ofReal hcpos.le]
+      rfl
+    rw [hsm, kernelNormalizer_radialMixture₃_radial τ hτ νp hsp x,
+      kernelNormalizer_radialMixture₃_radial τ hτ νq hsq x]
+    exact hprop ‖x‖ (norm_nonneg x)
+  haveI hfin : IsFiniteMeasure ((ENNReal.ofReal c) • radialMixture₃ νq) := by
+    constructor
+    rw [Measure.smul_apply, smul_eq_mul, measure_univ, mul_one]
+    exact ENNReal.ofReal_lt_top
+  have hL4 := laplaceSmoothingInjective_euclideanSpace (ι := Fin 3) τ hτ
+  have hpq := hL4 (radialMixture₃ νp) ((ENNReal.ofReal c) • radialMixture₃ νq)
+    inferInstance hfin hZ
+  have hmass : (radialMixture₃ νp) univ
+      = ((ENNReal.ofReal c) • radialMixture₃ νq) univ := by
+    rw [hpq]
+  rw [measure_univ, Measure.smul_apply, smul_eq_mul, measure_univ, mul_one] at hmass
+  have hc1 : c = 1 := ENNReal.ofReal_eq_one.mp hmass.symm
+  rw [hpq, hc1, ENNReal.ofReal_one, one_smul]
 
 end DriftingIdentifiability

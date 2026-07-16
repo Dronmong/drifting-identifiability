@@ -18,14 +18,14 @@ rotation-invariant ("radial") probability measures on `ℝ³`, zero Laplace
 mean-shift drift ⟹ `p = q`.  We are building L5 for `n = 3` first (v1).  This is
 the last milestone standing between us and the headline theorem.
 
-**Target theorem (to be produced):**
+**Target theorem — PROVED 2026-07-16 (`LaplaceRadialInvariance3.lean`; see §5e):**
 ```
 theorem laplaceZeroDrift_identifies_of_radialMixture₃
     (τ : ℝ) (hτ : 0 < τ) (νp νq : Measure ℝ)
     [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
     (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)          -- supported on [0,∞)
-    (hmomp : Integrable id νp) (hmomq : Integrable id νq)  -- first moments
-    (hslackp : RadialSlack₃ τ νp) (hslackq : RadialSlack₃ τ νq)  -- see §5(F6)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)      -- first moments
+    (hslackp : RadialSlack₃ τ νp)                          -- νp only; see §5(F6)
     (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
               (radialMixture₃ νp) (radialMixture₃ νq)) :
     radialMixture₃ νp = radialMixture₃ νq
@@ -302,37 +302,36 @@ outage — check `git status`):
   **`radialRayV₃_eq_zero`** (v ≡ 0),
   **`radialRayZ₃_proportional`** (`Z̃_p = c·Z̃_q` on (0,∞)).
 
-REMAINING (exactly three steps, all scoped):
-1. **Invariance** `Z_p(x) = Z̃_p(‖x‖)` — use the **θ-flow argument**
-   (recorded in `LaplaceHigherDim.md §4.10` log, 2026-07-16 DISCOVERY
-   bullet): `I(θ) = ∫∫ F(cosθ·u + sinθ·√(1−u²)cosφ) dchartBase` has
-   `I'(θ) = 0` because the divergence-free generator
-   `X = (−√(1−u²)cosφ, −u·sinφ/√(1−u²))` satisfies `∂θw = −X·∇w`, and the
-   two 1-d IBPs have vanishing boundaries (`X_u(±1) = 0`, `sin(±π) = 0`).
-   NO polar coordinates.  Azimuth by φ-periodicity
-   (`Function.Periodic.intervalIntegral_eq`-family).  Apply to
-   `F(w) = exp(−√(‖x‖²+s²−2s‖x‖w)/τ)`, smooth when `s ≠ ‖x‖`; collision
-   shells: atoms of ν are countable ⟹ dense set of good `‖x‖` ⟹ conclude
-   by continuity of both sides in `x` (`continuous_radialRayZ₃` + norm).
-2. **`c = 1`** via 3-d Tonelli: `∫_{ℝ³} Z_p dx = κ = ∫ Z_q dx` with
-   `κ = ∫ e^{−‖x‖/τ} dx ∈ (0,∞)` (integrability =
-   `laplaceEuclideanFourierBase_integrable`, `LaplaceEuclideanInjectivity`;
-   translation invariance of volume for the inner integral; lintegral/Tonelli
-   over the probability `radialMixture₃`).  Then `Z_p = c·Z_q` everywhere +
-   equal masses ⟹ `c = 1`.
-3. **Headline**: `Z_p = Z_q` everywhere ⟹
-   `laplaceKernelNormalizer_injective_euclideanSpace_of_fourier_ne_zero` /
-   `laplaceSmoothingInjective_euclideanSpace (ι := Fin 3)` (both CLOSED, in
-   `LaplaceRadialFourier.lean:990` / `LaplaceEuclideanInjectivity.lean:413`)
-   gives `radialMixture₃ νp = radialMixture₃ νq`.  State
-   `laplaceZeroDrift_identifies_of_radialMixture₃` with hypotheses:
-   `0 < τ` (or `ValidBandwidth τ`), `[IsProbabilityMeasure νp/q]`,
-   `νp/q (Iio 0) = 0`, `Integrable id νp/q`, `RadialSlack₃ τ νp`
-   (νq's slack is NOT needed — the driver only uses νp's m̃), `ZeroDrift …`.
-   Then audit entries, root wiring (`DriftingIdentifiability.lean` — add the
-   four new files), `Check.ps1`.
+### 5e. STATUS UPDATE 2026-07-16 (later) — **L5 IS COMPLETE**
 
-### 5e. (superseded — see 5d)
+`LaplaceRadialInvariance3.lean` (builds green) closes everything that was
+listed as remaining in 5d:
+
+1. **Invariance is DONE** — the θ-flow argument went through exactly as
+   designed, with one improvement: the collision shells (`s = ‖x‖`) did NOT
+   need the countable-atoms/dense-radii argument.  The tilted per-shell
+   identity extends across the collision by **s-continuity at fixed x**
+   (`chartBase_tilted_eq_shellZ'`: both sides are continuous in `s`, equal
+   for `s ≠ R`, conclude with `tendsto_nhds_unique_of_eventuallyEq` on
+   `𝓝[≠] R`).  The master theorem is
+   **`kernelNormalizer_radialMixture₃_radial`**: `Z_ν(x) = Z̃_ν(‖x‖)` for
+   EVERY probe `x` (`x = 0` via `rayProbe_zero_eq`; `x ≠ 0` via spherical
+   angles `θ₀ = arccos(x₀/‖x‖)`, `ψ = Complex.arg⟨x₁,x₂⟩`).
+2. **`c = 1` is DONE, and the Tonelli/ray-mass identity was NEVER NEEDED**
+   (that plan item is deleted).  Discovery: L4's `LaplaceSmoothingInjective`
+   is stated for **finite** measures, so after extending proportionality to
+   `r = 0` (**`radialRayZ₃_proportional'`**, right-limit continuity), apply
+   `laplaceSmoothingInjective_euclideanSpace (ι := Fin 3)` to the pair
+   `(radialMixture₃ νp, (ENNReal.ofReal c) • radialMixture₃ νq)` — the
+   normalizer hypothesis holds exactly by `integral_smul_measure`.  That
+   yields `p = (ofReal c)•q`; evaluating at `univ` forces `ofReal c = 1`
+   (`ENNReal.ofReal_eq_one`), and `one_smul` finishes.
+3. **THE HEADLINE IS PROVED**: `laplaceZeroDrift_identifies_of_radialMixture₃`
+   (hypotheses exactly as in §0, with only νp's slack, as predicted).
+
+Root wiring (all five L5 files added to `DriftingIdentifiability.lean`) and
+`AxiomAudit.ps1` entries (12 promoted L5 declarations, headline included)
+are in place.  Remaining bookkeeping only: keep `Check.ps1` green and commit.
 
 ---
 

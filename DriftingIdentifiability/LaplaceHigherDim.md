@@ -1530,6 +1530,38 @@ session-handoff spec).**
   `κ = ∫e^{−‖x‖/τ}dx`, using `laplaceEuclideanFourierBase_integrable` from
   L4), and the headline concludes with
   `laplaceKernelNormalizer_injective_euclideanSpace…`/L4.
+- 2026-07-16 (**DISCOVERY — `c = 1` for free from finite-measure
+  injectivity; Tonelli mass identity NOT needed**): L4's
+  `LaplaceSmoothingInjective` (and its Euclidean instance
+  `laplaceSmoothingInjective_euclideanSpace`, `LaplaceRadialFourier.lean`)
+  is stated for **finite** measures, not just probability measures.  So
+  once `Z_p(x) = c·Z_q(x)` for all `x` (master radiality + ray
+  proportionality extended to `r = 0` by continuity), apply it to the PAIR
+  `(radialMixture₃ νp, (ENNReal.ofReal c) • radialMixture₃ νq)`: the
+  normalizer of the scaled measure is `c·Z_q` by `integral_smul_measure`,
+  so the hypothesis holds EXACTLY, giving `p = (ofReal c)•q` as measures.
+  Evaluating at `univ` gives `1 = ofReal c`, i.e. `c = 1`
+  (`ENNReal.ofReal_eq_one`), and `one_smul` finishes.  The planned 3-d
+  Tonelli/ray-mass identity (F10 `∫Z̃ dr`-style work) is DELETED from the
+  plan — never needed.
+- 2026-07-16 (INVARIANCE + ENDGAME WRITTEN — building):
+  `LaplaceRadialInvariance3.lean` gained the master radiality theorem
+  **`kernelNormalizer_radialMixture₃_radial`** (`Z_ν(x) = Z̃_ν(‖x‖)` for
+  every probe `x`; `x = 0` via `rayProbe_zero_eq`, `x ≠ 0` via spherical
+  angles `θ₀ = arccos(x₀/‖x‖)`, `ψ = Complex.arg⟨x₁,x₂⟩`, the tilted
+  per-shell identity `chartBase_tilted_eq_shellZ'`), the `r = 0`-extended
+  proportionality **`radialRayZ₃_proportional'`** (positive constant via
+  `radialRayZ₃_pos` at `r = 1`; right-limit gluing at `0` with
+  `tendsto_nhds_unique_of_eventuallyEq`), and **THE HEADLINE
+  `laplaceZeroDrift_identifies_of_radialMixture₃`** via the `c•q` trick
+  above.  Root module + `AxiomAudit.ps1` wired (all five L5 files).
+  Gotchas: `Complex.cos_arg`/`sin_arg` return `z.re/‖z‖`-shaped equalities —
+  massage with `rfl`-proofs `(⟨a,b⟩ : ℂ).re = a` and
+  `Complex.norm_eq_sqrt_sq_add_sq` before rewriting; `abs_of_pos
+  (Real.exp_pos _)` does NOT rewrite `|laplaceKernel τ x y|` (pattern is
+  under the def) — use a type-ascribed `0 ≤ laplaceKernel τ x y :=
+  (Real.exp_pos _).le` and `abs_of_nonneg`; `Continuous.tendsto x` (not
+  `.continuousAt.tendsto`) for right-limit arguments.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over
