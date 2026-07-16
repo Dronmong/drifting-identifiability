@@ -293,17 +293,46 @@ NEXT (in order — the first two are pure algebra over `zeroDrift_C_eq`):
    `LaplaceACPropagation.lean:1343`) `⟹ (Z̃_p/Z̃_q)' = 0 ⟹ Z̃_p = c·Z̃_q`,
    then `c = 1` via the ray-mass identity (5a.2, still to prove).
 
-### 5d. `LaplaceRadialInvariance3.lean`
-`Z_p(x) = Z̃_p(‖x‖)` from O(3)-invariance of `radialMixture₃` (polar formula +
-one 2-d change of variables — see §4.10 F9.4; Householder reflection transports
-`‖x‖e₁ ↦ x`).  **Fallback if the CoV fights Lean (§4.10 F9.5):** half-line Green
-uniqueness on `(1−τ²∂²)(rZ̃)` or a 1-d charFun argument on the odd extension —
-both ray-only, no invariance needed.
+### 5d. STATUS UPDATE 2026-07-16 — TRICHOTOMY AND RAY ENDGAME ARE DONE
+`LaplaceRadialConverse3.lean` (all green, committed through the trichotomy;
+the ray-endgame commit may be pending if the session ended during a tool
+outage — check `git status`):
+- continuity layer, Abel shape, three edge cores, origin-edge providers,
+  **`radialRayKhat₃_eq_zero`** (K̂ ≡ 0 on (0,∞)),
+  **`radialRayV₃_eq_zero`** (v ≡ 0),
+  **`radialRayZ₃_proportional`** (`Z̃_p = c·Z̃_q` on (0,∞)).
 
-### 5e. `LaplaceRadialConverse3.lean`
-Assemble the headline `laplaceZeroDrift_identifies_of_radialMixture₃` (feed L4 at
-the last step), add `AxiomAudit` entries, wire into root
-`DriftingIdentifiability.lean`, run `Check.ps1`.
+REMAINING (exactly three steps, all scoped):
+1. **Invariance** `Z_p(x) = Z̃_p(‖x‖)` — use the **θ-flow argument**
+   (recorded in `LaplaceHigherDim.md §4.10` log, 2026-07-16 DISCOVERY
+   bullet): `I(θ) = ∫∫ F(cosθ·u + sinθ·√(1−u²)cosφ) dchartBase` has
+   `I'(θ) = 0` because the divergence-free generator
+   `X = (−√(1−u²)cosφ, −u·sinφ/√(1−u²))` satisfies `∂θw = −X·∇w`, and the
+   two 1-d IBPs have vanishing boundaries (`X_u(±1) = 0`, `sin(±π) = 0`).
+   NO polar coordinates.  Azimuth by φ-periodicity
+   (`Function.Periodic.intervalIntegral_eq`-family).  Apply to
+   `F(w) = exp(−√(‖x‖²+s²−2s‖x‖w)/τ)`, smooth when `s ≠ ‖x‖`; collision
+   shells: atoms of ν are countable ⟹ dense set of good `‖x‖` ⟹ conclude
+   by continuity of both sides in `x` (`continuous_radialRayZ₃` + norm).
+2. **`c = 1`** via 3-d Tonelli: `∫_{ℝ³} Z_p dx = κ = ∫ Z_q dx` with
+   `κ = ∫ e^{−‖x‖/τ} dx ∈ (0,∞)` (integrability =
+   `laplaceEuclideanFourierBase_integrable`, `LaplaceEuclideanInjectivity`;
+   translation invariance of volume for the inner integral; lintegral/Tonelli
+   over the probability `radialMixture₃`).  Then `Z_p = c·Z_q` everywhere +
+   equal masses ⟹ `c = 1`.
+3. **Headline**: `Z_p = Z_q` everywhere ⟹
+   `laplaceKernelNormalizer_injective_euclideanSpace_of_fourier_ne_zero` /
+   `laplaceSmoothingInjective_euclideanSpace (ι := Fin 3)` (both CLOSED, in
+   `LaplaceRadialFourier.lean:990` / `LaplaceEuclideanInjectivity.lean:413`)
+   gives `radialMixture₃ νp = radialMixture₃ νq`.  State
+   `laplaceZeroDrift_identifies_of_radialMixture₃` with hypotheses:
+   `0 < τ` (or `ValidBandwidth τ`), `[IsProbabilityMeasure νp/q]`,
+   `νp/q (Iio 0) = 0`, `Integrable id νp/q`, `RadialSlack₃ τ νp`
+   (νq's slack is NOT needed — the driver only uses νp's m̃), `ZeroDrift …`.
+   Then audit entries, root wiring (`DriftingIdentifiability.lean` — add the
+   four new files), `Check.ps1`.
+
+### 5e. (superseded — see 5d)
 
 ---
 

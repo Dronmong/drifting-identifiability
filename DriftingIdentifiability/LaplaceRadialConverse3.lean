@@ -768,4 +768,135 @@ theorem radialRayKhat₃_eq_zero (τ : ℝ) (hτ : 0 < τ)
       have := hlin t ht0 htx.le
       rwa [sub_zero]
 
+/-! ## Endgame: `Z̃_p ∝ Z̃_q` on the ray -/
+
+lemma continuousAt_radialRayV₃ (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    {r : ℝ} (hr : 0 < r) :
+    ContinuousAt (radialRayV₃ τ νp νq) r := by
+  have h1 := continuousAt_radialRayZd₃ τ hτ νp hr
+  have h2 := continuousAt_radialRayZd₃ τ hτ νq hr
+  have h3 := (hasDerivAt_radialRayZ₃ τ hτ νp hr).continuousAt
+  have h4 := (hasDerivAt_radialRayZ₃ τ hτ νq hr).continuousAt
+  have hfe : radialRayV₃ τ νp νq = fun x => x ^ 2
+      * ((1 / τ) * (radialRayZd₃ τ νp x * radialRayZ₃ τ νq x
+        - radialRayZd₃ τ νq x * radialRayZ₃ τ νp x)) := rfl
+  rw [hfe]
+  exact ((continuous_pow 2).continuousAt).mul
+    (((h1.mul h4).sub (h2.mul h3)).const_mul _)
+
+/-- **The Wronskian weight vanishes**: `v ≡ 0` on `(0,∞)` — on `{m̃ ≠ 0}` by
+division in `K̂ = τm̃v ≡ 0`, on the interior of `{m̃ = 0}` by the derivative
+identity `0 = K̂' = −4τ·v`, and on the boundary by continuity against the
+frequent zeros. -/
+theorem radialRayV₃_eq_zero (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) :
+    ∀ r : ℝ, 0 < r → radialRayV₃ τ νp νq r = 0 := by
+  have hK0 := radialRayKhat₃_eq_zero τ hτ νp νq hsp hsq hmp hmq hslackp hzero
+  intro r hr
+  by_cases hm : radialRayM₃ τ νp r = 0
+  · by_cases hev : ∀ᶠ t in 𝓝 r, radialRayM₃ τ νp t = 0
+    · -- interior of the zero set: `0 = K̂' = −4τ·v`
+      have hMD0 : radialRayMDeriv₃ τ νp r = 0 := by
+        have h1 := hasDerivAt_radialRayM₃ τ hτ νp hr
+        have heq : radialRayM₃ τ νp =ᶠ[𝓝 r] fun _ => (0 : ℝ) := hev
+        exact ((h1.congr_of_eventuallyEq heq.symm).unique (hasDerivAt_const r 0))
+      have hK'0 : -(τ * (radialRayMDeriv₃ τ νp r + 4)) * radialRayV₃ τ νp νq r
+          = 0 := by
+        have h1 := hasDerivAt_radialRayKhat₃ τ νp νq hτ hsp hsq hzero hr
+        have heq : radialRayKhat₃ τ νp νq =ᶠ[𝓝 r] fun _ => (0 : ℝ) := by
+          filter_upwards [Ioi_mem_nhds hr] with t ht
+          exact hK0 t ht
+        exact ((h1.congr_of_eventuallyEq heq.symm).unique (hasDerivAt_const r 0))
+      rw [hMD0] at hK'0
+      have hne : -(τ * ((0 : ℝ) + 4)) ≠ 0 := by
+        simp only [zero_add, neg_ne_zero]
+        positivity
+      exact (mul_eq_zero.mp hK'0).resolve_left hne
+    · -- boundary: frequent zeros of `v` + continuity
+      have hfreq : ∃ᶠ t in 𝓝 r, radialRayM₃ τ νp t ≠ 0 :=
+        Filter.not_eventually.mp hev
+      have hpos : ∀ᶠ t in 𝓝 r, 0 < t := Ioi_mem_nhds hr
+      have hfreq0 : ∃ᶠ t in 𝓝 r, radialRayV₃ τ νp νq t = 0 := by
+        refine (hfreq.and_eventually hpos).mono ?_
+        rintro t ⟨hmne, ht0⟩
+        have hKM := radialRayKhat₃_eq_M_mul_V τ νp νq hτ hsp hsq hzero ht0
+        rw [hK0 t ht0] at hKM
+        rcases mul_eq_zero.mp hKM.symm with h | h
+        · rcases mul_eq_zero.mp h with h' | h'
+          · exact absurd h' hτ.ne'
+          · exact absurd h' hmne
+        · exact h
+      exact tendsto_nhds_unique_of_frequently_eq
+        (continuousAt_radialRayV₃ τ hτ νp νq hr) tendsto_const_nhds hfreq0
+  · -- `m̃(r) ≠ 0`: divide in `K̂ = τm̃v ≡ 0`
+    have hKM := radialRayKhat₃_eq_M_mul_V τ νp νq hτ hsp hsq hzero hr
+    rw [hK0 r hr] at hKM
+    rcases mul_eq_zero.mp hKM.symm with h | h
+    · rcases mul_eq_zero.mp h with h' | h'
+      · exact absurd h' hτ.ne'
+      · exact absurd h' hm
+    · exact h
+
+/-- **Ray proportionality**: under the L5 hypotheses, `Z̃_p = c·Z̃_q` on
+`(0,∞)`. -/
+theorem radialRayZ₃_proportional (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable id νp) (hmq : Integrable id νq)
+    (hslackp : RadialSlack₃ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₃ νp) (radialMixture₃ νq)) :
+    ∃ c : ℝ, ∀ r : ℝ, 0 < r →
+      radialRayZ₃ τ νp r = c * radialRayZ₃ τ νq r := by
+  have hV0 := radialRayV₃_eq_zero τ hτ νp νq hsp hsq hmp hmq hslackp hzero
+  have hRderiv : ∀ r : ℝ, 0 < r → HasDerivAt
+      (fun x => radialRayZ₃ τ νp x / radialRayZ₃ τ νq x) 0 r := by
+    intro r hr
+    have h1 := (hasDerivAt_radialRayZ₃ τ hτ νp hr).div
+      (hasDerivAt_radialRayZ₃ τ hτ νq hr) (radialRayZ₃_pos τ hτ νq r).ne'
+    have hnum : (1 / τ) * radialRayZd₃ τ νp r * radialRayZ₃ τ νq r
+        - radialRayZ₃ τ νp r * ((1 / τ) * radialRayZd₃ τ νq r) = 0 := by
+      have hv := hV0 r hr
+      rw [radialRayV₃, radialRayW₃] at hv
+      have hr2 : (r : ℝ) ^ 2 ≠ 0 := by positivity
+      have hW := (mul_eq_zero.mp hv).resolve_left hr2
+      rcases mul_eq_zero.mp hW with h | h
+      · exact absurd h (one_div_ne_zero hτ.ne')
+      · linear_combination (1 / τ) * h
+    have hzero' : ((1 / τ) * radialRayZd₃ τ νp r * radialRayZ₃ τ νq r
+        - radialRayZ₃ τ νp r * ((1 / τ) * radialRayZd₃ τ νq r))
+        / (radialRayZ₃ τ νq r) ^ 2 = 0 := by
+      rw [hnum]
+      simp
+    rw [← hzero']
+    exact h1
+  refine ⟨radialRayZ₃ τ νp 1 / radialRayZ₃ τ νq 1, ?_⟩
+  intro r hr
+  have hconst : radialRayZ₃ τ νp r / radialRayZ₃ τ νq r
+      = radialRayZ₃ τ νp 1 / radialRayZ₃ τ νq 1 := by
+    have hu0 : 0 < min r 1 := lt_min hr one_pos
+    have hMVT := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+      (f := fun x => radialRayZ₃ τ νp x / radialRayZ₃ τ νq x)
+      (f' := fun _ => (0 : ℝ)) (s := Icc (min r 1) (max r 1)) (C := 0)
+      (fun x hx => (hRderiv x (lt_of_lt_of_le hu0 hx.1)).hasDerivWithinAt)
+      (fun x _ => by simp) (convex_Icc _ _)
+      (Set.mem_Icc.mpr ⟨min_le_left r 1, le_max_left r 1⟩)
+      (Set.mem_Icc.mpr ⟨min_le_right r 1, le_max_right r 1⟩)
+    rw [zero_mul] at hMVT
+    have := norm_le_zero_iff.mp hMVT
+    have hsub := sub_eq_zero.mp this
+    linarith [hsub]
+  have hZq : radialRayZ₃ τ νq r ≠ 0 := (radialRayZ₃_pos τ hτ νq r).ne'
+  calc radialRayZ₃ τ νp r
+      = (radialRayZ₃ τ νp r / radialRayZ₃ τ νq r) * radialRayZ₃ τ νq r := by
+        field_simp
+    _ = (radialRayZ₃ τ νp 1 / radialRayZ₃ τ νq 1) * radialRayZ₃ τ νq r := by
+        rw [hconst]
+
 end DriftingIdentifiability

@@ -1489,6 +1489,47 @@ session-handoff spec).**
   for `(x²)' = 2r`.  NEXT: the trichotomy (F7 — mirror
   `LaplaceUnconditionalConverse.lean:882–1010` with `LaplaceACPropagation`
   lemmas), endgame steps 1–3, ray-mass identity, invariance, headline.
+- 2026-07-16 (TRICHOTOMY + RAY ENDGAME COMPLETE — **committed, green**):
+  `LaplaceRadialConverse3.lean` now proves, in order: the continuity layer
+  (`continuousAt_radialRay{Q,Zd,MDeriv,M,V}₃`), the Abel shape
+  (`hasDerivAt_radialRayKhat₃_abel`), the three edge cores
+  (`radialRayKhat₃_eq_zero_on_Ioo_of_{left,right}Edge`, `…_on_ray` — the
+  1-d propagation wrappers consume the radial system with an FTC primitive,
+  since the coefficient is genuinely continuous here), the origin-edge
+  providers (`shellD_zero_left`, `radialRayD₃_zero`, `abs_radialRayQ₃_le`,
+  global `continuous_radialRay{Z,D}₃`, **`abs_radialRayD₃_le_linear`**
+  (`|D̃(t)| ≤ (e⁻¹+1)t` via MVT + ε→0 `ge_of_tendsto`),
+  **`radialRayM₃_le_linear`**, `radialRayKhat₃_bounded_near_zero`),
+  **`radialRayKhat₃_eq_zero`** (the full trichotomy driver — sInf/sSup zeros
+  with closure-image continuity, IVT midfields, metric ball extensions,
+  `exists_Ioo_linear_bound_of_hasDerivAt_zero` at interior crossings, the
+  `r = 0` universal edge), **`radialRayV₃_eq_zero`** (dense-zero gluing via
+  `tendsto_nhds_unique_of_frequently_eq` — no interior-topology bookkeeping),
+  and **`radialRayZ₃_proportional`** (`Z̃_p = c·Z̃_q` on `(0,∞)`, ratio-MVT
+  with `C = 0`).  Gotchas: `Ioo_mem_nhdsGT hab : Ioo a b ∈ 𝓝[>] a`;
+  `Convex.norm_image_sub_le_of_norm_hasDerivWithin_le` (Convex-prefixed);
+  `integral_id` is top-level (not `intervalIntegral.`); `mono_left
+  nhdsWithin_le_nhds` needs a type-ascribed `have`; `Ioi_mem_nhds hr` IS the
+  eventually `0 < t`.
+- 2026-07-16 (**DISCOVERY — the cheap invariance route**): the remaining
+  `Z_p(x) = Z̃_p(‖x‖)` does NOT need polar coordinates or a 3-d CoV.
+  **θ-flow argument**: for `w(θ,u,φ) = cosθ·u + sinθ·√(1−u²)cosφ` (the inner
+  product of the chart point with a tilted axis), the rotation generator
+  about `e₃` in chart coordinates, `X = (−√(1−u²)cosφ, −u·sinφ/√(1−u²))`, is
+  **divergence-free** (`∂ᵤX_u + ∂φX_φ = 0`) and satisfies
+  `∂θ w = −X·∇_{(u,φ)} w`.  Hence for smooth `F`,
+  `I(θ) := ∫∫ F(w) dchartBase` has `I'(θ) = −∫∫ X·∇(F∘w) = 0` by TWO
+  elementary 1-d IBPs: the `u`-boundary vanishes because
+  `X_u(±1) = ∓0·cosφ = 0`, the `φ`-boundary because `sin(±π) = 0`.  So
+  `I(θ) = I(0)`, i.e. the tilted-axis zonal average equals the polar one; the
+  azimuth is handled by φ-periodicity.  Apply with
+  `F(w) = exp(−√(‖x‖²+s²−2s‖x‖w)/τ)` (smooth for `s ≠ ‖x‖`); the collision
+  shells are handled by: atoms of `ν` are countable ⟹ the identity holds for
+  a dense set of `‖x‖` ⟹ everywhere by continuity of both sides in `x`.
+  Then `c = 1` via the 3-d Tonelli mass identity (`∫Z_p = κ = ∫Z_q` with
+  `κ = ∫e^{−‖x‖/τ}dx`, using `laplaceEuclideanFourierBase_integrable` from
+  L4), and the headline concludes with
+  `laplaceKernelNormalizer_injective_euclideanSpace…`/L4.
 - 2026-07-15 (pre-implementation refinement): two further simplifications.
   (a) **The C¹ layer is y-level, not per-shell**: `Z̃', C̃' = D̃/τ, D̃'`
   all follow from dominated differentiation of the integrals over
