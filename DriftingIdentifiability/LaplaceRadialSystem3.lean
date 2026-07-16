@@ -500,4 +500,149 @@ lemma shellC_le (τ : ℝ) (hτ : 0 < τ) (r s : ℝ) : shellC τ r s ≤ τ := 
         rw [setIntegral_const, Real.volume_real_Ioc_of_le (by norm_num), smul_eq_mul]
         ring
 
+lemma continuous_shellZ (τ : ℝ) (hτ : 0 < τ) (r : ℝ) :
+    Continuous fun s : ℝ => shellZ τ r s := by
+  unfold shellZ
+  refine continuous_const.mul ?_
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  refine continuous_of_dominated (bound := fun _ => 1) (fun s => ?_) (fun s => ?_) ?_ ?_
+  · have hc : Continuous fun u : ℝ => Real.exp (-(1 / τ) * shellDist r s u) := by
+      unfold shellDist
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · refine ae_of_all _ fun u => ?_
+    rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _), Real.exp_le_one_iff]
+    have hd : 0 ≤ shellDist r s u := Real.sqrt_nonneg _
+    have h1τ : (0 : ℝ) ≤ 1 / τ := by positivity
+    nlinarith
+  · exact integrable_const 1
+  · refine ae_of_all _ fun u => ?_
+    have hd : Continuous fun s : ℝ => shellDist r s u := by
+      unfold shellDist
+      fun_prop
+    exact Real.continuous_exp.comp (hd.const_mul (-(1 / τ)))
+
+lemma continuous_shellC (τ : ℝ) (hτ : 0 < τ) (r : ℝ) :
+    Continuous fun s : ℝ => shellC τ r s := by
+  unfold shellC
+  refine continuous_const.mul ?_
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ, Real.volume_Ioc]; exact ENNReal.ofReal_lt_top⟩
+  refine continuous_of_dominated (bound := fun _ => τ) (fun s => ?_) (fun s => ?_) ?_ ?_
+  · have hc : Continuous fun u : ℝ =>
+        (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) := by
+      unfold shellDist
+      fun_prop
+    exact hc.aestronglyMeasurable
+  · refine ae_of_all _ fun u => ?_
+    have hd : 0 ≤ shellDist r s u := Real.sqrt_nonneg _
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    exact matern_le τ hτ hd
+  · exact integrable_const τ
+  · refine ae_of_all _ fun u => ?_
+    have hd : Continuous fun s : ℝ => shellDist r s u := by
+      unfold shellDist
+      fun_prop
+    exact (continuous_const.add hd).mul
+      (Real.continuous_exp.comp (hd.const_mul (-(1 / τ))))
+
+lemma prob_measureReal_le_one {ν : Measure ℝ} [IsProbabilityMeasure ν] (s : Set ℝ) :
+    ν.real s ≤ 1 := by
+  have h : ν s ≤ 1 := prob_le_one
+  have h2 := ENNReal.toReal_mono ENNReal.one_ne_top h
+  rw [ENNReal.toReal_one] at h2
+  exact h2
+
+lemma measureReal_nonneg' {ν : Measure ℝ} (s : Set ℝ) : 0 ≤ ν.real s :=
+  ENNReal.toReal_nonneg
+
+/-- **Normalizer split bound**: `Z̃(r) ≤ e^{−r/(2τ)} + ν([r/2,∞))`. -/
+lemma radialRayZ₃_le_split (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 ≤ r) :
+    radialRayZ₃ τ ν r
+      ≤ Real.exp (-(1 / τ) * (r / 2)) + ν.real (Ici (r / 2)) := by
+  have hint : Integrable (fun s => shellZ τ r s) ν :=
+    ⟨(continuous_shellZ τ hτ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := 1) (ae_of_all _ fun s => by
+        rw [Real.norm_eq_abs, abs_of_nonneg (shellZ_nonneg τ r s)]
+        exact shellZ_le_one τ hτ r s)⟩
+  rw [radialRayZ₃, ← integral_add_compl (measurableSet_Ici (a := r / 2)) hint]
+  have h1 : (∫ s in Ici (r / 2), shellZ τ r s ∂ν) ≤ ν.real (Ici (r / 2)) := by
+    calc (∫ s in Ici (r / 2), shellZ τ r s ∂ν)
+        ≤ ∫ _ in Ici (r / 2), (1 : ℝ) ∂ν :=
+          setIntegral_mono_on hint.integrableOn ((integrable_const 1).integrableOn)
+            measurableSet_Ici (fun s _ => shellZ_le_one τ hτ r s)
+      _ = ν.real (Ici (r / 2)) := by rw [setIntegral_const, smul_eq_mul, mul_one]
+  have h2 : (∫ s in (Ici (r / 2))ᶜ, shellZ τ r s ∂ν)
+      ≤ Real.exp (-(1 / τ) * (r / 2)) := by
+    have hae : ∀ᵐ s ∂(ν.restrict (Ici (r / 2))ᶜ),
+        shellZ τ r s ≤ Real.exp (-(1 / τ) * (r / 2)) := by
+      filter_upwards [ae_restrict_of_ae (radial_ae_nonneg hsupp),
+        ae_restrict_mem (measurableSet_Ici (a := r / 2)).compl] with s hs hmem
+      have hlt : s < r / 2 := by
+        simpa [mem_compl_iff, mem_Ici, not_le] using hmem
+      refine (shellZ_le_exp τ hτ hr hs).trans ?_
+      apply Real.exp_le_exp.mpr
+      have habs : r / 2 ≤ |r - s| := by
+        rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ r - s)]
+        linarith
+      have h1τ : (0 : ℝ) ≤ 1 / τ := by positivity
+      nlinarith
+    calc (∫ s in (Ici (r / 2))ᶜ, shellZ τ r s ∂ν)
+        ≤ ∫ _ in (Ici (r / 2))ᶜ, Real.exp (-(1 / τ) * (r / 2)) ∂ν :=
+          setIntegral_mono_ae_restrict hint.integrableOn
+            ((integrable_const _).integrableOn) hae
+      _ = ν.real (Ici (r / 2))ᶜ * Real.exp (-(1 / τ) * (r / 2)) := by
+          rw [setIntegral_const, smul_eq_mul]
+      _ ≤ 1 * Real.exp (-(1 / τ) * (r / 2)) :=
+          mul_le_mul_of_nonneg_right (prob_measureReal_le_one _) (Real.exp_pos _).le
+      _ = Real.exp (-(1 / τ) * (r / 2)) := one_mul _
+  linarith
+
+/-- **Companion split bound**:
+`C̃(r) ≤ (τ+r/2)e^{−r/(2τ)} + τ·ν([r/2,∞))`. -/
+lemma radialRayC₃_le_split (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    {r : ℝ} (hr : 0 ≤ r) :
+    radialRayC₃ τ ν r
+      ≤ (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) + τ * ν.real (Ici (r / 2)) := by
+  have hint : Integrable (fun s => shellC τ r s) ν :=
+    ⟨(continuous_shellC τ hτ r).aestronglyMeasurable,
+      HasFiniteIntegral.of_bounded (C := τ) (ae_of_all _ fun s => by
+        rw [Real.norm_eq_abs, abs_of_nonneg (shellC_nonneg τ hτ r s)]
+        exact shellC_le τ hτ r s)⟩
+  rw [radialRayC₃, ← integral_add_compl (measurableSet_Ici (a := r / 2)) hint]
+  have h1 : (∫ s in Ici (r / 2), shellC τ r s ∂ν) ≤ τ * ν.real (Ici (r / 2)) := by
+    calc (∫ s in Ici (r / 2), shellC τ r s ∂ν)
+        ≤ ∫ _ in Ici (r / 2), τ ∂ν :=
+          setIntegral_mono_on hint.integrableOn ((integrable_const τ).integrableOn)
+            measurableSet_Ici (fun s _ => shellC_le τ hτ r s)
+      _ = τ * ν.real (Ici (r / 2)) := by rw [setIntegral_const, smul_eq_mul]; ring
+  have h2 : (∫ s in (Ici (r / 2))ᶜ, shellC τ r s ∂ν)
+      ≤ (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) := by
+    have hae : ∀ᵐ s ∂(ν.restrict (Ici (r / 2))ᶜ),
+        shellC τ r s ≤ (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) := by
+      filter_upwards [ae_restrict_of_ae (radial_ae_nonneg hsupp),
+        ae_restrict_mem (measurableSet_Ici (a := r / 2)).compl] with s hs hmem
+      have hlt : s < r / 2 := by
+        simpa [mem_compl_iff, mem_Ici, not_le] using hmem
+      refine (shellC_le_matern τ hτ hr hs).trans ?_
+      refine matern_antitone τ hτ (by positivity) ?_
+      rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ r - s)]
+      linarith
+    calc (∫ s in (Ici (r / 2))ᶜ, shellC τ r s ∂ν)
+        ≤ ∫ _ in (Ici (r / 2))ᶜ, (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) ∂ν :=
+          setIntegral_mono_ae_restrict hint.integrableOn
+            ((integrable_const _).integrableOn) hae
+      _ = ν.real (Ici (r / 2))ᶜ * ((τ + r / 2) * Real.exp (-(1 / τ) * (r / 2))) := by
+          rw [setIntegral_const, smul_eq_mul]
+      _ ≤ 1 * ((τ + r / 2) * Real.exp (-(1 / τ) * (r / 2))) := by
+          refine mul_le_mul_of_nonneg_right (prob_measureReal_le_one _) ?_
+          have : (0 : ℝ) ≤ τ + r / 2 := by positivity
+          positivity
+      _ = (τ + r / 2) * Real.exp (-(1 / τ) * (r / 2)) := one_mul _
+  linarith
+
 end DriftingIdentifiability
