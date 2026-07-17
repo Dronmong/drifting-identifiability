@@ -386,4 +386,347 @@ lemma shell_pair_bracket {c : ℝ} {Z Z' Q Q' D D' W W' : ℝ}
     linarith [hA, hB, hassoc]
   exact le_of_mul_le_mul_left hsum (mul_pos hZ hZ')
 
+/-! ## The far-shell branch: comonotonicity in `u` -/
+
+lemma abs_axialDiv_le_one {r s u : ℝ} (hu : u ^ 2 ≤ 1) :
+    |(s * u - r) / shellDist r s u| ≤ 1 := by
+  rcases eq_or_lt_of_le (shellDist_nonneg r s u) with h0 | hpos
+  · rw [← h0, div_zero, abs_zero]
+    exact zero_le_one
+  · rw [abs_div, abs_of_pos hpos, div_le_one hpos]
+    have hd2 : shellDist r s u ^ 2 = shellAxial r s u ^ 2 + shellRhoSq s u :=
+      shellDist_sq_eq_axial_add_rho hu r s
+    have hax : shellAxial r s u = s * u - r := rfl
+    rw [hax] at hd2
+    have h1 : (s * u - r) ^ 2 ≤ shellDist r s u ^ 2 := by
+      nlinarith [shellRhoSq_nonneg hu s]
+    calc |s * u - r| = Real.sqrt ((s * u - r) ^ 2) :=
+          (Real.sqrt_sq_eq_abs _).symm
+      _ ≤ Real.sqrt (shellDist r s u ^ 2) := Real.sqrt_le_sqrt h1
+      _ = shellDist r s u := Real.sqrt_sq hpos.le
+
+private lemma shellDist_sq_pos_far {r s u : ℝ} (hr : 0 < r) (hge : r ≤ s)
+    (hu : u < 1) : 0 < r ^ 2 + s ^ 2 - 2 * r * s * u := by
+  have hs : 0 < s := lt_of_lt_of_le hr hge
+  nlinarith [sq_nonneg (r - s), mul_pos (mul_pos hr hs) (sub_pos.mpr hu)]
+
+private lemma hasDerivAt_axialDiv {r s u : ℝ} (hr : 0 < r) (hge : r ≤ s)
+    (hu2 : u < 1) :
+    HasDerivAt (fun v => (s * v - r) / shellDist r s v)
+      ((s * shellDist r s u - (s * u - r) * -(r * s / shellDist r s u)) /
+        shellDist r s u ^ 2) u := by
+  have hq := shellDist_sq_pos_far hr hge hu2
+  have hdne : shellDist r s u ≠ 0 := (Real.sqrt_pos.mpr hq).ne'
+  have hX : HasDerivAt (fun v : ℝ => s * v - r) s u := by
+    simpa using ((hasDerivAt_id u).const_mul s).sub_const r
+  exact hX.div (hasDerivAt_shellDist_u hq) hdne
+
+private lemma axialDiv_deriv_nonneg {r s u : ℝ} (hr : 0 < r) (hge : r ≤ s)
+    (hu2 : u ≤ 1) (hq : 0 < r ^ 2 + s ^ 2 - 2 * r * s * u) :
+    0 ≤ (s * shellDist r s u - (s * u - r) * -(r * s / shellDist r s u)) /
+      shellDist r s u ^ 2 := by
+  have hs : 0 < s := lt_of_lt_of_le hr hge
+  have hdpos : 0 < shellDist r s u := Real.sqrt_pos.mpr hq
+  have hde : shellDist r s u
+      = Real.sqrt (r ^ 2 + s ^ 2 - 2 * r * s * u) := rfl
+  have hd2 : shellDist r s u ^ 2 = r ^ 2 + s ^ 2 - 2 * r * s * u := by
+    rw [hde]
+    exact Real.sq_sqrt hq.le
+  refine div_nonneg ?_ (sq_nonneg _)
+  have hnum : s * shellDist r s u - (s * u - r) * -(r * s / shellDist r s u)
+      = (s * shellDist r s u ^ 2 + (s * u - r) * (r * s))
+          / shellDist r s u := by
+    field_simp
+    ring
+  rw [hnum]
+  refine div_nonneg ?_ hdpos.le
+  rw [hd2]
+  have hru : r * u ≤ s := by nlinarith
+  have hkey : s * (r ^ 2 + s ^ 2 - 2 * r * s * u) + (s * u - r) * (r * s)
+      = s ^ 2 * (s - r * u) := by ring
+  have h2 : 0 ≤ s ^ 2 * (s - r * u) :=
+    mul_nonneg (sq_nonneg s) (sub_nonneg.mpr hru)
+  linarith [hkey, h2]
+
+private lemma monotoneOn_axialDiv {r s : ℝ} (hr : 0 < r) (hge : r ≤ s) :
+    MonotoneOn (fun u => (s * u - r) / shellDist r s u) (Icc (-1 : ℝ) 1) := by
+  have hs0 : 0 ≤ s := (lt_of_lt_of_le hr hge).le
+  refine monotoneOn_of_deriv_nonneg (convex_Icc _ _)
+    (continuousOn_shellAxialDivN hr hs0) ?_ ?_
+  · rw [interior_Icc]
+    intro u hu
+    exact (hasDerivAt_axialDiv hr hge
+      hu.2).differentiableAt.differentiableWithinAt
+  · rw [interior_Icc]
+    intro u hu
+    rw [(hasDerivAt_axialDiv hr hge hu.2).deriv]
+    exact axialDiv_deriv_nonneg hr hge hu.2.le
+      (shellDist_sq_pos_far hr hge hu.2)
+
+/-! ## Weighted Chebyshev doubling -/
+
+/-- **Weighted Chebyshev/FKG doubling**: on a full-measure carrier where the
+weight is nonnegative and `f, g` are comonotone, the weighted correlation is
+nonnegative.  Proved by expanding the doubled bracket
+`F(x)F(y)(f(x)-f(y))(g(x)-g(y)) ≥ 0` over the product measure. -/
+private lemma weighted_chebyshev {μ : Measure ℝ} [SFinite μ]
+    {F f g : ℝ → ℝ} {A : Set ℝ} (hAfull : μ Aᶜ = 0)
+    (hFnn : ∀ x ∈ A, 0 ≤ F x)
+    (hmono : ∀ x ∈ A, ∀ y ∈ A, x ≤ y → f x ≤ f y ∧ g x ≤ g y)
+    (hiF : Integrable F μ) (hiFf : Integrable (fun x => F x * f x) μ)
+    (hiFg : Integrable (fun x => F x * g x) μ)
+    (hiFfg : Integrable (fun x => F x * (f x * g x)) μ) :
+    (∫ x, F x * f x ∂μ) * ∫ x, F x * g x ∂μ ≤
+      (∫ x, F x * (f x * g x) ∂μ) * ∫ x, F x ∂μ := by
+  have hpair : ∀ᵐ z ∂(μ.prod μ), z.1 ∈ A ∧ z.2 ∈ A := by
+    rw [ae_iff]
+    have hsub : {z : ℝ × ℝ | ¬(z.1 ∈ A ∧ z.2 ∈ A)}
+        ⊆ (Aᶜ ×ˢ (univ : Set ℝ)) ∪ ((univ : Set ℝ) ×ˢ Aᶜ) := by
+      intro z hz
+      rw [mem_setOf_eq, not_and] at hz
+      by_cases h1 : z.1 ∈ A
+      · exact Or.inr ⟨mem_univ _, hz h1⟩
+      · exact Or.inl ⟨h1, mem_univ _⟩
+    refine measure_mono_null hsub (measure_union_null ?_ ?_)
+    · rw [Measure.prod_prod, hAfull, zero_mul]
+    · rw [Measure.prod_prod, hAfull, mul_zero]
+  have hprod_nonneg : 0 ≤ ∫ z : ℝ × ℝ,
+      (F z.1 * F z.2) * ((f z.1 - f z.2) * (g z.1 - g z.2)) ∂(μ.prod μ) := by
+    refine integral_nonneg_of_ae ?_
+    filter_upwards [hpair] with z hz
+    obtain ⟨h1, h2⟩ := hz
+    have hF1 := hFnn z.1 h1
+    have hF2 := hFnn z.2 h2
+    have hbr : 0 ≤ (f z.1 - f z.2) * (g z.1 - g z.2) := by
+      rcases le_total z.1 z.2 with h | h
+      · obtain ⟨hf, hg⟩ := hmono z.1 h1 z.2 h2 h
+        have hprod := mul_nonneg (neg_nonneg.mpr (by linarith : f z.1 - f z.2 ≤ 0))
+          (neg_nonneg.mpr (by linarith : g z.1 - g z.2 ≤ 0))
+        rwa [neg_mul_neg] at hprod
+      · obtain ⟨hf, hg⟩ := hmono z.2 h2 z.1 h1 h
+        exact mul_nonneg (by linarith) (by linarith)
+    exact mul_nonneg (mul_nonneg hF1 hF2) hbr
+  have hiT1 : Integrable
+      (fun z : ℝ × ℝ => (F z.1 * (f z.1 * g z.1)) * F z.2) (μ.prod μ) :=
+    hiFfg.mul_prod hiF
+  have hiT2 : Integrable
+      (fun z : ℝ × ℝ => F z.1 * (F z.2 * (f z.2 * g z.2))) (μ.prod μ) :=
+    hiF.mul_prod hiFfg
+  have hiT3 : Integrable
+      (fun z : ℝ × ℝ => (F z.1 * f z.1) * (F z.2 * g z.2)) (μ.prod μ) :=
+    hiFf.mul_prod hiFg
+  have hiT4 : Integrable
+      (fun z : ℝ × ℝ => (F z.1 * g z.1) * (F z.2 * f z.2)) (μ.prod μ) :=
+    hiFg.mul_prod hiFf
+  have hexpand : (fun z : ℝ × ℝ =>
+        (F z.1 * F z.2) * ((f z.1 - f z.2) * (g z.1 - g z.2)))
+      = fun z : ℝ × ℝ =>
+          ((F z.1 * (f z.1 * g z.1)) * F z.2
+            + F z.1 * (F z.2 * (f z.2 * g z.2)))
+          - ((F z.1 * f z.1) * (F z.2 * g z.2)
+            + (F z.1 * g z.1) * (F z.2 * f z.2)) := by
+    funext z
+    ring
+  rw [hexpand] at hprod_nonneg
+  have hT1 : (∫ z : ℝ × ℝ, (F z.1 * (f z.1 * g z.1)) * F z.2 ∂(μ.prod μ))
+      = (∫ x, F x * (f x * g x) ∂μ) * ∫ x, F x ∂μ :=
+    integral_prod_mul (fun x => F x * (f x * g x)) (fun y => F y)
+  have hT2 : (∫ z : ℝ × ℝ, F z.1 * (F z.2 * (f z.2 * g z.2)) ∂(μ.prod μ))
+      = (∫ x, F x ∂μ) * ∫ x, F x * (f x * g x) ∂μ :=
+    integral_prod_mul (fun x => F x) (fun y => F y * (f y * g y))
+  have hT3 : (∫ z : ℝ × ℝ, (F z.1 * f z.1) * (F z.2 * g z.2) ∂(μ.prod μ))
+      = (∫ x, F x * f x ∂μ) * ∫ x, F x * g x ∂μ :=
+    integral_prod_mul (fun x => F x * f x) (fun y => F y * g y)
+  have hT4 : (∫ z : ℝ × ℝ, (F z.1 * g z.1) * (F z.2 * f z.2) ∂(μ.prod μ))
+      = (∫ x, F x * g x ∂μ) * ∫ x, F x * f x ∂μ :=
+    integral_prod_mul (fun x => F x * g x) (fun y => F y * f y)
+  have hbig : (∫ z : ℝ × ℝ,
+        F z.1 * (f z.1 * g z.1) * F z.2 + F z.1 * (F z.2 * (f z.2 * g z.2))
+          - (F z.1 * f z.1 * (F z.2 * g z.2)
+            + F z.1 * g z.1 * (F z.2 * f z.2)) ∂(μ.prod μ))
+      = (∫ z : ℝ × ℝ,
+          F z.1 * (f z.1 * g z.1) * F z.2
+            + F z.1 * (F z.2 * (f z.2 * g z.2)) ∂(μ.prod μ))
+        - (∫ z : ℝ × ℝ,
+          F z.1 * f z.1 * (F z.2 * g z.2)
+            + F z.1 * g z.1 * (F z.2 * f z.2) ∂(μ.prod μ)) :=
+    integral_sub (hiT1.add hiT2) (hiT3.add hiT4)
+  have hadd1 : (∫ z : ℝ × ℝ,
+        F z.1 * (f z.1 * g z.1) * F z.2
+          + F z.1 * (F z.2 * (f z.2 * g z.2)) ∂(μ.prod μ))
+      = (∫ z : ℝ × ℝ, F z.1 * (f z.1 * g z.1) * F z.2 ∂(μ.prod μ))
+        + ∫ z : ℝ × ℝ, F z.1 * (F z.2 * (f z.2 * g z.2)) ∂(μ.prod μ) :=
+    integral_add hiT1 hiT2
+  have hadd2 : (∫ z : ℝ × ℝ,
+        F z.1 * f z.1 * (F z.2 * g z.2)
+          + F z.1 * g z.1 * (F z.2 * f z.2) ∂(μ.prod μ))
+      = (∫ z : ℝ × ℝ, F z.1 * f z.1 * (F z.2 * g z.2) ∂(μ.prod μ))
+        + ∫ z : ℝ × ℝ, F z.1 * g z.1 * (F z.2 * f z.2) ∂(μ.prod μ) :=
+    integral_add hiT3 hiT4
+  rw [hbig, hadd1, hadd2, hT1, hT2, hT3, hT4] at hprod_nonneg
+  have e1 : (∫ x, F x ∂μ) * ∫ x, F x * (f x * g x) ∂μ
+      = (∫ x, F x * (f x * g x) ∂μ) * ∫ x, F x ∂μ := mul_comm _ _
+  have e2 : (∫ x, F x * g x ∂μ) * ∫ x, F x * f x ∂μ
+      = (∫ x, F x * f x ∂μ) * ∫ x, F x * g x ∂μ := mul_comm _ _
+  linarith [hprod_nonneg, e1, e2]
+
+/-- **Per-shell RSI, far branch (`s ≥ r`)**: on far shells `X` and `X/d` are
+comonotone in `u`, so the per-shell covariance is nonnegative outright. -/
+theorem shellRSIN_far {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ}
+    (hτ : 0 < τ) (hr : 0 < r) (hge : r ≤ s) :
+    0 ≤ shellQN n τ r s * shellZN n τ r s -
+      shellDN n τ r s * shellZdN n τ r s := by
+  have hs0 : 0 ≤ s := (lt_of_lt_of_le hr hge).le
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) := by
+    constructor
+    rw [Measure.restrict_apply_univ, Real.volume_Ioc]
+    exact ENNReal.ofReal_lt_top
+  -- integrable families over the zonal base
+  have hiF : Integrable
+      (fun u => zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u))
+      (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    ((continuous_zonalWeight hn).mul
+      (continuous_shellKernelN' τ r s)).integrableOn_Icc.mono_set
+      Ioc_subset_Icc_self
+  have hiFf : Integrable
+      (fun u => (zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u))
+        * (s * u - r)) (volume.restrict (Ioc (-1 : ℝ) 1)) :=
+    (((continuous_zonalWeight hn).mul
+      (continuous_shellKernelN' τ r s)).mul
+      ((continuous_const.mul continuous_id).sub
+        continuous_const)).integrableOn_Icc.mono_set Ioc_subset_Icc_self
+  have hmeasG : Measurable fun u => (s * u - r) / shellDist r s u :=
+    (((continuous_const.mul continuous_id).sub
+      continuous_const).measurable).div
+      (continuous_shellDist_u r s).measurable
+  have hiFg : Integrable
+      (fun u => (zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u))
+        * ((s * u - r) / shellDist r s u))
+      (volume.restrict (Ioc (-1 : ℝ) 1)) := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := 1) ?_⟩
+    · exact (((continuous_zonalWeight hn).mul
+        (continuous_shellKernelN' τ r s)).measurable.mul
+        hmeasG).aestronglyMeasurable
+    · filter_upwards [ae_restrict_mem measurableSet_Ioc] with u hu
+      have hu2 : u ^ 2 ≤ 1 := sq_le_one_of_mem_Ioc hu
+      rw [Real.norm_eq_abs, abs_mul, abs_mul]
+      have hW : |zonalWeight n u| ≤ 1 := by
+        rw [abs_of_nonneg (zonalWeight_nonneg hu2)]
+        exact zonalWeight_le_one hn hu2
+      have hK : |Real.exp (-(1 / τ) * shellDist r s u)| ≤ 1 := by
+        rw [abs_of_pos (Real.exp_pos _)]
+        exact exp_shellDist_le_one hτ r s u
+      calc |zonalWeight n u| * |Real.exp (-(1 / τ) * shellDist r s u)|
+            * |(s * u - r) / shellDist r s u|
+          ≤ 1 * 1 * 1 :=
+            mul_le_mul (mul_le_mul hW hK (abs_nonneg _) zero_le_one)
+              (abs_axialDiv_le_one hu2) (abs_nonneg _) (by norm_num)
+        _ = 1 := by norm_num
+  have hiFfg : Integrable
+      (fun u => (zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u))
+        * ((s * u - r) * ((s * u - r) / shellDist r s u)))
+      (volume.restrict (Ioc (-1 : ℝ) 1)) := by
+    refine ⟨?_, HasFiniteIntegral.of_bounded (C := s + r) ?_⟩
+    · exact (((continuous_zonalWeight hn).mul
+        (continuous_shellKernelN' τ r s)).measurable.mul
+        ((((continuous_const.mul continuous_id).sub
+          continuous_const).measurable).mul hmeasG)).aestronglyMeasurable
+    · filter_upwards [ae_restrict_mem measurableSet_Ioc] with u hu
+      have hu2 : u ^ 2 ≤ 1 := sq_le_one_of_mem_Ioc hu
+      rw [Real.norm_eq_abs, abs_mul, abs_mul]
+      have hW : |zonalWeight n u| ≤ 1 := by
+        rw [abs_of_nonneg (zonalWeight_nonneg hu2)]
+        exact zonalWeight_le_one hn hu2
+      have hK : |Real.exp (-(1 / τ) * shellDist r s u)| ≤ 1 := by
+        rw [abs_of_pos (Real.exp_pos _)]
+        exact exp_shellDist_le_one hτ r s u
+      have hu1 : |u| ≤ 1 := abs_le.mpr ⟨hu.1.le, hu.2⟩
+      have hX : |s * u - r| ≤ s + r := by
+        calc |s * u - r| ≤ |s * u| + |r| := abs_sub _ _
+          _ = s * |u| + r := by
+            rw [abs_mul, abs_of_nonneg hs0, abs_of_pos hr]
+          _ ≤ s * 1 + r := by
+            have := mul_le_mul_of_nonneg_left hu1 hs0
+            linarith
+          _ = s + r := by ring
+      calc |zonalWeight n u| * |Real.exp (-(1 / τ) * shellDist r s u)|
+            * |(s * u - r) * ((s * u - r) / shellDist r s u)|
+          ≤ 1 * 1 * ((s + r) * 1) := by
+            refine mul_le_mul (mul_le_mul hW hK (abs_nonneg _) zero_le_one)
+              ?_ (abs_nonneg _) (by norm_num)
+            rw [abs_mul]
+            exact mul_le_mul hX (abs_axialDiv_le_one hu2) (abs_nonneg _)
+              (by linarith)
+        _ = s + r := by ring
+  -- the carrier `Icc (-1) 1` is full for the restricted measure
+  have hAfull : (volume.restrict (Ioc (-1 : ℝ) 1)) (Icc (-1 : ℝ) 1)ᶜ = 0 := by
+    rw [Measure.restrict_apply measurableSet_Icc.compl]
+    have hsub : (Icc (-1 : ℝ) 1)ᶜ ∩ Ioc (-1 : ℝ) 1 ⊆ ∅ :=
+      fun x hx => hx.1 (Ioc_subset_Icc_self hx.2)
+    rw [Set.subset_empty_iff.mp hsub, measure_empty]
+  have hFnn : ∀ u ∈ Icc (-1 : ℝ) 1,
+      0 ≤ zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) := by
+    intro u hu
+    exact mul_nonneg (zonalWeight_nonneg (by nlinarith [hu.1, hu.2]))
+      (Real.exp_pos _).le
+  have hmono : ∀ u ∈ Icc (-1 : ℝ) 1, ∀ v ∈ Icc (-1 : ℝ) 1, u ≤ v →
+      (s * u - r ≤ s * v - r) ∧
+      ((s * u - r) / shellDist r s u ≤ (s * v - r) / shellDist r s v) := by
+    intro u hu v hv huv
+    refine ⟨by nlinarith [mul_le_mul_of_nonneg_left huv hs0], ?_⟩
+    exact monotoneOn_axialDiv hr hge hu hv huv
+  -- the doubling inequality
+  have hcheb := weighted_chebyshev (μ := volume.restrict (Ioc (-1 : ℝ) 1))
+    (F := fun u => zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u))
+    (f := fun u => s * u - r)
+    (g := fun u => (s * u - r) / shellDist r s u)
+    (A := Icc (-1 : ℝ) 1) hAfull hFnn hmono
+    hiF hiFf hiFg hiFfg
+  -- rewrite shell objects into the `∫F`, `∫F·f`, `∫F·g`, `∫F·(f·g)` shapes
+  have hZN : shellZN n τ r s = (zonalMass n)⁻¹ *
+      ∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) := rfl
+  have hDN : shellDN n τ r s = (zonalMass n)⁻¹ *
+      ∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+          (s * u - r) := by
+    rw [shellDN]
+    congr 1
+    exact setIntegral_congr_fun measurableSet_Ioc (fun u _ => by ring)
+  have hZdN : shellZdN n τ r s = (zonalMass n)⁻¹ *
+      ∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+          ((s * u - r) / shellDist r s u) := by
+    rw [shellZdN]
+    congr 1
+    exact setIntegral_congr_fun measurableSet_Ioc (fun u _ => by ring)
+  have hQN : shellQN n τ r s = (zonalMass n)⁻¹ *
+      ∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+          ((s * u - r) * ((s * u - r) / shellDist r s u)) := by
+    rw [shellQN]
+    congr 1
+    refine setIntegral_congr_fun measurableSet_Ioc (fun u _ => ?_)
+    have hax : shellAxial r s u = s * u - r := rfl
+    rw [hax]
+    ring
+  rw [hZN, hDN, hZdN, hQN]
+  have hcinv : 0 ≤ (zonalMass n)⁻¹ := inv_nonneg.mpr (zonalMass_pos hn).le
+  have hkey :
+      ((zonalMass n)⁻¹ * ∫ u in Ioc (-1 : ℝ) 1,
+          zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+            (s * u - r)) *
+        ((zonalMass n)⁻¹ * ∫ u in Ioc (-1 : ℝ) 1,
+          zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+            ((s * u - r) / shellDist r s u))
+      ≤ ((zonalMass n)⁻¹ * ∫ u in Ioc (-1 : ℝ) 1,
+          zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u) *
+            ((s * u - r) * ((s * u - r) / shellDist r s u))) *
+        ((zonalMass n)⁻¹ * ∫ u in Ioc (-1 : ℝ) 1,
+          zonalWeight n u * Real.exp (-(1 / τ) * shellDist r s u)) := by
+    have hsq : (0 : ℝ) ≤ (zonalMass n)⁻¹ * (zonalMass n)⁻¹ :=
+      mul_nonneg hcinv hcinv
+    nlinarith [hcheb, hsq]
+  linarith [hkey]
+
 end DriftingIdentifiability
