@@ -449,3 +449,16 @@ Haar-coordinate `ZonalSphereBridge`, then port the n-dependent derivative,
 Abel-system, propagation, and invariance-to-global-normalizer layers.  This is
 substantially more than the one bridge lemma; no general-n converse is claimed
 before those layers exist.
+
+### G1 physical-ray interface (2026-07-16)
+
+`LaplaceRadialPhysicalBridgeN.lean` now closes the algebraic connection from
+the genuine Haar radial mixture to the zonal profiles, conditional only on the
+explicitly named (and still unproved) `ZonalSphereBridge`.  It defines the
+general first-coordinate ray and proves its exact sphere geometry, then
+derives the physical-to-zonal identities for the Laplace normalizer `Z`, the
+companion normalizer `C`, and the first-coordinate displacement numerator
+`D`.  The `Z` identity has no additional analytic premise; `C` and `D` expose
+their standard integrability premises rather than concealing them.  This makes
+the remaining bridge and the missing derivative/Abel/propagation port the only
+obstacles to an actual general-`n` radial converse.
