@@ -360,6 +360,13 @@ ray closure be discharged and the derivative/system layer be generalized.
 
 ---
 
+The follow-up file `LaplaceRadialZonalBridgeN.lean` now records the explicit
+`ZonalSphereBridge` proposition and proves the first-coordinate bookkeeping
+around it (continuity, measurability, probability pushforward, and a rewriting
+lemma).  It deliberately does not axiomatize the spherical-slicing density
+formula.  G1 therefore still requires an inhabitant of this bridge before the
+general-n converse can be promoted.
+
 ## 6. Concrete Lean gotchas already hit (save yourself the round-trips)
 
 - **`μ̃` (μ + U+0303 combining tilde) is NOT a valid Lean identifier** →

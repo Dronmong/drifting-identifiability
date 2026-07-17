@@ -422,3 +422,14 @@ uniform-shell/radial-mixture measure in `ℝⁿ`, prove its zonal pushforward br
 to `zonalWeight`, and then discharge the displayed integrability hypotheses so
 that the `Z`, `C`, and `D` ray profiles can enter the derivative/system layer.
 No general-`n` converse theorem is claimed by this checkpoint.
+
+### G1 bridge boundary (2026-07-16)
+
+`LaplaceRadialZonalBridgeN.lean` isolates the remaining spherical-slicing
+identity as the explicit proposition `ZonalSphereBridge`.  The first sphere
+coordinate is proved continuous and measurable, and its Haar pushforward is
+proved to be a probability measure.  The rewriting lemma
+`integral_uniformSphere_zonal_of_bridge` consumes only an explicit bridge
+inhabitant; no axiom or hidden assumption was added.  The general-n converse
+remains unpromoted until that classical coordinate-density identity and the
+ray-level integrability obligations are proved.
