@@ -1,5 +1,11 @@
 # L5 (n = 3 radial Laplace converse) — session handoff
 
+> **2026-07-16: L5 is COMPLETE (see §0/§5e).  The next-phase plan — the
+> general ℝⁿ converse (radial general n, slack removal, n = 2, and the
+> foliation–cancellation route to arbitrary measures) — lives in
+> `LaplaceRnRoadmap.md`.  Start there; this file remains the map of the
+> closed n = 3 milestone and its five implementation files.**
+
 *Written 2026-07-15.  Read this top-to-bottom; it is self-contained.  It tells a
 new agent exactly what the goal is, what is already proved, what remains, and
 where every relevant lemma/plan lives.*

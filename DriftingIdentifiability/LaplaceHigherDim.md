@@ -542,7 +542,14 @@ points of both potentials — where moreover `ζ(x₀) ≥ Φ(x₀)/((n+1)τ²) 
 1-d trichotomy pivoted on exactly the zero set of `m`; this is its n-d shadow
 and the sharpest known reformulation of the endgame.
 
-**(e) The n-d L3 conjecture (centroid monotonicity).**  All 1-d endgame sign
+**(e) The n-d L3 conjecture (centroid monotonicity).  ⚠ FALSIFIED 2026-07-16
+— both the full-matrix form below AND the directional-along-`m̂` refinement
+are unboundedly false for `n ≥ 2`; explicit counterexample families and the
+exact Jacobian identity `I + Dm = (1/τ)Cov_w(X, X/‖X‖)` are recorded in
+`LaplaceRnRoadmap.md` (F-A/F-B/F-C) and `numerics/rn_screen4.py`.  The radial
+specialization (RSI) is NOT affected — its `(n−1)τ` buffer is
+shell-integrated, which pointwise configurations cannot reproduce.  Kept
+below for the record.**  All 1-d endgame sign
 control came from `m' + 1 ≥ 0` — monotonicity of the mean-shift target map.
 **Conjecture: `x ↦ x + m_p(x)` is monotone** (`⟨F(x)-F(x'), x-x'⟩ ≥ 0`) for
 every probability `p`, every dimension.  Evidence: proved in 1-d (four-mass
@@ -1544,6 +1551,25 @@ session-handoff spec).**
   (`ENNReal.ofReal_eq_one`), and `one_smul` finishes.  The planned 3-d
   Tonelli/ray-mass identity (F10 `∫Z̃ dr`-style work) is DELETED from the
   plan — never needed.
+- 2026-07-16 (FIFTH RESEARCH PASS — the ℝⁿ roadmap; recorded in the NEW
+  design doc **`LaplaceRnRoadmap.md`**, which supersedes §4.7(D2.c/D2.d)
+  sequencing): (1) **§4.6(e) falsified** — no pointwise Jacobian sign control
+  exists in `n ≥ 2` (full-matrix AND directional forms unboundedly false;
+  exact identity `I + Dm = Cov_w(X, u)/τ`; closed-form 2-atom/3-atom
+  counterexample families verified to 3 decimals, `numerics/rn_screen*.py`);
+  (2) linearized injectivity + descent screens in ℝ²/ℝ³ PASS (no
+  counterexample — the conjecture stands, σ_min/σ_max ≥ 2.2e-3 over 400
+  configs/dim); (3) **NEW: the foliation–cancellation route** — zero drift +
+  one exterior derivative aligns all level sets with `m`; substituting the
+  dimension-uniform Matérn PDE `g − τ²Δg = (n+1)τ²k` into `R̃ = G'` cancels
+  `Δψ_q` exactly, giving a leafwise dichotomy: either `Z_p = c·Z_q` locally
+  (no propagation needed!) or `ψ_q` is transnormal with compact leaves
+  (tubes; radial = tube-around-a-point).  General endgame = tube rigidity +
+  1-d-style gluing across `{m = 0}`; open points and plan G1–G5 in the
+  roadmap doc.  (4) G1 design improvement: define `radialMixtureN` via a
+  manifestly isometry-invariant `uniformShell` so the master radiality
+  theorem falls out of L2 transport — the θ-flow layer (1000+ lines at n=3)
+  is not needed again.
 - 2026-07-16 (INVARIANCE + ENDGAME WRITTEN — building):
   `LaplaceRadialInvariance3.lean` gained the master radiality theorem
   **`kernelNormalizer_radialMixture₃_radial`** (`Z_ν(x) = Z̃_ν(‖x‖)` for
