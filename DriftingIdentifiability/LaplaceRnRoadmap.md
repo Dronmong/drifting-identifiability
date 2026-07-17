@@ -433,3 +433,19 @@ proved to be a probability measure.  The rewriting lemma
 inhabitant; no axiom or hidden assumption was added.  The general-n converse
 remains unpromoted until that classical coordinate-density identity and the
 ray-level integrability obligations are proved.
+
+### G1 analytic discharge (2026-07-16)
+
+`LaplaceRadialIntegrabilityN.lean` closes the ray-level integrability
+obligations.  It proves both square-over-distance payload bounds by the
+uniform estimate `d * exp(-d/tau) <= tau * exp(-1)`, establishes the
+measurability and uniform boundedness of the resulting shell profiles, and
+derives `radialRayCN_eq_closure_of_probability` for every probability profile
+supported on `[0,infinity)`.  Thus no first-moment or additional integrability
+hypothesis is needed merely to state the general-n companion closure.
+
+The outstanding G1 work is now geometric and structural: prove the actual
+Haar-coordinate `ZonalSphereBridge`, then port the n-dependent derivative,
+Abel-system, propagation, and invariance-to-global-normalizer layers.  This is
+substantially more than the one bridge lemma; no general-n converse is claimed
+before those layers exist.
