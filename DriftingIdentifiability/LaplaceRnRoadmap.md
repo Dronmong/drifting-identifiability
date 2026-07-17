@@ -356,12 +356,26 @@ weak-tilt expansion `∂_s d ≈ 1 − (r²/2s²)(1−u²)` makes the covariance
 `O(r³/s³)` against `E[u] = Θ(r/τ·Var_w(u))`.  Timebox as before; the Lean
 surface below ships regardless.
 
-**Lean surface (implemented/planned):** per-shell `shellZdN`, the two
-per-shell RSI branches, the cleared-denominator `ZonalShellAssociation`
-predicate, and `radialSlackN_of_zonalShellAssociation : ZonalShellAssociation
-n τ → RadialSlackN n _ τ ν` for every admissible profile — after which the
-G1 headline's per-measure hypothesis is replaced by one fixed kernel
-inequality, and W3's eventual proof deletes it entirely.
+**Lean surface — LANDED 2026-07-17 (`LaplaceRadialSlackAssociationN.lean`,
+builds green, no sorries, axiom-clean modulo the shared sphere axiom):**
+per-shell `shellZdN` (with the collision singularity squeezed via `2r|X|=d²`),
+both per-shell RSI branches (`shellRSIN_near` via the Dirac-profile collapse
+of the proved mixture AM–GM; `shellRSIN_far` via a reusable weighted
+Chebyshev/FKG `weighted_chebyshev` doubling on the comonotone `u`-derivative
+`∂_u(X/d)=s²(s−ru)/d³≥0`), the combined floor `shellRSIN`, the cleared-
+denominator `ZonalShellAssociation` predicate, a generic `cross_doubling`
+lemma lifting per-point floors to the `ν`-mixture, and the headline
+**`radialSlackN_of_zonalShellAssociation : ZonalShellAssociation n τ →
+RadialSlackN n _ τ ν`** for every admissible profile.  So the G1 headline's
+per-measure `RadialSlackN` hypothesis is now discharged by ONE fixed
+kernel-geometry inequality (`ZonalShellAssociation`, `ν`-free), whose numerics
+are green across `n ∈ {3,4,5,10}` and all scales.  Remaining: prove
+`ZonalShellAssociation` itself (the `m`-monotonicity `s>r` tilt-correction
+bound above) — after which the hypothesis vanishes entirely.
+(Also fixed this pass: the root module now imports the full general-`n` chain
+explicitly, repairing a G1 audit-wiring gap where the root exposed only
+`LaplaceRadialInvarianceN`; `AxiomAudit.ps1` gained the reviewed sphere axiom
+`uniformSphere_directionalCoordinate_integral` in its allowed-project list.)
 
 *(Original sketch, superseded:)* law of total covariance over shells;
 F-B/F-C mean the proof must be shell-integrated; RsiScan 40× margin.

@@ -215,6 +215,10 @@ $declarations = @(
   'DriftingIdentifiability.kernelNormalizer_radialMixtureN_radial',
   'DriftingIdentifiability.laplaceZeroDrift_identifies_of_radialMixtureN',
   'DriftingIdentifiability.laplaceZeroDrift_identifies_of_radialMixtureN_centered',
+  'DriftingIdentifiability.shellRhoSqOverDistN_eq_shellTN',
+  'DriftingIdentifiability.shellRSIN',
+  'DriftingIdentifiability.shellRSIN_far',
+  'DriftingIdentifiability.radialSlackN_of_zonalShellAssociation',
   'DriftingIdentifiability.lowerExpMass_rightContinuous',
   'DriftingIdentifiability.upperExpMass_rightContinuous',
   'DriftingIdentifiability.laplaceKernelNormalizerRightDerivCoeff_measurable',
@@ -412,7 +416,8 @@ $allowedProjectAxioms = @(
   'antisymmetric_kernel_induces_basis_antisymmetry',
   'equation_11_bilinear_mean_shift',
   'equation_31_bilinear_expansion',
-  'sampleMean_meanSquare_le'
+  'sampleMean_meanSquare_le',
+  'uniformSphere_directionalCoordinate_integral'
 )
 
 $sourceLines = [System.Collections.Generic.List[string]]::new()

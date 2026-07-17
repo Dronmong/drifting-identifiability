@@ -729,4 +729,244 @@ theorem shellRSIN_far {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ}
     nlinarith [hcheb, hsq]
   linarith [hkey]
 
+/-! ## Integrability of the soft-sign shell profile -/
+
+private lemma continuous_shellDist_pair' (r : ℝ) :
+    Continuous (fun z : ℝ × ℝ => shellDist r z.1 z.2) := by
+  unfold shellDist
+  refine Real.continuous_sqrt.comp ?_
+  exact (continuous_const.add (continuous_fst.pow 2)).sub
+    ((continuous_const.mul continuous_fst).mul continuous_snd)
+
+private lemma stronglyMeasurable_shellZdN (n : ℕ) (hn : 3 ≤ n) (τ r : ℝ) :
+    StronglyMeasurable (fun s : ℝ => shellZdN n τ r s) := by
+  unfold shellZdN
+  apply StronglyMeasurable.const_mul
+  apply MeasureTheory.StronglyMeasurable.integral_prod_right'
+    (f := fun z : ℝ × ℝ => zonalWeight n z.2 *
+      (Real.exp (-(1 / τ) * shellDist r z.1 z.2) *
+        ((z.1 * z.2 - r) / shellDist r z.1 z.2)))
+  apply Measurable.stronglyMeasurable
+  have hnum : Measurable fun z : ℝ × ℝ => z.1 * z.2 - r := by fun_prop
+  exact ((continuous_zonalWeight hn).comp continuous_snd).measurable.mul
+    ((Real.continuous_exp.comp
+      ((continuous_shellDist_pair' r).const_mul (-(1 / τ)))).measurable.mul
+      (hnum.div (continuous_shellDist_pair' r).measurable))
+
+lemma abs_shellZdN_le_one {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ} (hτ : 0 < τ) :
+    |shellZdN n τ r s| ≤ 1 := by
+  rw [shellZdN, abs_mul, abs_of_nonneg (inv_nonneg.mpr (zonalMass_pos hn).le)]
+  haveI : IsFiniteMeasure (volume.restrict (Ioc (-1 : ℝ) 1)) := by
+    constructor
+    rw [Measure.restrict_apply_univ, Real.volume_Ioc]
+    exact ENNReal.ofReal_lt_top
+  have hle_pt : ∀ u ∈ Ioc (-1 : ℝ) 1,
+      |zonalWeight n u * (Real.exp (-(1 / τ) * shellDist r s u) *
+        ((s * u - r) / shellDist r s u))| ≤ zonalWeight n u := by
+    intro u hu
+    have hu2 : u ^ 2 ≤ 1 := sq_le_one_of_mem_Ioc hu
+    rw [abs_mul, abs_mul, abs_of_nonneg (zonalWeight_nonneg hu2)]
+    have hK : |Real.exp (-(1 / τ) * shellDist r s u)| ≤ 1 := by
+      rw [abs_of_pos (Real.exp_pos _)]
+      exact exp_shellDist_le_one hτ r s u
+    have hax : |(s * u - r) / shellDist r s u| ≤ 1 := abs_axialDiv_le_one hu2
+    calc zonalWeight n u * (|Real.exp (-(1 / τ) * shellDist r s u)|
+          * |(s * u - r) / shellDist r s u|)
+        ≤ zonalWeight n u * (1 * 1) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul hK hax (abs_nonneg _) zero_le_one)
+            (zonalWeight_nonneg hu2)
+      _ = zonalWeight n u := by ring
+  have hmeas : Measurable (fun u => zonalWeight n u *
+      (Real.exp (-(1 / τ) * shellDist r s u) *
+        ((s * u - r) / shellDist r s u))) :=
+    ((continuous_zonalWeight hn).measurable).mul
+      (((continuous_shellKernelN' τ r s).measurable).mul
+        ((((continuous_const.mul continuous_id).sub
+          continuous_const).measurable).div
+          (continuous_shellDist_u r s).measurable))
+  have hintegrand : IntegrableOn (fun u => zonalWeight n u *
+      (Real.exp (-(1 / τ) * shellDist r s u) *
+        ((s * u - r) / shellDist r s u))) (Ioc (-1 : ℝ) 1) :=
+    Integrable.mono' (integrableOn_zonalWeight hn) hmeas.aestronglyMeasurable
+      (by
+        filter_upwards [ae_restrict_mem measurableSet_Ioc] with u hu
+        rw [Real.norm_eq_abs]
+        exact hle_pt u hu)
+  have hbound : |∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * (Real.exp (-(1 / τ) * shellDist r s u) *
+          ((s * u - r) / shellDist r s u))| ≤ zonalMass n :=
+    calc |∫ u in Ioc (-1 : ℝ) 1, zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) *
+              ((s * u - r) / shellDist r s u))|
+        ≤ ∫ u in Ioc (-1 : ℝ) 1, |zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) *
+              ((s * u - r) / shellDist r s u))| :=
+          abs_integral_le_integral_abs
+      _ ≤ ∫ u in Ioc (-1 : ℝ) 1, zonalWeight n u :=
+          setIntegral_mono_on hintegrand.abs (integrableOn_zonalWeight hn)
+            measurableSet_Ioc hle_pt
+      _ = zonalMass n := rfl
+  calc (zonalMass n)⁻¹ * |∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u * (Real.exp (-(1 / τ) * shellDist r s u) *
+          ((s * u - r) / shellDist r s u))|
+      ≤ (zonalMass n)⁻¹ * zonalMass n :=
+        mul_le_mul_of_nonneg_left hbound (inv_nonneg.mpr (zonalMass_pos hn).le)
+    _ = 1 := inv_mul_cancel₀ (zonalMass_ne_zero hn)
+
+lemma integrable_shellZdN {n : ℕ} (hn : 3 ≤ n) {τ r : ℝ} (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    Integrable (fun s => shellZdN n τ r s) ν :=
+  Integrable.of_bound (stronglyMeasurable_shellZdN n hn τ r).aestronglyMeasurable 1
+    (ae_of_all _ fun s => by
+      rw [Real.norm_eq_abs]
+      exact abs_shellZdN_le_one hn hτ)
+
+/-! ## The combined per-shell floor -/
+
+/-- **Per-shell RSI (both branches)**: every shell obeys the covariance floor
+`-(n-1)τ Z̄² ≤ Q̄Z̄ - D̄Z̄d`.  Near shells (`s < r`) use the mixture AM–GM
+estimate at the Dirac profile; far shells (`s ≥ r`) use comonotonicity. -/
+theorem shellRSIN {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ}
+    (hτ : 0 < τ) (hr : 0 < r) (hs : 0 ≤ s) :
+    -(((n : ℝ) - 1) * τ) * shellZN n τ r s ^ 2 ≤
+      shellQN n τ r s * shellZN n τ r s -
+        shellDN n τ r s * shellZdN n τ r s := by
+  rcases lt_or_ge s r with hlt | hge
+  · exact shellRSIN_near hn hτ hr hs hlt
+  · have hfar := shellRSIN_far hn hτ hr hge
+    have hc : 0 ≤ ((n : ℝ) - 1) * τ := by
+      have h3 : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+      exact mul_nonneg (by linarith) hτ.le
+    nlinarith [mul_nonneg hc (sq_nonneg (shellZN n τ r s)), hfar]
+
+/-! ## The generic cross-doubling lemma -/
+
+/-- **Cross doubling**: given per-point covariance floors and comonotone
+association on a full carrier, the mixture cross-correlation obeys the same
+floor.  This lifts the per-shell RSI to the `ν`-mixture. -/
+private lemma cross_doubling {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {Q Z D W : ℝ → ℝ} {c : ℝ} {S : Set ℝ} (hScompl : ν Sᶜ = 0)
+    (hZpos : ∀ s ∈ S, 0 < Z s)
+    (hfloor : ∀ s ∈ S, -c * Z s ^ 2 ≤ Q s * Z s - D s * W s)
+    (hassoc : ∀ s ∈ S, ∀ s' ∈ S,
+      0 ≤ (D s * Z s' - D s' * Z s) * (W s * Z s' - W s' * Z s))
+    (hiZ : Integrable Z ν) (hiQ : Integrable Q ν)
+    (hiD : Integrable D ν) (hiW : Integrable W ν) :
+    -c * (∫ s, Z s ∂ν) ^ 2 ≤
+      (∫ s, Q s ∂ν) * (∫ s, Z s ∂ν) - (∫ s, D s ∂ν) * ∫ s, W s ∂ν := by
+  have hpair : ∀ᵐ z ∂(ν.prod ν), z.1 ∈ S ∧ z.2 ∈ S := by
+    rw [ae_iff]
+    have hsub : {z : ℝ × ℝ | ¬(z.1 ∈ S ∧ z.2 ∈ S)}
+        ⊆ (Sᶜ ×ˢ (univ : Set ℝ)) ∪ ((univ : Set ℝ) ×ˢ Sᶜ) := by
+      intro z hz
+      rw [mem_setOf_eq, not_and] at hz
+      by_cases h1 : z.1 ∈ S
+      · exact Or.inr ⟨mem_univ _, hz h1⟩
+      · exact Or.inl ⟨h1, mem_univ _⟩
+    refine measure_mono_null hsub (measure_union_null ?_ ?_)
+    · rw [Measure.prod_prod, hScompl, zero_mul]
+    · rw [Measure.prod_prod, hScompl, mul_zero]
+  -- the pointwise doubled inequality, in tensor-friendly ordering
+  have hpt : ∀ᵐ z ∂(ν.prod ν),
+      -(2 * c) * (Z z.1 * Z z.2) ≤
+        (Q z.1 * Z z.2 + Z z.1 * Q z.2) - (D z.1 * W z.2 + W z.1 * D z.2) := by
+    filter_upwards [hpair] with z hz
+    have h := shell_pair_bracket (hZpos z.1 hz.1) (hZpos z.2 hz.2)
+      (hfloor z.1 hz.1) (hfloor z.2 hz.2) (hassoc z.1 hz.1 z.2 hz.2)
+    linarith [h, mul_comm (Q z.2) (Z z.1), mul_comm (D z.2) (W z.1)]
+  -- integrability of both sides over the product
+  have hiQZ : Integrable (fun z : ℝ × ℝ => Q z.1 * Z z.2) (ν.prod ν) :=
+    hiQ.mul_prod hiZ
+  have hiZQ : Integrable (fun z : ℝ × ℝ => Z z.1 * Q z.2) (ν.prod ν) :=
+    hiZ.mul_prod hiQ
+  have hiDW : Integrable (fun z : ℝ × ℝ => D z.1 * W z.2) (ν.prod ν) :=
+    hiD.mul_prod hiW
+  have hiWD : Integrable (fun z : ℝ × ℝ => W z.1 * D z.2) (ν.prod ν) :=
+    hiW.mul_prod hiD
+  have hiL : Integrable (fun z : ℝ × ℝ => -(2 * c) * (Z z.1 * Z z.2))
+      (ν.prod ν) := (hiZ.mul_prod hiZ).const_mul _
+  have hiR : Integrable
+      (fun z : ℝ × ℝ =>
+        (Q z.1 * Z z.2 + Z z.1 * Q z.2) - (D z.1 * W z.2 + W z.1 * D z.2))
+      (ν.prod ν) := (hiQZ.add hiZQ).sub (hiDW.add hiWD)
+  have hmono := integral_mono_ae hiL hiR hpt
+  -- evaluate both integrals
+  have hL : (∫ z : ℝ × ℝ, -(2 * c) * (Z z.1 * Z z.2) ∂(ν.prod ν))
+      = -(2 * c) * ((∫ s, Z s ∂ν) * ∫ s, Z s ∂ν) := by
+    rw [integral_const_mul]
+    congr 1
+    exact integral_prod_mul (fun x => Z x) (fun y => Z y)
+  have hR1 : (∫ z : ℝ × ℝ, Q z.1 * Z z.2 ∂(ν.prod ν))
+      = (∫ s, Q s ∂ν) * ∫ s, Z s ∂ν :=
+    integral_prod_mul (fun x => Q x) (fun y => Z y)
+  have hR2 : (∫ z : ℝ × ℝ, Z z.1 * Q z.2 ∂(ν.prod ν))
+      = (∫ s, Z s ∂ν) * ∫ s, Q s ∂ν :=
+    integral_prod_mul (fun x => Z x) (fun y => Q y)
+  have hR3 : (∫ z : ℝ × ℝ, D z.1 * W z.2 ∂(ν.prod ν))
+      = (∫ s, D s ∂ν) * ∫ s, W s ∂ν :=
+    integral_prod_mul (fun x => D x) (fun y => W y)
+  have hR4 : (∫ z : ℝ × ℝ, W z.1 * D z.2 ∂(ν.prod ν))
+      = (∫ s, W s ∂ν) * ∫ s, D s ∂ν :=
+    integral_prod_mul (fun x => W x) (fun y => D y)
+  have hsub : (∫ z : ℝ × ℝ,
+        (Q z.1 * Z z.2 + Z z.1 * Q z.2)
+          - (D z.1 * W z.2 + W z.1 * D z.2) ∂(ν.prod ν))
+      = (∫ z : ℝ × ℝ, Q z.1 * Z z.2 + Z z.1 * Q z.2 ∂(ν.prod ν))
+        - ∫ z : ℝ × ℝ, D z.1 * W z.2 + W z.1 * D z.2 ∂(ν.prod ν) :=
+    integral_sub (hiQZ.add hiZQ) (hiDW.add hiWD)
+  have hadd1 : (∫ z : ℝ × ℝ, Q z.1 * Z z.2 + Z z.1 * Q z.2 ∂(ν.prod ν))
+      = (∫ z : ℝ × ℝ, Q z.1 * Z z.2 ∂(ν.prod ν))
+        + ∫ z : ℝ × ℝ, Z z.1 * Q z.2 ∂(ν.prod ν) :=
+    integral_add hiQZ hiZQ
+  have hadd2 : (∫ z : ℝ × ℝ, D z.1 * W z.2 + W z.1 * D z.2 ∂(ν.prod ν))
+      = (∫ z : ℝ × ℝ, D z.1 * W z.2 ∂(ν.prod ν))
+        + ∫ z : ℝ × ℝ, W z.1 * D z.2 ∂(ν.prod ν) :=
+    integral_add hiDW hiWD
+  rw [hL, hsub, hadd1, hadd2, hR1, hR2, hR3, hR4] at hmono
+  have hsq : (∫ s, Z s ∂ν) ^ 2 = (∫ s, Z s ∂ν) * ∫ s, Z s ∂ν := pow_two _
+  linarith [hmono, hsq,
+    mul_comm (∫ s, Z s ∂ν) (∫ s, Q s ∂ν),
+    mul_comm (∫ s, W s ∂ν) (∫ s, D s ∂ν)]
+
+/-! ## The headline reduction -/
+
+/-- **G2 reduction**: the measure-free `ZonalShellAssociation` implies the
+per-measure `RadialSlackN` for every admissible radial profile.  After this,
+the `RadialSlackN` hypothesis in the G1 headline is replaced by one fixed
+kernel-geometry inequality (numerically verified; see `numerics/rn_g2.py`). -/
+theorem radialSlackN_of_zonalShellAssociation {n : ℕ} (hn : 3 ≤ n) {τ : ℝ}
+    (hτ : 0 < τ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsupp : ν (Iio 0) = 0) (hassoc : ZonalShellAssociation n τ) :
+    RadialSlackN n (by omega) τ ν := by
+  intro r hr _
+  have hScompl : ν (Ici (0 : ℝ))ᶜ = 0 := by
+    rw [compl_Ici]; exact hsupp
+  have hmem : ∀ s ∈ Ici (0 : ℝ), (0 : ℝ) ≤ s := fun s hs => hs
+  have hfloor := cross_doubling (ν := ν) (c := ((n : ℝ) - 1) * τ)
+    (S := Ici (0 : ℝ)) hScompl
+    (fun s hs => shellZN_pos hn τ hτ r s)
+    (fun s hs => shellRSIN hn hτ hr (hmem s hs))
+    (fun s hs s' hs' => hassoc r hr s s' (hmem s hs) (hmem s' hs'))
+    (integrable_shellZN hn hτ ν) (integrable_shellQN hn hτ ν)
+    (integrable_shellDN hn hτ ν) (integrable_shellZdN hn hτ ν)
+  -- identify the mixture ray objects
+  rw [show (∫ s, shellZN n τ r s ∂ν) = radialRayZN n τ ν r from rfl,
+    show (∫ s, shellQN n τ r s ∂ν) = radialRayQN n τ ν r from rfl,
+    show (∫ s, shellDN n τ r s ∂ν) = radialRayDN n τ ν r from rfl,
+    ← radialRayZdN_eq_integral_shellZdN hn hτ ν hsupp hr] at hfloor
+  -- feed the closure identity
+  have hcov := radialRayMDerivN_cov hn τ hτ ν r
+  have hZpos : 0 < radialRayZN n τ ν r := radialRayZN_pos hn τ hτ ν r
+  have hZsq : 0 < radialRayZN n τ ν r ^ 2 := by positivity
+  have hkey : -(((n : ℝ) - 1) * τ) * radialRayZN n τ ν r ^ 2 ≤
+      τ * (radialRayMDerivN n (by omega) τ ν r + 1) *
+        radialRayZN n τ ν r ^ 2 := by
+    rw [hcov]
+    exact hfloor
+  have hstep : -(((n : ℝ) - 1)) ≤ radialRayMDerivN n (by omega) τ ν r + 1 := by
+    have hτZ : 0 < τ * radialRayZN n τ ν r ^ 2 := mul_pos hτ hZsq
+    nlinarith [hkey, hτZ]
+  linarith [hstep]
+
 end DriftingIdentifiability
