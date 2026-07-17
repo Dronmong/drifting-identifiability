@@ -350,4 +350,322 @@ theorem hasDerivAt_radialRayZ₂ (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
       (integrable_softsign_rayProbe₂ τ hτ _ r), integral_const_mul]
   exact hval ▸ key.2
 
+/-! ## The `X²/d` bound and payload derivatives -/
+
+lemma first_sq_div_rayProbe₂_le (r : ℝ) (y : EuclideanSpace ℝ (Fin 2)) :
+    (y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖ ≤ ‖rayProbe₂ r - y‖ := by
+  rcases eq_or_ne (‖rayProbe₂ r - y‖) 0 with h0 | hne
+  · rw [h0, div_zero]
+  · have hpos : 0 < ‖rayProbe₂ r - y‖ := (norm_nonneg _).lt_of_ne' hne
+    rw [div_le_iff₀ hpos]
+    have h := abs_first_sub_le_norm_rayProbe₂ r y
+    nlinarith [mul_self_le_mul_self (abs_nonneg (y 0 - r)) h, sq_abs (y 0 - r)]
+
+/-- The core `K·d ≤ τe⁻¹` bound along the ray. -/
+lemma laplaceKernel_rayProbe₂_mul_norm_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 2)) :
+    laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖ ≤ τ * Real.exp (-1) := by
+  rw [laplaceKernel, mul_comm]
+  have he : -(1 / τ) * ‖rayProbe₂ r - y‖ = -‖rayProbe₂ r - y‖ / τ := by ring
+  rw [he]
+  exact mul_exp_neg_div_le hτ (norm_nonneg _)
+
+lemma abs_kernel_mul_first_sq_div_rayProbe₂_le (τ : ℝ) (hτ : 0 < τ) (r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 2)) :
+    |laplaceKernel τ (rayProbe₂ r) y *
+      ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)| ≤ τ * Real.exp (-1) := by
+  have hKnn : 0 ≤ laplaceKernel τ (rayProbe₂ r) y :=
+    laplaceKernel_rayProbe₂_nonneg τ r y
+  have hpnn : 0 ≤ (y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖ :=
+    div_nonneg (sq_nonneg _) (norm_nonneg _)
+  rw [abs_of_nonneg (mul_nonneg hKnn hpnn)]
+  have hle : laplaceKernel τ (rayProbe₂ r) y *
+        ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)
+      ≤ laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖ :=
+    mul_le_mul_of_nonneg_left (first_sq_div_rayProbe₂_le r y) hKnn
+  exact hle.trans (laplaceKernel_rayProbe₂_mul_norm_le τ hτ r y)
+
+/-- Pointwise derivative of the axial weighted-displacement integrand. -/
+lemma hasDerivAt_laplaceKernel_mul_first_rayProbe₂ {τ r : ℝ}
+    {y : EuclideanSpace ℝ (Fin 2)} (hne : ‖rayProbe₂ r - y‖ ≠ 0) :
+    HasDerivAt (fun x => laplaceKernel τ (rayProbe₂ x) y * (y 0 - x))
+      ((1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) -
+        laplaceKernel τ (rayProbe₂ r) y) r := by
+  have hk := hasDerivAt_laplaceKernel_rayProbe₂ (τ := τ) hne
+  have hlin : HasDerivAt (fun x : ℝ => y 0 - x) (-1) r := by
+    simpa using (hasDerivAt_id r).const_sub (y 0)
+  have hprod := hk.mul hlin
+  have hval :
+      (1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) / ‖rayProbe₂ r - y‖)) * (y 0 - r) +
+        laplaceKernel τ (rayProbe₂ r) y * (-1)
+      = (1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) -
+        laplaceKernel τ (rayProbe₂ r) y := by
+    rw [div_eq_mul_inv, div_eq_mul_inv]
+    ring
+  rw [hval] at hprod
+  exact hprod
+
+/-- Pointwise derivative of the companion kernel along the ray. -/
+lemma hasDerivAt_laplaceCompanionKernel_rayProbe₂ {τ r : ℝ}
+    {y : EuclideanSpace ℝ (Fin 2)} (hτ : 0 < τ)
+    (hne : ‖rayProbe₂ r - y‖ ≠ 0) :
+    HasDerivAt (fun x => laplaceCompanionKernel τ (rayProbe₂ x) y)
+      ((1 / τ) * (laplaceKernel τ (rayProbe₂ r) y * (y 0 - r))) r := by
+  have hd := hasDerivAt_norm_rayProbe₂_sub hne
+  have hk := hasDerivAt_laplaceKernel_rayProbe₂ (τ := τ) hne
+  have hprod := (hd.const_add τ).mul hk
+  have hval :
+      (r - y 0) / ‖rayProbe₂ r - y‖ * laplaceKernel τ (rayProbe₂ r) y +
+        (τ + ‖rayProbe₂ r - y‖) *
+          ((1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+            ((y 0 - r) / ‖rayProbe₂ r - y‖)))
+      = (1 / τ) * (laplaceKernel τ (rayProbe₂ r) y * (y 0 - r)) := by
+    field_simp [hne, hτ.ne']
+    ring
+  rw [hval] at hprod
+  simp only [laplaceCompanionKernel]
+  exact hprod
+
+/-! ## `Q` and companion collapses -/
+
+lemma radialRayQ₂_eq_integral (τ : ℝ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (r : ℝ)
+    (hf : Integrable (fun y => laplaceKernel τ (rayProbe₂ r) y *
+      ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) (radialMixture₂ ν)) :
+    radialRayQ₂ τ ν r
+      = ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖) ∂(radialMixture₂ ν) := by
+  rw [radialRayQ₂, integral_radialMixture₂_eq ν hf]
+  refine integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))
+  rw [shellQ₂]
+  congr 1
+  refine setIntegral_congr_fun measurableSet_Ioc (fun φ _ => ?_)
+  have hc : (s • circleChart φ) 0 = s * Real.cos φ := by
+    rw [PiLp.smul_apply, circleChart_apply_zero, smul_eq_mul]
+  have hnorm : ‖rayProbe₂ r - s • circleChart φ‖ = shellDist r s (Real.cos φ) :=
+    norm_rayProbe₂_sub_smul_circleChart r s φ
+  rw [laplaceKernel_rayProbe₂_chart, hc, hnorm]
+
+lemma radialRayC₂_eq_integral (τ : ℝ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (r : ℝ)
+    (hf : Integrable (fun y => laplaceCompanionKernel τ (rayProbe₂ r) y)
+      (radialMixture₂ ν)) :
+    radialRayC₂ τ ν r
+      = ∫ y, laplaceCompanionKernel τ (rayProbe₂ r) y ∂(radialMixture₂ ν) := by
+  rw [radialRayC₂, integral_radialMixture₂_eq ν hf]
+  refine integral_congr_ae (Filter.Eventually.of_forall (fun s => ?_))
+  rw [shellC₂]
+  congr 1
+  refine setIntegral_congr_fun measurableSet_Ioc (fun φ _ => ?_)
+  rw [laplaceCompanionKernel, norm_rayProbe₂_sub_smul_circleChart,
+    laplaceKernel_rayProbe₂_chart]
+
+/-! ## Integrability of the axial and companion payloads -/
+
+lemma integrable_axial_rayProbe₂ (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 2))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceKernel τ (rayProbe₂ r) y * (y 0 - r)) μ := by
+  refine ⟨?_, HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+    (ae_of_all _ fun y => ?_)⟩
+  · have hcoord : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => y 0 - r) := by fun_prop
+    exact (((continuous_laplaceKernel_rayProbe₂ τ r).measurable).mul
+      hcoord).aestronglyMeasurable
+  · rw [Real.norm_eq_abs, abs_mul,
+      abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ r y)]
+    have hXd : |y 0 - r| ≤ ‖rayProbe₂ r - y‖ := abs_first_sub_le_norm_rayProbe₂ r y
+    calc laplaceKernel τ (rayProbe₂ r) y * |y 0 - r|
+        ≤ laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖ :=
+          mul_le_mul_of_nonneg_left hXd (laplaceKernel_rayProbe₂_nonneg τ r y)
+      _ ≤ τ * Real.exp (-1) := laplaceKernel_rayProbe₂_mul_norm_le τ hτ r y
+
+lemma integrable_companion_rayProbe₂ (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 2))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceCompanionKernel τ (rayProbe₂ r) y) μ := by
+  have hcont : Continuous (fun y : EuclideanSpace ℝ (Fin 2) =>
+      laplaceCompanionKernel τ (rayProbe₂ r) y) := by
+    simp only [laplaceCompanionKernel]
+    exact ((continuous_const.add
+      (continuous_const.sub continuous_id).norm).mul
+      (continuous_laplaceKernel_rayProbe₂ τ r))
+  refine ⟨hcont.aestronglyMeasurable,
+    HasFiniteIntegral.of_bounded (C := τ + τ * Real.exp (-1))
+      (ae_of_all _ fun y => ?_)⟩
+  rw [Real.norm_eq_abs, laplaceCompanionKernel]
+  have hKnn : 0 ≤ laplaceKernel τ (rayProbe₂ r) y :=
+    laplaceKernel_rayProbe₂_nonneg τ r y
+  have hnn : 0 ≤ (τ + ‖rayProbe₂ r - y‖) * laplaceKernel τ (rayProbe₂ r) y :=
+    mul_nonneg (by positivity) hKnn
+  rw [abs_of_nonneg hnn, add_mul]
+  have h1 : τ * laplaceKernel τ (rayProbe₂ r) y ≤ τ := by
+    nlinarith [laplaceKernel_rayProbe₂_le_one τ hτ r y, hτ.le]
+  have h2 : ‖rayProbe₂ r - y‖ * laplaceKernel τ (rayProbe₂ r) y
+      ≤ τ * Real.exp (-1) := by
+    rw [mul_comm]
+    exact laplaceKernel_rayProbe₂_mul_norm_le τ hτ r y
+  linarith
+
+lemma integrable_Q_payload_rayProbe₂ (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 2))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceKernel τ (rayProbe₂ r) y *
+      ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) μ := by
+  refine ⟨?_, HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+    (ae_of_all _ fun y => ?_)⟩
+  · have hcoord : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => (y 0 - r) ^ 2) := by fun_prop
+    have hnorm : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => ‖rayProbe₂ r - y‖) := by fun_prop
+    exact (((continuous_laplaceKernel_rayProbe₂ τ r).measurable).mul
+      (hcoord.div hnorm)).aestronglyMeasurable
+  · rw [Real.norm_eq_abs]
+    exact abs_kernel_mul_first_sq_div_rayProbe₂_le τ hτ r y
+
+/-! ## The first derivatives `D̃₂'` and `C̃₂'` -/
+
+theorem hasDerivAt_radialRayD₂ (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayD₂ τ ν)
+      ((1 / τ) * radialRayQ₂ τ ν r - radialRayZ₂ τ ν r) r := by
+  have hfe : radialRayD₂ τ ν = fun x =>
+      ∫ y, laplaceKernel τ (rayProbe₂ x) y * (y 0 - x) ∂(radialMixture₂ ν) := by
+    funext x
+    exact radialRayD₂_eq_integral τ ν x (integrable_axial_rayProbe₂ τ hτ _ x)
+  have hmeasF' : AEStronglyMeasurable
+      (fun y : EuclideanSpace ℝ (Fin 2) =>
+        (1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) -
+        laplaceKernel τ (rayProbe₂ r) y) (radialMixture₂ ν) := by
+    have hcoord : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => (y 0 - r) ^ 2) := by fun_prop
+    have hnorm : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => ‖rayProbe₂ r - y‖) := by fun_prop
+    exact ((((continuous_laplaceKernel_rayProbe₂ τ r).measurable).mul
+      (hcoord.div hnorm)).const_mul _).sub
+      (continuous_laplaceKernel_rayProbe₂ τ r).measurable
+      |>.aestronglyMeasurable
+  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (μ := radialMixture₂ ν) (x₀ := r)
+    (F := fun x (y : EuclideanSpace ℝ (Fin 2)) =>
+      laplaceKernel τ (rayProbe₂ x) y * (y 0 - x))
+    (F' := fun x (y : EuclideanSpace ℝ (Fin 2)) =>
+      (1 / τ) * (laplaceKernel τ (rayProbe₂ x) y *
+        ((y 0 - x) ^ 2 / ‖rayProbe₂ x - y‖)) -
+      laplaceKernel τ (rayProbe₂ x) y)
+    (bound := fun _ => Real.exp (-1) + 1)
+    (Ioi_mem_nhds hr)
+    (Filter.Eventually.of_forall fun x =>
+      ((continuous_laplaceKernel_rayProbe₂ τ x).mul
+        (by fun_prop)).aestronglyMeasurable)
+    (integrable_axial_rayProbe₂ τ hτ _ r)
+    hmeasF'
+    (ae_of_all _ fun y => by
+      intro x _
+      rw [Real.norm_eq_abs]
+      have hA : |(1 / τ) * (laplaceKernel τ (rayProbe₂ x) y *
+            ((y 0 - x) ^ 2 / ‖rayProbe₂ x - y‖))| ≤ Real.exp (-1) := by
+        rw [abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / τ)]
+        have hb := abs_kernel_mul_first_sq_div_rayProbe₂_le τ hτ x y
+        calc 1 / τ * |laplaceKernel τ (rayProbe₂ x) y *
+              ((y 0 - x) ^ 2 / ‖rayProbe₂ x - y‖)|
+            ≤ 1 / τ * (τ * Real.exp (-1)) :=
+              mul_le_mul_of_nonneg_left hb (by positivity)
+          _ = Real.exp (-1) := by field_simp
+      have hB : |laplaceKernel τ (rayProbe₂ x) y| ≤ 1 := by
+        rw [abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ x y)]
+        exact laplaceKernel_rayProbe₂_le_one τ hτ x y
+      calc |(1 / τ) * (laplaceKernel τ (rayProbe₂ x) y *
+              ((y 0 - x) ^ 2 / ‖rayProbe₂ x - y‖)) -
+            laplaceKernel τ (rayProbe₂ x) y|
+          ≤ |(1 / τ) * (laplaceKernel τ (rayProbe₂ x) y *
+              ((y 0 - x) ^ 2 / ‖rayProbe₂ x - y‖))| +
+            |laplaceKernel τ (rayProbe₂ x) y| := abs_sub _ _
+        _ ≤ Real.exp (-1) + 1 := add_le_add hA hB)
+    (integrable_const _)
+    (by
+      filter_upwards [radialMixture₂_ae_probe_ne ν] with y hy
+      intro x hx
+      exact hasDerivAt_laplaceKernel_mul_first_rayProbe₂ (hy x hx))
+  rw [hfe]
+  have hiQ : Integrable (fun y => laplaceKernel τ (rayProbe₂ r) y *
+      ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) (radialMixture₂ ν) :=
+    integrable_Q_payload_rayProbe₂ τ hτ _ r
+  have hval : (∫ y, ((1 / τ) * (laplaceKernel τ (rayProbe₂ r) y *
+        ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖)) -
+      laplaceKernel τ (rayProbe₂ r) y) ∂(radialMixture₂ ν))
+      = (1 / τ) * radialRayQ₂ τ ν r - radialRayZ₂ τ ν r := by
+    rw [integral_sub (hiQ.const_mul (1 / τ))
+      (integrable_laplaceKernel_rayProbe₂ τ hτ _ r), integral_const_mul,
+      ← radialRayQ₂_eq_integral τ ν r hiQ, ← radialRayZ₂_eq_integral τ hτ ν r]
+  exact hval ▸ key.2
+
+/-- The companion-normalizer derivative `C̃₂' = (1/τ) D̃₂`. -/
+theorem hasDerivAt_radialRayC₂ (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] {r : ℝ} (hr : 0 < r) :
+    HasDerivAt (radialRayC₂ τ ν) ((1 / τ) * radialRayD₂ τ ν r) r := by
+  have hfe : radialRayC₂ τ ν = fun x =>
+      ∫ y, laplaceCompanionKernel τ (rayProbe₂ x) y ∂(radialMixture₂ ν) := by
+    funext x
+    exact radialRayC₂_eq_integral τ ν x (integrable_companion_rayProbe₂ τ hτ _ x)
+  have hmeasF' : AEStronglyMeasurable
+      (fun y : EuclideanSpace ℝ (Fin 2) =>
+        (1 / τ) * (laplaceKernel τ (rayProbe₂ r) y * (y 0 - r)))
+      (radialMixture₂ ν) := by
+    have hcoord : Measurable
+        (fun y : EuclideanSpace ℝ (Fin 2) => y 0 - r) := by fun_prop
+    exact ((((continuous_laplaceKernel_rayProbe₂ τ r).measurable).mul
+      hcoord).const_mul _).aestronglyMeasurable
+  have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (μ := radialMixture₂ ν) (x₀ := r)
+    (F := fun x (y : EuclideanSpace ℝ (Fin 2)) =>
+      laplaceCompanionKernel τ (rayProbe₂ x) y)
+    (F' := fun x (y : EuclideanSpace ℝ (Fin 2)) =>
+      (1 / τ) * (laplaceKernel τ (rayProbe₂ x) y * (y 0 - x)))
+    (bound := fun _ => Real.exp (-1))
+    (Ioi_mem_nhds hr)
+    (Filter.Eventually.of_forall fun x => by
+      have hc : Continuous (fun y : EuclideanSpace ℝ (Fin 2) =>
+          laplaceCompanionKernel τ (rayProbe₂ x) y) := by
+        simp only [laplaceCompanionKernel]
+        exact (continuous_const.add
+          (continuous_const.sub continuous_id).norm).mul
+          (continuous_laplaceKernel_rayProbe₂ τ x)
+      exact hc.aestronglyMeasurable)
+    (integrable_companion_rayProbe₂ τ hτ _ r)
+    hmeasF'
+    (ae_of_all _ fun y => by
+      intro x _
+      rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg
+        (by positivity : (0 : ℝ) ≤ 1 / τ)]
+      have hb := abs_kernel_mul_first_sq_div_rayProbe₂_le τ hτ x y
+      have hXd : |laplaceKernel τ (rayProbe₂ x) y * (y 0 - x)|
+          ≤ τ * Real.exp (-1) := by
+        rw [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ x y)]
+        have hXle : |y 0 - x| ≤ ‖rayProbe₂ x - y‖ :=
+          abs_first_sub_le_norm_rayProbe₂ x y
+        calc laplaceKernel τ (rayProbe₂ x) y * |y 0 - x|
+            ≤ laplaceKernel τ (rayProbe₂ x) y * ‖rayProbe₂ x - y‖ :=
+              mul_le_mul_of_nonneg_left hXle
+                (laplaceKernel_rayProbe₂_nonneg τ x y)
+          _ ≤ τ * Real.exp (-1) :=
+              laplaceKernel_rayProbe₂_mul_norm_le τ hτ x y
+      calc 1 / τ * |laplaceKernel τ (rayProbe₂ x) y * (y 0 - x)|
+          ≤ 1 / τ * (τ * Real.exp (-1)) :=
+            mul_le_mul_of_nonneg_left hXd (by positivity)
+        _ = Real.exp (-1) := by field_simp)
+    (integrable_const _)
+    (by
+      filter_upwards [radialMixture₂_ae_probe_ne ν] with y hy
+      intro x hx
+      exact hasDerivAt_laplaceCompanionKernel_rayProbe₂ hτ (hy x hx))
+  rw [hfe]
+  have hval : (∫ y, (1 / τ) *
+      (laplaceKernel τ (rayProbe₂ r) y * (y 0 - r)) ∂(radialMixture₂ ν))
+      = (1 / τ) * radialRayD₂ τ ν r := by
+    rw [radialRayD₂_eq_integral τ ν r (integrable_axial_rayProbe₂ τ hτ _ r),
+      integral_const_mul]
+  exact hval ▸ key.2
+
 end DriftingIdentifiability
