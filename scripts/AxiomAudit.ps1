@@ -219,6 +219,8 @@ $declarations = @(
   'DriftingIdentifiability.shellRSIN',
   'DriftingIdentifiability.shellRSIN_far',
   'DriftingIdentifiability.radialSlackN_of_zonalShellAssociation',
+  'DriftingIdentifiability.kernelNormalizer_radialMixture₂',
+  'DriftingIdentifiability.shellRhoSqOverDist₂_eq_shellT₂',
   'DriftingIdentifiability.lowerExpMass_rightContinuous',
   'DriftingIdentifiability.upperExpMass_rightContinuous',
   'DriftingIdentifiability.laplaceKernelNormalizerRightDerivCoeff_measurable',

@@ -382,14 +382,38 @@ F-B/F-C mean the proof must be shell-integrated; RsiScan 40× margin.
 
 ### G3 — `n = 2` radial *(after G1)*
 
-Shell-through-probe integrals are log-divergent ⟹ `m̃'` exists only as an
-integrable a.e.-derivative at shell radii.  The 1-d file already runs its
-propagation in exactly this regime (right-derivatives, FTC form, càdlàg
-coefficient layer) — port the G1 skeleton with the 1-d one-sided toolkit.
-Also `(1−u²)^{(n−3)/2}` is singular at `u = ±1` for n = 2 (integrable);
-the (T) IBP boundary terms still vanish (verified in §4.9(R2) for n = 2).
-Estimate: 2–3 sessions.  Not load-bearing for G4 (F-E's degenerate cores in
-`ℝ²` are 1-parameter tubes; but general-n statement wants it eventually).
+**FOUNDATION LANDED 2026-07-17 (`LaplaceRadialShell2.lean`, builds green, no
+sorries, fully axiom-clean — only the 3 foundations, NO sphere axiom).**  Key
+design decision that de-risks the whole `n = 2` case: the `u = cos θ`
+parametrization of `ShellN` gives the *singular* arcsine weight
+`(1−u²)^{−1/2}` at `n = 2`, breaking every boundedness lemma.  Instead
+parametrize the circle `S¹ ⊂ ℝ²` directly by its **angle** `φ`, whose Haar
+measure is *uniform* — so every per-shell object is a clean bounded
+`φ`-integral with no singular weight, built as an explicit chart pushforward
+(`radialMixture₂ ν := (ν ⊗ chartBase₂).map chartMap₂`, `chartBase₂` uniform on
+`[−π,π]`) exactly like the `n = 3` L5 file `Shell3` — which is also why NO
+sphere-measure axiom is needed.  Delivered: `circleChart`, `rayProbe₂`, the
+probe-distance identity `‖r•e₁ − s•circleChart φ‖ = shellDist r s (cos φ)`
+(reusing `shellDist`/its helpers from the `n ≥ 3` layer at `u = cos φ`), the
+measure + integral collapse, the per-shell objects
+`shellZ₂/shellT₂/shellD₂/shellRhoSqOverDist₂`, the normalizer bridge
+`kernelNormalizer_radialMixture₂ = ∫ shellZ₂ dν`, and **the `n = 2` tangential
+identity (T) `shellRhoSqOverDist₂ = (τ/r)·shellT₂`** via a single `φ`-IBP
+against the primitive `−(τ/r)·s·sin φ` (boundary vanishes at `φ = ±π` since
+`sin(±π) = 0`), off-collision then extended across `s = r` by `s`-continuity
+(same `𝓝[≠] r`-gluing as L5).  This is (n−1)=1 of the general (T).
+
+REMAINING (the genuinely `n = 2`-specific work, next increments): the ray
+differentiation layer runs into the **log-divergence** of `Z̃d'`
+(`∂_φ(X/d) ∼ 1/|sin(φ/2)|` at collision, uncompensated for `n = 2` — the extra
+`sin^{n−2}` weight that saves `n ≥ 3` is absent).  So `m̃'` exists only as an
+integrable a.e.-derivative at shell radii and the propagation must use the
+1-d file's one-sided/FTC/càdlàg layer (right-derivatives, FTC-form Abel
+propagation) rather than the classical two-sided `SystemN`/`ConverseN` stack.
+Port the G1 skeleton with that toolkit, then the endgame + headline
+`laplaceZeroDrift_identifies_of_radialMixture₂`.  Estimate for the remaining
+work: 2–3 sessions.  Not load-bearing for G4 (F-E's degenerate cores in `ℝ²`
+are 1-parameter tubes; but the general-`n` statement wants it eventually).
 
 ### G4 — the general endgame *(paper-first, start now in parallel)*
 
