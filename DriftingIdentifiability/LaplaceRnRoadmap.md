@@ -403,17 +403,98 @@ against the primitive `−(τ/r)·s·sin φ` (boundary vanishes at `φ = ±π` s
 `sin(±π) = 0`), off-collision then extended across `s = r` by `s`-continuity
 (same `𝓝[≠] r`-gluing as L5).  This is (n−1)=1 of the general (T).
 
-REMAINING (the genuinely `n = 2`-specific work, next increments): the ray
-differentiation layer runs into the **log-divergence** of `Z̃d'`
-(`∂_φ(X/d) ∼ 1/|sin(φ/2)|` at collision, uncompensated for `n = 2` — the extra
-`sin^{n−2}` weight that saves `n ≥ 3` is absent).  So `m̃'` exists only as an
-integrable a.e.-derivative at shell radii and the propagation must use the
-1-d file's one-sided/FTC/càdlàg layer (right-derivatives, FTC-form Abel
-propagation) rather than the classical two-sided `SystemN`/`ConverseN` stack.
-Port the G1 skeleton with that toolkit, then the endgame + headline
-`laplaceZeroDrift_identifies_of_radialMixture₂`.  Estimate for the remaining
-work: 2–3 sessions.  Not load-bearing for G4 (F-E's degenerate cores in `ℝ²`
-are 1-parameter tubes; but the general-`n` statement wants it eventually).
+#### G3 implementation research pass (2026-07-17): the log-divergence does NOT block `n = 2`
+
+**Headline finding (corrects the earlier note below): the whole radial program
+is FIRST-ORDER, so the `n = 2` log-divergence never enters and the feared
+one-sided/FTC/càdlàg layer is NOT needed.**  Audit of the committed `n ≥ 3`
+stack establishes:
+
+1. **Only first-order `r`-derivatives are ever taken.**  The complete list of
+   `HasDerivAt` lemmas across `DifferentiationN`/`SystemN`/`ConverseN` is:
+   `hasDerivAt_radialRayZN` (`Z̃'`), `…CN` (`C̃'`), `…DN`/`…DN_shell` (`D̃'`),
+   `hasDerivAt_radialRayMN` (`m̃'`, a *quotient* `D̃/Z̃`), and
+   `hasDerivAt_radialRayKhatN`/`…_abel` (`K̂'`).  There is **no**
+   `hasDerivAt_radialRayZdN`, no `…QN`, and no second derivative anywhere
+   (`grep` confirms).  The `(T)` identity is exactly what replaces the
+   Laplacian/`C²` layer, keeping everything first-order.
+2. **Every first-order dominator is CONSTANT — no `1/d`.**  `Z̃'`:
+   `∂_r K = (1/τ)(X/d)K`, dominated by `1/τ` (`hasDerivAt_radialRayZN`, bound
+   `1/τ`).  `D̃'`: `∂_r(XK) = −K + (1/τ)(X²/d)K`, dominated by `exp(−1)+1`
+   (`hasDerivAt_radialRayDN`, bound `Real.exp(-1)+1`) — because `X²/d ≤ d` and
+   `d·e^{−d/τ} ≤ τ e⁻¹`.  Soft-sign / `m̃'`-continuity: dominated by `1`
+   (`continuousAt_radialRayZdN`, bound `1`) — because `|X/d| ≤ 1`.  The only
+   kernel ratios that appear are `|X/d| ≤ 1` and `X²/d ≤ d`, **both bounded in
+   every dimension**; no `1/d` factor occurs at first order.
+3. **The `1/d` log-divergence lives strictly in `Z̃''`** (second derivative:
+   `∂_r(X/d) = −ρ²/d³`, `∼ 1/|sin(φ/2)|` at collision for `n = 2`).  `Z̃''` is
+   **never computed** by the first-order program, so the divergence is inert.
+   (The earlier claim that it forces an FTC layer was written before auditing
+   the dominators; it is retracted.)
+4. **Differentiation is done at the MIXTURE level over `EuclideanSpace`**
+   (`hasDerivAt_integral_of_dominated_loc_of_deriv_le` against
+   `radialMixtureN`), never per-shell — so it never touches the singular
+   arcsine weight, and ports to `radialMixture₂` measure-generically.
+5. **`m̃'`-continuity for the propagation is bounded-DCT** (`continuousAt_of_
+   dominated`, bound `1`, using `radialMixtureN_ae_probe_ne` for the a.e.-`y`
+   pointwise limit) — dimension-generic; the probe is a measure-null point in
+   `ℝ²` too.
+
+**Recommended path — a parallel first-order `n = 2` stack on the angle chart
+(low risk, no new mathematics).**  Mirror the four `n ≥ 3` files with
+`radialMixtureN n → radialMixture₂`, `Fin n → Fin 2`, constants `3 ↦ 2`,
+reusing every abstract layer:
+
+- **`Shell2` ✅ done** — per-shell objects + `(T)` (`shellRhoSqOverDist₂ =
+  (τ/r)shellT₂`, the `(n−1)=1` case).
+- **`Ray2`/`Differentiation2`** — define `radialRayZ₂/D₂/Q₂/Zd₂/C₂` and port
+  `hasDerivAt_radialRayZ₂/C₂/D₂` by dominated differentiation over
+  `radialMixture₂` (near-copies of the `…N` proofs; the geometry lemmas
+  `‖r•e₁ − s•circleChart φ‖ = shellDist r s (cos φ)`, `|X/d| ≤ 1`, `X²/d ≤ d`
+  are in `Shell2` or trivial; dominators are the SAME constants).
+- **`System2`** — closure `C̃₂ = Q̃₂ + 2τZ̃₂ + (τ/r)D̃₂` from `Shell2`'s `(T)`;
+  `m̃₂'` (quotient); the `K̂₂` Abel system with `n = 2` constants
+  (`K̂₂' = −τ(m̃₂'+3)v`); RSI near-branch (the AM–GM `2K|X| ≤ K X²/d + K d`,
+  dimension-generic) + `RadialSlack₂` (ship as a named hypothesis first, then
+  discharge via the G2 `cross_doubling`/association port).
+- **`Converse2`** — instantiate the abstract Abel layer
+  (`LaplaceACPropagation`, already consumed generically by `ConverseN` with
+  `μDeriv := (m̃'+n+1)/2`) at `n = 2`; trichotomy → `K̂₂ ≡ 0` → `v ≡ 0` →
+  `Z̃₂_p = c·Z̃₂_q`.  Near-copy of `ConverseN`.
+- **`Invariance2` + headline** — master radiality `Z_ν(x) = Z̃₂(‖x‖)` via **L2
+  affine-isometry transport** (`radialMixture₂` is rotation-invariant; the
+  circle-shift needs a periodicity lemma — reuse L5's `integral_Ioc_cos_shift`);
+  `c = 1` via **L4** (all-dimensional injectivity) + the `c•q` trick (F-F);
+  headline `laplaceZeroDrift_identifies_of_radialMixture₂`.
+
+**Subtleties to verify during implementation (honest risks):**
+(a) the abstract Abel layer's coefficient shape at `n = 2` — `ConverseN`
+parametrizes `μDeriv = (m̃'+n+1)/2` generically so `n = 2` plugs in, but check
+no single propagation lemma hard-codes `2(μDeriv+1)` in a way that clashes with
+the `n = 2` `v`-equation coefficient `2(m̃'+3/2)` (the §4.9(R3) dual-slot
+caveat; `n = 3` cleared it with `n`-generic FTC-primitive edge cores).
+(b) `∞`-decay of `K̂₂` needs a finite `(n−1)/2 = ½`-moment (weaker than
+`n = 3`'s first moment), or a subsequence.
+(c) master-radiality rotation-invariance needs the circle-shift periodicity
+lemma (small; L5 template exists).
+
+**Rejected alternatives.**  (A) Generalize the `*N` files to `2 ≤ n`: blocked
+— their measure is the sphere-axiom + *singular* zonal weight
+`(1−u²)^{(n−3)/2}`, which breaks `ShellN` boundedness at `n = 2`; the angle
+chart is needed regardless.  (C) Abstract the ray machinery over the chart so
+`n ≥ 3` and `n = 2` share one instantiation: most elegant, but refactors
+committed green code for little marginal gain — defer.  The originally-feared
+one-sided FTC/càdlàg layer: **not needed** (premise was wrong).
+
+**Revised effort: LOW risk, ~2–3 focused increments** (was "2–3 sessions of
+NEW machinery").  It is a mechanical port of four first-order files plus the
+already-built `(T)` foundation, reusing `LaplaceACPropagation`, L2, L4, and the
+G2 doubling — no new analysis.
+
+*(Superseded pessimistic note, kept for the record:)* the ray differentiation
+layer runs into the log-divergence of `Z̃d'` … so the propagation must use the
+1-d one-sided/FTC/càdlàg layer.  — **RETRACTED**: `Z̃d'` is never taken; see
+the first-order audit above.
 
 ### G4 — the general endgame *(paper-first, start now in parallel)*
 
