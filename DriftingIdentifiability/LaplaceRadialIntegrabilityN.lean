@@ -204,6 +204,22 @@ private lemma stronglyMeasurable_shellZN (n : ℕ) (hn : 3 ≤ n) (τ r : ℝ) :
     (Real.continuous_exp.comp
       ((continuous_shellDist_pair r).const_mul (-(1 / τ)))).measurable
 
+private lemma stronglyMeasurable_shellDN (n : ℕ) (hn : 3 ≤ n) (τ r : ℝ) :
+    StronglyMeasurable (fun s : ℝ => shellDN n τ r s) := by
+  unfold shellDN
+  apply StronglyMeasurable.const_mul
+  apply stronglyMeasurable_setIntegral_right
+    (F := fun z : ℝ × ℝ => zonalWeight n z.2 *
+      (Real.exp (-(1 / τ) * shellDist r z.1 z.2) *
+        shellAxial r z.1 z.2))
+  apply Measurable.stronglyMeasurable
+  exact ((continuous_zonalWeight hn).comp continuous_snd).measurable.mul
+    ((Real.continuous_exp.comp
+      ((continuous_shellDist_pair r).const_mul (-(1 / τ)))).mul
+      (by
+        unfold shellAxial
+        fun_prop)).measurable
+
 private lemma stronglyMeasurable_shellQN (n : ℕ) (hn : 3 ≤ n) (τ r : ℝ) :
     StronglyMeasurable (fun s : ℝ => shellQN n τ r s) := by
   unfold shellQN
@@ -329,6 +345,71 @@ private lemma integral_abs_shellAxialPayloadN_le {n : ℕ} (hn : 3 ≤ n)
       rw [integral_const_mul]
       rfl
 
+private lemma abs_shellAxial_le_shellDist {r s u : ℝ} (hu : u ^ 2 ≤ 1) :
+    |shellAxial r s u| ≤ shellDist r s u := by
+  have hsq : shellAxial r s u ^ 2 ≤ shellDist r s u ^ 2 := by
+    rw [shellDist_sq_eq_axial_add_rho hu r s]
+    exact le_add_of_nonneg_right (shellRhoSq_nonneg hu s)
+  rw [sq_le_sq, abs_of_nonneg (shellDist_nonneg r s u)] at hsq
+  exact hsq
+
+private lemma integral_abs_shellDisplacementPayloadN_le
+    {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ} (hτ : 0 < τ) :
+    |∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u *
+          (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)|
+      ≤ (τ * Real.exp (-1)) * zonalMass n := by
+  have hF : IntegrableOn (fun u : ℝ => zonalWeight n u *
+      (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u))
+      (Ioc (-1 : ℝ) 1) := by
+    exact ((continuous_zonalWeight hn).mul
+      ((Real.continuous_exp.comp
+        ((continuous_shellDist_u r s).const_mul (-(1 / τ)))).mul
+        ((continuous_const.mul continuous_id).sub continuous_const))).integrableOn_Icc.mono_set
+          Ioc_subset_Icc_self
+  have hW := (integrableOn_zonalWeight hn).const_mul (τ * Real.exp (-1))
+  have hmono : (fun u : ℝ =>
+      |zonalWeight n u *
+        (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)|)
+        ≤ᵐ[volume.restrict (Ioc (-1 : ℝ) 1)]
+          fun u => (τ * Real.exp (-1)) * zonalWeight n u := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioc] with u hu
+    have hu2 := sq_le_one_of_mem_Ioc hu
+    have hW0 := zonalWeight_nonneg (n := n) hu2
+    have hA := abs_shellAxial_le_shellDist (r := r) (s := s) hu2
+    rw [abs_mul, abs_of_nonneg hW0, abs_mul, abs_of_pos (Real.exp_pos _)]
+    calc
+      zonalWeight n u *
+          (Real.exp (-(1 / τ) * shellDist r s u) * |shellAxial r s u|)
+        ≤ zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) * shellDist r s u) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left hA (Real.exp_pos _).le) hW0
+      _ ≤ zonalWeight n u * (τ * Real.exp (-1)) :=
+          mul_le_mul_of_nonneg_left (by
+            calc
+              Real.exp (-(1 / τ) * shellDist r s u) * shellDist r s u
+                = shellDist r s u *
+                    Real.exp (-(1 / τ) * shellDist r s u) := by ring
+              _ ≤ τ * Real.exp (-1) := shell_exp_dist_bound hτ) hW0
+      _ = (τ * Real.exp (-1)) * zonalWeight n u := by ring
+  calc
+    |∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u *
+          (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)|
+      ≤ ∫ u in Ioc (-1 : ℝ) 1,
+          |zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)| := by
+        simpa only [Real.norm_eq_abs] using
+          (norm_integral_le_integral_norm (fun u : ℝ => zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)))
+    _ ≤ ∫ u in Ioc (-1 : ℝ) 1,
+          (τ * Real.exp (-1)) * zonalWeight n u :=
+        integral_mono_ae hF.abs hW hmono
+    _ = (τ * Real.exp (-1)) * zonalMass n := by
+      rw [integral_const_mul]
+      rfl
+
 private lemma integral_abs_shellRhoPayloadN_le {n : ℕ} (hn : 3 ≤ n)
     {τ r s : ℝ} (hτ : 0 < τ) :
     |∫ u in Ioc (-1 : ℝ) 1,
@@ -434,6 +515,22 @@ lemma abs_shellRhoSqOverDistN_le {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ}
     _ = τ * Real.exp (-1) := by
       field_simp [zonalMass_ne_zero hn]
 
+lemma abs_shellDN_le {n : ℕ} (hn : 3 ≤ n) {τ r s : ℝ} (hτ : 0 < τ) :
+    |shellDN n τ r s| ≤ τ * Real.exp (-1) := by
+  rw [shellDN, abs_mul,
+    abs_of_nonneg (inv_nonneg.mpr (zonalMass_pos hn).le)]
+  calc
+    (zonalMass n)⁻¹ *
+        |∫ u in Ioc (-1 : ℝ) 1,
+          zonalWeight n u *
+            (Real.exp (-(1 / τ) * shellDist r s u) * shellAxial r s u)|
+      ≤ (zonalMass n)⁻¹ * ((τ * Real.exp (-1)) * zonalMass n) :=
+        mul_le_mul_of_nonneg_left
+          (integral_abs_shellDisplacementPayloadN_le (r := r) (s := s) hn hτ)
+          (inv_nonneg.mpr (zonalMass_pos hn).le)
+    _ = τ * Real.exp (-1) := by
+      field_simp [zonalMass_ne_zero hn]
+
 lemma integrable_shellZN {n : ℕ} (hn : 3 ≤ n) {τ r : ℝ} (hτ : 0 < τ)
     (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     Integrable (fun s => shellZN n τ r s) ν :=
@@ -441,6 +538,15 @@ lemma integrable_shellZN {n : ℕ} (hn : 3 ≤ n) {τ r : ℝ} (hτ : 0 < τ)
     (ae_of_all _ fun s => by
       rw [Real.norm_eq_abs]
       exact abs_shellZN_le_one hn hτ)
+
+lemma integrable_shellDN {n : ℕ} (hn : 3 ≤ n) {τ r : ℝ} (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    Integrable (fun s => shellDN n τ r s) ν :=
+  Integrable.of_bound (stronglyMeasurable_shellDN n hn τ r).aestronglyMeasurable
+    (τ * Real.exp (-1))
+    (ae_of_all _ fun s => by
+      rw [Real.norm_eq_abs]
+      exact abs_shellDN_le hn hτ)
 
 lemma integrable_shellQN {n : ℕ} (hn : 3 ≤ n) {τ r : ℝ} (hτ : 0 < τ)
     (ν : Measure ℝ) [IsProbabilityMeasure ν] :

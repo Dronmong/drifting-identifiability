@@ -115,6 +115,18 @@ theorem radialRayZN_eq_kernelNormalizer_of_zonalBridge
   exact integral_congr_ae (Filter.Eventually.of_forall fun s =>
     (integral_uniformSphere_laplaceKernel_eq_shellZN_of_bridge hbridge τ r s).symm)
 
+/-- The genuine radial-mixture normalizer is the zonal ray normalizer.  The
+classical sphere-coordinate theorem is supplied through the reviewed standard
+bridge, so callers do not need to thread a geometric hypothesis. -/
+theorem radialRayZN_eq_kernelNormalizer
+    {n : ℕ} (hn : 3 ≤ n) {τ : ℝ} (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    radialRayZN n τ ν r =
+      kernelNormalizer (laplaceKernel τ) (radialMixtureN n ν)
+        (radialRayProbeN n (by omega) r) :=
+  radialRayZN_eq_kernelNormalizer_of_zonalBridge
+    (zonalSphereBridge_standard n hn) hτ ν r
+
 private lemma continuous_shellCompanionN (τ r s : ℝ) :
     Continuous fun u : ℝ =>
       (τ + shellDist r s u) * Real.exp (-(1 / τ) * shellDist r s u) :=
@@ -168,11 +180,110 @@ theorem radialRayCN_eq_companionNormalizer_of_zonalBridge
   exact integral_congr_ae (Filter.Eventually.of_forall fun s =>
     (integral_uniformSphere_laplaceCompanion_eq_shellCN_of_bridge hbridge τ r s).symm)
 
+/-- Standard-bridge form of the companion-normalizer identity. -/
+theorem radialRayCN_eq_companionNormalizer
+    {n : ℕ} (hn : 3 ≤ n) (τ : ℝ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ)
+    (hcomp : Integrable
+      (fun y => laplaceCompanionKernel τ (radialRayProbeN n (by omega) r) y)
+      (radialMixtureN n ν)) :
+    radialRayCN n τ ν r =
+      kernelNormalizer (laplaceCompanionKernel τ) (radialMixtureN n ν)
+        (radialRayProbeN n (by omega) r) :=
+  radialRayCN_eq_companionNormalizer_of_zonalBridge
+    (zonalSphereBridge_standard n hn) τ ν r hcomp
+
 private lemma continuous_shellDisplacementN (τ r s : ℝ) :
     Continuous fun u : ℝ =>
       Real.exp (-(1 / τ) * shellDist r s u) * (s * u - r) :=
   (continuous_shellKernelN τ r s).mul
     ((continuous_const.mul continuous_id).sub continuous_const)
+
+/-- The differentiated axial payload has a removable collision singularity
+on the physical coordinate interval.  Its absolute value is squeezed by the
+continuous shell distance. -/
+private lemma continuousOn_shellAxialSqDivN (r s : ℝ) :
+    ContinuousOn (fun u => shellAxial r s u ^ 2 / shellDist r s u)
+      (Icc (-1 : ℝ) 1) := by
+  intro u hu
+  rcases eq_or_ne (shellDist r s u) 0 with hd0 | hdne
+  · have hnonneg : ∀ᶠ v in 𝓝[Icc (-1 : ℝ) 1] u,
+        0 ≤ shellAxial r s v ^ 2 / shellDist r s v :=
+      Filter.Eventually.of_forall fun v => shellAxial_sq_div_shellDist_nonneg
+    have hupper : ∀ᶠ v in 𝓝[Icc (-1 : ℝ) 1] u,
+        shellAxial r s v ^ 2 / shellDist r s v ≤ shellDist r s v := by
+      filter_upwards [self_mem_nhdsWithin] with v hv
+      have hv2 : v ^ 2 ≤ 1 := by nlinarith [hv.1, hv.2]
+      exact shellAxial_sq_div_shellDist_le hv2
+    have hdlim : Tendsto (shellDist r s) (𝓝[Icc (-1 : ℝ) 1] u) (𝓝 0) := by
+      have h : ContinuousWithinAt (shellDist r s) (Icc (-1 : ℝ) 1) u :=
+        (continuous_shellDist_u r s).continuousWithinAt
+      change Tendsto (shellDist r s) (𝓝[Icc (-1 : ℝ) 1] u)
+        (𝓝 (shellDist r s u)) at h
+      rw [hd0] at h
+      exact h
+    have hlim : Tendsto
+        (fun v => shellAxial r s v ^ 2 / shellDist r s v)
+        (𝓝[Icc (-1 : ℝ) 1] u) (𝓝 0) :=
+      squeeze_zero' hnonneg hupper hdlim
+    change Tendsto (fun v => shellAxial r s v ^ 2 / shellDist r s v)
+      (𝓝[Icc (-1 : ℝ) 1] u)
+      (𝓝 (shellAxial r s u ^ 2 / shellDist r s u))
+    rw [hd0, div_zero]
+    exact hlim
+  · exact (((continuous_const.mul continuous_id).sub continuous_const).pow 2).continuousAt.div
+      (continuous_shellDist_u r s).continuousAt hdne |>.continuousWithinAt
+
+private lemma continuousOn_shellQPayloadN (τ r s : ℝ) :
+    ContinuousOn (fun u => Real.exp (-(1 / τ) * shellDist r s u) *
+      (shellAxial r s u ^ 2 / shellDist r s u)) (Icc (-1 : ℝ) 1) :=
+  (continuous_shellKernelN τ r s).continuousOn.mul
+    (continuousOn_shellAxialSqDivN r s)
+
+/-- The Haar-shell integral of the `X₀²/d` derivative payload is exactly the
+zonal `shellQN` profile. -/
+lemma integral_uniformSphere_laplaceAxialSqDiv_eq_shellQN
+    {n : ℕ} (hn : 3 ≤ n) (τ r s : ℝ) :
+    (∫ ω, laplaceKernel τ (radialRayProbeN n (by omega) r)
+          (s • (ω : EuclideanSpace ℝ (Fin n))) *
+        (((s • (ω : EuclideanSpace ℝ (Fin n))) ⟨0, by omega⟩ - r) ^ 2 /
+          ‖radialRayProbeN n (by omega) r -
+            s • (ω : EuclideanSpace ℝ (Fin n))‖)
+        ∂(uniformSphereMeasure n)) = shellQN n τ r s := by
+  have hpoint : ∀ ω : sphere (0 : EuclideanSpace ℝ (Fin n)) 1,
+      laplaceKernel τ (radialRayProbeN n (by omega) r)
+          (s • (ω : EuclideanSpace ℝ (Fin n))) *
+        (((s • (ω : EuclideanSpace ℝ (Fin n))) ⟨0, by omega⟩ - r) ^ 2 /
+          ‖radialRayProbeN n (by omega) r -
+            s • (ω : EuclideanSpace ℝ (Fin n))‖) =
+      Real.exp (-(1 / τ) * shellDist r s
+          (sphereFirstCoord n (by omega) ω)) *
+        (shellAxial r s (sphereFirstCoord n (by omega) ω) ^ 2 /
+          shellDist r s (sphereFirstCoord n (by omega) ω)) := by
+    intro ω
+    unfold laplaceKernel shellAxial sphereFirstCoord
+    rw [norm_radialRayProbeN_sub_smul_sphere (by omega)]
+    simp [PiLp.smul_apply, smul_eq_mul, sphereFirstCoord]
+  calc
+    (∫ ω, laplaceKernel τ (radialRayProbeN n (by omega) r)
+          (s • (ω : EuclideanSpace ℝ (Fin n))) *
+        (((s • (ω : EuclideanSpace ℝ (Fin n))) ⟨0, by omega⟩ - r) ^ 2 /
+          ‖radialRayProbeN n (by omega) r -
+            s • (ω : EuclideanSpace ℝ (Fin n))‖)
+        ∂(uniformSphereMeasure n)) =
+      ∫ ω, Real.exp (-(1 / τ) * shellDist r s
+          (sphereFirstCoord n (by omega) ω)) *
+        (shellAxial r s (sphereFirstCoord n (by omega) ω) ^ 2 /
+          shellDist r s (sphereFirstCoord n (by omega) ω))
+        ∂(uniformSphereMeasure n) :=
+      integral_congr_ae (Filter.Eventually.of_forall hpoint)
+    _ = (zonalMass n)⁻¹ * ∫ u in Ioc (-1 : ℝ) 1,
+        zonalWeight n u *
+          (Real.exp (-(1 / τ) * shellDist r s u) *
+            (shellAxial r s u ^ 2 / shellDist r s u)) := by
+      exact integral_uniformSphere_zonalOn_of_bridge
+        (zonalSphereBridge_standard n hn) _ (continuousOn_shellQPayloadN τ r s)
+    _ = shellQN n τ r s := rfl
 
 /-- The first-coordinate Haar-shell integral of the Laplace displacement is
 the zonal axial displacement profile. -/
@@ -227,5 +338,18 @@ theorem radialRayDN_eq_displacementCoord_of_zonalBridge
   exact integral_congr_ae (Filter.Eventually.of_forall fun s =>
     (integral_uniformSphere_laplaceDisplacementCoord_eq_shellDN_of_bridge
       hbridge τ r s).symm)
+
+/-- Standard-bridge form of the axial displacement identity. -/
+theorem radialRayDN_eq_displacementCoord
+    {n : ℕ} (hn : 3 ≤ n) (τ : ℝ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ)
+    (hdisp : Integrable
+      (fun y => (laplaceWeightedDisplacement τ (radialRayProbeN n (by omega) r) y)
+        ⟨0, by omega⟩) (radialMixtureN n ν)) :
+    radialRayDN n τ ν r =
+      ∫ y, (laplaceWeightedDisplacement τ (radialRayProbeN n (by omega) r) y)
+        ⟨0, by omega⟩ ∂(radialMixtureN n ν) :=
+  radialRayDN_eq_displacementCoord_of_zonalBridge
+    (zonalSphereBridge_standard n hn) τ ν r hdisp
 
 end DriftingIdentifiability

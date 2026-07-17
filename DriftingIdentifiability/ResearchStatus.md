@@ -1430,3 +1430,37 @@ and weak-convergence reductions. `GaussianNondegeneracy.lean` still contains a
 synthetic interaction construction. These should not be conflated with the now
 promoted raw Gaussian mean-shift theorem. The conditional-external class
 contains 5 axioms.
+
+## 2026-07-16: general-dimensional radial converse (G1)
+
+The G1 radial program now has an end-to-end Lean theorem for every `n ≥ 3`
+and every shared center.  `LaplaceRadialShellN/RayN/MeasureN` construct the
+weighted zonal profiles and genuine Haar radial mixtures;
+`LaplaceRadialZonalBridgeN/PhysicalBridgeN/IntegrabilityN/DifferentiationN`
+connect the physical measures to the ray calculus; `LaplaceRadialSystemN` and
+`LaplaceRadialConverseN` prove the dimension-dependent Abel system,
+origin/tail providers, sign-component propagation, determinant vanishing, and
+ray-normalizer proportionality; and `LaplaceRadialInvarianceN` proves global
+radiality and invokes the certified all-dimensional smoothing-injectivity
+gate.
+
+Promoted headlines:
+
+- `laplaceZeroDrift_identifies_of_radialMixtureN` (center zero);
+- `laplaceZeroDrift_identifies_of_radialMixtureN_centered` (arbitrary common
+  center).
+
+The explicit theorem hypotheses are: radial laws supported on `[0,∞)`, finite
+natural `(n-1)` moments, and `RadialSlackN` for the first law.  The moment
+condition is a conservative sufficient tail condition; sharpening it to the
+planned symmetric `(n-1)/2` moments is optional follow-up.  Removing
+`RadialSlackN` remains the separate G2 objective, and `n = 2` remains G3.
+
+The only new non-foundational trust dependency is one reviewed standard
+external theorem: a coordinate of normalized Haar-uniform sphere measure in
+any unit direction has density proportional to
+`(1-u²)^((n-3)/2)`.  It is isolated as
+`Paper.uniformSphere_directionalCoordinate_integral`; it contains no drift,
+measure-pair, proportionality, or identifiability conclusion.  No additional
+axiom was introduced for differentiation, propagation, radiality, smoothing
+injectivity, or the headline theorem.

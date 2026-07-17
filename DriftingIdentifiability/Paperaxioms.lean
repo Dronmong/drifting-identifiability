@@ -22,6 +22,11 @@ Appendix C.1's ingredients are exposed separately, through the vanishing of
 the coefficient minors `aᵢ bⱼ - aⱼ bᵢ`.  Turning those ingredients into an
 identifiability theorem is deliberately left to downstream files.
 
+The final spherical-slicing declaration is a separately audited **standard
+external analytic fact**: the classical first-coordinate marginal of
+normalized surface measure.  Its statement is measure-geometric only and has
+no drift, target measures, or injectivity conclusion.
+
 The characteristic-kernel and Gaussian axioms at the end are a separately
 audited class of **conditional external assumptions**. For the MMD drift of
 equation (41), embedding injectivity is substantively equivalent to the desired
@@ -989,6 +994,31 @@ axiom sampleMean_meanSquare_le
     (hmean : ∀ i, ∫ ω, Z i ω ∂P = 0)
     {σ : ℝ} (hσ : ∀ i, ∫ ω, ‖Z i ω‖ ^ 2 ∂P ≤ σ ^ 2) :
     ∫ ω, ‖(M : ℝ)⁻¹ • ∑ i, Z i ω‖ ^ 2 ∂P ≤ σ ^ 2 / M
+
+/-! ## Standard spherical slicing
+
+The following is the classical directional-coordinate marginal formula for
+normalized surface measure on `S^{n-1}`.  If `ω` is uniform on the Euclidean
+unit sphere in `ℝⁿ` and `v` is a unit vector, then `⟨v,ω⟩` has density proportional to
+`(1-u²)^((n-3)/2)` on `[-1,1]`.  Equivalently, `ω₀²` is
+`Beta(1/2, (n-1)/2)`.  This is a standard geometric-measure fact, independent
+of the drifting construction and of every measure pair `p,q`.
+
+The statement uses Mathlib's polar surface measure `Measure.toSphere volume`
+and normalizes it explicitly.  It deliberately exposes the weight integral
+rather than importing a Gamma/Beta closed form, which eliminates any possible
+normalization mismatch with the downstream zonal definitions. -/
+axiom uniformSphere_directionalCoordinate_integral
+    (n : ℕ) (hn : 3 ≤ n) (v : EuclideanSpace ℝ (Fin n)) (hv : ‖v‖ = 1)
+    (g : ℝ → ℝ)
+    (_hg : ContinuousOn g (Set.Icc (-1 : ℝ) 1)) :
+    (∫ ω, g (inner ℝ v (ω : EuclideanSpace ℝ (Fin n)))
+        ∂((((Measure.toSphere (volume : Measure (EuclideanSpace ℝ (Fin n)))) Set.univ)⁻¹) •
+          Measure.toSphere (volume : Measure (EuclideanSpace ℝ (Fin n))))) =
+      (∫ u in Set.Ioc (-1 : ℝ) 1,
+        (1 - u ^ 2) ^ (((n : ℝ) - 3) / 2))⁻¹ *
+        ∫ u in Set.Ioc (-1 : ℝ) 1,
+          (1 - u ^ 2) ^ (((n : ℝ) - 3) / 2) * g u
 
 end Paper
 end DriftingIdentifiability

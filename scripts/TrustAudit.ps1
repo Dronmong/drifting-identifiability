@@ -34,7 +34,13 @@ $conditionalExternalAxioms = @(
   'gaussian_gram_linearIndependent'
 ) | Sort-Object
 
-$allowedPaperAxioms = @($paperEstablishedAxioms + $conditionalExternalAxioms) | Sort-Object
+$standardExternalAxioms = @(
+  'uniformSphere_directionalCoordinate_integral'
+) | Sort-Object
+
+$allowedPaperAxioms = @(
+  $paperEstablishedAxioms + $standardExternalAxioms + $conditionalExternalAxioms
+) | Sort-Object
 
 if (-not (Test-Path -LiteralPath $hashManifest)) {
   $errors.Add('Missing .trusted/Paperaxioms.sha256 trust manifest.')
@@ -121,5 +127,6 @@ if ($errors.Count -gt 0) {
 Write-Host (
   "Trust audit passed: $($leanFiles.Count) Lean files checked; " +
   "$($paperEstablishedAxioms.Count) paper axioms and " +
+  "$($standardExternalAxioms.Count) standard external analytic axiom and " +
   "$($conditionalExternalAxioms.Count) conditional external axioms classified."
 )

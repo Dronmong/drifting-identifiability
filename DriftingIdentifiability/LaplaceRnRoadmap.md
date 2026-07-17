@@ -398,7 +398,15 @@ existing templates.
 
 ## 6. G1 implementation status (2026-07-16)
 
-The first two general-`n` layers are now present and compile axiom-free:
+**G1 now has an end-to-end, machine-checked theorem in every `n ≥ 3`, at an
+arbitrary common center.**  The theorem is conditional only on the explicitly
+named `RadialSlackN` hypothesis and finite natural `(n-1)` radial moments.
+The latter is a conservative tail provider; the originally planned symmetric
+`(n-1)/2`-moment sharpening remains an optimization, not a logical gap in the
+proved theorem.  The only non-foundational dependency is the audited standard
+Haar-sphere directional-coordinate marginal described below.
+
+The general-`n` stack is:
 
 * `LaplaceRadialShellN.lean` defines the weighted zonal shell profiles for
   every `n ≥ 3` and proves the tangential identity
@@ -414,25 +422,42 @@ The first two general-`n` layers are now present and compile axiom-free:
 * `LaplaceRadialMeasureN.lean` defines the normalized Haar sphere measure,
   the genuine radius-times-direction radial mixture, centered mixtures, and
   the product-integral bridge.  This closes the measure-construction part of
-  G1; it does not yet prove the zonal-coordinate pushforward.
+  G1.
+* `LaplaceRadialZonalBridgeN.lean`, `LaplaceRadialPhysicalBridgeN.lean`, and
+  `LaplaceRadialIntegrabilityN.lean` connect that genuine measure to the zonal
+  profiles and discharge the analytic payload integrability.
+* `LaplaceRadialDifferentiationN.lean` and `LaplaceRadialSystemN.lean` prove
+  the general ray derivatives, companion closure, sign estimate under
+  `RadialSlackN`, and the dimension-dependent Abel system.
+* `LaplaceRadialConverseN.lean` proves the Abel propagation trichotomy,
+  including the origin edge and a moment-based tail provider, then obtains
+  `Khat = 0`, `V = 0`, and ray-normalizer proportionality.
+* `LaplaceRadialInvarianceN.lean` proves the Haar mixture normalizer is radial,
+  invokes the already-certified all-dimensional Laplace smoothing
+  injectivity theorem, forces the proportionality constant to one by total
+  mass, and transports the result to an arbitrary common center.
 
-These files are intentionally not imported by the project root yet.  The
-remaining G1 work is therefore sharply identified: construct the genuine
-uniform-shell/radial-mixture measure in `ℝⁿ`, prove its zonal pushforward bridge
-to `zonalWeight`, and then discharge the displayed integrability hypotheses so
-that the `Z`, `C`, and `D` ray profiles can enter the derivative/system layer.
-No general-`n` converse theorem is claimed by this checkpoint.
+The root module imports this stack, and the promoted declarations are listed
+in `scripts/AxiomAudit.ps1`.
 
 ### G1 bridge boundary (2026-07-16)
 
-`LaplaceRadialZonalBridgeN.lean` isolates the remaining spherical-slicing
-identity as the explicit proposition `ZonalSphereBridge`.  The first sphere
-coordinate is proved continuous and measurable, and its Haar pushforward is
-proved to be a probability measure.  The rewriting lemma
-`integral_uniformSphere_zonal_of_bridge` consumes only an explicit bridge
-inhabitant; no axiom or hidden assumption was added.  The general-n converse
-remains unpromoted until that classical coordinate-density identity and the
-ray-level integrability obligations are proved.
+`LaplaceRadialZonalBridgeN.lean` isolates the spherical-slicing identity as the
+explicit proposition `ZonalSphereBridge`.  The first sphere coordinate is
+proved continuous and measurable, and its Haar pushforward is proved to be a
+probability measure.  The classical coordinate marginal has now been reviewed
+and admitted as the narrowly scoped standard external analytic theorem
+`Paper.uniformSphere_directionalCoordinate_integral`: for normalized Mathlib
+`Measure.toSphere volume`, the coordinate in any fixed unit direction has normalized density
+`(1-u²)^((n-3)/2)` on `[-1,1]`.  This is equivalently the standard fact that
+the squared first coordinate is `Beta(1/2,(n-1)/2)`, derivable from the
+normalized-Gaussian construction of Haar sphere measure.  It mentions no
+drift or measure pair.  `zonalSphereBridge_standard` packages exactly this
+fact, with its dependency visible under `#print axioms`.
+
+The arbitrary-unit-direction form is mathematically the same Haar marginal
+as the first-coordinate form (by rotational invariance), and it is what lets
+the final radiality proof avoid any separate rotation axiom.
 
 ### G1 analytic discharge (2026-07-16)
 
@@ -444,21 +469,31 @@ derives `radialRayCN_eq_closure_of_probability` for every probability profile
 supported on `[0,infinity)`.  Thus no first-moment or additional integrability
 hypothesis is needed merely to state the general-n companion closure.
 
-The outstanding G1 work is now geometric and structural: prove the actual
-Haar-coordinate `ZonalSphereBridge`, then port the n-dependent derivative,
-Abel-system, propagation, and invariance-to-global-normalizer layers.  This is
-substantially more than the one bridge lemma; no general-n converse is claimed
-before those layers exist.
+These obligations are now consumed by the derivative and system layers.
 
 ### G1 physical-ray interface (2026-07-16)
 
 `LaplaceRadialPhysicalBridgeN.lean` now closes the algebraic connection from
-the genuine Haar radial mixture to the zonal profiles, conditional only on the
-explicitly named (and still unproved) `ZonalSphereBridge`.  It defines the
+the genuine Haar radial mixture to the zonal profiles through the explicitly
+named `ZonalSphereBridge`, now supplied by `zonalSphereBridge_standard`.  It defines the
 general first-coordinate ray and proves its exact sphere geometry, then
 derives the physical-to-zonal identities for the Laplace normalizer `Z`, the
 companion normalizer `C`, and the first-coordinate displacement numerator
-`D`.  The `Z` identity has no additional analytic premise; `C` and `D` expose
-their standard integrability premises rather than concealing them.  This makes
-the remaining bridge and the missing derivative/Abel/propagation port the only
-obstacles to an actual general-`n` radial converse.
+`D`.  The `Z` identity has no additional analytic premise; the integrability
+premises for `C` and `D` are discharged in `LaplaceRadialIntegrabilityN.lean`.
+
+### G1 promoted theorem surface (2026-07-16)
+
+`laplaceZeroDrift_identifies_of_radialMixtureN` proves identification for
+center-zero Haar radial mixtures in every `n ≥ 3`.  Its centered companion
+`laplaceZeroDrift_identifies_of_radialMixtureN_centered` proves the same result
+for any shared center.  Both require support on `[0,∞)`, finite natural
+`(n-1)` moments, and `RadialSlackN` for the first profile.  No density,
+atomlessness, compact support, or hidden injectivity assumption is used.
+
+Remaining improvements are deliberately separated:
+
+1. sharpen the sufficient tail assumption from natural `(n-1)` moments to the
+   symmetric `(n-1)/2` moments originally forecast in §3;
+2. G2: remove `RadialSlackN` (a separate mathematical objective);
+3. extend the dimension surface to `n = 2` in G3.
