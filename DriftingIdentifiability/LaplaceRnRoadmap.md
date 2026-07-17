@@ -304,16 +304,67 @@ degenerate-branch core consumed by F-E(iv).  Generalize the five L5 files
 
 ### G2 — remove `RadialSlack` *(parallel research; makes G1 unconditional)*
 
-The open case is `m̃ > r` (probe inside the centroid).  §4.10's sketch: law of
-total covariance over shells — within-shell `Cov_w(X, X/d) ≥ 0` holds by
-co-monotonicity on each shell (`s > r` shells verified); the cross-shell term
-is where the `(n−1)τ` buffer from (T) must be spent.  F-B/F-C sharpen the
-search space: any proof MUST consume shell-integrated structure — do not
-spend time on pointwise/association arguments (now provably dead).  Numerics
-(RsiScan, 2026-07-15): 40× margin, worst case single-shell just behind the
-probe.  If it resists: it stays a named hypothesis and G1 ships conditional
-like L5; the F-E route inherits the same condition on its radial cores.
-Estimate: open-ended; timebox 1 session per attempt.
+**STATUS 2026-07-17 — REDUCED to a measure-free two-shell association
+statement; numerics green across `n` and all scales (`numerics/rn_g2.py`).**
+
+The sixth-pass analysis (this section supersedes the sketch below) runs the
+doubling identity at the SHELL level.  With per-shell tilted zonal averages
+`m(s) = E[X|s]`, `z(s) = E[X/d|s]`, `q(s) = E[X²/d|s]` (all against
+`(1-u²)^((n-3)/2)·e^{-d/τ}du`), the symmetrized two-shell bracket obeys the
+EXACT identity
+
+```
+q(s) + q(s') − m(s)z(s') − m(s')z(s)
+  = Cov_within(s) + Cov_within(s') + (m(s) − m(s'))(z(s) − z(s')) ,
+```
+
+and integrating it against `ν⊗ν` reproduces the mixture covariance.  Hence
+`RadialSlackN` follows from two ingredient families:
+
+1. **Per-shell RSI (PROVABLE NOW, both branches).**
+   `Cov_within(s) ≥ −(n−1)τ` for every single shell:
+   - `s ≥ r`: `X` and `X/d` are comonotone in `u` — the exact derivative is
+     `∂_u(X/d) = s²(s − ru)/d³ ≥ 0` (the numerator simplification
+     `X² + rX + ρ² = s(s − ru)` is the key observation) — so
+     `Cov_within ≥ 0` by the Chebyshev/doubling argument in `u`.
+   - `s < r`: `m(s) ≤ s − r < 0 ≤ r`, so the PROVED mixture AM–GM case
+     applies per shell (per-shell (T) = `shellRhoSqOverDistN_eq_shellTN`
+     provides the buffer); sharpened it gives
+     `Cov_within(s) ≥ −(n−1)τ·(r−|m(s)|)⁺/(2r) ≥ −(n−1)τ/2`.
+2. **Between-shell association (`ZonalShellAssociation`, THE remaining
+   lemma — measure-free!):** `(m(s) − m(s'))(z(s) − z(s')) ≥ 0` for all
+   `s, s' ≥ 0` — i.e. the per-shell tilted axial mean and the per-shell
+   tilted "soft sign" mean are comonotone in the shell radius.  This is a
+   statement about two explicit 2-parameter kernel integrals; the unknown
+   profile `ν` no longer appears anywhere.
+
+**Numerics (`rn_g2.py`, seed 20260717):** `m(s)` and `z(s)` are monotone
+increasing in `s` for every tested `(n, r)` (`n ∈ {3,4,5,10}`,
+`r/τ ∈ [0.02, 50]`, 900-point `s`-grids; min forward step comfortably
+positive); the within-shell floor is `−0.046τ` (25× inside the `−(n−1)τ/2`
+budget, worst at `s/r ≈ 0.81`, dimension-stable); adversarial two-shell
+mixtures never drop the between-term below `0`.
+
+**Proof notes for the association lemma:** `∂_s(X/d) = rs(1−u²)/d³ ≥ 0`
+pointwise (so `z` increases pointwise before the tilt-correction), and
+`∂_s m = E[u] − (s/τ)Cov_u(u, ∂_s d)` with `∂_s d = (s−ru)/d` U-shaped in
+`u` (ends at `1`, dips to `√(1−r²/s²)` at `u = r/s`), `|∂_s d| ≤ 1`,
+`E[u] ≥ 0` by increasing-tilt association.  For `s ≤ r`, `∂_s d` is
+monotone decreasing in `u` and `Cov_u(u, ∂_s d) ≤ 0` closes `m`-monotonicity
+immediately; the open work is the `s > r` tilt-correction bound, where the
+weak-tilt expansion `∂_s d ≈ 1 − (r²/2s²)(1−u²)` makes the covariance
+`O(r³/s³)` against `E[u] = Θ(r/τ·Var_w(u))`.  Timebox as before; the Lean
+surface below ships regardless.
+
+**Lean surface (implemented/planned):** per-shell `shellZdN`, the two
+per-shell RSI branches, the cleared-denominator `ZonalShellAssociation`
+predicate, and `radialSlackN_of_zonalShellAssociation : ZonalShellAssociation
+n τ → RadialSlackN n _ τ ν` for every admissible profile — after which the
+G1 headline's per-measure hypothesis is replaced by one fixed kernel
+inequality, and W3's eventual proof deletes it entirely.
+
+*(Original sketch, superseded:)* law of total covariance over shells;
+F-B/F-C mean the proof must be shell-integrated; RsiScan 40× margin.
 
 ### G3 — `n = 2` radial *(after G1)*
 
