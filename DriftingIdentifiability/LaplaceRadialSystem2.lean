@@ -469,4 +469,180 @@ theorem radialRayC₂_eq_closure (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
   field_simp [hr.ne']
   ring
 
+/-! ## The proved part of the sign layer (AM–GM near branch) -/
+
+lemma two_mul_laplace_abs_first_rayProbe₂_le (τ r : ℝ)
+    (y : EuclideanSpace ℝ (Fin 2)) :
+    2 * (laplaceKernel τ (rayProbe₂ r) y * |y 0 - r|) ≤
+      laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖) +
+        laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖ := by
+  have hK := laplaceKernel_rayProbe₂_nonneg τ r y
+  rcases eq_or_ne (‖rayProbe₂ r - y‖) 0 with h0 | hne
+  · have hy : rayProbe₂ r = y := norm_sub_eq_zero_iff.mp h0
+    have hX : y 0 - r = 0 := by rw [← hy, rayProbe₂_apply_zero, sub_self]
+    simp [h0, hX]
+  · have hdpos : 0 < ‖rayProbe₂ r - y‖ := (norm_nonneg _).lt_of_ne' hne
+    have hAM : 2 * |y 0 - r| ≤
+        (y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖ + ‖rayProbe₂ r - y‖ := by
+      rw [← sub_nonneg]
+      have hkey :
+          (y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖ + ‖rayProbe₂ r - y‖ -
+              2 * |y 0 - r| =
+            (|y 0 - r| - ‖rayProbe₂ r - y‖) ^ 2 / ‖rayProbe₂ r - y‖ := by
+        field_simp
+        nlinarith [sq_abs (y 0 - r)]
+      rw [hkey]; positivity
+    calc 2 * (laplaceKernel τ (rayProbe₂ r) y * |y 0 - r|)
+        = laplaceKernel τ (rayProbe₂ r) y * (2 * |y 0 - r|) := by ring
+      _ ≤ laplaceKernel τ (rayProbe₂ r) y *
+          ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖ + ‖rayProbe₂ r - y‖) :=
+        mul_le_mul_of_nonneg_left hAM hK
+      _ = _ := by ring
+
+lemma integrable_laplaceKernel_mul_norm_rayProbe₂ (τ : ℝ) (hτ : 0 < τ)
+    (μ : Measure (EuclideanSpace ℝ (Fin 2))) [IsFiniteMeasure μ] (r : ℝ) :
+    Integrable (fun y => laplaceKernel τ (rayProbe₂ r) y *
+      ‖rayProbe₂ r - y‖) μ := by
+  refine ⟨((continuous_laplaceKernel_rayProbe₂ τ r).mul
+    ((continuous_const.sub continuous_id).norm)).aestronglyMeasurable,
+    HasFiniteIntegral.of_bounded (C := τ * Real.exp (-1))
+      (ae_of_all _ fun y => ?_)⟩
+  rw [Real.norm_eq_abs, abs_mul,
+    abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ r y),
+    abs_of_nonneg (norm_nonneg _)]
+  exact laplaceKernel_rayProbe₂_mul_norm_le τ hτ r y
+
+lemma integral_laplaceKernel_mul_norm_eq_C₂_sub (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (r : ℝ) :
+    (∫ y, laplaceKernel τ (rayProbe₂ r) y *
+        ‖rayProbe₂ r - y‖ ∂(radialMixture₂ ν)) =
+      radialRayC₂ τ ν r - τ * radialRayZ₂ τ ν r := by
+  have hCint := integrable_companion_rayProbe₂ τ hτ (radialMixture₂ ν) r
+  have hZint := integrable_laplaceKernel_rayProbe₂ τ hτ (radialMixture₂ ν) r
+  have hSint := integrable_laplaceKernel_mul_norm_rayProbe₂ τ hτ
+    (radialMixture₂ ν) r
+  rw [radialRayC₂_eq_integral τ ν r hCint, radialRayZ₂_eq_integral τ hτ ν r]
+  have hdecomp : (∫ y, laplaceCompanionKernel τ (rayProbe₂ r) y
+        ∂(radialMixture₂ ν))
+      = τ * (∫ y, laplaceKernel τ (rayProbe₂ r) y ∂(radialMixture₂ ν)) +
+        ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+          ‖rayProbe₂ r - y‖ ∂(radialMixture₂ ν) := by
+    have hpt : (∫ y, laplaceCompanionKernel τ (rayProbe₂ r) y
+          ∂(radialMixture₂ ν))
+        = ∫ y, (τ * laplaceKernel τ (rayProbe₂ r) y +
+            laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖)
+            ∂(radialMixture₂ ν) :=
+      integral_congr_ae (Filter.Eventually.of_forall (fun y => by
+        rw [laplaceCompanionKernel]; ring))
+    have hadd : (∫ y, (τ * laplaceKernel τ (rayProbe₂ r) y +
+          laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖)
+          ∂(radialMixture₂ ν))
+        = (∫ y, τ * laplaceKernel τ (rayProbe₂ r) y ∂(radialMixture₂ ν))
+          + ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+              ‖rayProbe₂ r - y‖ ∂(radialMixture₂ ν) :=
+      integral_add (hZint.const_mul τ) hSint
+    rw [hpt, hadd, integral_const_mul]
+  rw [hdecomp]; ring
+
+lemma abs_radialRayD₂_le (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0) {r : ℝ} (hr : 0 < r) :
+    |radialRayD₂ τ ν r| ≤ radialRayQ₂ τ ν r +
+      (τ / (2 * r)) * (radialRayD₂ τ ν r + r * radialRayZ₂ τ ν r) := by
+  have hDint := integrable_axial_rayProbe₂ τ hτ (radialMixture₂ ν) r
+  have hQint := integrable_Q_payload_rayProbe₂ τ hτ (radialMixture₂ ν) r
+  have hSint := integrable_laplaceKernel_mul_norm_rayProbe₂ τ hτ
+    (radialMixture₂ ν) r
+  have habs : |radialRayD₂ τ ν r| ≤
+      ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+        |y 0 - r| ∂(radialMixture₂ ν) := by
+    rw [radialRayD₂_eq_integral τ ν r hDint]
+    have h1 := norm_integral_le_integral_norm
+      (μ := radialMixture₂ ν)
+      (f := fun y : EuclideanSpace ℝ (Fin 2) =>
+        laplaceKernel τ (rayProbe₂ r) y * (y 0 - r))
+    simp only [Real.norm_eq_abs] at h1
+    refine h1.trans (le_of_eq (integral_congr_ae
+      (Filter.Eventually.of_forall fun y => ?_)))
+    simp only [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ r y)]
+  have hintAbs : Integrable (fun y : EuclideanSpace ℝ (Fin 2) =>
+      laplaceKernel τ (rayProbe₂ r) y * |y 0 - r|) (radialMixture₂ ν) := by
+    convert hDint.abs using 1
+    funext y
+    rw [abs_mul, abs_of_nonneg (laplaceKernel_rayProbe₂_nonneg τ r y)]
+  have hAM :
+      (∫ y, laplaceKernel τ (rayProbe₂ r) y *
+          |y 0 - r| ∂(radialMixture₂ ν)) ≤
+        (radialRayQ₂ τ ν r +
+          ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+            ‖rayProbe₂ r - y‖ ∂(radialMixture₂ ν)) / 2 := by
+    calc (∫ y, laplaceKernel τ (rayProbe₂ r) y *
+            |y 0 - r| ∂(radialMixture₂ ν))
+        ≤ ∫ y, (laplaceKernel τ (rayProbe₂ r) y *
+              ((y 0 - r) ^ 2 / ‖rayProbe₂ r - y‖) +
+            laplaceKernel τ (rayProbe₂ r) y * ‖rayProbe₂ r - y‖) / 2
+            ∂(radialMixture₂ ν) := by
+          refine integral_mono hintAbs ((hQint.add hSint).div_const 2)
+            (fun y => ?_)
+          have h := two_mul_laplace_abs_first_rayProbe₂_le τ r y
+          linarith
+      _ = (radialRayQ₂ τ ν r +
+          ∫ y, laplaceKernel τ (rayProbe₂ r) y *
+            ‖rayProbe₂ r - y‖ ∂(radialMixture₂ ν)) / 2 := by
+          rw [integral_div, integral_add hQint hSint,
+            ← radialRayQ₂_eq_integral τ ν r hQint]
+  have hS := integral_laplaceKernel_mul_norm_eq_C₂_sub τ hτ ν r
+  have hC := radialRayC₂_eq_closure τ hτ ν hsupp hr
+  rw [hS, hC] at hAM
+  have h := habs.trans hAM
+  field_simp [hr.ne'] at h ⊢
+  linarith
+
+theorem radialRayMDeriv₂_ge_of_le (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0) {r : ℝ} (hr : 0 < r)
+    (hm : radialRayM₂ τ ν r ≤ r) :
+    -(2 : ℝ) ≤ radialRayMDeriv₂ τ ν r := by
+  set Z := radialRayZ₂ τ ν r with hZ
+  set D := radialRayD₂ τ ν r with hD
+  set Q := radialRayQ₂ τ ν r with hQ
+  set Zd := radialRayZd₂ τ ν r with hZd
+  have hZpos : 0 < Z := radialRayZ₂_pos τ hτ ν r
+  have hDle : D ≤ r * Z := by
+    rw [radialRayM₂, div_le_iff₀ hZpos] at hm; exact hm
+  have hDabs := abs_radialRayD₂_le τ hτ ν hsupp hr
+  have hDabs2 : |D| ≤ Q + τ * Z := by
+    have hcoef : 0 ≤ τ / (2 * r) :=
+      div_nonneg hτ.le (by positivity)
+    have hinside : D + r * Z ≤ 2 * r * Z := by linarith
+    have hmul := mul_le_mul_of_nonneg_left hinside hcoef
+    have hcalc : τ / (2 * r) * (2 * r * Z) = τ * Z := by field_simp [hr.ne']
+    rw [← hZ, ← hD, ← hQ] at hDabs
+    linarith
+  have hZdabs : |Zd| ≤ Z := by
+    simpa [hZ, hZd] using abs_radialRayZd₂_le τ hτ ν r
+  have hDZd : D * Zd ≤ |D| * Z := by
+    calc D * Zd ≤ |D * Zd| := le_abs_self _
+      _ = |D| * |Zd| := abs_mul _ _
+      _ ≤ |D| * Z := mul_le_mul_of_nonneg_left hZdabs (abs_nonneg _)
+  have hcov := radialRayMDeriv₂_cov τ hτ ν r
+  rw [← hZ, ← hD, ← hQ, ← hZd] at hcov
+  have hlower : -(τ) * Z ^ 2 ≤ Q * Z - D * Zd := by
+    have htmp : D * Zd ≤ (Q + τ * Z) * Z :=
+      hDZd.trans (mul_le_mul_of_nonneg_right hDabs2 hZpos.le)
+    nlinarith [hZpos]
+  have hkey : -(τ) * Z ^ 2 ≤ τ * (radialRayMDeriv₂ τ ν r + 1) * Z ^ 2 := by
+    rw [hcov]; exact hlower
+  have hZsq : 0 < Z ^ 2 := by positivity
+  by_contra hcon
+  have hlt : radialRayMDeriv₂ τ ν r + 1 < -1 := by linarith
+  nlinarith [mul_pos hτ hZsq, hkey, hlt]
+
+theorem radialRayMDeriv₂_ge (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    (hslack : RadialSlack₂ τ ν) {r : ℝ} (hr : 0 < r) :
+    -(2 : ℝ) ≤ radialRayMDeriv₂ τ ν r := by
+  rcases le_or_gt (radialRayM₂ τ ν r) r with hm | hm
+  · exact radialRayMDeriv₂_ge_of_le τ hτ ν hsupp hr hm
+  · exact hslack r hr hm
+
 end DriftingIdentifiability
