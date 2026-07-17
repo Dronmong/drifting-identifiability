@@ -411,6 +411,10 @@ The first two general-`n` layers are now present and compile axiom-free:
   integrability plus radial-payload integrability hypotheses; this is the
   honest boundary before the measure/chart bridge and dominated radial
   differentiation are supplied.
+* `LaplaceRadialMeasureN.lean` defines the normalized Haar sphere measure,
+  the genuine radius-times-direction radial mixture, centered mixtures, and
+  the product-integral bridge.  This closes the measure-construction part of
+  G1; it does not yet prove the zonal-coordinate pushforward.
 
 These files are intentionally not imported by the project root yet.  The
 remaining G1 work is therefore sharply identified: construct the genuine

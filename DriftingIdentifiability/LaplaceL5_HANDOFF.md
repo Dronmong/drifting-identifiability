@@ -349,6 +349,9 @@ files:
 * `LaplaceRadialRayN.lean` — radial ray packaging, mixed tangential identity,
   axial split, `Q` payload, and a closure theorem with explicit shell/radial
   integrability hypotheses.
+* `LaplaceRadialMeasureN.lean` — normalized `Measure.toSphere`, genuine
+  radius-times-direction mixtures (including translated mixtures), and the
+  product-integral bridge.
 
 These are a G1 foundation, not a completed general-`n` converse.  The next
 load-bearing step is the genuine uniform-shell measure and its zonal
