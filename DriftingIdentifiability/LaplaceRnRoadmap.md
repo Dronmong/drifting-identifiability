@@ -395,3 +395,26 @@ existing templates.
 - `numerics/rn_screen.py, rn_screen2.py, rn_screen3.py, rn_screen4.py` — this
   pass's experiments (seeds 20260716–18; all outputs quoted in §1/§2 verbatim
   from the runs of 2026-07-16).
+
+## 6. G1 implementation status (2026-07-16)
+
+The first two general-`n` layers are now present and compile axiom-free:
+
+* `LaplaceRadialShellN.lean` defines the weighted zonal shell profiles for
+  every `n ≥ 3` and proves the tangential identity
+  `shellRhoSqOverDistN = ((n-1)τ/r) · shellTN`, including the collision shell
+  by continuity in the shell radius.
+* `LaplaceRadialRayN.lean` packages those profiles into radial ray integrals.
+  It proves the support bookkeeping, the mixed tangential identity,
+  `T = D + r Z`, the axial `Q` payload, the per-shell companion closure, and a
+  ray-level closure theorem.  The latter carries explicit a.e. shell
+  integrability plus radial-payload integrability hypotheses; this is the
+  honest boundary before the measure/chart bridge and dominated radial
+  differentiation are supplied.
+
+These files are intentionally not imported by the project root yet.  The
+remaining G1 work is therefore sharply identified: construct the genuine
+uniform-shell/radial-mixture measure in `ℝⁿ`, prove its zonal pushforward bridge
+to `zonalWeight`, and then discharge the displayed integrability hypotheses so
+that the `Z`, `C`, and `D` ray profiles can enter the derivative/system layer.
+No general-`n` converse theorem is claimed by this checkpoint.

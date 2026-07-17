@@ -339,6 +339,22 @@ Root wiring (all five L5 files added to `DriftingIdentifiability.lean`) and
 `AxiomAudit.ps1` entries (12 promoted L5 declarations, headline included)
 are in place.  Remaining bookkeeping only: keep `Check.ps1` green and commit.
 
+### 5f. G1 GENERAL-`n` CHECKPOINT (2026-07-16)
+
+The n-dimensional successor has now started in two new, currently standalone
+files:
+
+* `LaplaceRadialShellN.lean` — weighted zonal shell layer for every `n ≥ 3`,
+  including the collision-safe tangential identity.
+* `LaplaceRadialRayN.lean` — radial ray packaging, mixed tangential identity,
+  axial split, `Q` payload, and a closure theorem with explicit shell/radial
+  integrability hypotheses.
+
+These are a G1 foundation, not a completed general-`n` converse.  The next
+load-bearing step is the genuine uniform-shell measure and its zonal
+pushforward bridge; only after that bridge can the analytic hypotheses in the
+ray closure be discharged and the derivative/system layer be generalized.
+
 ---
 
 ## 6. Concrete Lean gotchas already hit (save yourself the round-trips)
