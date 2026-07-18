@@ -734,4 +734,139 @@ theorem laplaceFoliationDefect_nonpos
       _ ≤ laplaceFoliationDefect τ p q (γ (-T)) := hgrowth
   linarith [hmax (γ (-T))]
 
+/-! ## The defect vanishes identically -/
+
+omit [BorelSpace E] [SecondCountableTopology E] [FiniteDimensional ℝ E] in
+/-- Zero mean-shift drift is symmetric in the two laws. -/
+theorem zeroDrift_meanShiftDrift_symm
+    {k : E → E → ℝ} {p q : Measure E}
+    (h : ZeroDrift (meanShiftDrift k) p q) :
+    ZeroDrift (meanShiftDrift k) q p := by
+  intro x
+  have hx := h x
+  simp only [meanShiftDrift] at hx ⊢
+  rw [sub_eq_zero] at hx ⊢
+  exact hx.symm
+
+omit [CompleteSpace E] [SecondCountableTopology E] in
+/-- The swapped defect is a negative multiple of the original one. -/
+theorem laplaceFoliationDefect_swap
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q] (x : E) :
+    laplaceFoliationDefect τ q p x =
+      -(laplaceNormalizerRatio τ q p x) * laplaceFoliationDefect τ p q x := by
+  have hZp := (laplaceKernelNormalizer_pos p τ hτ x).ne'
+  have hZq := (laplaceKernelNormalizer_pos q τ hτ x).ne'
+  unfold laplaceFoliationDefect laplaceNormalizerRatio
+  field_simp
+  ring
+
+/-- **The foliation defect vanishes identically under zero drift.**  The
+maximum principle applied to both orders of the pair pins `H` between `0`
+and `0`. -/
+theorem laplaceFoliationDefect_eq_zero
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : E) :
+    laplaceFoliationDefect τ p q x = 0 := by
+  have h1 := laplaceFoliationDefect_nonpos hτ p q hzero x
+  have h2 := laplaceFoliationDefect_nonpos hτ q p
+    (zeroDrift_meanShiftDrift_symm hzero) x
+  rw [laplaceFoliationDefect_swap hτ p q x] at h2
+  have hR := laplaceNormalizerRatio_pos hτ q p x
+  by_contra hne
+  have hlt : laplaceFoliationDefect τ p q x < 0 := lt_of_le_of_ne h1 hne
+  nlinarith [mul_pos hR (neg_pos.mpr hlt)]
+
+/-! ## Ratio constancy and the identification input -/
+
+/-- Under zero drift the normalizer ratio equals the (differentiable)
+potential ratio pointwise. -/
+theorem laplaceNormalizerRatio_eq_potentialRatio
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : E) :
+    laplaceNormalizerRatio τ p q x =
+      laplaceDisplacementPotential τ p x /
+        laplaceDisplacementPotential τ q x := by
+  have hH := laplaceFoliationDefect_eq_zero hτ p q hzero x
+  unfold laplaceFoliationDefect at hH
+  have hψq := (laplaceDisplacementPotential_pos hτ q x).ne'
+  rw [eq_div_iff hψq]
+  linarith
+
+/-- The normalizer ratio is differentiable with vanishing derivative at every
+point: the quotient rule combined with the gradient alignment and the
+vanishing defect kills the numerator identically. -/
+theorem hasFDerivAt_laplaceNormalizerRatio_zero
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : E) :
+    HasFDerivAt (laplaceNormalizerRatio τ p q) (0 : E →L[ℝ] ℝ) x := by
+  have hp := hasFDerivAt_laplaceDisplacementPotential hτ p x
+  have hq := hasFDerivAt_laplaceDisplacementPotential hτ q x
+  have hψq : laplaceDisplacementPotential τ q x ≠ 0 :=
+    (laplaceDisplacementPotential_pos hτ q x).ne'
+  have hinv : HasFDerivAt
+      (fun y => (laplaceDisplacementPotential τ q y)⁻¹)
+      ((-(laplaceDisplacementPotential τ q x ^ 2)⁻¹) •
+        innerSL ℝ (laplaceDisplacementField τ q x)) x :=
+    (hasDerivAt_inv hψq).comp_hasFDerivAt x hq
+  have hmul : HasFDerivAt
+      (fun y => laplaceDisplacementPotential τ p y *
+        (laplaceDisplacementPotential τ q y)⁻¹)
+      (laplaceDisplacementPotential τ p x •
+          ((-(laplaceDisplacementPotential τ q x ^ 2)⁻¹) •
+            innerSL ℝ (laplaceDisplacementField τ q x)) +
+        (laplaceDisplacementPotential τ q x)⁻¹ •
+          innerSL ℝ (laplaceDisplacementField τ p x)) x := hp.mul hinv
+  have hfun : (fun y => laplaceDisplacementPotential τ p y *
+      (laplaceDisplacementPotential τ q y)⁻¹) =
+      laplaceNormalizerRatio τ p q := by
+    funext y
+    rw [laplaceNormalizerRatio_eq_potentialRatio hτ p q hzero y,
+      div_eq_mul_inv]
+  have halign := laplaceDisplacementField_eq_ratio_smul_of_zeroDrift
+    hτ p q hzero x
+  have hψp : laplaceDisplacementPotential τ p x =
+      laplaceNormalizerRatio τ p q x * laplaceDisplacementPotential τ q x := by
+    have hH := laplaceFoliationDefect_eq_zero hτ p q hzero x
+    unfold laplaceFoliationDefect at hH
+    linarith
+  rw [hfun] at hmul
+  have hcoeff : laplaceDisplacementPotential τ p x *
+        (-(laplaceDisplacementPotential τ q x ^ 2)⁻¹) +
+      (laplaceDisplacementPotential τ q x)⁻¹ *
+        laplaceNormalizerRatio τ p q x = 0 := by
+    rw [hψp]
+    field_simp
+    ring
+  have hval : laplaceDisplacementPotential τ p x •
+        ((-(laplaceDisplacementPotential τ q x ^ 2)⁻¹) •
+          innerSL ℝ (laplaceDisplacementField τ q x)) +
+      (laplaceDisplacementPotential τ q x)⁻¹ •
+        innerSL ℝ (laplaceDisplacementField τ p x) =
+      (0 : E →L[ℝ] ℝ) := by
+    rw [halign, map_smul, smul_smul, smul_smul, ← add_smul, hcoeff, zero_smul]
+  rw [hval] at hmul
+  exact hmul
+
+/-- **G4 local constancy input.**  Under zero drift the normalizer ratio is
+globally constant, hence locally constant. -/
+theorem laplaceNormalizerRatio_isLocallyConstant
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) :
+    IsLocallyConstant (laplaceNormalizerRatio τ p q) := by
+  have hconst : laplaceNormalizerRatio τ p q =
+      fun _ => laplaceNormalizerRatio τ p q 0 := by
+    funext y
+    exact is_const_of_fderiv_eq_zero
+      (fun z => (hasFDerivAt_laplaceNormalizerRatio_zero
+        hτ p q hzero z).differentiableAt)
+      (fun z => (hasFDerivAt_laplaceNormalizerRatio_zero
+        hτ p q hzero z).fderiv) y 0
+  rw [hconst]
+  exact IsLocallyConstant.const _
+
 end DriftingIdentifiability
