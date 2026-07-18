@@ -661,4 +661,392 @@ theorem radialRayKhat₂_eq_zero_of_tendsto
       have h := hlin t ht0 htx.le
       rwa [sub_zero]
 
+/-! ## A moment-based tail provider (`n = 2`, uniform-angle shells) -/
+
+private lemma radial_ae_nonneg₂ {ν : Measure ℝ} (hsupp : ν (Iio 0) = 0) :
+    ∀ᵐ s ∂ν, 0 ≤ s := by
+  rw [ae_iff]
+  have hset : {s : ℝ | ¬ 0 ≤ s} = Iio 0 := by ext s; simp [not_le]
+  rw [hset]; exact hsupp
+
+private lemma prob_measureReal_le_one₂
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] (s : Set ℝ) : ν.real s ≤ 1 :=
+  ENNReal.toReal_mono ENNReal.one_ne_top prob_le_one
+
+private lemma abs_sub_le_shellDist₂ {r s u : ℝ}
+    (hr : 0 ≤ r) (hs : 0 ≤ s) (hu : u ≤ 1) :
+    |r - s| ≤ shellDist r s u := by
+  rw [shellDist, ← Real.sqrt_sq_eq_abs]
+  apply Real.sqrt_le_sqrt
+  nlinarith [mul_nonneg hr hs]
+
+/-- Uniform-angle shell normalizer bounded by the radial-gap exponential. -/
+lemma shellZ₂_le_exp (τ : ℝ) (hτ : 0 < τ) {r s : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s) :
+    shellZ₂ τ r s ≤ Real.exp (-(1 / τ) * |r - s|) := by
+  rw [shellZ₂]
+  set g : ℝ → ℝ := fun φ => Real.exp (-(1 / τ) * shellDist r s (Real.cos φ)) with hg
+  have hcont : Continuous g :=
+    Real.continuous_exp.comp
+      (((continuous_shellDist_u r s).comp Real.continuous_cos).const_mul _)
+  have hgint : IntegrableOn g (Ioc (-Real.pi) Real.pi) :=
+    (hcont.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+  have hcint : IntegrableOn (fun _ : ℝ => Real.exp (-(1 / τ) * |r - s|))
+      (Ioc (-Real.pi) Real.pi) :=
+    (continuous_const.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+  have hbound : ∀ φ ∈ Ioc (-Real.pi) Real.pi,
+      g φ ≤ Real.exp (-(1 / τ) * |r - s|) := by
+    intro φ _
+    apply Real.exp_le_exp.mpr
+    have hgap := abs_sub_le_shellDist₂ hr hs (Real.cos_le_one φ)
+    have hrec : (0 : ℝ) ≤ 1 / τ := by positivity
+    nlinarith
+  have hmono := setIntegral_mono_on hgint hcint measurableSet_Ioc hbound
+  have hvol : (∫ _φ in Ioc (-Real.pi) Real.pi, Real.exp (-(1 / τ) * |r - s|))
+      = 2 * Real.pi * Real.exp (-(1 / τ) * |r - s|) := by
+    rw [setIntegral_const, smul_eq_mul, measureReal_def, Real.volume_Ioc,
+      ENNReal.toReal_ofReal (by linarith [Real.pi_pos] :
+        (0 : ℝ) ≤ Real.pi - -Real.pi)]
+    ring
+  calc (2 * Real.pi)⁻¹ * ∫ φ in Ioc (-Real.pi) Real.pi, g φ
+      ≤ (2 * Real.pi)⁻¹ * (2 * Real.pi * Real.exp (-(1 / τ) * |r - s|)) := by
+        rw [← hvol]
+        exact mul_le_mul_of_nonneg_left hmono (by positivity)
+    _ = Real.exp (-(1 / τ) * |r - s|) := by
+        rw [← mul_assoc,
+          inv_mul_cancel₀ (by positivity : (2 * Real.pi : ℝ) ≠ 0), one_mul]
+
+lemma shellZ₂_le_one (τ : ℝ) (hτ : 0 < τ) (r s : ℝ) : shellZ₂ τ r s ≤ 1 := by
+  rw [shellZ₂]
+  set g : ℝ → ℝ := fun φ => Real.exp (-(1 / τ) * shellDist r s (Real.cos φ)) with hg
+  have hcont : Continuous g :=
+    Real.continuous_exp.comp
+      (((continuous_shellDist_u r s).comp Real.continuous_cos).const_mul _)
+  have hgint : IntegrableOn g (Ioc (-Real.pi) Real.pi) :=
+    (hcont.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+  have hcint : IntegrableOn (fun _ : ℝ => (1 : ℝ)) (Ioc (-Real.pi) Real.pi) :=
+    (continuous_const.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+  have hbound : ∀ φ ∈ Ioc (-Real.pi) Real.pi, g φ ≤ 1 :=
+    fun φ _ => exp_shellDist_le_one hτ r s (Real.cos φ)
+  have hmono := setIntegral_mono_on hgint hcint measurableSet_Ioc hbound
+  have hvol : (∫ _φ in Ioc (-Real.pi) Real.pi, (1 : ℝ)) = 2 * Real.pi := by
+    rw [setIntegral_const, smul_eq_mul, mul_one, measureReal_def, Real.volume_Ioc,
+      ENNReal.toReal_ofReal (by linarith [Real.pi_pos] :
+        (0 : ℝ) ≤ Real.pi - -Real.pi)]
+    ring
+  calc (2 * Real.pi)⁻¹ * ∫ φ in Ioc (-Real.pi) Real.pi, g φ
+      ≤ (2 * Real.pi)⁻¹ * (2 * Real.pi) := by
+        rw [← hvol]
+        exact mul_le_mul_of_nonneg_left hmono (by positivity)
+    _ = 1 := inv_mul_cancel₀ (by positivity)
+
+/-- Near shells contribute only an exponential; far shells the radial tail. -/
+lemma radialRayZ₂_le_split (τ : ℝ) (hτ : 0 < τ) (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0) {r : ℝ} (hr : 0 ≤ r) :
+    radialRayZ₂ τ ν r ≤
+      Real.exp (-(1 / τ) * (r / 2)) + ν.real (Ici (r / 2)) := by
+  have hint := integrable_shellZ₂ τ hτ ν r
+  rw [radialRayZ₂, ← integral_add_compl (measurableSet_Ici (a := r / 2)) hint]
+  have htail : (∫ s in Ici (r / 2), shellZ₂ τ r s ∂ν) ≤ ν.real (Ici (r / 2)) := by
+    calc (∫ s in Ici (r / 2), shellZ₂ τ r s ∂ν)
+        ≤ ∫ _ in Ici (r / 2), (1 : ℝ) ∂ν :=
+          setIntegral_mono_on hint.integrableOn ((integrable_const 1).integrableOn)
+            measurableSet_Ici (fun s _ => shellZ₂_le_one τ hτ r s)
+      _ = ν.real (Ici (r / 2)) := by rw [setIntegral_const, smul_eq_mul, mul_one]
+  have hnear : (∫ s in (Ici (r / 2))ᶜ, shellZ₂ τ r s ∂ν) ≤
+      Real.exp (-(1 / τ) * (r / 2)) := by
+    have hae : ∀ᵐ s ∂(ν.restrict (Ici (r / 2))ᶜ),
+        shellZ₂ τ r s ≤ Real.exp (-(1 / τ) * (r / 2)) := by
+      filter_upwards [ae_restrict_of_ae (radial_ae_nonneg₂ hsupp),
+        ae_restrict_mem (measurableSet_Ici (a := r / 2)).compl] with s hs hmem
+      have hlt : s < r / 2 := by simpa [mem_compl_iff, mem_Ici, not_le] using hmem
+      refine (shellZ₂_le_exp τ hτ hr hs).trans ?_
+      apply Real.exp_le_exp.mpr
+      have habs : r / 2 ≤ |r - s| := by
+        rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ r - s)]; linarith
+      have hrec : (0 : ℝ) ≤ 1 / τ := by positivity
+      nlinarith
+    calc (∫ s in (Ici (r / 2))ᶜ, shellZ₂ τ r s ∂ν)
+        ≤ ∫ _ in (Ici (r / 2))ᶜ, Real.exp (-(1 / τ) * (r / 2)) ∂ν :=
+          setIntegral_mono_ae_restrict hint.integrableOn
+            ((integrable_const _).integrableOn) hae
+      _ = ν.real (Ici (r / 2))ᶜ * Real.exp (-(1 / τ) * (r / 2)) := by
+          rw [setIntegral_const, smul_eq_mul]
+      _ ≤ 1 * Real.exp (-(1 / τ) * (r / 2)) :=
+          mul_le_mul_of_nonneg_right (prob_measureReal_le_one₂ _) (Real.exp_pos _).le
+      _ = Real.exp (-(1 / τ) * (r / 2)) := one_mul _
+  linarith
+
+private lemma tendsto_pow_mul_measureReal_Ici_atTop₂
+    (k : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hmom : Integrable (fun s : ℝ => s ^ k) ν) :
+    Tendsto (fun r : ℝ => r ^ k * ν.real (Ici r)) atTop (nhds 0) := by
+  have hupper : Tendsto (fun r : ℝ => ∫ s in Ici r, s ^ k ∂ν) atTop (nhds 0) := by
+    have h := tendsto_integral_filter_of_dominated_convergence (μ := ν)
+      (l := atTop)
+      (F := fun (r : ℝ) (s : ℝ) => Set.indicator (Ici r) (fun z => z ^ k) s)
+      (f := fun _ => 0) (bound := fun s => |s ^ k|)
+      (Filter.Eventually.of_forall fun _ =>
+        ((measurable_id.pow_const k).indicator measurableSet_Ici).aestronglyMeasurable)
+      (Filter.Eventually.of_forall fun _ => ae_of_all _ fun s => by
+        simpa [Real.norm_eq_abs] using
+          norm_indicator_le_norm_self (f := fun z : ℝ => z ^ k) s)
+      hmom.abs
+      (ae_of_all _ fun s => by
+        have hev : ∀ᶠ r : ℝ in atTop,
+            Set.indicator (Ici r) (fun z : ℝ => z ^ k) s = 0 := by
+          filter_upwards [eventually_gt_atTop s] with r hr
+          exact Set.indicator_of_notMem (by simpa using not_le.mpr hr) _
+        exact tendsto_const_nhds.congr' (hev.mono fun r hr => hr.symm))
+    simp only [integral_zero] at h
+    refine h.congr fun r => ?_
+    exact integral_indicator measurableSet_Ici
+  have hnn : ∀ᶠ r : ℝ in atTop, 0 ≤ r ^ k * ν.real (Ici r) := by
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+    exact mul_nonneg (pow_nonneg hr k) ENNReal.toReal_nonneg
+  have hle : ∀ᶠ r : ℝ in atTop,
+      r ^ k * ν.real (Ici r) ≤ ∫ s in Ici r, s ^ k ∂ν := by
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+    have hmono : (∫ _ in Ici r, r ^ k ∂ν) ≤ ∫ s in Ici r, s ^ k ∂ν :=
+      setIntegral_mono_on ((integrable_const (r ^ k)).integrableOn)
+        hmom.integrableOn measurableSet_Ici (fun s hs =>
+          pow_le_pow_left₀ hr hs k)
+    calc
+      r ^ k * ν.real (Ici r) = ν.real (Ici r) • r ^ k := by
+        rw [smul_eq_mul]; ring
+      _ = ∫ _ in Ici r, r ^ k ∂ν := (setIntegral_const (r ^ k)).symm
+      _ ≤ ∫ s in Ici r, s ^ k ∂ν := hmono
+  exact squeeze_zero' hnn hle hupper
+
+private lemma tendsto_nat_pow_mul_exp_neg_mul₂ (k : ℕ) {c : ℝ} (hc : 0 < c) :
+    Tendsto (fun r : ℝ => r ^ k * Real.exp (-c * r)) atTop (nhds 0) := by
+  have h := tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (k : ℝ) c hc
+  refine h.congr' ?_
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with r hr
+  rw [Real.rpow_natCast]
+
+private lemma tendsto_pow_mul_half_tail₂
+    (k : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hmom : Integrable (fun s : ℝ => s ^ k) ν) :
+    Tendsto (fun r : ℝ => r ^ k * ν.real (Ici (r / 2))) atTop (nhds 0) := by
+  have hhalf : Tendsto (fun r : ℝ => r / 2) atTop atTop :=
+    tendsto_atTop_atTop.mpr fun b => ⟨2 * b, fun a ha => by linarith⟩
+  have h := (tendsto_pow_mul_measureReal_Ici_atTop₂ k ν hmom).comp hhalf
+  have hscaled := h.const_mul ((2 : ℝ) ^ k)
+  convert hscaled using 1
+  · funext r
+    simp only [Function.comp_apply]
+    rw [← mul_assoc, ← mul_pow, show (2 : ℝ) * (r / 2) = r by ring]
+  · simp
+
+/-- A first moment forces the scaled `n = 2` normalizer to decay. -/
+lemma tendsto_pow_radialRayZ₂_atTop (τ : ℝ) (hτ : 0 < τ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (hsupp : ν (Iio 0) = 0)
+    (hmom : Integrable (fun s : ℝ => s ^ 1) ν) :
+    Tendsto (fun r : ℝ => r ^ 1 * radialRayZ₂ τ ν r) atTop (nhds 0) := by
+  have hc : 0 < 1 / (2 * τ) := by positivity
+  have hexp : Tendsto (fun r : ℝ => r ^ 1 * Real.exp (-(1 / (2 * τ)) * r))
+      atTop (nhds 0) := tendsto_nat_pow_mul_exp_neg_mul₂ 1 hc
+  have htail := tendsto_pow_mul_half_tail₂ 1 ν hmom
+  have hupper : Tendsto (fun r : ℝ =>
+      r ^ 1 * (Real.exp (-(1 / τ) * (r / 2)) + ν.real (Ici (r / 2))))
+      atTop (nhds 0) := by
+    have hadd := hexp.add htail
+    convert hadd using 1
+    · funext r
+      have heq : -(1 / τ) * (r / 2) = -(1 / (2 * τ)) * r := by field_simp [hτ.ne']
+      rw [mul_add, heq]
+    · simp
+  refine squeeze_zero' ?_ ?_ hupper
+  · filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+    exact mul_nonneg (pow_nonneg hr _) (radialRayZ₂_pos τ hτ ν r).le
+  · filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+    exact mul_le_mul_of_nonneg_left (radialRayZ₂_le_split τ hτ ν hsupp hr)
+      (pow_nonneg hr _)
+
+private lemma abs_radialRayK₂_le_tau_mul_Zadd (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (r : ℝ) :
+    |radialRayK₂ τ νp νq r| ≤
+      τ * (radialRayZ₂ τ νp r + radialRayZ₂ τ νq r) := by
+  have hCp0 := radialRayC₂_nonneg τ hτ νp r
+  have hCq0 := radialRayC₂_nonneg τ hτ νq r
+  have hZp0 := (radialRayZ₂_pos τ hτ νp r).le
+  have hZq0 := (radialRayZ₂_pos τ hτ νq r).le
+  have hCp := radialRayC₂_le τ hτ νp r
+  have hCq := radialRayC₂_le τ hτ νq r
+  rw [radialRayK₂]
+  calc |radialRayC₂ τ νp r * radialRayZ₂ τ νq r -
+        radialRayC₂ τ νq r * radialRayZ₂ τ νp r|
+      ≤ |radialRayC₂ τ νp r * radialRayZ₂ τ νq r| +
+        |radialRayC₂ τ νq r * radialRayZ₂ τ νp r| := abs_sub _ _
+    _ = radialRayC₂ τ νp r * radialRayZ₂ τ νq r +
+        radialRayC₂ τ νq r * radialRayZ₂ τ νp r := by
+        rw [abs_of_nonneg (mul_nonneg hCp0 hZq0),
+          abs_of_nonneg (mul_nonneg hCq0 hZp0)]
+    _ ≤ τ * radialRayZ₂ τ νq r + τ * radialRayZ₂ τ νp r :=
+        add_le_add (mul_le_mul_of_nonneg_right hCp hZq0)
+          (mul_le_mul_of_nonneg_right hCq hZp0)
+    _ = τ * (radialRayZ₂ τ νp r + radialRayZ₂ τ νq r) := by ring
+
+/-- `Khat → 0` under finite first moments of both radial laws. -/
+theorem tendsto_radialRayKhat₂_atTop (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable (fun s : ℝ => s ^ 1) νp)
+    (hmq : Integrable (fun s : ℝ => s ^ 1) νq) :
+    Tendsto (radialRayKhat₂ τ νp νq) atTop (nhds 0) := by
+  have hp := tendsto_pow_radialRayZ₂_atTop τ hτ νp hsp hmp
+  have hq := tendsto_pow_radialRayZ₂_atTop τ hτ νq hsq hmq
+  have hupper : Tendsto (fun r : ℝ =>
+      τ * (r ^ 1 * radialRayZ₂ τ νp r + r ^ 1 * radialRayZ₂ τ νq r))
+      atTop (nhds 0) := by
+    simpa using (hp.add hq).const_mul τ
+  refine squeeze_zero_norm' ?_ hupper
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with r hr
+  rw [Real.norm_eq_abs, radialRayKhat₂, abs_mul, abs_of_nonneg hr]
+  calc
+    r * |radialRayK₂ τ νp νq r|
+      ≤ r * (τ * (radialRayZ₂ τ νp r + radialRayZ₂ τ νq r)) :=
+        mul_le_mul_of_nonneg_left (abs_radialRayK₂_le_tau_mul_Zadd τ hτ νp νq r) hr
+    _ = τ * (r ^ 1 * radialRayZ₂ τ νp r + r ^ 1 * radialRayZ₂ τ νq r) := by
+        ring
+
+/-- **`n = 2` determinant propagation with a first-moment provider.** -/
+theorem radialRayKhat₂_eq_zero (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable (fun s : ℝ => s ^ 1) νp)
+    (hmq : Integrable (fun s : ℝ => s ^ 1) νq)
+    (hslackp : RadialSlack₂ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₂ νp) (radialMixture₂ νq)) :
+    ∀ r : ℝ, 0 < r → radialRayKhat₂ τ νp νq r = 0 :=
+  radialRayKhat₂_eq_zero_of_tendsto τ hτ νp νq hsp hsq hslackp hzero
+    (tendsto_radialRayKhat₂_atTop τ hτ νp νq hsp hsq hmp hmq)
+
+/-! ## From `Khat = 0` to ray proportionality -/
+
+lemma continuousAt_radialRayV₂ (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    {r : ℝ} (hr : 0 < r) :
+    ContinuousAt (radialRayV₂ τ νp νq) r := by
+  have h1 := continuousAt_radialRayZd₂ τ hτ νp hr
+  have h2 := continuousAt_radialRayZd₂ τ hτ νq hr
+  have h3 := (hasDerivAt_radialRayZ₂ τ hτ νp hr).continuousAt
+  have h4 := (hasDerivAt_radialRayZ₂ τ hτ νq hr).continuousAt
+  change ContinuousAt (fun x => x *
+    ((1 / τ) * (radialRayZd₂ τ νp x * radialRayZ₂ τ νq x -
+      radialRayZd₂ τ νq x * radialRayZ₂ τ νp x))) r
+  exact continuousAt_id.mul (((h1.mul h4).sub (h2.mul h3)).const_mul _)
+
+/-- The weighted Wronskian `V` vanishes on the open ray. -/
+theorem radialRayV₂_eq_zero (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable (fun s : ℝ => s ^ 1) νp)
+    (hmq : Integrable (fun s : ℝ => s ^ 1) νq)
+    (hslackp : RadialSlack₂ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₂ νp) (radialMixture₂ νq)) :
+    ∀ r : ℝ, 0 < r → radialRayV₂ τ νp νq r = 0 := by
+  have hK0 := radialRayKhat₂_eq_zero τ hτ νp νq hsp hsq hmp hmq hslackp hzero
+  intro r hr
+  by_cases hm : radialRayM₂ τ νp r = 0
+  · by_cases hev : ∀ᶠ t in nhds r, radialRayM₂ τ νp t = 0
+    · have hMD0 : radialRayMDeriv₂ τ νp r = 0 := by
+        have h1 := hasDerivAt_radialRayM₂ τ hτ νp hr
+        have heq : radialRayM₂ τ νp =ᶠ[nhds r] fun _ => (0 : ℝ) := hev
+        exact ((h1.congr_of_eventuallyEq heq.symm).unique (hasDerivAt_const r 0))
+      have hK'0 :
+          -(τ * (radialRayMDeriv₂ τ νp r + 3)) * radialRayV₂ τ νp νq r = 0 := by
+        have h1 := hasDerivAt_radialRayKhat₂ τ hτ νp νq hsp hsq hzero hr
+        have heq : radialRayKhat₂ τ νp νq =ᶠ[nhds r] fun _ => (0 : ℝ) := by
+          filter_upwards [Ioi_mem_nhds hr] with t ht
+          exact hK0 t ht
+        exact ((h1.congr_of_eventuallyEq heq.symm).unique (hasDerivAt_const r 0))
+      rw [hMD0] at hK'0
+      have hne : -(τ * ((0 : ℝ) + 3)) ≠ 0 := by
+        apply neg_ne_zero.mpr
+        exact mul_ne_zero hτ.ne' (by norm_num)
+      exact (mul_eq_zero.mp hK'0).resolve_left hne
+    · have hfreq : ∃ᶠ t in nhds r, radialRayM₂ τ νp t ≠ 0 :=
+        Filter.not_eventually.mp hev
+      have hpos : ∀ᶠ t in nhds r, 0 < t := Ioi_mem_nhds hr
+      have hfreq0 : ∃ᶠ t in nhds r, radialRayV₂ τ νp νq t = 0 := by
+        refine (hfreq.and_eventually hpos).mono ?_
+        rintro t ⟨hmne, ht0⟩
+        have hKM := radialRayKhat₂_eq_M_mul_V τ hτ νp νq hsp hsq hzero ht0
+        rw [hK0 t ht0] at hKM
+        rcases mul_eq_zero.mp hKM.symm with h | h
+        · rcases mul_eq_zero.mp h with h' | h'
+          · exact absurd h' hτ.ne'
+          · exact absurd h' hmne
+        · exact h
+      exact tendsto_nhds_unique_of_frequently_eq
+        (continuousAt_radialRayV₂ τ hτ νp νq hr)
+        tendsto_const_nhds hfreq0
+  · have hKM := radialRayKhat₂_eq_M_mul_V τ hτ νp νq hsp hsq hzero hr
+    rw [hK0 r hr] at hKM
+    rcases mul_eq_zero.mp hKM.symm with h | h
+    · rcases mul_eq_zero.mp h with h' | h'
+      · exact absurd h' hτ.ne'
+      · exact absurd h' hm
+    · exact h
+
+/-- The two radial normalizer profiles are proportional on the open ray. -/
+theorem radialRayZ₂_proportional (τ : ℝ) (hτ : 0 < τ)
+    (νp νq : Measure ℝ) [IsProbabilityMeasure νp] [IsProbabilityMeasure νq]
+    (hsp : νp (Iio 0) = 0) (hsq : νq (Iio 0) = 0)
+    (hmp : Integrable (fun s : ℝ => s ^ 1) νp)
+    (hmq : Integrable (fun s : ℝ => s ^ 1) νq)
+    (hslackp : RadialSlack₂ τ νp)
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ))
+      (radialMixture₂ νp) (radialMixture₂ νq)) :
+    ∃ c : ℝ, ∀ r : ℝ, 0 < r →
+      radialRayZ₂ τ νp r = c * radialRayZ₂ τ νq r := by
+  have hV0 := radialRayV₂_eq_zero τ hτ νp νq hsp hsq hmp hmq hslackp hzero
+  have hRderiv : ∀ r : ℝ, 0 < r → HasDerivAt
+      (fun x => radialRayZ₂ τ νp x / radialRayZ₂ τ νq x) 0 r := by
+    intro r hr
+    have h1 := (hasDerivAt_radialRayZ₂ τ hτ νp hr).div
+      (hasDerivAt_radialRayZ₂ τ hτ νq hr)
+      (radialRayZ₂_pos τ hτ νq r).ne'
+    have hnum : (1 / τ) * radialRayZd₂ τ νp r * radialRayZ₂ τ νq r -
+        radialRayZ₂ τ νp r * ((1 / τ) * radialRayZd₂ τ νq r) = 0 := by
+      have hv := hV0 r hr
+      rw [radialRayV₂] at hv
+      have hW := (mul_eq_zero.mp hv).resolve_left hr.ne'
+      rw [radialRayW₂] at hW
+      rcases mul_eq_zero.mp hW with h | h
+      · exact absurd h (one_div_ne_zero hτ.ne')
+      · linear_combination (1 / τ) * h
+    have hzero' : ((1 / τ) * radialRayZd₂ τ νp r * radialRayZ₂ τ νq r -
+        radialRayZ₂ τ νp r * ((1 / τ) * radialRayZd₂ τ νq r)) /
+        (radialRayZ₂ τ νq r) ^ 2 = 0 := by rw [hnum]; simp
+    rw [← hzero']
+    exact h1
+  refine ⟨radialRayZ₂ τ νp 1 / radialRayZ₂ τ νq 1, ?_⟩
+  intro r hr
+  have hconst : radialRayZ₂ τ νp r / radialRayZ₂ τ νq r =
+      radialRayZ₂ τ νp 1 / radialRayZ₂ τ νq 1 := by
+    have hu0 : 0 < min r 1 := lt_min hr one_pos
+    have hMVT := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+      (f := fun x => radialRayZ₂ τ νp x / radialRayZ₂ τ νq x)
+      (f' := fun _ => (0 : ℝ)) (s := Icc (min r 1) (max r 1)) (C := 0)
+      (fun x hx => (hRderiv x (lt_of_lt_of_le hu0 hx.1)).hasDerivWithinAt)
+      (fun x _ => by simp) (convex_Icc _ _)
+      (Set.mem_Icc.mpr ⟨min_le_left r 1, le_max_left r 1⟩)
+      (Set.mem_Icc.mpr ⟨min_le_right r 1, le_max_right r 1⟩)
+    rw [zero_mul] at hMVT
+    have hz := norm_le_zero_iff.mp hMVT
+    have hsub := sub_eq_zero.mp hz
+    linarith [hsub]
+  have hZq : radialRayZ₂ τ νq r ≠ 0 := (radialRayZ₂_pos τ hτ νq r).ne'
+  calc
+    radialRayZ₂ τ νp r =
+        (radialRayZ₂ τ νp r / radialRayZ₂ τ νq r) * radialRayZ₂ τ νq r := by
+          field_simp
+    _ = (radialRayZ₂ τ νp 1 / radialRayZ₂ τ νq 1) * radialRayZ₂ τ νq r := by
+          rw [hconst]
+
 end DriftingIdentifiability
