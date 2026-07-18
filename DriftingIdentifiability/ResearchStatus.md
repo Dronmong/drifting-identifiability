@@ -1464,3 +1464,86 @@ any unit direction has density proportional to
 measure-pair, proportionality, or identifiability conclusion.  No additional
 axiom was introduced for differentiation, propagation, radiality, smoothing
 injectivity, or the headline theorem.
+
+## 2026-07-17: G4 arbitrary-measure foliation endgame
+
+The axiom-free formal skeleton of the non-radial endgame has landed in
+`LaplaceFoliationCancellation.lean` and `LaplaceFoliationEndgame.lean`.
+For actual probability measures it now proves: zero drift aligns the two
+companion-potential gradients by the positive ratio `R=Z_p/Z_q`; the
+potentials have globally Lipschitz gradients; `R` is locally Lipschitz; the
+Hessian symmetry calculation gives the differential foliation identity; the
+common elliptic equations and local chain rule cancel to
+`τ²G''|∇ψ_q|²=G-sG'`; two different gradient norms on a leaf force `G''=0`
+and proportionality, which propagates across connected intervals of such
+leaves.  On connected open critical components both actual potentials are
+constant.  Once upstream geometry establishes that `R` is locally constant,
+the complete downstream theorem glues it globally and proves `p=q` using the
+certified finite-measure Laplace smoothing injectivity and total mass.
+
+G4 is **not yet a full arbitrary-measure converse**.  The remaining primary
+gap is tube rigidity for the transnormal branch, followed by the upstream
+branch-boundary proof that `R` is locally constant.  The originally proposed
+far-field tilt route only covers compactly supported or suitable
+exponential-moment laws: arbitrary probability measures may have an infinite
+directional tilt transform, and tightness does not control the tail relative
+to the exponentially small compact-core contribution.  The heavy-tail regime
+therefore needs a separate argument (or the local tube-averaged PDE route).
+No tube, radiality, local-constancy, or identifiability conclusion has been
+axiomatized or hidden in a promoted theorem.
+
+## 2026-07-18: G4 classical bridge and seeded propagation
+
+The main analytic/formal boundary described above has now been removed.
+`LaplaceDisplacementHessian.lean` proves an everywhere-classical Fréchet
+derivative for the integrated displacement field, with a uniformly bounded
+symmetric Hessian, and proves the companion elliptic equation pointwise.  This
+works at atoms as well as off support and replaces the planned a.e.
+Rademacher/Alexandrov layer.
+
+`LaplaceFoliationChart.lean` then proves, for the actual probability measures,
+that `R=Z_p/Z_q` is differentiable wherever `D_q != 0`, that `dR` annihilates
+leaf tangents, and that
+
+```text
+tau^2 dR(D_q) = psi_p - R psi_q.
+```
+
+It also constructs the genuine implicit-function chart whose first coordinate
+is `psi_q`; no chart axiom or local factorization hypothesis is used in these
+results.
+
+`LaplaceFoliationFlow.lean` identifies the useful scalar defect
+`H=psi_p-R psi_q`.  Along an actual gradient curve `gamma'=D_q` it proves
+
+```text
+H' = -(psi_q/tau^2) H.
+```
+
+The global `tau/e` field bound and dimension-free Hessian/Lipschitz bound are
+proved, Picard--Lindelof constructs local gradient curves, and a two-sided
+Gronwall theorem propagates one zero seed through a regular orbit segment.
+Vanishing `H` also forces the full derivative of `R` to be zero, so `R` is
+constant on connected regular open regions that have been seeded.  Separately,
+the pointwise PDE upgrades potential constancy on open critical components to
+normalizer/ratio constancy; `R` is locally constant at every point of
+`interior {D_q=0}`.
+
+`LaplaceFoliationFactorization.lean` now closes that formal bridge without an
+axiom.  It proves `psi_q` is `C^1`, constructs a restricted regular chart with
+a `C^1` inverse, proves vertical-slice constancy by the convex mean-value
+theorem, and obtains differentiable local scalar factors for `R` and `psi_p`.
+Differentiating the factor gives
+`dR(D_q)=h'(psi_q) norm(D_q)^2`; comparing two points on one leaf with
+different gradient norms forces the genuine defect `H` to vanish at both
+points.  Actual non-degenerate leaves therefore manufacture the seeds already
+consumed by the gradient-flow layer.
+
+The arbitrary-measure converse is still not closed.  The exact remaining
+research gap is a **seedless fully degenerate regular component**: a
+transnormal component on which no non-degenerate leaf or boundary mechanism
+supplies `H=0`.  The remaining gluing gap is confined to boundaries of the
+critical set and interfaces involving such seedless components.  The
+far-field classification still requires directional exponential moments and
+does not cover arbitrary heavy-tailed laws.  No seed-coverage, tube-rigidity,
+or final identifiability assertion has been assumed or axiomatized.

@@ -514,25 +514,71 @@ the first-order audit above.
 
 ### G4 — the general endgame *(paper-first, start now in parallel)*
 
+**STATUS 2026-07-18 — P1, including the actual local scalar factorization and
+non-degenerate-leaf seed construction, is now closed; seeded P2 propagation,
+critical interiors, and the downstream P3 endgame are also landed.  The
+seedless fully degenerate branch is now the sole mathematical crux.**
+`LaplaceFoliationCancellation.lean` proves the actual zero-drift gradient
+alignment, positivity/continuity/local-Lipschitz regularity of `Z_p/Z_q`, the
+global Lipschitz-gradient (`C^{1,1}`) package for the companion potentials,
+the Hessian exterior-product identity, exact elliptic cancellation, the
+two-point non-degenerate leaf dichotomy, interval proportionality, and
+constancy of both potentials on connected open critical components.
+`LaplaceFoliationEndgame.lean` proves the full connectedness + finite-measure
+`c•q` mass endgame from local constancy of `Z_p/Z_q` (with a completely
+discharged Euclidean specialization).  All declarations are axiom-free.
+
+The new bridge is split across `LaplaceDisplacementHessian.lean`,
+`LaplaceFoliationChart.lean`, `LaplaceFoliationFactorization.lean`, and
+`LaplaceFoliationFlow.lean`.  The first proves
+an everywhere-classical symmetric Hessian for the integrated displacement
+field and the pointwise companion PDE, so no a.e. Rademacher/Alexandrov gate is
+needed.  The second differentiates the actual ratio on `{D_q != 0}`, proves
+the measure-level cancellation, and constructs the actual implicit leaf
+chart.  The third proves the gradient-flow equation
+`H'=-(psi_q/tau^2)H` for
+`H=psi_p-(Z_p/Z_q)psi_q`, constructs local gradient curves by
+Picard--Lindelof, propagates any zero seed in both time directions, and proves
+ratio constancy on critical interiors.  The factorization file proves the
+potential is genuinely `C^1`, restricts the actual implicit chart to a `C^1`
+inverse chart, proves vertical-slice constancy by the mean-value theorem, and
+constructs differentiable scalar factors for both the normalizer ratio and
+the companion potential.  Differentiating the factor and comparing two
+points on one leaf with different gradient norms now produces an actual zero
+defect seed.  Thus P2 has narrowed to seedless fully degenerate components and
+P3 to their branch boundaries.
+
+The P2 far-field plan was also audited and its claimed arbitrary-measure
+extension was too optimistic: `L̃_q(u)=∫exp(<u,y>/τ)dq(y)` need not be finite,
+and tightness alone does not control a truncation error relative to an
+exponentially small far-field core.  Thus the far-field pin currently applies
+only under compact support / directional exponential moments.  Arbitrary
+heavy tails require a separate tail-dominated argument or the local
+tube-averaged PDE bypass.  This is recorded in full in
+`LaplaceG4Foliation.md`; it is an explicit theorem boundary, not a hidden
+hypothesis.
+
 Development track for F-E, in order:
-- **P1** (regularity): write out the a.e. leafwise dichotomy rigorously for
-  `C^{1,1}` potentials; identify exactly where real-analyticity off supports
-  is needed.  Deliverable: a self-contained paper section.  1 session.
+- **P1 (closed)**: the
+  everywhere-classical Hessian, pointwise PDE, differentiated ratio, tangent
+  cancellation, implicit chart, local scalar factorization, differentiable
+  one-variable factor, and non-degenerate-leaf seed theorem are all machine
+  checked; real-analyticity off supports was not needed.
 - **P2** (tube rigidity): the far-field pin — extend L1's monotone-weight
   expansion one order in `1/r` and show leaf-constancy at ∞ forces the focal
   set to a point (probability measures).  This is the single most valuable
   open computation in the program.  1–2 sessions paper + numerics
   (tube-profile fits on synthetic transnormal candidates).
-- **P3** (gluing): transplant the 1-d trichotomy playbook to the leaf
-  parameter; classify what happens at `int{m=0}` via the `Z`-constancy
-  rigidity (F-E(v)); L3 handles atoms at interfaces.  1–2 sessions paper.
-- **P4** (assembly + Lean feasibility review): decide the formalization
-  boundary — candidates for Paperaxioms allowlisting under the project's
-  axiomatize-standard-results policy: Rademacher/Alexandrov-type a.e.
-  differentiability (if Mathlib still lacks what's needed) and, if the
-  classification route is taken instead of the ODE bypass, the transnormal
-  structure theorem.  Target: formalize the skeleton with the radial core
-  (G1) plugged in as-is.
+- **P3** (gluing): `int{D_q=0}` is closed by the pointwise PDE and the final
+  locally-constant-ratio endgame is closed.  What remains is gluing at the
+  boundary of the critical set and at seedless/seeded branch boundaries; L3
+  handles atoms at interfaces.
+- **P4** (assembly + Lean feasibility review): the
+  Rademacher/Alexandrov candidate is retired because the classical derivative
+  bridge is proved.  If classification is taken instead of the ODE bypass,
+  only a carefully vetted transnormal structure theorem remains a possible
+  standard external input.  Target: formalize the skeleton with the radial
+  core (G1) plugged in as-is.
 - Fallback for P2/P3 if tube rigidity stalls: the odd-`n` local tower
   (`(1−τ²Δ)³ψ ∝ ν` in ℝ³) — pursue `n = 3` general-measure as the first
   unconditional non-radial theorem, accepting dimension-specific scope.
