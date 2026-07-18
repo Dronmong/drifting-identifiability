@@ -564,4 +564,174 @@ theorem laplaceFoliationDefect_backward_growth
         mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hA0) hH0
     _ = laplaceFoliationDefect τ p q (γ (-T)) := hend
 
+/-! ## The maximum principle -/
+
+/-- On the interior of the critical set the pointwise elliptic identity forces
+the defect to vanish. -/
+theorem laplaceFoliationDefect_eq_zero_of_mem_interior_qField_eq_zero
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {x : E} (hx : x ∈ interior {y | laplaceDisplacementField τ q y = 0}) :
+    laplaceFoliationDefect τ p q x = 0 := by
+  have hUopen : IsOpen (interior {y | laplaceDisplacementField τ q y = 0}) :=
+    isOpen_interior
+  have hqcrit : ∀ y ∈ interior {y | laplaceDisplacementField τ q y = 0},
+      laplaceDisplacementField τ q y = 0 := by
+    intro y hy
+    have hy' : y ∈ {y : E | laplaceDisplacementField τ q y = 0} :=
+      interior_subset hy
+    exact hy'
+  have hpcrit : ∀ y ∈ interior {y | laplaceDisplacementField τ q y = 0},
+      laplaceDisplacementField τ p y = 0 := fun y hy =>
+    laplaceDisplacementField_eq_zero_of_zeroDrift_of_eq_zero
+      hτ p q hzero (hqcrit y hy)
+  have hpLap := laplaceDisplacementLaplacian_eq_zero_of_eq_zero_on_open
+    hτ p hUopen hpcrit hx
+  have hqLap := laplaceDisplacementLaplacian_eq_zero_of_eq_zero_on_open
+    hτ q hUopen hqcrit hx
+  have hpde := laplaceDisplacementPotential_elliptic hτ p x
+  have hqde := laplaceDisplacementPotential_elliptic hτ q x
+  rw [hpLap, mul_zero, sub_zero] at hpde
+  rw [hqLap, mul_zero, sub_zero] at hqde
+  have hZq : kernelNormalizer (laplaceKernel τ) q x ≠ 0 :=
+    (laplaceKernelNormalizer_pos q τ hτ x).ne'
+  unfold laplaceFoliationDefect laplaceNormalizerRatio
+  rw [hpde, hqde]
+  field_simp
+  ring
+
+/-- **The global maximum principle.**  Under zero drift the foliation defect
+is nonpositive everywhere: a positive maximum could neither sit at a regular
+point nor at a critical boundary point (backward flow inflates it beyond its
+own supremum without leaving a good ball), nor inside the critical set
+(elliptic identity). -/
+theorem laplaceFoliationDefect_nonpos
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q) (x : E) :
+    laplaceFoliationDefect τ p q x ≤ 0 := by
+  by_contra hcon
+  rw [not_le] at hcon
+  obtain ⟨z, hz, hmax⟩ := laplaceFoliationDefect_exists_max_of_pos hτ p q hcon
+  by_cases hint : z ∈ interior {y | laplaceDisplacementField τ q y = 0}
+  · exact absurd
+      (laplaceFoliationDefect_eq_zero_of_mem_interior_qField_eq_zero
+        hτ p q hzero hint) hz.ne'
+  -- z is a closure point of the regular set
+  have hclos : ∀ η : ℝ, 0 < η →
+      ∃ y : E, dist y z < η ∧ laplaceDisplacementField τ q y ≠ 0 := by
+    intro η hη
+    by_contra hno
+    push Not at hno
+    apply hint
+    rw [mem_interior_iff_mem_nhds]
+    filter_upwards [Metric.ball_mem_nhds z hη] with y hy
+    exact hno y (Metric.mem_ball.mp hy)
+  -- the good ball: `ψ_q ≥ δτ²` with `δτ² = ψ_q(z)/2`
+  have hψz : 0 < laplaceDisplacementPotential τ q z :=
+    laplaceDisplacementPotential_pos hτ q z
+  have hδpos : 0 < laplaceDisplacementPotential τ q z / (2 * τ ^ 2) := by
+    positivity
+  set δ : ℝ := laplaceDisplacementPotential τ q z / (2 * τ ^ 2) with hδdef
+  have hδτ : δ * τ ^ 2 = laplaceDisplacementPotential τ q z / 2 := by
+    rw [hδdef]
+    field_simp
+  obtain ⟨R₀, hR₀pos, hR₀⟩ : ∃ R₀ : ℝ, 0 < R₀ ∧ ∀ y : E, dist y z < R₀ →
+      δ * τ ^ 2 ≤ laplaceDisplacementPotential τ q y := by
+    have hhalf : laplaceDisplacementPotential τ q z / 2 <
+        laplaceDisplacementPotential τ q z := half_lt_self hψz
+    have hev := ((continuous_laplaceDisplacementPotential hτ
+      q).continuousAt (x := z)).eventually (eventually_gt_nhds hhalf)
+    rw [Metric.eventually_nhds_iff] at hev
+    obtain ⟨R₀, hR₀pos, hball⟩ := hev
+    refine ⟨R₀, hR₀pos, fun y hy => ?_⟩
+    rw [hδτ]
+    exact (hball hy).le
+  -- the backward time: short enough for the uniform curve and to stay in the ball
+  have hLpos : 0 < τ * Real.exp (-1) + 1 := by positivity
+  set T : ℝ := min (laplaceCurveTime τ / 2)
+    (R₀ / (2 * (τ * Real.exp (-1) + 1))) with hTdef
+  have hTpos : 0 < T := lt_min (half_pos (laplaceCurveTime_pos hτ))
+    (by positivity)
+  have hTS : T < laplaceCurveTime τ :=
+    lt_of_le_of_lt (min_le_left _ _) (half_lt_self (laplaceCurveTime_pos hτ))
+  have hTspeed : τ * Real.exp (-1) * T ≤ R₀ / 2 := by
+    have h1 : T ≤ R₀ / (2 * (τ * Real.exp (-1) + 1)) := min_le_right _ _
+    have h2 : τ * Real.exp (-1) * T ≤
+        τ * Real.exp (-1) * (R₀ / (2 * (τ * Real.exp (-1) + 1))) :=
+      mul_le_mul_of_nonneg_left h1 (by positivity)
+    have h3 : τ * Real.exp (-1) * (R₀ / (2 * (τ * Real.exp (-1) + 1))) ≤
+        R₀ / 2 := by
+      rw [← mul_div_assoc, div_le_div_iff₀ (by positivity) (by norm_num)]
+      nlinarith [hR₀pos.le, mul_nonneg hτ.le (Real.exp_pos (-1)).le]
+    linarith
+  -- the seed threshold
+  have hexpT : (1 : ℝ) < Real.exp (δ * T) := by
+    rw [← Real.exp_zero]
+    exact Real.exp_lt_exp.mpr (by positivity)
+  have hthr : laplaceFoliationDefect τ p q z / Real.exp (δ * T) <
+      laplaceFoliationDefect τ p q z := by
+    rw [div_lt_iff₀ (Real.exp_pos _)]
+    nlinarith
+  obtain ⟨η, hηpos, hη⟩ : ∃ η : ℝ, 0 < η ∧ ∀ y : E, dist y z < η →
+      laplaceFoliationDefect τ p q z / Real.exp (δ * T) <
+        laplaceFoliationDefect τ p q y := by
+    have hev := ((continuous_laplaceFoliationDefect hτ
+      p q).continuousAt (x := z)).eventually (eventually_gt_nhds hthr)
+    rw [Metric.eventually_nhds_iff] at hev
+    obtain ⟨η, hηpos, hball⟩ := hev
+    exact ⟨η, hηpos, fun y hy => hball hy⟩
+  -- pick a regular seed close to the maximum point
+  obtain ⟨x', hx'dist, hx'reg⟩ := hclos (min η (R₀ / 2))
+    (lt_min hηpos (by positivity))
+  have hx'η : dist x' z < η := lt_of_lt_of_le hx'dist (min_le_left _ _)
+  have hx'R : dist x' z < R₀ / 2 := lt_of_lt_of_le hx'dist (min_le_right _ _)
+  -- the backward curve from the seed
+  obtain ⟨γ, hγ0, hγ⟩ := exists_gradientCurve_uniform hτ q x'
+  have hsubT : Icc (-T) 0 ⊆ Ioo (-laplaceCurveTime τ) (laplaceCurveTime τ) := by
+    intro u hu
+    constructor
+    · linarith [hu.1]
+    · exact lt_of_le_of_lt hu.2 (laplaceCurveTime_pos hτ)
+  have hγIcc : ∀ u ∈ Icc (-T) 0, HasDerivAt γ
+      (laplaceDisplacementField τ q (γ u)) u :=
+    fun u hu => hγ u (hsubT hu)
+  have hreg := laplaceDisplacementField_ne_zero_on_backward_curve hτ q
+    hTpos.le hγIcc (by rw [hγ0]; exact hx'reg)
+  -- the curve stays in the good ball
+  have hstay : ∀ u ∈ Icc (-T) 0, dist (γ u) z < R₀ := by
+    intro u hu
+    have hspeed := norm_gradientCurve_sub_start_le hτ q hTpos.le hγIcc u hu
+    calc dist (γ u) z ≤ dist (γ u) (γ 0) + dist (γ 0) z := dist_triangle _ _ _
+      _ = ‖γ u - γ 0‖ + dist x' z := by rw [dist_eq_norm, hγ0]
+      _ < τ * Real.exp (-1) * T + R₀ / 2 := by
+          have := hspeed
+          linarith
+      _ ≤ R₀ / 2 + R₀ / 2 := by linarith
+      _ = R₀ := by ring
+  have hρ : ∀ u ∈ Icc (-T) 0,
+      δ * τ ^ 2 ≤ laplaceDisplacementPotential τ q (γ u) :=
+    fun u hu => hR₀ _ (hstay u hu)
+  -- the seed value exceeds the threshold
+  have hHx' : laplaceFoliationDefect τ p q z / Real.exp (δ * T) <
+      laplaceFoliationDefect τ p q (γ 0) := by
+    rw [hγ0]
+    exact hη x' hx'η
+  have hthrpos : 0 < laplaceFoliationDefect τ p q z / Real.exp (δ * T) := by
+    positivity
+  -- backward growth pushes the defect above its supremum
+  have hgrowth := laplaceFoliationDefect_backward_growth hτ p q hzero
+    hTpos.le hTS hγ hreg hρ (le_of_lt (lt_trans hthrpos hHx'))
+  have hover : laplaceFoliationDefect τ p q z <
+      laplaceFoliationDefect τ p q (γ (-T)) := by
+    calc laplaceFoliationDefect τ p q z
+        = (laplaceFoliationDefect τ p q z / Real.exp (δ * T)) *
+            Real.exp (δ * T) := by
+          field_simp
+      _ < laplaceFoliationDefect τ p q (γ 0) * Real.exp (δ * T) :=
+          mul_lt_mul_of_pos_right hHx' (Real.exp_pos _)
+      _ ≤ laplaceFoliationDefect τ p q (γ (-T)) := hgrowth
+  linarith [hmax (γ (-T))]
+
 end DriftingIdentifiability
