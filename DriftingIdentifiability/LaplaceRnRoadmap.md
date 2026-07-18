@@ -514,6 +514,27 @@ the first-order audit above.
 
 ### G4 — the general endgame *(paper-first, start now in parallel)*
 
+**★★★ G4 CLOSED (2026-07-18, later same day): THE TARGET THEOREM OF §0 IS
+MACHINE-CHECKED AND AXIOM-FREE.**  `laplaceZeroDrift_identifies_euclidean` /
+`laplaceZeroDrift_identifies_rn` (`LaplaceEuclideanConverse.lean`): zero
+ℓ²-Laplace mean-shift drift identifies **arbitrary** probability measures on
+every finite-dimensional Euclidean space — no support, moment, density, atom,
+radiality, or slack hypothesis; `#print axioms` = 3 foundations.  The
+seedless-degenerate crux (and with it all of P2 tube rigidity and P3
+branch-boundary gluing) was dissolved by a **global maximum principle** for
+the defect `H = ψ_p − (Z_p/Z_q)ψ_q` (`LaplaceFoliationMaximum.lean`):
+`H ≤ ψ_p − τ²Z_p = ∫τ‖x−y‖e^{−‖x−y‖/τ}dp → 0` at infinity, so a positive sup
+is attained; at a maximum in `closure {D_q ≠ 0}` the certified Abel flow
+equation `H' = −(ψ_q/τ²)H` (with `ψ_q > 0`, speed ≤ τ/e, Grönwall
+regularity of backward orbits) inflates `H` past its own supremum inside a
+fixed ball; in `interior {D_q = 0}` the pointwise elliptic identity forces
+`H = 0`.  Hence `sup H ≤ 0`, and the p↔q swap (`H_qp = −(Z_q/Z_p)H_pq`)
+gives `H ≡ 0`; then `Z_p/Z_q = ψ_p/ψ_q` is differentiable with vanishing
+derivative everywhere, globally constant, and the certified endgame closes
+`p = q`.  G1–G3 radial converses survive as corollaries/history; the record
+below documents the staged route whose P1/flow/endgame layers the final
+proof consumes.**
+
 **STATUS 2026-07-18 — P1, including the actual local scalar factorization and
 non-degenerate-leaf seed construction, is now closed; seeded P2 propagation,
 critical interiors, and the downstream P3 endgame are also landed.  The

@@ -1,5 +1,43 @@
 # G4: foliation--cancellation endgame
 
+## ★ CLOSED (2026-07-18): the general theorem is machine-checked
+
+The seedless-degenerate-component question and every remaining P2/P3 gap are
+resolved by a **global maximum principle** for the defect
+`H = psi_p - (Z_p/Z_q) psi_q`, formalized in
+`LaplaceFoliationMaximum.lean` and `LaplaceEuclideanConverse.lean`:
+
+1. Unconditionally (no drift), `H <= psi_p - tau^2 Z_p
+   = integral tau |x-y| e^{-|x-y|/tau} dp`, and this bound vanishes at
+   infinity, so every positive value of `H` lives on a compact sublevel set
+   and a positive supremum would be attained.
+2. A positive maximum cannot sit at a point of `closure {D_q != 0}`: the
+   certified Abel equation `H' = -(psi_q/tau^2) H` with `psi_q > 0` makes
+   `H` grow strictly along the *backward* gradient flow, the field speed is
+   at most `tau/e` so a short backward orbit stays inside a ball on which
+   `psi_q` is bounded below, and Gronwall keeps the orbit regular — so `H`
+   would exceed its own supremum.
+3. A positive maximum cannot sit in `interior {D_q = 0}` either: there the
+   pointwise elliptic identity forces `H = 0`.
+4. Hence `sup H <= 0`; swapping `p` and `q` flips the sign
+   (`H_qp = -(Z_q/Z_p) H_pq`), so `H == 0` **everywhere**.
+5. `H == 0` makes `Z_p/Z_q = psi_p/psi_q` a quotient of everywhere
+   differentiable functions with positive denominator; the quotient rule and
+   `D_p = R D_q` kill its derivative identically, so the ratio is globally
+   constant, and the endgame (smoothing injectivity + mass) gives `p = q`.
+
+**Headline** (`LaplaceEuclideanConverse.lean`, axiom-free):
+`laplaceZeroDrift_identifies_euclidean` /
+`laplaceZeroDrift_identifies_rn` — zero Laplace mean-shift drift identifies
+arbitrary probability measures on every finite-dimensional Euclidean space.
+No support, moment, density, atom, radiality, tube, or slack hypothesis.
+`#print axioms` = `propext`, `Classical.choice`, `Quot.sound`.
+
+Consequently no tube rigidity, transnormal classification, far-field tilt
+expansion, seed-coverage argument, or branch-boundary gluing is needed
+anywhere: the sections below are retained as the historical design record of
+the staged route whose P1/flow/endgame layers the final proof consumes.
+
 ## Scope
 
 This is the live implementation note for G4 of `LaplaceRnRoadmap.md`.  The

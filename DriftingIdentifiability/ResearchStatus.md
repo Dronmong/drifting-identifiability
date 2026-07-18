@@ -1547,3 +1547,38 @@ critical set and interfaces involving such seedless components.  The
 far-field classification still requires directional exponential moments and
 does not cover arbitrary heavy-tailed laws.  No seed-coverage, tube-rigidity,
 or final identifiability assertion has been assumed or axiomatized.
+
+## 2026-07-18 (later): G4 CLOSED — the general Euclidean Laplace converse
+
+The arbitrary-measure converse is now machine-checked and axiom-free.
+`LaplaceFoliationMaximum.lean` proves a global maximum principle for the
+foliation defect `H = psi_p - (Z_p/Z_q) psi_q`:
+
+* unconditionally `H <= psi_p - tau^2 Z_p`, the kernel-weighted first
+  moment of `p`, which vanishes at infinity; positive sublevel sets of `H`
+  are therefore compact and a positive supremum would be attained;
+* a positive maximum cannot lie in the closure of the regular set: the
+  certified gradient-flow Abel equation `H' = -(psi_q/tau^2) H` with
+  `psi_q > 0` makes `H` grow strictly along short backward orbits, which
+  stay regular (Gronwall on `D_q` with the Hessian bound `2`) and stay
+  inside a ball where `psi_q` is bounded below (field speed at most
+  `tau/e`), so `H` would exceed its own supremum;
+* a positive maximum cannot lie in the interior of the critical set, where
+  the pointwise elliptic identity forces `H = 0`.
+
+Hence `sup H <= 0`; swapping the two laws flips the sign and `H == 0`
+everywhere.  Consequently `Z_p/Z_q = psi_p/psi_q` is differentiable with
+identically vanishing derivative, hence globally constant, and the already
+certified gluing/mass endgame yields `p = q`.
+
+`LaplaceEuclideanConverse.lean` records the headline
+`laplaceZeroDrift_identifies_euclidean` and the roadmap form
+`laplaceZeroDrift_identifies_rn`: **zero Laplace mean-shift drift identifies
+arbitrary probability measures on every finite-dimensional Euclidean
+space**, with no support, moment, density, atom, radiality, or slack
+hypothesis.  `#print axioms` shows only the three foundations.  No tube
+rigidity, transnormal classification, far-field expansion, or seed coverage
+was needed; the staged P1/flow/endgame layers are consumed by the final
+proof and the radial converses G1–G3 become corollaries of the general
+theorem.  Check.ps1 green: 94 files, 455 promoted declarations, axiom
+classes unchanged (15 paper + 1 standard + 5 conditional).
