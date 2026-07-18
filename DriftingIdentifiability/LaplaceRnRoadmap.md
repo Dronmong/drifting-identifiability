@@ -382,6 +382,22 @@ F-B/F-C mean the proof must be shell-integrated; RsiScan 40× margin.
 
 ### G3 — `n = 2` radial *(after G1)*
 
+**★ CLOSED 2026-07-17 (Fable). Headline
+`laplaceZeroDrift_identifies_of_radialMixture₂` machine-checked, axiom-free
+(`#print axioms` = propext/Classical.choice/Quot.sound), Check.ps1 green (413
+promoted decls). Five files: `LaplaceRadial{Shell,Ray,System,Converse,Invariance}2.lean`.**
+The research finding below held exactly — the `n = 2` case was a mechanical
+first-order port of the general-`n` Abel/trichotomy machinery (constants `3↦2`:
+`n+1=3`, `v=r·w`, first radial moment), with the ONE genuinely-new step being
+master radiality: no Haar sphere at `n = 2`, so `Invariance2` uses the planar
+polar angle (`exists_polar₂`) and a periodic shift `φ↦φ−θ`
+(`Function.Periodic.intervalIntegral_add_eq` + `integral_comp_sub_right`) to move
+the arbitrary-probe circle average onto `shellZ₂` at `‖x‖`; then L4 Euclidean
+smoothing injectivity (`Fin 2`) + `c=1` mass argument. Converse2 reuses the
+`LaplaceACPropagation` abstract Abel lemmas and
+`exists_Ioo_linear_bound_of_hasDerivAt_zero` (imports `LaplaceACFinal`); ∞-decay
+uses uniform-angle `shellZ₂_le_exp/le_one` (no zonal weight).
+
 **FOUNDATION LANDED 2026-07-17 (`LaplaceRadialShell2.lean`, builds green, no
 sorries, fully axiom-clean — only the 3 foundations, NO sphere axiom).**  Key
 design decision that de-risks the whole `n = 2` case: the `u = cos θ`
