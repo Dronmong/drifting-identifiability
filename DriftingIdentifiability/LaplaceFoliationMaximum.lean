@@ -357,4 +357,211 @@ theorem laplaceFoliationDefect_exists_max_of_pos
     exact hzmax hyK
   · exact le_trans (not_le.mp hy).le hzK'
 
+/-! ## Backward gradient curves -/
+
+/-- The uniform Picard–Lindelöf time step: it depends only on the bandwidth. -/
+noncomputable def laplaceCurveTime (τ : ℝ) : ℝ :=
+  1 / (2 * (τ * Real.exp (-1) + 1))
+
+lemma laplaceCurveTime_pos {τ : ℝ} (hτ : 0 < τ) : 0 < laplaceCurveTime τ := by
+  unfold laplaceCurveTime
+  positivity
+
+/-- Uniform-time local integral curves through every point. -/
+theorem exists_gradientCurve_uniform
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsProbabilityMeasure μ] (x : E) :
+    ∃ γ : ℝ → E, γ 0 = x ∧
+      ∀ t ∈ Ioo (-laplaceCurveTime τ) (laplaceCurveTime τ),
+        HasDerivAt γ (laplaceDisplacementField τ μ (γ t)) t := by
+  let L : ℝ≥0 := ⟨τ * Real.exp (-1),
+    mul_nonneg (le_of_lt hτ) (le_of_lt (Real.exp_pos _))⟩
+  have hε : 0 < laplaceCurveTime τ := laplaceCurveTime_pos hτ
+  have hεeq : laplaceCurveTime τ = 1 / (2 * ((L : ℝ) + 1)) := rfl
+  let t₀ : Icc (-laplaceCurveTime τ) (laplaceCurveTime τ) :=
+    ⟨0, by constructor <;> linarith⟩
+  have hPL : IsPicardLindelof
+      (fun _ : ℝ => laplaceDisplacementField τ μ) t₀ x 1 0 L 2 := by
+    refine {
+      lipschitzOnWith := ?_
+      continuousOn := ?_
+      norm_le := ?_
+      mul_max_le := ?_ }
+    · intro t _
+      exact (lipschitzWith_laplaceDisplacementField hτ μ).lipschitzOnWith
+    · intro y _
+      exact continuous_const.continuousOn
+    · intro t _ y _
+      exact norm_laplaceDisplacementField_le hτ μ y
+    · change (L : ℝ) * max (laplaceCurveTime τ - 0)
+        (0 - -laplaceCurveTime τ) ≤ (1 : ℝ) - 0
+      rw [sub_zero, zero_sub, neg_neg, max_self, sub_zero, hεeq]
+      have hden : 0 < 2 * ((L : ℝ) + 1) := by positivity
+      rw [one_div, ← div_eq_mul_inv, div_le_iff₀ hden]
+      nlinarith [L.coe_nonneg]
+  rcases hPL.exists_eq_forall_mem_Icc_hasDerivWithinAt₀ with ⟨γ, hγ₀, hγ⟩
+  refine ⟨γ, ?_, ?_⟩
+  · simpa [t₀] using hγ₀
+  · intro t ht
+    exact (hγ t (Ioo_subset_Icc_self ht)).hasDerivAt
+      (Icc_mem_nhds ht.1 ht.2)
+
+/-- A gradient curve that starts regular stays regular backward in time:
+Grönwall applied to `D∘γ` with the uniform Hessian bound `2`. -/
+theorem laplaceDisplacementField_ne_zero_on_backward_curve
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsProbabilityMeasure μ]
+    {γ : ℝ → E} {T : ℝ} (_hT : 0 ≤ T)
+    (hγ : ∀ u ∈ Icc (-T) 0, HasDerivAt γ (laplaceDisplacementField τ μ (γ u)) u)
+    (h0 : laplaceDisplacementField τ μ (γ 0) ≠ 0) :
+    ∀ u ∈ Icc (-T) 0, laplaceDisplacementField τ μ (γ u) ≠ 0 := by
+  intro t ht hcon
+  set w : ℝ → E := fun u => laplaceDisplacementField τ μ (γ u) with hw
+  have hsub : Icc t 0 ⊆ Icc (-T) 0 := Icc_subset_Icc ht.1 le_rfl
+  have hwderiv : ∀ u ∈ Ico t 0, HasDerivWithinAt w
+      (laplaceDisplacementHessian τ μ (γ u)
+        (laplaceDisplacementField τ μ (γ u))) (Ici u) u := by
+    intro u hu
+    exact ((hasFDerivAt_laplaceDisplacementField hτ μ (γ u)).comp_hasDerivAt u
+      (hγ u (hsub (Ico_subset_Icc_self hu)))).hasDerivWithinAt
+  have hwcont : ContinuousOn w (Icc t 0) := by
+    intro u hu
+    exact (((hasFDerivAt_laplaceDisplacementField hτ μ
+      (γ u)).continuousAt).comp
+        (hγ u (hsub hu)).continuousAt).continuousWithinAt
+  have hbound : ∀ u ∈ Ico t 0,
+      ‖laplaceDisplacementHessian τ μ (γ u)
+        (laplaceDisplacementField τ μ (γ u))‖ ≤ 2 * ‖w u‖ + 0 := by
+    intro u _
+    rw [add_zero]
+    calc ‖laplaceDisplacementHessian τ μ (γ u)
+          (laplaceDisplacementField τ μ (γ u))‖
+        ≤ ‖laplaceDisplacementHessian τ μ (γ u)‖ *
+            ‖laplaceDisplacementField τ μ (γ u)‖ :=
+          ContinuousLinearMap.le_opNorm _ _
+      _ ≤ 2 * ‖w u‖ :=
+          mul_le_mul_of_nonneg_right
+            (norm_laplaceDisplacementHessian_le hτ μ (γ u)) (norm_nonneg _)
+  have hstart : ‖w t‖ ≤ 0 := by
+    rw [hw]
+    simp [hcon]
+  have hgron := norm_le_gronwallBound_of_norm_deriv_right_le
+    hwcont hwderiv hstart hbound 0 ⟨ht.2, le_rfl⟩
+  rw [gronwallBound_ε0] at hgron
+  have hzero0 : w 0 = 0 := by
+    have : ‖w 0‖ ≤ 0 := by
+      calc ‖w 0‖ ≤ 0 * Real.exp (2 * (0 - t)) := hgron
+        _ = 0 := zero_mul _
+    exact norm_le_zero_iff.mp this
+  exact h0 (by simpa [hw] using hzero0)
+
+omit [BorelSpace E] [CompleteSpace E] [SecondCountableTopology E]
+    [FiniteDimensional ℝ E] in
+/-- Backward speed bound: the curve moves at most `τ/e` per unit time. -/
+theorem norm_gradientCurve_sub_start_le
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsProbabilityMeasure μ]
+    {γ : ℝ → E} {T : ℝ} (hT : 0 ≤ T)
+    (hγ : ∀ u ∈ Icc (-T) 0, HasDerivAt γ (laplaceDisplacementField τ μ (γ u)) u) :
+    ∀ u ∈ Icc (-T) 0, ‖γ u - γ 0‖ ≤ τ * Real.exp (-1) * T := by
+  intro u hu
+  have hmvt := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+    (f := γ) (f' := fun z => laplaceDisplacementField τ μ (γ z))
+    (C := τ * Real.exp (-1))
+    (fun z hz => (hγ z hz).hasDerivWithinAt)
+    (fun z _ => norm_laplaceDisplacementField_le hτ μ (γ z))
+    (convex_Icc _ _) (right_mem_Icc.mpr (by linarith)) hu
+  calc ‖γ u - γ 0‖ ≤ τ * Real.exp (-1) * ‖u - 0‖ := hmvt
+    _ ≤ τ * Real.exp (-1) * T := by
+        have habs : ‖u - 0‖ ≤ T := by
+          rw [sub_zero, Real.norm_eq_abs, abs_le]
+          exact ⟨by linarith [hu.1], by linarith [hu.2]⟩
+        exact mul_le_mul_of_nonneg_left habs (by positivity)
+
+omit [FiniteDimensional ℝ E] in
+/-- The companion potential is continuous. -/
+theorem continuous_laplaceDisplacementPotential
+    {τ : ℝ} (hτ : 0 < τ) (μ : Measure E) [IsFiniteMeasure μ] :
+    Continuous (laplaceDisplacementPotential τ μ) := by
+  rw [continuous_iff_continuousAt]
+  exact fun x => (hasFDerivAt_laplaceDisplacementPotential hτ μ x).continuousAt
+
+/-- **Backward exponential growth of a nonnegative defect.**  Along a regular
+backward orbit segment on which `ψ_q ≥ ρτ²`, the defect grows by at least
+`e^{ρT}`. -/
+theorem laplaceFoliationDefect_backward_growth
+    {τ : ℝ} (hτ : 0 < τ) (p q : Measure E)
+    [IsProbabilityMeasure p] [IsProbabilityMeasure q]
+    (hzero : ZeroDrift (meanShiftDrift (laplaceKernel τ)) p q)
+    {γ : ℝ → E} {T S : ℝ} (hT : 0 ≤ T) (hTS : T < S)
+    (hγ : ∀ u ∈ Ioo (-S) S, HasDerivAt γ
+      (laplaceDisplacementField τ q (γ u)) u)
+    (hreg : ∀ u ∈ Icc (-T) 0, laplaceDisplacementField τ q (γ u) ≠ 0)
+    {ρ : ℝ}
+    (hρ : ∀ u ∈ Icc (-T) 0,
+      ρ * τ ^ 2 ≤ laplaceDisplacementPotential τ q (γ u))
+    (hH0 : 0 ≤ laplaceFoliationDefect τ p q (γ 0)) :
+    laplaceFoliationDefect τ p q (γ 0) * Real.exp (ρ * T) ≤
+      laplaceFoliationDefect τ p q (γ (-T)) := by
+  have hS0 : 0 < S := lt_of_le_of_lt hT hTS
+  have hsubIoo : Icc (-T) 0 ⊆ Ioo (-S) S := by
+    intro u hu
+    exact ⟨by linarith [hu.1], by linarith [hu.2]⟩
+  set W : ℝ → ℝ := fun u => laplaceFoliationDefect τ p q (γ u) with hWdef
+  set c : ℝ → ℝ := fun u =>
+    laplaceDisplacementPotential τ q (γ u) / τ ^ 2 with hcdef
+  have hγcont : ContinuousOn γ (Ioo (-S) S) := fun u hu =>
+    (hγ u hu).continuousAt.continuousWithinAt
+  have hccont : ContinuousOn c (Ioo (-S) S) :=
+    (((continuous_laplaceDisplacementPotential hτ q).comp_continuousOn
+      hγcont).div_const _)
+  set A : ℝ → ℝ := fun z => ∫ u in (-T)..z, c u with hAdef
+  have hAfull : ∀ z ∈ Ioo (-S) S, HasDerivAt A (c z) z := by
+    intro z hz
+    have hmemT : (-T : ℝ) ∈ Ioo (-S) S := ⟨by linarith, by linarith⟩
+    have hcint : IntervalIntegrable c volume (-T) z :=
+      ContinuousOn.intervalIntegrable
+        (hccont.mono (OrdConnected.uIcc_subset inferInstance hmemT hz))
+    exact intervalIntegral.integral_hasDerivAt_right hcint
+      (hccont.stronglyMeasurableAtFilter isOpen_Ioo z hz)
+      (hccont.continuousAt (isOpen_Ioo.mem_nhds hz))
+  have hWcont : ContinuousOn W (Icc (-T) 0) := fun u hu =>
+    (((continuous_laplaceFoliationDefect hτ p q).continuousAt).comp
+      (hγ u (hsubIoo hu)).continuousAt).continuousWithinAt
+  have hAcont : ContinuousOn A (Icc (-T) 0) := fun u hu =>
+    (hAfull u (hsubIoo hu)).continuousAt.continuousWithinAt
+  have hcont : ContinuousOn (fun x => W x * Real.exp (A x)) (Icc (-T) 0) :=
+    hWcont.mul (Real.continuous_exp.comp_continuousOn hAcont)
+  have hW : ∀ x ∈ Ico (-T) 0,
+      HasDerivWithinAt W (-(c x) * W x) (Ici x) x := by
+    intro x hx
+    have habel := hasDerivAt_laplaceFoliationDefect_comp_gradientCurve_abel
+      hτ p q hzero (hγ x (hsubIoo (Ico_subset_Icc_self hx)))
+      (hreg x (Ico_subset_Icc_self hx))
+    exact habel.hasDerivWithinAt
+  have hA : ∀ x ∈ Ico (-T) 0, HasDerivWithinAt A (c x) (Ici x) x :=
+    fun x hx =>
+      (hAfull x (hsubIoo (Ico_subset_Icc_self hx))).hasDerivWithinAt
+  have hconst := abel_integratingFactor_const_Icc hcont hW hA
+  have hend := hconst 0 ⟨by linarith, le_rfl⟩
+  have hAT : A (-T) = 0 := intervalIntegral.integral_same
+  rw [hAT, Real.exp_zero, mul_one] at hend
+  have hA0 : ρ * T ≤ A 0 := by
+    have hρ' : ∀ u ∈ Icc (-T) 0, ρ ≤ c u := by
+      intro u hu
+      rw [hcdef]
+      rw [le_div_iff₀ (by positivity : (0:ℝ) < τ ^ 2)]
+      exact hρ u hu
+    have hcint : IntervalIntegrable c volume (-T) 0 := by
+      have hmemT : (-T : ℝ) ∈ Ioo (-S) S := ⟨by linarith, by linarith⟩
+      have hmem0 : (0 : ℝ) ∈ Ioo (-S) S := ⟨by linarith, hS0⟩
+      exact ContinuousOn.intervalIntegrable
+        (hccont.mono (OrdConnected.uIcc_subset inferInstance hmemT hmem0))
+    have hmono := intervalIntegral.integral_mono_on (by linarith : (-T:ℝ) ≤ 0)
+      (intervalIntegrable_const) hcint hρ'
+    rw [intervalIntegral.integral_const, smul_eq_mul, sub_neg_eq_add,
+      zero_add, mul_comm] at hmono
+    exact hmono
+  calc laplaceFoliationDefect τ p q (γ 0) * Real.exp (ρ * T)
+      ≤ laplaceFoliationDefect τ p q (γ 0) * Real.exp (A 0) :=
+        mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hA0) hH0
+    _ = laplaceFoliationDefect τ p q (γ (-T)) := hend
+
 end DriftingIdentifiability
