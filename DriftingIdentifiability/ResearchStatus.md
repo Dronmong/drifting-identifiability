@@ -1582,3 +1582,34 @@ was needed; the staged P1/flow/endgame layers are consumed by the final
 proof and the radial converses G1–G3 become corollaries of the general
 theorem.  Check.ps1 green: 94 files, 455 promoted declarations, axiom
 classes unchanged (15 paper + 1 standard + 5 conditional).
+
+## 2026-07-18: dynamics program Phase A complete (fission + mass-blindness)
+
+Two atlas-motivated theorems certified, axiom-clean, audited (Check green:
+96 files, 464 promoted decls).
+
+**A1 (`LaplaceFissionInstability.lean`) — fission instability of point
+collapse.**  Point-collapse equilibria of drifting dynamics (`m_p(c)=0`,
+so `delta_c` is stationary) are escapable by particle fission.  The
+splitting index equals `m_p'(c)+1 = (1/tau)*(kernel-tilted mean absolute
+deviation)/Z` (`laplaceFissionIndex_eq_deviation`), strictly positive
+unless `p({c})=1` (`laplaceFissionIndex_pos`) — matching the atlas P2B
+degeneracy boundary exactly.  For the symmetric fission pair the mean shift
+has the exact closed form `-(2u k)/(1+k)` at its atoms, and the actual
+paper drift's separation velocity is strictly positive for all small
+`u>0` (`laplaceFission_separation_grows`).
+
+**A2 (`FiniteRangeMassBlindness.lean`) — finite-range kernels are
+mass-blind.**  For any kernel that vanishes past range `rho`, the two-atom
+mixtures `w*delta_a + (1-w)*delta_b` and `w'*delta_a + (1-w')*delta_b`
+(atoms at least `2*rho` apart, weights in `(0,1)`) have identical
+mean-shift drift everywhere yet are distinct probability measures
+(`finiteRangeKernel_zeroDrift_not_identifies`).  Hence the zero-drift
+converse fails for every finite-range kernel, in every dimension, with no
+regularity beyond finite range.  Sharp counterpoint to
+`laplaceZeroDrift_identifies_euclidean`: the exponential tail is
+load-bearing, and strict positivity — not RKHS-characteristicness — is the
+dividing line for normalized displacement drift.  The mechanism: near each
+atom the other is out of range so the mixing weight cancels in the ratio
+`D/Z`; in the dead zone both normalizers vanish and the `(0)^{-1}=0`
+convention makes the field zero.
