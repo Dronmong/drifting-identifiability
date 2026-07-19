@@ -99,7 +99,7 @@ Wire the three atlas design rules into the estimator-level pipeline
 
 | Item | Status |
 |---|---|
-| A1 fission theorem | **in progress** (started 2026-07-18) |
+| A1 fission theorem | **DONE** (2026-07-18, axiom-clean, audited) |
 | A2 mass-blindness theorem | queued |
 | B1 residual floor | queued |
 | B2 metastability bounds | queued |
