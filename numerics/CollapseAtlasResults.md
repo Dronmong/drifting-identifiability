@@ -2,12 +2,23 @@
 
 *Curated conclusions; raw experiment logs appended below by
 `collapse_atlas.py` (master seed 20260718).  Spec: `CollapseAtlas.md`.
-The E3(b) residual-floor certification is in `atlas_e3b_check.py`.*
+The E3(b) residual-floor evidence (local least-squares; not a certificate) is in `atlas_e3b_check.py`.*
+
+
+> **Audit note (2026-07-18).**  `CollapseAtlasAudit.md` audited this pass.
+> Known pass-1 caveats: E4 ran a reduced matrix (P1 only, 60 inits/cell,
+> N in {8,32}, absolute spreads, squared-energy-distance threshold, no
+> residual criterion); E5 omitted the promised self-mask comparison; E6
+> tested the Euler map, not the flow (increases may be discretization
+> overshoot -- re-tested at the flow level in pass 2); the E3 exponent fit
+> ignores censoring and conflates sigma/tau with L/tau; "certified"
+> language has been downgraded to evidence.  Pass-2 protocol:
+> `CollapseAtlas.md` (Pass 2); runs live in `numerics/atlas_runs/`.
 
 ## Headline findings
 
-1. **(E1) The spurious-equilibrium landscape is exactly the mean-shift mode
-   structure.**  Zeros of `m_p` = sinks (one per resolved cluster) plus
+1. **(E1) The found spurious-equilibrium landscape matches the mean-shift mode
+   structure** (multistart census; not exhaustive).  Zeros of `m_p` = sinks (one per resolved cluster) plus
    saddles/sources between them; sinks merge into one as `τ` passes the
    separation scale.  Lone-particle collapse candidates exist at every
    bandwidth.
@@ -16,7 +27,7 @@ The E3(b) residual-floor certification is in `atlas_e3b_check.py`.*
    survives adversarial attack.**  The pair-splitting linearization
    `u ← u + η·(I + Dm_p(c))u` is verified numerically (relative error at
    the perturbation scale).  The splitting index
-   `σ(c) = max Re eig(I + Dm_p(c))` was positive at **every** sink of every
+   `σ(c) = max Re eig(I + Dm_p(c))` was positive at **every found** sink of every
    family in d = 1, 2 (census minimum `+0.018`), and 24 adversarial
    Nelder–Mead searches over 4-atom 2-d configurations pinned to exact
    zeros could push it only to `+0.005`, never negative.
@@ -27,11 +38,11 @@ The E3(b) residual-floor certification is in `atlas_e3b_check.py`.*
    `laplaceMeanShiftRatioDeriv_add_one_nonneg`; strictness under a
    non-degeneracy hypothesis.
 
-3. **(E3 + atlas_e3b_check) Wrong-mass states are NOT equilibria — but they
+3. **(E3 + atlas_e3b_check) Wrong-mass states appear NOT to be equilibria — but they
    are exponentially metastable.**  Deterministic halving time of a
    two-cluster mass imbalance grows like `exp(c·L/τ)` with fitted
    `c ≈ 1.5` over `L/τ ∈ [2, 5]`, and stalls beyond (`> 12000·η` at
-   `L/τ = 5.9`).  At `L/τ ≈ 7`, least-squares certifies a **strictly
+   `L/τ = 5.9`).  At `L/τ ≈ 7`, least-squares gives **numerical evidence for a strictly
    positive residual floor** (`‖V‖ ≈ 3.7e-6 > 0`, gradient-converged): the
    stalled state is a slow *traveling* state, not a fixed point.  So for
    finite atomic supports the only exact equilibria found are `p` itself
@@ -70,8 +81,8 @@ The E3(b) residual-floor certification is in `atlas_e3b_check.py`.*
   residual floor `0 < ‖V‖ ≲ e^{−L/τ}` on imbalanced states (the
   lower-bound side is the quantitative-converse machinery of Direction B
   applied locally).
-* **T3 (theory):** no-spurious-equilibria for finite atomic `q ≠ p` — is
-  the certified positive residual floor a theorem?  (Connects to the
+* **T3 (theory, open):** no-spurious-equilibria for finite atomic `q ≠ p` — is
+  the observed positive residual floor a theorem?  (Connects to the
   support-restricted converse A1: for finite supports the answer would be
   "only collapses and `p` are stationary".)
 * **T4 (numerics → theory):** the step-size stability boundary `η*(τ)`.
@@ -287,3 +298,85 @@ E4: basin fractions over (tau, N, spread); 60 inits each
   tau=6.0 N=32 spread=1.0: {'converged': 60, 'collapsed': 0, 'metastable': 0, 'wandering': 0}
   tau=6.0 N=32 spread=4.0: {'converged': 60, 'collapsed': 0, 'metastable': 0, 'wandering': 0}
 ```
+
+---
+
+# Pass 2 (audit-hardened), 2026-07-18
+
+*Generated from `numerics/atlas_runs/*/` (manifests + raw CSVs inside).
+Protocol: `CollapseAtlas.md` §Pass 2.  Audit: `CollapseAtlasAudit.md`.
+Wording is evidence-calibrated: nothing here is "certified".*
+
+## P2A — the fission law is exactly first-order (invariants pass)
+
+Invariant suite (V(p,p)=0, translation equivariance, atom-split
+invariance, weight normalization): all PASS.  The relative error of the
+pair law `u ← u + η(I + Dm_p(c))u` equals the perturbation radius
+(log–log slope 0.996 over radii `1e-2τ…1e-7τ`, roundoff below): the
+pass-1 "uniform 1e-6 error" was the quadratic remainder, as predicted.
+
+## P2B — the dichotomy conjecture, now sharp
+
+Symmetry-quotiented adversarial search (differential evolution + 40
+Nelder–Mead restarts per DE run, weight floor, exact-zero polishing,
+three FD scales, singular values reported) in d = 2 and 3 drove σ to
+`±1e-6` — but with `min singval(I+Dm) ≈ 1e-21`: the minimizer converges
+to a **degenerate boundary**, not to a stable collapse.  Inspection
+(`atlas_p2b_inspect.py`): the minimizing geometry places a dominant atom
+of `p` (weight 0.86) at distance 4e-3 from the collapse point — σ → 0⁺
+exactly in the "collapse onto an atom of p" limit, where `Dm → −I`.
+
+**Refined conjecture (A2-sharp):** σ > 0 at every sink unless the sink
+carries a locally dominant atom of `p`, and σ = 0 exactly in that limit —
+i.e. *the only way point collapse approaches stability is by being where
+`p` actually has a point mass*.  Matches the proven 1-d identity
+`σ = (1/τ)·Cov_w(X, sgn X)`, which vanishes iff the tilted mass sits
+entirely at the point.
+
+## P2C — the metastability law replicates; the two-bandwidth rescue is real
+
+* Exponential slope in `L/τ`: `c = 1.692` (L = 5) vs `c = 1.698` (L = 8)
+  on scale-consistent families (σ = 0.25τ), zero censored cells —
+  **`L/τ` controls the barrier**.  AIC mildly prefers a `x^a·e^{cx}`
+  refinement on this narrow range (a < 0, likely overfit); exponential
+  dominance is unambiguous.
+* `η`-halving leaves `T/τ` unchanged (45.9 → 45.6): continuum behavior,
+  not discretization.
+* Fixed-absolute vs scale-consistent cluster width: negligible at the
+  tested cell (46.5 vs 45.9) — the pass-1 conflation did not distort the law.
+* **Two-bandwidth intervention** `V = ½(V_τ + V_{τ'})`:
+  at `L/τ = 5`, single-bandwidth `T/τ = 679` drops to `21.5` (τ' = L/2)
+  and `17.7` (τ' = L): **31–38× faster**.  The paper's multi-τ heuristic
+  is a measured metastability rescue; a bandwidth-ladder design rule (G2)
+  is now a quantitative target.
+
+## P2D — the no-Lyapunov finding survives at the flow level
+
+Analytic orbital derivatives `∇F·V` (closed-form atomic gradients):
+MMD² strictly increases at 5.5% and energy distance at 6.8% of 2400
+sampled states along trajectories — **genuine flow-level violations with
+stored witnesses** (`p2d_witnesses.csv`), not Euler overshoot.  The A3
+question is now firmly "find a cleverer functional or prove impossibility".
+
+## P2E — the truth is stable for the population field; the mask breaks
+## exact stationarity at finite N
+
+Continuous generator at `q = p` (unmasked): `max Re eig < 0`, and the
+Euler boundary from the spectrum matches bisection to 3 decimals
+(`η* = 2.012τ` at τ=1, `0.808τ` at τ=2.5) — the step-size ceiling is now
+predictable from the generator.  With the paper's self-mask, `q = p` is
+**not stationary at finite N** and the linearization has expanding
+directions (max Re eig ≈ +0.6) — consistent with the certified Obj-4
+result that masking shifts the population target by O(1/N); the masked
+dynamics equilibrates near, not at, `p`.  N-scaling of this shift is a
+pass-3 item.
+
+## Updated theorem targets
+
+* **T1 (unchanged, Lean):** 1-d σ ≥ 0 from the certified derivative bound;
+  strictness now has the right hypothesis: no dominant atom at the sink.
+* **T2 (sharpened):** metastability bounds `e^{c₁L/τ} ≤ T ≤ e^{c₂L/τ}`
+  with the measured `c ≈ 1.7`, plus the two-bandwidth acceleration bound.
+* **T5 (new):** the masked-field equilibrium is `O(1/N)`-shifted from `p`
+  and the unmasked Euler ceiling satisfies `η* = min −2Reλ/|λ|²` over the
+  generator spectrum (numerically exact here).

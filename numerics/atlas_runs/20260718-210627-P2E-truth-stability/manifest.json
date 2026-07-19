@@ -1,0 +1,12 @@
+{
+ "which": "P2E-truth-stability",
+ "seed": 20260718,
+ "commit": "fcff2d442560dac914babdc26027ea0e2dc8d5bb",
+ "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+ "numpy": "2.5.1",
+ "scipy": "1.18.0",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "cmdline": "numerics/collapse_atlas2.py P2E",
+ "start": "20260718-210627",
+ "wall_seconds": 1.1
+}

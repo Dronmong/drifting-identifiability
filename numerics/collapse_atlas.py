@@ -311,7 +311,7 @@ def E3():
         ratios.append(L / tau)
         logTs.append(np.log(T) if T else np.nan)
         log(f"    L/tau={L/tau:5.2f}: flow-time to halve = "
-            f"{(f'{T:9.2f}' if T else '   >12000*eta (stalled)')}")
+            f"{(f'{T:9.2f}' if T else f'censored at {120000 * eta:.0f}')}")
     ok = ~np.isnan(logTs)
     if ok.sum() >= 3:
         slope = np.polyfit(np.array(ratios)[ok], np.array(logTs)[ok], 1)[0]

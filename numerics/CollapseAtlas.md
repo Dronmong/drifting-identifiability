@@ -227,3 +227,59 @@ uv run --with numpy --with scipy --with matplotlib python numerics/collapse_atla
 Master seed 20260718; every experiment reseeds `default_rng(20260718 + k)`.
 All dynamics are deterministic given the initialization; randomness enters
 only through initial conditions and adversarial-search restarts.
+
+---
+
+# Pass 2: audit response (2026-07-18)
+
+`CollapseAtlasAudit.md` audited pass 1.  Accepted corrections: the E6
+conclusion tested the Euler map, not the flow; "certified" overstated the
+least-squares floor; E4/E5 under-implemented their spec; the E3 horizon
+label was wrong; and the pass-1 metastability sweep conflated `σ/τ` with
+`L/τ` (fixed absolute cluster width under varying `τ`).  Pass 2 implements
+the audit's Priority 0–1 program, scoped as follows.
+
+## P0 — provenance
+Each pass-2 run writes `numerics/atlas_runs/<run-id>/` with `manifest.json`
+(commit, versions, config, seed), raw CSV/NPZ outputs, and a generated
+`summary.md`.  Invariant tests run first: `V(p,p) ≡ 0`, translation
+equivariance, duplicated-atom invariance, and first-order decay of the
+pair-linearization error.  Evidence-calibrated wording throughout: numeric
+results are *evidence*; "certified" is reserved for Lean.
+
+## P2A — linearization-scale study (audit R2.1)
+Relative error of the fission law vs `A = I + Dm_p(c)` over perturbation
+radii `1e-2·τ … 1e-7·τ`; expected log–log slope ≈ 1 (first-order remainder)
+until roundoff.
+
+## P2B — adversarial splitting search v2 (audit R2.4–R2.8)
+Symmetry-quotiented parameterization (zero fixed at the origin, first atom
+on the positive axis, positions bounded, weight floor), differential
+evolution + Nelder–Mead restarts + exact-zero polishing, in d = 2 and 3;
+σ re-evaluated at three FD scales with the Jacobian's smallest singular
+value reported; both the continuous abscissa and the discrete spectral
+radius recorded.
+
+## P2C — metastability v2 (audit R3)
+Scale-consistent families (`σ = 0.25·τ`), `L/τ ∈ [2, 5]` reached through
+two different `L` values (tests that `L/τ` controls); 3 seeds per cell;
+right-censoring recorded; competing laws `C·e^{c·x}` vs `C·x^a·e^{c·x}`
+compared by AIC; an `η`-halving cell (discretization control); a
+fixed-absolute-`σ` cell (isolates `σ/τ`); and the **two-bandwidth
+intervention** `V = ½(V_τ + V_{τ'})`, `τ' ∈ {L/2, L}` measured against the
+single-`τ` barrier.
+
+## P2D — Lyapunov candidates at the flow level (audit R6)
+Analytic orbital derivatives `∇F·V` for Laplace-MMD² and energy distance
+(closed-form atomic gradients, collision-guarded), evaluated along
+trajectories and at random states; discrete-map increases cross-checked at
+`η/10` to separate overshoot from genuine flow violations; positive-witness
+states stored.
+
+## P2E — stability at the truth v2 (audit R5, partial)
+Continuous generator spectrum at `q = p`; Euler boundary `η*` predicted
+from the spectrum (`η* = min −2Reλ/|λ|²`) and verified by bisection; both
+self-interacting and paper-style self-masked fields.
+
+Deferred to pass 3: the full E4 basin matrix with confidence intervals,
+higher-`N` cells, and interval certificates (Lean's job).
