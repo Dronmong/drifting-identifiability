@@ -104,4 +104,6 @@ Wire the three atlas design rules into the estimator-level pipeline
 | B1 residual floor | queued |
 | B2 metastability bounds | queued |
 | B3 mask effects | queued |
-| C1–C3 benchmarks | queued (can start any time after A) |
+| C1 bandwidth ladder | **DONE** (anneal wins, tuning-free) |
+| C2 step size | **DONE** (eta~0.5tau; generator is upper bound) |
+| C3 mask policy | **DONE** (hazard at small N/K) |

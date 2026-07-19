@@ -1,0 +1,10 @@
+{
+ "which": "C2-step-size",
+ "seed": 20260719,
+ "commit": "fba6d57056222654f47ca0aa9f26df3ce58a4f83",
+ "python": "3.14.4",
+ "numpy": "2.5.1",
+ "scipy": "1.18.0",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "start": "20260719-015351"
+}
