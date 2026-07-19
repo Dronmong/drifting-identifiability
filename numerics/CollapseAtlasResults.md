@@ -380,3 +380,82 @@ pass-3 item.
 * **T5 (new):** the masked-field equilibrium is `O(1/N)`-shifted from `p`
   and the unmasked Euler ceiling satisfies `η* = min −2Reλ/|λ|²` over the
   generator spectrum (numerically exact here).
+
+---
+
+# Pass 3 (numerics completion), 2026-07-18
+
+*Generated from `numerics/atlas_runs/*P3*/`.  Figures in
+`numerics/atlas_figs/` (metastability, splitting_1d, mask_shift).*
+
+## P3A — the self-mask shift: law-level small, position-level not
+
+Masked-field equilibria from exact p-representations (N = 6k particles):
+the law-level gap decays fast — `ED²(p, q_eq)`: 2.37 (N=6) → 0.28 (12)
+→ 0.0825 (24) → 0.0252 (48) → 0.0079 (96), roughly `N^{-1.7}` — but the
+**maximum single-particle displacement plateaus at O(1)** (≈ 2.2): a
+vanishing-mass stray particle remains far-displaced.  At N = 6 (one
+particle per atom) the masked dynamics equilibrates *far* from p
+(max-shift 6.7, ED² 2.4) and is genuinely stable there
+(max Re eig = −0.12): **with very few particles per mode, the eye-mask
+creates a stable wrong equilibrium.**  At N ≥ 24 the near-equilibrium is
+marginal (max Re eig ≈ +0.003 with residual ~1e-4 — slow drift, not fully
+settled at the step budget).  Caution flag for small-batch eye-masked
+training; a longer-equilibration protocol and stray-particle tracking are
+the remaining open items here.
+
+## P3C — zero-finding coverage resolved (tested families)
+
+1-d exhaustive bracketing over the atom hull (outer bound: the field
+points inward outside the hull) reproduces the pass-1 census exactly
+(3/3/1/1 zeros across τ; zero tangencies).  2-d multistart census is
+stable from 250 → 1000 → 4000 seeds (3 zeros at both bandwidths).  The
+pass-1 landscape was complete on these families.
+
+## P3E — the bandwidth-ladder design curve
+
+At `L/τ = 5` (single-bandwidth `T/τ = 679`), the mixture
+`V = (1−β)V_τ + βV_{τ'}` gives:
+
+| τ'/L | β=0.25 | β=0.5 |
+|---|---|---|
+| 0.25 | 291.8 | 153.2 |
+| 0.5  | 66.0  | 21.5  |
+| 1.0  | 59.2  | **17.7** |
+| 2.0  | 72.6  | 21.9  |
+
+**Design rule (measured):** the second bandwidth should sit at the
+cluster-separation scale (`τ' ≈ L`, broad optimum from L/2 to 2L) with
+substantial weight (β = 0.5 ≫ 0.25).  Too-small `τ'` (L/4) barely helps.
+This is the quantitative seed of the G2 certified-bandwidth rule.
+
+## P3B — the full basin matrix: collapse never happens
+
+54 cells (P1 + P2, τ ∈ {0.2, 0.5, 1}·L, N ∈ {8, 32, 128}, spreads
+{0.5, 2, 5}·L, 100 inits/cell — 50 for N = 128 — with 4× extension of
+unresolved runs and per-cell quantization floors):
+
+* **Zero collapse endpoints in ~4,750 generic runs** (Wilson 95% upper
+  bounds ≤ 3.7% / 7.1% per cell), across every bandwidth, size, spread.
+* **Collapse-biased initializations always escape**: 150 runs started
+  *inside* a sink's fission zone (0.05τ jitter) ended metastable
+  (N=8, τ=0.2L), law-accurate-moving (N=32, τ=0.2L), or fully converged
+  (τ=L) — never collapsed.  The σ > 0 fission prediction holds in vivo
+  at particle level, not just in linearization.
+* Phase structure: at τ = 0.2L with N = 8, metastable mass imbalance
+  (28–58%) plus slow unresolved runs dominate the failures; at larger N
+  the picture shifts to `target_moving` (law-accurate by energy distance
+  but above the strict stationarity tolerance at the step budget); at
+  τ ≥ 0.5L essentially everything is target-accurate.
+* Quantization floors behave as predicted (P2 with N = 8 cannot represent
+  masses 0.3/0.7 exactly; floor 0.036 accounted for in the criterion).
+
+**Atlas conclusion (evidence-calibrated):** across three passes, the only
+failure modes of deterministic population drifting ever observed are
+*slowness* — exponential mass-imbalance metastability at small bandwidth,
+and slow final equilibration at large N — never point collapse, never a
+stable wrong equilibrium (unmasked field).  Collapse exists as an exact
+equilibrium but is dynamically irrelevant: unstable in linearization
+(P2B, sharply), and never reached or retained in simulation (P3B).  The
+practical design levers are the bandwidth ladder (P3E: τ' ≈ separation,
+equal weight) and the step-size ceiling (P2E: η* from the generator).

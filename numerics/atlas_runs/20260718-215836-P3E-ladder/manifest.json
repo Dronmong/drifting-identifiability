@@ -1,0 +1,11 @@
+{
+ "which": "P3E-ladder",
+ "seed": 20260718,
+ "commit": "0bfbe94b81c6e560cc2f5a8411867238eaec608b",
+ "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+ "numpy": "2.5.1",
+ "scipy": "1.18.0",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "cmdline": "numerics/collapse_atlas3.py P3E",
+ "start": "20260718-215836"
+}
