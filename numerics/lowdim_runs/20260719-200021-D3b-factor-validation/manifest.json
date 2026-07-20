@@ -1,0 +1,99 @@
+{
+  "which": "D3b-factor-validation",
+  "seed": 20260719,
+  "commit": "45f4f43910cc6755d2086d15726236d04e008c8e",
+  "git_dirty": false,
+  "git_status": [],
+  "git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_sha256": {
+    "numerics\\lowdim_drift.py": "71c5b49d9ceb38ce239f5baff966cb9c077485f9abc081b8798e18618ebf64f6",
+    "numerics\\lowdim_attribution.py": "552925d56795a57e84717463e6b9ffdfd65070bd954000755f0eded69f2686a8",
+    "numerics\\LowDimAttributionProtocol.md": "70674f1534bd65149a8379872dc98db58028049244a71bed52c212f359ef3eb5"
+  },
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cmdline": [
+    "numerics/lowdim_attribution.py",
+    "validation",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "stage": "fresh-factorial-validation",
+    "profile": {
+      "name": "standard",
+      "steps": 400,
+      "validation_seeds": 6,
+      "test_seeds": 20,
+      "ref_final": 1024,
+      "ref_cross": 256,
+      "N": 48,
+      "batch": 64
+    },
+    "targets": [
+      "AV-1d-K4-uneq",
+      "AV-2d-K5-hetero",
+      "AV-ring",
+      "AV-circles",
+      "AV-moons",
+      "AV-banana"
+    ],
+    "arms": [
+      {
+        "label": "tau-fixed__mask-on__eta-fixed",
+        "tau_mode": "fixed",
+        "mask_mode": "on",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "tau-fixed__mask-on__eta-scaled",
+        "tau_mode": "fixed",
+        "mask_mode": "on",
+        "eta_mode": "scaled"
+      },
+      {
+        "label": "tau-fixed__mask-auto__eta-fixed",
+        "tau_mode": "fixed",
+        "mask_mode": "auto",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "tau-fixed__mask-auto__eta-scaled",
+        "tau_mode": "fixed",
+        "mask_mode": "auto",
+        "eta_mode": "scaled"
+      },
+      {
+        "label": "tau-geometry__mask-on__eta-fixed",
+        "tau_mode": "geometry",
+        "mask_mode": "on",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "tau-geometry__mask-on__eta-scaled",
+        "tau_mode": "geometry",
+        "mask_mode": "on",
+        "eta_mode": "scaled"
+      },
+      {
+        "label": "tau-geometry__mask-auto__eta-fixed",
+        "tau_mode": "geometry",
+        "mask_mode": "auto",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "tau-geometry__mask-auto__eta-scaled",
+        "tau_mode": "geometry",
+        "mask_mode": "auto",
+        "eta_mode": "scaled"
+      }
+    ],
+    "selection": "minimum geometric mean of cell-median ED2"
+  },
+  "start": "20260719-200021",
+  "wall_seconds": 420.826,
+  "kernel_pairs": 1238630400,
+  "field_calls": 230400
+}

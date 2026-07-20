@@ -1,0 +1,23 @@
+{
+  "profile": "standard",
+  "winner": {
+    "label": "tau-fixed__mask-auto__eta-fixed",
+    "tau_mode": "fixed",
+    "mask_mode": "auto",
+    "eta_mode": "fixed"
+  },
+  "validation_aggregate": 0.00394250740991047,
+  "baseline_factorial_label": "tau-fixed__mask-on__eta-fixed",
+  "baseline_aggregate": 0.004876205257222735,
+  "winner_to_base_ratio": 0.8085195765848345,
+  "all_aggregates": {
+    "tau-fixed__mask-on__eta-fixed": 0.004876205257222735,
+    "tau-fixed__mask-on__eta-scaled": 0.004876205257222735,
+    "tau-fixed__mask-auto__eta-fixed": 0.00394250740991047,
+    "tau-fixed__mask-auto__eta-scaled": 0.00394250740991047,
+    "tau-geometry__mask-on__eta-fixed": 0.0051214813279801,
+    "tau-geometry__mask-on__eta-scaled": 0.005263110268298626,
+    "tau-geometry__mask-auto__eta-fixed": 0.00411883680046221,
+    "tau-geometry__mask-auto__eta-scaled": 0.00434071508798132
+  }
+}
