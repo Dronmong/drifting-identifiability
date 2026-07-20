@@ -78,7 +78,8 @@ def _sha256_file(path: Path) -> str:
 
 
 class Run:
-    def __init__(self, which: str, config: dict) -> None:
+    def __init__(self, which: str, config: dict,
+                 source_files: Iterable[Path] = ()) -> None:
         stamp = time.strftime("%Y%m%d-%H%M%S")
         self.dir = RUNROOT / f"{stamp}-{which}"
         self.dir.mkdir(parents=True, exist_ok=False)
@@ -87,13 +88,26 @@ class Run:
         self.counter = WorkCounter()
         status = _git("status", "--porcelain")
         diff = _git("diff", "--binary", "HEAD")
+        sources = [HERE / "lowdim_drift.py", *source_files]
+        # Preserve order while removing duplicate resolved paths.
+        unique_sources: list[Path] = []
+        seen: set[Path] = set()
+        for source in sources:
+            resolved = Path(source).resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                unique_sources.append(resolved)
         self.manifest = {
             "which": which,
             "seed": MASTER,
             "commit": _git("rev-parse", "HEAD"),
             "git_dirty": bool(status),
+            "git_status": status.splitlines() if status else [],
             "git_diff_sha256": hashlib.sha256(diff.encode()).hexdigest(),
-            "module_sha256": _sha256_file(HERE / "lowdim_drift.py"),
+            "source_sha256": {
+                str(source.relative_to(ROOT)): _sha256_file(source)
+                for source in unique_sources
+            },
             "python": sys.version,
             "numpy": np.__version__,
             "scipy": scipy.__version__,
@@ -102,6 +116,9 @@ class Run:
             "config": config,
             "start": stamp,
         }
+        for source in unique_sources:
+            snapshot = self.dir / f"source_snapshot_{source.name}"
+            snapshot.write_bytes(source.read_bytes())
 
     def log(self, text: str = "") -> None:
         print(text, flush=True)
@@ -487,12 +504,12 @@ def train(q0: np.ndarray, target: TargetSpec, policy: Policy,
     minibatch (identical stream across arms for a given seed); `policy_rng`
     drives policy-internal randomness only."""
     q = q0.copy()
+    start_pairs = counter.kernel_pairs
+    t0 = time.time()
     setup_sample = target.sample(setup_n, data_rng)
     policy.setup(setup_sample, len(q), policy_rng, counter)
     hist: list[tuple[float, ...]] = []
     event_time: int | None = None
-    start_pairs = counter.kernel_pairs
-    t0 = time.time()
     diverged = False
     obs: dict = {"last_V": None, "last_ed": None, "counter": counter}
     for step in range(1, steps + 1):

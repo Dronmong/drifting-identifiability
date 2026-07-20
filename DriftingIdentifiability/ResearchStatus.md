@@ -1659,23 +1659,30 @@ future work.
 
 ## 2026-07-19: low-dimensional performance study (D0-D3) - gate FAILED, honestly
 
-Implemented numerics/LowDimPerformanceRoadmap.md with a pre-frozen protocol
-(LowDimPerformanceProtocol.md), fresh namespace (lowdim_drift.py,
-lowdim_benchmark.py, lowdim_generator.py), full run manifests, paired
-randomness, matched kernel-pair compute, and strict validation/held-out
-separation.  Headline: under a STRONG tuned baseline and the exact paper
-bi-softmax estimator, the theory-derived modified procedure does NOT beat
-the base procedure in aggregate on held-out targets (paired ED^2 ratio
-1.031, CI [1.019, 1.041]); the pre-declared gate failed and was not
-weakened.  Surviving qualified claims: (1) tuning-free parity - the frozen
-policy tau = sqrt(sigma_hat * L_hat), eta = 0.15 tau (all from 256
-unlabeled samples) matches the grid-tuned baseline at zero tuning cost vs
-7.1e8 kernel pairs; (2) large conditional wins where the tuned bandwidth is
-geometry-mismatched (two-moons -47%, ring -37%, 1-d -14%); (3) D1 showed
-the whole bandwidth/step/mask mechanism family lands within +-25% of the
-tuned baseline on validation: a well-tuned fixed bandwidth already IS the
-coarse-bandwidth design rule (the D0 grid optimum sits at ~sqrt(sigma*L)).
-New theory target extracted for B1: derive the sqrt(sigma*L) optimal-
-bandwidth scaling from the residual-floor trade-off (e^{-L/tau} transport
-floor vs O(tau) bias).  D4 runner wiring verified (gradcheck, matched-batch
-zero update) but not run as a decisive test per the gate ordering.
+Implemented `numerics/LowDimPerformanceRoadmap.md` through the D3 held-out
+gate using the exact paper bi-softmax estimator, paired randomness, and a
+validation/held-out split.  The central negative is sound: the frozen modified
+policy does **not** beat the tuned baseline in aggregate (paired ED² ratio
+1.031, far above the pre-declared 0.8 requirement), and the gate was not
+weakened.  The original row-bootstrap CI `[1.019,1.041]` is conditional on the
+18 fixed cells; a target-aware hierarchical reanalysis gives approximately
+`[0.990,1.062]`, so the data do not establish broad significant harm either.
+
+Post-audit corrections: the final geometry rule has no new per-target grid
+search after global validation selection, but it was not discovered at “zero
+tuning cost”; the D1 candidates were not all within ±25% of baseline
+(coarse-only was 141% worse); and the large ring/moons wins cannot be assigned
+to geometry matching because bandwidth, step, and mask changed together.  In
+fact the modified mask was on in only 9/20 ring and 6/20 moon setups.  The old
+“4.4× better than the paper temperature set” reference is withdrawn because
+the implementation cycled the three temperatures rather than evaluating them
+as fixed alternatives.  Historical manifests also omit trajectories, full
+runner-source snapshots, realized geometry/mask decisions, per-arm wall time,
+and some promised secondary metrics.
+
+The surviving result is a calibrated negative plus a hypothesis: the rule
+`tau = sqrt(sigma_hat * L_hat), eta = 0.15 tau` achieves approximate
+validation parity without a new per-target sweep, while its heterogeneous
+held-out effects require a fresh factorial attribution study.  D4 remains a
+two-seed smoke wiring check only.  A new fresh-target attribution phase repairs
+the audit gaps before any decisive learned-generator run or empirical claim.
