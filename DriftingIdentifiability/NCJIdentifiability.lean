@@ -420,6 +420,113 @@ theorem crossFitted_centroidDiff_meanSquare_le
 
 end CrossFitted
 
+/-! ## T4: removing the affinity-mass freeze
+
+The exact paper field contains the product of its positive and negative
+affinity masses as a scalar gain.  The following results isolate the resulting
+conditioning difference.  The exponential statement deliberately takes an
+explicit mass-product estimate as a premise: softmax shift invariance means
+that distance from the samples, by itself, is not enough to derive such an
+estimate without additional geometric/coverage assumptions.
+-/
+
+variable {F : Type u} [NormedAddCommGroup F] [NormedSpace ℝ F]
+variable {Nx Npos Nneg : ℕ}
+
+/-- The norm of a nonnegative-gain normalized-centroid field is exactly the
+gain times the norm of its centroid signal. -/
+theorem positiveGainField_norm_eq
+    (g : Fin Nx → ℝ) (x : Fin Nx → F) (yPos : Fin Npos → F)
+    (yNeg : Fin Nneg → F) (temperature : ℝ) (i : Fin Nx)
+    (hg : 0 ≤ g i) :
+    ‖positiveGainField g x yPos yNeg temperature i‖ =
+      g i * ‖normalizedCentroidField x yPos yNeg temperature i‖ := by
+  rw [positiveGainField, norm_smul, Real.norm_eq_abs, abs_of_nonneg hg]
+
+/-- **Normalized-field speed floor.**  If the retained gain is at least
+`gmin > 0` and the centroid signal has norm at least `c > 0`, the normalized
+field cannot freeze below speed `gmin * c`. -/
+theorem positiveGainField_norm_ge
+    (g : Fin Nx → ℝ) (x : Fin Nx → F) (yPos : Fin Npos → F)
+    (yNeg : Fin Nneg → F) (temperature : ℝ) (i : Fin Nx)
+    {gmin c : ℝ} (hgmin : 0 < gmin) (hc : 0 < c)
+    (hg : gmin ≤ g i)
+    (hcentroid : c ≤ ‖normalizedCentroidField x yPos yNeg temperature i‖) :
+    gmin * c ≤ ‖positiveGainField g x yPos yNeg temperature i‖ := by
+  rw [positiveGainField_norm_eq g x yPos yNeg temperature i
+    ((hgmin.le.trans hg))]
+  exact mul_le_mul hg hcentroid hc.le (hgmin.le.trans hg)
+
+/-- If an external geometric or probabilistic argument bounds the paper
+affinity-mass product by `α`, the exact Algorithm-2 drift is at most
+`2 * α * R` for samples in the radius-`R` ball. -/
+theorem algorithm2Drift_norm_le_of_affinityMassProduct_le
+    (x : Fin Nx → F) (yPos : Fin Npos → F) (yNeg : Fin Nneg → F)
+    (temperature : ℝ) (selfMask : Fin Nx → Fin Nneg → Bool)
+    (i : Fin Nx) {R α : ℝ}
+    (hyPos : ∀ j, ‖yPos j‖ ≤ R) (hyNeg : ∀ j, ‖yNeg j‖ ≤ R)
+    (hR : 0 ≤ R)
+    (hmass : algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+      algorithm2NegativeMass x yPos yNeg temperature selfMask i ≤ α) :
+    ‖algorithm2Drift x yPos yNeg temperature selfMask i‖ ≤ 2 * α * R := by
+  calc
+    ‖algorithm2Drift x yPos yNeg temperature selfMask i‖ ≤
+        2 * algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+          algorithm2NegativeMass x yPos yNeg temperature selfMask i * R := by
+      simpa [algorithm2PositiveMass, algorithm2NegativeMass] using
+        algorithm2Drift_norm_le_affinityMass x yPos yNeg temperature selfMask
+          i hyPos hyNeg
+    _ = 2 *
+        (algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+          algorithm2NegativeMass x yPos yNeg temperature selfMask i) * R := by
+      ring
+    _ ≤ 2 * α * R := by
+      exact mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hmass (by norm_num)) hR
+
+/-- **Paper-field exponential attenuation, conditional form.**  Whenever a
+separate argument supplies `P_i Q_i ≤ C exp (-(d-r)/τ)`, the paper field
+inherits the same exponential upper bound.  This theorem does not assert that
+the mass estimate follows from distance alone. -/
+theorem algorithm2Drift_norm_le_of_exponential_affinityMassProduct
+    (x : Fin Nx → F) (yPos : Fin Npos → F) (yNeg : Fin Nneg → F)
+    (temperature : ℝ) (selfMask : Fin Nx → Fin Nneg → Bool)
+    (i : Fin Nx) {R C d r : ℝ}
+    (hyPos : ∀ j, ‖yPos j‖ ≤ R) (hyNeg : ∀ j, ‖yNeg j‖ ≤ R)
+    (hR : 0 ≤ R)
+    (hmass : algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+      algorithm2NegativeMass x yPos yNeg temperature selfMask i ≤
+        C * Real.exp (-(d - r) / temperature)) :
+    ‖algorithm2Drift x yPos yNeg temperature selfMask i‖ ≤
+      2 * (C * Real.exp (-(d - r) / temperature)) * R :=
+  algorithm2Drift_norm_le_of_affinityMassProduct_le x yPos yNeg temperature
+    selfMask i hyPos hyNeg hR hmass
+
+/-- **T4 combined comparison.**  Under the stated signal and gain floors, the
+normalized field has a positive speed floor, while any certified exponential
+bound on the paper affinity-mass product yields exponential attenuation of the
+paper field.  This is a conditioning comparison, not a global convergence
+theorem. -/
+theorem positiveGain_noFreeze_and_paper_exponential_attenuation
+    (g : Fin Nx → ℝ) (x : Fin Nx → F) (yPos : Fin Npos → F)
+    (yNeg : Fin Nneg → F) (temperature : ℝ)
+    (selfMask : Fin Nx → Fin Nneg → Bool) (i : Fin Nx)
+    {gmin c R C d r : ℝ} (hgmin : 0 < gmin) (hc : 0 < c)
+    (hg : gmin ≤ g i)
+    (hcentroid : c ≤ ‖normalizedCentroidField x yPos yNeg temperature i‖)
+    (hyPos : ∀ j, ‖yPos j‖ ≤ R) (hyNeg : ∀ j, ‖yNeg j‖ ≤ R)
+    (hR : 0 ≤ R)
+    (hmass : algorithm2PositiveMass x yPos yNeg temperature selfMask i *
+      algorithm2NegativeMass x yPos yNeg temperature selfMask i ≤
+        C * Real.exp (-(d - r) / temperature)) :
+    gmin * c ≤ ‖positiveGainField g x yPos yNeg temperature i‖ ∧
+      ‖algorithm2Drift x yPos yNeg temperature selfMask i‖ ≤
+        2 * (C * Real.exp (-(d - r) / temperature)) * R :=
+  ⟨positiveGainField_norm_ge g x yPos yNeg temperature i hgmin hc hg
+      hcentroid,
+    algorithm2Drift_norm_le_of_exponential_affinityMassProduct x yPos yNeg
+      temperature selfMask i hyPos hyNeg hR hmass⟩
+
 end Algorithm2
 
 end DriftingIdentifiability
