@@ -1,0 +1,44 @@
+{
+  "which": "D0-baseline",
+  "seed": 20260719,
+  "commit": "627d23cd5cad3763b90203f892e6cdfc65c0a713",
+  "git_dirty": true,
+  "git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "module_sha256": "9b038a520b4e346ca332fe6d4b6f5bef935d2aea7f8b111e4a15617e5a397492",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cmdline": [
+    "numerics/lowdim_benchmark.py",
+    "D0",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "profile": "standard",
+    "tau_grid": [
+      0.05,
+      0.1,
+      0.2,
+      0.35,
+      0.6,
+      1.0,
+      1.75
+    ],
+    "eta_frac_grid": [
+      0.05,
+      0.15,
+      0.4
+    ],
+    "paper_temps": [
+      0.02,
+      0.05,
+      0.2
+    ]
+  },
+  "start": "20260719-181630",
+  "wall_seconds": 219.097,
+  "kernel_pairs": 709632000,
+  "field_calls": 132000
+}
