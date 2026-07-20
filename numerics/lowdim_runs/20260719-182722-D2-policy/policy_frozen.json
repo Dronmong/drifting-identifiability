@@ -1,0 +1,16 @@
+{
+  "type": "geo-fixed",
+  "bandwidth": "tau = sqrt(sigma_hat * L_hat) from setup sample",
+  "step_rule": "eta = 0.15 * tau",
+  "mask_rule": "mask on iff N >= 8*K_hat",
+  "eta_cap": 0.25,
+  "validation_aggregate": 0.005442212966178447,
+  "all_aggregates": {
+    "geo-fixed": 0.005442212966178447,
+    "geo-anneal-fixed70": 0.006997453546265106,
+    "geo-anneal-plateau": 0.006120664049128523,
+    "sigma-fixed70": 0.007630934597355789,
+    "sigma-plateau": 0.006156241851060366,
+    "sigma-agree": 0.006849014412192278
+  }
+}

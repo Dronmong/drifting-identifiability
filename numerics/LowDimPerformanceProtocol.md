@@ -124,3 +124,26 @@ paired bootstrap CI.  No retuning on held-out targets.
 `LowDimPerformanceResults.md` with the complete algorithm spec, tables,
 paired CIs, ablations, failures, wall/tuning costs, scope statement, and
 links from `DynamicsRoadmap.md`/`ResearchStatus.md`.
+
+## D1 outcome and pre-D2 redesign addendum (2026-07-19, before D2 ran)
+
+D1 gate result: **no modification arm beat the tuned baseline on the
+validation aggregate** (base 0.00543; best modification 0.00624).  Recorded
+per protocol as a non-transfer of the SNIS-era headroom: the strong-baseline
+principle already absorbed the coarse-bandwidth mechanism (the tuned
+`τ* = 0.35 ≈ √(σ·L)`), the mask rule is inert at `N = 48`
+(`N ≥ 8·K̂` everywhere), and annealing to `σ̂` overshoots below the
+grid-optimal scale.
+
+Redesigned candidate family for D2 (validation-selected, still non-oracle):
+the modification's remaining edge is being **tuning-free and
+geometry-matched** where the baseline needed a 7.1e8-kernel-pair sweep and
+carries one fixed `τ*` across geometries.  D2 therefore selects among:
+
+* `geo-fixed`: `τ = √(σ̂·L̂)`, `η = 0.15·τ`, mask rule unchanged;
+* `geo-anneal-fixed70` / `geo-anneal-plateau`: start `τ₀ = L̂`, anneal
+  geometrically to `√(σ̂·L̂)` (not `σ̂`), `η_t = 0.15·τ_t`;
+* the original `anneal-to-σ̂` triggers (fixed70/plateau/agree) as controls.
+
+The D3 gate is unchanged; D3 tests whether geometry-matching generalizes to
+held-out families where the frozen `τ* = 0.35` may be mismatched.

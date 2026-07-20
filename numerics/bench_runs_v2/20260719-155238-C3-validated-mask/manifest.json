@@ -1,0 +1,62 @@
+{
+  "which": "C3-validated-mask",
+  "seed": 20260719,
+  "commit": "bc5d0d4b85e68d216208fa422319b98c6e014d4d",
+  "git_dirty": true,
+  "git_status": [
+    "M DriftingIdentifiability/DynamicsRoadmap.md",
+    "?? numerics/bench_runs_v2/",
+    "?? numerics/driftbench_v2.py"
+  ],
+  "git_diff_sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc",
+  "script_sha256": "9dde59a8fe5896fc42a04de640a3213ce04b27ae9f3ace449ece6ad7d96ee1e5",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cmdline": [
+    "numerics/driftbench_v2.py",
+    "all",
+    "--profile",
+    "smoke"
+  ],
+  "config": {
+    "profile": {
+      "name": "smoke",
+      "c1_seeds": 2,
+      "c1_tune_seeds": 1,
+      "c1_steps": 80,
+      "c2_seeds": 2,
+      "c2_steps": 100,
+      "c3_seeds": 2,
+      "c3_steps": 100,
+      "c3_long_steps": 200,
+      "ref_n": 256
+    },
+    "estimators": [
+      "snis",
+      "paper"
+    ],
+    "target_weights": [
+      "equal",
+      "unequal"
+    ],
+    "particles_per_mode": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "batches": [
+      16,
+      64
+    ],
+    "tau": "sigma",
+    "long_horizon_trigger": "coverage<1 or mass_error>0.4"
+  },
+  "start": "20260719-155238",
+  "wall_seconds": 48.09,
+  "kernel_pairs": 75308416,
+  "field_calls": 38696
+}

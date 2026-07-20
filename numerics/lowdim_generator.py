@@ -29,7 +29,7 @@ from lowdim_drift import (  # noqa: E402
     sliced_w1,
 )
 from lowdim_benchmark import (  # noqa: E402
-    AdaptivePolicy, FixedPolicy, load_frozen,
+    FixedPolicy, load_frozen, make_modified_policy,
 )
 
 
@@ -177,7 +177,7 @@ def main() -> None:
                                "arch": "2-64-64-d tanh MLP, Adam 1e-3"})
     run.log(f"D4: learned-generator transfer; base=(tau*={base['tau_star']},"
             f" eta*={base['eta_abs']:.4f}, mask on) vs "
-            f"modified=adaptive-{pol['trigger']}")
+            f"modified={pol['type']}")
     gradcheck(run.log)
     rows = []
     all_base, all_mod = [], []
@@ -186,7 +186,7 @@ def main() -> None:
         for s in range(seeds):
             base_policy = FixedPolicy("base", base["tau_star"],
                                       base["eta_abs"], True)
-            mod_policy = AdaptivePolicy(pol["trigger"], pol["eta_cap"])
+            mod_policy = make_modified_policy(pol)
             eb, sb = train_generator(tgt, base_policy, s, updates, 64,
                                      run.counter)
             em, sm = train_generator(tgt, mod_policy, s, updates, 64,

@@ -20,6 +20,7 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from numpy.linalg import eigvals, norm
@@ -154,25 +155,51 @@ class MaskPolicy(GeometryPolicy):
         return StepDecision(self.tau_star, self.eta, mask)
 
 
+class GeoFixedPolicy(GeometryPolicy):
+    """Tuning-free geometry-matched fixed bandwidth: tau = sqrt(sigma_hat *
+    L_hat) (which reproduces the D0 grid optimum with zero sweep cost),
+    eta = 0.15 tau, particle-count-aware mask."""
+
+    def __init__(self):
+        super().__init__("geo-fixed")
+
+    def decide(self, step, steps, obs):
+        tau = float(np.sqrt(self.geo["sigma_hat"] * self.geo["L_hat"]))
+        mask = self.N >= 8 * self.geo["K_hat"]
+        return StepDecision(tau, 0.15 * tau, mask)
+
+
 class AdaptivePolicy(GeometryPolicy):
     """D2 candidate: coarse at L_hat until an observable trigger, then
-    geometric anneal to sigma_hat over the remaining budget.  Step and mask
-    follow the combined rule.  Fallback: fixed70."""
+    geometric anneal to an end scale over the remaining budget.
+    end_kind: 'sigma' anneals to sigma_hat; 'geomean' to sqrt(sigma L).
+    eta_kind: 'cap' uses min(0.1 tau, eta_cap*ceiling); 'frac015' uses
+    0.15 tau.  Fallback: fixed70."""
 
-    def __init__(self, trigger: str, eta_cap: float):
-        super().__init__(f"adaptive-{trigger}")
+    def __init__(self, trigger: str, eta_cap: float,
+                 end_kind: str = "sigma", eta_kind: str = "cap"):
+        super().__init__(f"adaptive-{trigger}-{end_kind}-{eta_kind}")
         self.trigger = trigger
         self.eta_cap = eta_cap
+        self.end_kind = end_kind
+        self.eta_kind = eta_kind
         self.trigger_step: int | None = None
         self.vhist: list[float] = []
         self.ceiling: float | None = None
+
+    def _end_scale(self) -> float:
+        if self.end_kind == "geomean":
+            return float(np.sqrt(self.geo["sigma_hat"] * self.geo["L_hat"]))
+        return self.geo["sigma_hat"]
 
     def setup(self, setup_sample, N, rng, counter):
         super().setup(setup_sample, N, rng, counter)
         self.trigger_step = None
         self.vhist = []
-        self.ceiling = surrogate_euler_ceiling(
-            setup_sample, self.geo["L_hat"], rng, counter)
+        self.ceiling = None
+        if self.eta_kind == "cap":
+            self.ceiling = surrogate_euler_ceiling(
+                setup_sample, self.geo["L_hat"], rng, counter)
 
     def _check_trigger(self, step, steps, obs) -> bool:
         if self.trigger == "fixed70":
@@ -204,16 +231,19 @@ class AdaptivePolicy(GeometryPolicy):
     def decide(self, step, steps, obs):
         if self.trigger_step is None and self._check_trigger(step, steps, obs):
             self.trigger_step = step
+        end = self._end_scale()
         if self.trigger_step is None:
             tau = self.geo["L_hat"]
         else:
             rem = max(1, steps - self.trigger_step)
             frac = min(1.0, (step - self.trigger_step) / rem)
-            tau = self.geo["L_hat"] * \
-                (self.geo["sigma_hat"] / self.geo["L_hat"]) ** frac
-        eta = 0.1 * tau
-        if self.ceiling is not None:
-            eta = min(eta, self.eta_cap * self.ceiling)
+            tau = self.geo["L_hat"] * (end / self.geo["L_hat"]) ** frac
+        if self.eta_kind == "frac015":
+            eta = 0.15 * tau
+        else:
+            eta = 0.1 * tau
+            if self.ceiling is not None:
+                eta = min(eta, self.eta_cap * self.ceiling)
         mask = self.N >= 8 * self.geo["K_hat"]
         return StepDecision(tau, eta, mask)
 
@@ -414,51 +444,84 @@ def D1(prof: Profile) -> None:
 # ---------------------------------------------------------------------------
 
 
+def make_modified_policy(pol: dict) -> Policy:
+    """Reconstruct the frozen modified policy from policy_frozen.json."""
+    if pol["type"] == "geo-fixed":
+        return GeoFixedPolicy()
+    return AdaptivePolicy(pol["trigger"], pol["eta_cap"],
+                          end_kind=pol["end_kind"], eta_kind=pol["eta_kind"])
+
+
 def D2(prof: Profile) -> None:
     base = load_frozen("*D0-baseline*", "baseline_frozen.json")
     run = Run("D2-policy", {"profile": prof.name, "baseline": base})
-    run.log("D2: adaptive annealing trigger selection (validation targets)")
+    run.log("D2: candidate policy selection (validation targets; "
+            "redesigned family per protocol addendum)")
+
+    candidates: dict[str, Callable[[], Policy]] = {
+        "geo-fixed": lambda: GeoFixedPolicy(),
+        "geo-anneal-fixed70": lambda: AdaptivePolicy(
+            "fixed70", 0.25, end_kind="geomean", eta_kind="frac015"),
+        "geo-anneal-plateau": lambda: AdaptivePolicy(
+            "plateau", 0.25, end_kind="geomean", eta_kind="frac015"),
+        "sigma-fixed70": lambda: AdaptivePolicy(
+            "fixed70", 0.25, end_kind="sigma", eta_kind="cap"),
+        "sigma-plateau": lambda: AdaptivePolicy(
+            "plateau", 0.25, end_kind="sigma", eta_kind="cap"),
+        "sigma-agree": lambda: AdaptivePolicy(
+            "agree", 0.25, end_kind="sigma", eta_kind="cap"),
+    }
     rows = []
     aggregates = {}
     pair_costs = {}
-    for trig in ("fixed70", "plateau", "agree"):
+    for cname, make in candidates.items():
         per_target = []
         costs = []
         for tgt in validation_targets():
             eds = []
             for s in range(prof.d2_seeds):
-                res = run_one(tgt, AdaptivePolicy(trig, eta_cap=0.25),
-                              30_000 + s, prof, run.counter)
+                res = run_one(tgt, make(), 30_000 + s, prof, run.counter)
                 eds.append(res.final_ed2)
                 costs.append(res.kernel_pairs)
-                rows.append((trig, tgt.name, s, res.final_ed2,
+                rows.append((cname, tgt.name, s, res.final_ed2,
                              res.event_time, int(res.censored),
                              res.kernel_pairs))
             per_target.append(float(np.median(eds)))
-        aggregates[trig] = geo_mean(per_target)
-        pair_costs[trig] = float(np.median(costs))
-        run.log(f"  {trig:8s}: geo-mean ED2 = {aggregates[trig]:.5f}  "
-                f"median pairs/run = {pair_costs[trig]:.3e}")
-    # select: best aggregate; must beat-or-match fixed70 at its charged cost
+        aggregates[cname] = geo_mean(per_target)
+        pair_costs[cname] = float(np.median(costs))
+        run.log(f"  {cname:20s}: geo-mean ED2 = {aggregates[cname]:.5f}  "
+                f"median pairs/run = {pair_costs[cname]:.3e}")
+    run.log(f"  (baseline D0 validation reference: {base['score']:.5f}, "
+            f"tuning cost {base['tuning_kernel_pairs']:.2e} pairs)")
     winner = min(aggregates, key=aggregates.get)
-    if aggregates[winner] > aggregates["fixed70"] * 1.02:
-        winner = "fixed70"
-    run.log(f"  selected trigger: {winner}")
-    policy_frozen = {
-        "type": "adaptive",
-        "trigger": winner,
-        "initial_bandwidth": "L_hat (k-means estimate from setup sample)",
-        "anneal": "geometric L_hat -> sigma_hat over remaining budget",
-        "step_rule": "eta = min(0.1*tau_t, 0.25*eta_ceiling(surrogate))",
-        "mask_rule": "mask on iff N >= 8*K_hat",
-        "fallback": "fixed70 anneal if trigger never fires",
-        "eta_cap": 0.25,
-        "validation_aggregate": aggregates[winner],
-        "baseline_aggregate_reference": None,
-    }
+    run.log(f"  selected candidate: {winner}")
+    if winner == "geo-fixed":
+        policy_frozen = {
+            "type": "geo-fixed",
+            "bandwidth": "tau = sqrt(sigma_hat * L_hat) from setup sample",
+            "step_rule": "eta = 0.15 * tau",
+            "mask_rule": "mask on iff N >= 8*K_hat",
+            "eta_cap": 0.25,
+        }
+    else:
+        end_kind = "geomean" if winner.startswith("geo") else "sigma"
+        eta_kind = "frac015" if winner.startswith("geo") else "cap"
+        policy_frozen = {
+            "type": "adaptive",
+            "trigger": winner.split("-")[-1],
+            "end_kind": end_kind,
+            "eta_kind": eta_kind,
+            "initial_bandwidth": "L_hat (k-means estimate)",
+            "anneal": f"geometric L_hat -> {end_kind} end scale",
+            "mask_rule": "mask on iff N >= 8*K_hat",
+            "fallback": "fixed70 anneal if trigger never fires",
+            "eta_cap": 0.25,
+        }
+    policy_frozen["validation_aggregate"] = aggregates[winner]
+    policy_frozen["all_aggregates"] = aggregates
     run.save_json("policy_frozen.json", policy_frozen)
     run.save_csv("d2_results.csv",
-                 ["trigger", "target", "seed", "ed2", "event_time",
+                 ["candidate", "target", "seed", "ed2", "event_time",
                   "censored", "kernel_pairs"], rows)
     run.finish()
 
@@ -475,7 +538,7 @@ def D3(prof: Profile) -> None:
                              "policy": pol})
     run.log(f"D3: held-out benchmark; base=(tau*={base['tau_star']}, "
             f"eta*={base['eta_abs']:.4f}, mask on) vs modified="
-            f"adaptive-{pol['trigger']}")
+            f"{pol['type']}")
     rows = []
     cell_ratios: dict[str, float] = {}
     all_pairs_mod, all_pairs_base = [], []
@@ -490,8 +553,7 @@ def D3(prof: Profile) -> None:
                 res_b = run_one(tgt, FixedPolicy("base", base["tau_star"],
                                                  base["eta_abs"], True),
                                 40_000 + s, prof, run.counter, init_kind)
-                res_m = run_one(tgt, AdaptivePolicy(pol["trigger"],
-                                                    pol["eta_cap"]),
+                res_m = run_one(tgt, make_modified_policy(pol),
                                 40_000 + s, prof, run.counter, init_kind)
                 eb = min(res_b.final_ed2, 1e6)
                 em = min(res_m.final_ed2, 1e6)

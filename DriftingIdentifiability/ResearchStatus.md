@@ -1656,3 +1656,26 @@ prove convergence, establish a universal optimizer rule, or demonstrate an
 improvement over the paper's trained neural model. Real encoder features,
 neural training, and the open quantitative Phase-B theory remain separate
 future work.
+
+## 2026-07-19: low-dimensional performance study (D0-D3) - gate FAILED, honestly
+
+Implemented numerics/LowDimPerformanceRoadmap.md with a pre-frozen protocol
+(LowDimPerformanceProtocol.md), fresh namespace (lowdim_drift.py,
+lowdim_benchmark.py, lowdim_generator.py), full run manifests, paired
+randomness, matched kernel-pair compute, and strict validation/held-out
+separation.  Headline: under a STRONG tuned baseline and the exact paper
+bi-softmax estimator, the theory-derived modified procedure does NOT beat
+the base procedure in aggregate on held-out targets (paired ED^2 ratio
+1.031, CI [1.019, 1.041]); the pre-declared gate failed and was not
+weakened.  Surviving qualified claims: (1) tuning-free parity - the frozen
+policy tau = sqrt(sigma_hat * L_hat), eta = 0.15 tau (all from 256
+unlabeled samples) matches the grid-tuned baseline at zero tuning cost vs
+7.1e8 kernel pairs; (2) large conditional wins where the tuned bandwidth is
+geometry-mismatched (two-moons -47%, ring -37%, 1-d -14%); (3) D1 showed
+the whole bandwidth/step/mask mechanism family lands within +-25% of the
+tuned baseline on validation: a well-tuned fixed bandwidth already IS the
+coarse-bandwidth design rule (the D0 grid optimum sits at ~sqrt(sigma*L)).
+New theory target extracted for B1: derive the sqrt(sigma*L) optimal-
+bandwidth scaling from the residual-floor trade-off (e^{-L/tau} transport
+floor vs O(tau) bias).  D4 runner wiring verified (gradcheck, matched-batch
+zero update) but not run as a decisive test per the gate ordering.

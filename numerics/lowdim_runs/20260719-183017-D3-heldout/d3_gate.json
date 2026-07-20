@@ -1,0 +1,23 @@
+{
+  "aggregate_ratio": 1.031121712714021,
+  "ratio_ci": [
+    1.0187996129312913,
+    1.0407501415137392
+  ],
+  "crit1_ratio_le_0.8": false,
+  "crit2_ci_hi_lt_1": false,
+  "degraded_cells": [
+    "H-2d-K3-overlap/missing"
+  ],
+  "crit3_degraded_le_20pct": true,
+  "km_base": 1,
+  "km_mod": 1,
+  "crit4_time_not_worse": true,
+  "nongauss_ratio": 1.0456272550259902,
+  "nongauss_ci": [
+    1.0353025170453114,
+    1.059119399649186
+  ],
+  "crit5_nongauss_holds": false,
+  "PASS": false
+}
