@@ -204,3 +204,49 @@ SGD-vs-Adam mechanism figure (committed evidence), then freeze the fresh
 validation/test generator registries and implement H1 (tempered gain) — the
 cheapest discriminator of whether *any* interior reliability strength beats
 paper under Adam. H2/T6 follow only if H1 shows interior headroom.
+
+## 9. H1 screen result (2026-07-20): near-flat, no gate-warranting headroom
+
+Two prior diagnostics settled the optimizer question first. The best-tuned
+absolute-ED2 sweep (`opt_sweep`, LR-tuned per optimizer) showed **no (field,
+optimizer) combination convincingly beats `paper + Adam`**: on-support all
+reasonable configs cluster at ED2 ~0.008–0.010, and the best off-support config
+(`constant + SGD`, 0.0089) only *ties* `paper + Adam` (0.0114) within noise
+while `paper + SGD` freezes (10.4). So switching the optimizer is a wash, not a
+win — it recovers the paper+Adam frontier by a different route.
+
+`generator_tempered_gain_screen.py` then ran the H1 tempered gain
+`(P*Q)^gamma` under exact E5 Adam semantics (reused/masked reference, no clip;
+8 targets × 4 inits × 6 seeds; `gamma=1` reproduces paper as a consistency
+check). Aggregate ED2 ratio vs paper:
+
+| gamma | ratio | hierarchical 95% CI | winning cells |
+|---:|---:|---|---:|
+| 0.00 (constant) | 1.073 | [0.954, 1.237] | 34% |
+| 0.50 | 0.962 | [0.943, 1.042] | 41% |
+| 1.00 (= paper) | 1.000 | [1.000, 1.000] | — |
+| 1.50 | 0.964 | [0.947, 1.033] | 59% |
+| 2.00 | 1.004 | [0.963, 1.085] | 47% |
+
+**Reading.** The objective is nearly flat across a 4× range of reliability-weight
+sharpness: the best interior points (`gamma=0.5`, `gamma=1.5`) improve the
+aggregate only ~3–4%, and **both confidence intervals include 1** — neither is
+statistically distinguishable from paper. This is far below the pre-registered
+general-improvement gate (ratio ≤ 0.90 with CI upper < 1). The per-init pattern
+is consistent with §3: `gamma=0` (drop the weight) hurts most off-support
+(`far` 1.360), while slight tempering (`gamma=0.5`) is uniformly, marginally
+non-harmful (all inits ≤ 1.0). The flatness across the whole family is itself
+evidence that a different reliability functional (H2, ESS/inverse-variance) is
+also unlikely to help materially: on these easy low-dimensional targets the
+Adam-trained generator is **near-optimal and largely insensitive to the drift
+field's per-sample weighting.**
+
+**Decision.** The screen does **not** warrant building the frozen fresh-split
+gate — it would chase a ~3–4% non-significant effect and fail the pre-registered
+threshold. Per §7, the earned conclusion is the **characterization**: `P*Q` is a
+near-optimal reliability weight under Adam; the NCJ particle advantage is
+optimizer-conditional (§2, triply confirmed); and the low-dimensional generator
+has negligible drift-field-design headroom. A genuine field-design win, if one
+exists, requires a harder venue (higher dimension / learned features), not a
+different weight or optimizer at this scale. H2/T6 remain defined for a future
+higher-dimensional attempt but are not pursued here.
