@@ -37,6 +37,22 @@ pseudo-code, and answers the Objective-7 question: which certified conditions
 are realistic enough to matter, and where do the certified constants leave
 practice behind.
 
+## Dynamics Phase C validation
+
+The audit-corrected finite-particle dynamics benchmark is separate from the
+earlier identifiability ledger:
+
+* `PhaseCValidation.md` specifies the controlled C1--C3 experiments;
+* `driftbench_v2.py` is the exact executable harness;
+* `DesignRules.md` records the qualified conclusions;
+* `bench_runs_v2/` contains standard-profile manifests, source snapshots,
+  per-seed data, and trajectories;
+* `bench_figs_v2/` contains the corresponding uncertainty plots.
+
+The old `PhaseC_DesignRules.md`, `driftbench.py`, and `bench_runs/` are retained
+as an explicitly superseded first pass. The V2 results are synthetic particle
+experiments; they do not claim trained-model or real-encoder performance.
+
 The operating point is taken from the paper, not chosen for convenience:
 
 - kernel `exp(-dist/tau_tilde)` with `tau_tilde = tau*sqrt(C)` on features

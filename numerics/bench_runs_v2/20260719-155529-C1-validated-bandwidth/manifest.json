@@ -1,0 +1,70 @@
+{
+  "which": "C1-validated-bandwidth",
+  "seed": 20260719,
+  "commit": "bc5d0d4b85e68d216208fa422319b98c6e014d4d",
+  "git_dirty": true,
+  "git_status": [
+    "M DriftingIdentifiability/DynamicsRoadmap.md",
+    "?? numerics/bench_runs_v2/",
+    "?? numerics/driftbench_v2.py"
+  ],
+  "git_diff_sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc",
+  "script_sha256": "64a65fddf0dbe0677fb690c8f87be907774708eb8554108c66144dbbbf14846f",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cmdline": [
+    "numerics/driftbench_v2.py",
+    "C1",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "profile": {
+      "name": "standard",
+      "c1_seeds": 8,
+      "c1_tune_seeds": 3,
+      "c1_steps": 400,
+      "c2_seeds": 8,
+      "c2_steps": 400,
+      "c3_seeds": 6,
+      "c3_steps": 400,
+      "c3_long_steps": 1600,
+      "ref_n": 1024
+    },
+    "targets": [
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        4,
+        5
+      ]
+    ],
+    "L_normalized": 1.0,
+    "batch": 64,
+    "particles_per_mode": 8,
+    "paper_taus": [
+      0.02,
+      0.05,
+      0.2
+    ],
+    "common_eta": 0.01,
+    "initialization": "central Gaussian, width 0.25 L (missing-mode stress test)",
+    "equal_scale_budget": true
+  },
+  "start": "20260719-155529",
+  "wall_seconds": 295.475,
+  "kernel_pairs": 800628736,
+  "field_calls": 183968
+}

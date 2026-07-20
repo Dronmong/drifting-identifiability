@@ -1,5 +1,13 @@
 # Phase C: the certified design rules, benchmarked
 
+> Historical procedure (superseded 2026-07-19). This file specifies the
+> original Phase C pass. Its conclusions were audited and rerun with corrected
+> controls, the full coupled generator, the exact paper bi-softmax estimator,
+> per-seed trajectories, and reproducibility manifests. Use
+> `PhaseCValidation.md` for the current protocol and `DesignRules.md` for the
+> validated, qualified conclusions. The original files are retained so the
+> correction is auditable.
+
 *Procedure spec (2026-07-19).  Implements Phase C of
 `DriftingIdentifiability/DynamicsRoadmap.md` — the "better performing model"
 leg of the tripod.  The Collapse Atlas established the three design rules at

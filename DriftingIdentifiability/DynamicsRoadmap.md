@@ -104,6 +104,240 @@ Wire the three atlas design rules into the estimator-level pipeline
 | B1 residual floor | queued |
 | B2 metastability bounds | queued |
 | B3 mask effects | queued |
-| C1 bandwidth ladder | **DONE** (anneal wins, tuning-free) |
-| C2 step size | **DONE** (eta~0.5tau; generator is upper bound) |
-| C3 mask policy | **DONE** (hazard at small N/K) |
+| C1 bandwidth ladder | **VALIDATED, QUALIFIED** (coarse is essential; anneal vs fixed coarse is geometry-dependent) |
+| C2 step size | **CORRECTED + VALIDATED** (full coupled generator is a ceiling, not an operating rule) |
+| C3 mask policy | **VALIDATED, QUALIFIED** (small-N hazard transfers to paper bi-softmax; no stable wrong endpoint demonstrated) |
+
+---
+
+## Phase C audit and required validation pass (2026-07-19)
+
+### Verdict
+
+Phase C is a useful first estimator-level pilot, but the first pass is not
+complete or reliable enough to mark C1--C3 `DONE`.
+
+* **C1 bandwidth scheduling:** promising, but causal attribution needs repair.
+* **C2 generator step rule:** mathematically incorrect as implemented.
+* **C3 mask policy:** useful preliminary evidence, but incomplete.
+* **Benchmark infrastructure:** a good start, but missing raw per-seed data and
+  exact provenance.
+* **Improvement over the paper estimator:** not yet supported.
+
+The suite genuinely improves upon the population atlas: it draws a fresh
+target minibatch each step, trains from generic particle clouds, records law
+and mode diagnostics, uses paired deterministic seeds, and states that the
+exact paper bi-softmax estimator and real features were not tested.  The
+combined coarse-to-fine procedure also clearly performs better than a
+permanently fine bandwidth on the synthetic targets.  The gaps below concern
+attribution and strength of claim, not the absence of a useful signal.
+
+### C1 audit: bandwidth scheduling
+
+The intended question is whether coarse-to-fine bandwidth scheduling improves
+mass transport without sacrificing final precision.  The implemented result
+supports the weaker claim that the combined policy “start with large bandwidth
+and large steps, then reduce both” performs well on the tested Gaussian
+mixtures.  It does not isolate bandwidth scheduling itself.
+
+#### Step-size confound
+
+For fixed bandwidths, the step is proportional to that bandwidth.  For the
+annealed arm it is recomputed as `eta_t = 0.1 * tau_t`.  Consequently:
+
+* `single-L` starts with step `0.1 L`;
+* `single-fine` uses approximately `0.1 tau_fine`;
+* `ladder-eq` uses a step based on its smallest bandwidth;
+* `paper-multi` also uses a step based on its smallest bandwidth;
+* `anneal` begins with the much larger `0.1 L` step.
+
+Thus `single-L` and `anneal` can move particles roughly an order of magnitude
+farther per update.  The poor performance of averaging may be caused partly by
+this discrepancy, not necessarily by averaging itself.
+
+#### Baseline mismatch
+
+The Phase C specification names the paper bandwidth set
+`{0.02, 0.05, 0.2}`.  The code instead used the target-relative set
+`{0.3 sigma, sigma, 0.3 L}`.  This can be a sensible synthetic baseline, but it
+must not be called the paper's fixed set without implementing the paper's
+feature normalization and actual values.
+
+#### Oracle target geometry
+
+The schedule receives the true mode separation `L` and width `sigma` from the
+synthetic generator.  Those quantities must be estimated on realistic data.
+The current rule is therefore tuning-free only conditional on oracle knowledge
+of the target geometry.
+
+#### Result wording and censoring
+
+Annealing matched the grid baseline for K4/d1, but its final energy distance
+was about three times worse for K4/d2 and K4/d5.  It reached a loose tolerance
+rapidly, but “matches the oracle everywhere” is too strong.
+
+Metrics were recorded only every 20 steps.  Reported values such as 10 steps
+can be medians of observed crossing labels 0 and 20 rather than actual observed
+crossing times.  Replacing censored runs by `9999` produced values such as
+`5039`; this is not a valid time-to-event statistic.
+
+#### Required C1 validation
+
+1. Hold the same fixed `eta` across every bandwidth policy.
+2. Separately compare the practical joint policy `eta_t = 0.1 tau_t`.
+3. Equalize kernel evaluations and wall-clock budget: a three-bandwidth step
+   costs roughly three single-bandwidth evaluations.
+4. Implement the actual paper bandwidth set under explicit normalization.
+5. Compare oracle `L,sigma` with values estimated only from target samples.
+6. Use a broader held-out grid for `single-best`, evaluated under the same
+   horizon and metric as the reported arms.
+7. Record threshold crossing every step and use explicit censoring rather than
+   sentinel-valued medians.
+
+### C2 audit: step-size rule
+
+This is the principal correctness problem.  The first implementation intended
+to estimate the generator of the full empirical particle field but called
+`drift_est(q[j:j+1], Y, tau)`.  Passing one particle makes the model law inside
+`drift_est` a singleton, whose self mean shift is identically zero.  The
+estimated derivative therefore resembles the derivative of the target mean
+shift for a lone particle, not the `N*d` by `N*d` Jacobian of the coupled
+particle system.
+
+It omits:
+
+* the effect of perturbing particle `j` on every other particle;
+* the effect of `j` on the empirical `m_q`;
+* cross-particle coupling;
+* collective support modes.
+
+The implementation also discarded eigenvalues with positive real part when
+forming `eta*`.  An expanding generator direction cannot be stabilized by a
+positive explicit-Euler step and must be reported, not ignored.  Therefore the
+reported `2.67 tau` and `2.72 tau` are not estimates of the full generator
+boundary.
+
+The fixed-step sweep gives only limited evidence that steps of order `tau` are
+reasonable.  In one dimension `1.0 tau` had the best final ED; in two
+dimensions `0.1 tau` did, with small differences.  Two targets and four seeds
+do not establish `0.5 tau` as universal.
+
+#### Required C2 validation
+
+Construct the complete frozen-batch field `F(q;Y) in R^(N*d)` and differentiate
+with respect to flattened `q`.  For moderate `N`, central finite differences
+are sufficient; larger systems can use Jacobian-vector products and Arnoldi.
+
+1. Check whether every generator eigenvalue has negative real part.
+2. Compute the Euler boundary from the full spectrum only in the stable case.
+3. Test safety factors such as `0.1 eta*`, `0.25 eta*`, and `0.5 eta*`.
+4. Compare against fixed `c tau` rules.
+5. Include the computational cost of estimating the spectrum.
+6. Include a large-bandwidth regime where the atlas observed Euler
+   instability.
+
+Until this is done, C2 is provisional.
+
+### C3 audit: eye-mask policy
+
+C3 contains a meaningful empirical signal.  At `N/K = 2`, masking performed
+substantially worse and dropped a mode; at `N/K = 8` and `32`, masking
+performed better in the simplified SNIS system.
+
+The experiment does not establish that the masked endpoint is a stable wrong
+equilibrium.  It records the endpoint after 800 steps but does not require a
+small on-support drift residual, run a substantially longer horizon,
+perturb-and-return, or inspect the local Jacobian.
+
+The explanation that masking provides “variance reduction” is also not yet
+demonstrated.  The model-side field uses the complete particle cloud, not a
+stochastic minibatch of `q`.  Removing self-interaction primarily changes
+leave-one-out bias and repulsion rather than ordinary Monte Carlo variance.
+
+Most importantly, the Phase C specification requires both the simplified SNIS
+estimator and `driftlab.compute_v_paper`.  Only SNIS was run.  The document
+acknowledges this, but the status ledger nevertheless marked C3 complete.
+
+#### Required C3 validation
+
+1. Add the exact paper bi-softmax estimator.
+2. Sweep `N/K` over at least `{1,2,4,8,16,32}`.
+3. Independently sweep target minibatch size `B`.
+4. Measure endpoint residual and local stability.
+5. Continue suspicious endpoints for a much longer horizon.
+6. Use several target families, including unequal mode weights.
+7. Report the crossover as an interval; samples at only 2, 8, and 32 cannot
+   locate it “around 8.”
+
+### Reporting and reproducibility audit
+
+The specification requested per-run trajectories, IQRs, censoring, and
+configuration-bearing manifests.  The first pass saved only aggregated
+medians.  Therefore the medians cannot be independently recomputed, censored
+times are not handled correctly, and figures have no uncertainty bars.
+
+The saved manifests reference commit `fba6d57`, which predates the addition of
+`driftbench.py`.  The benchmark was run from an uncommitted working tree and
+committed afterward, so the recorded commit does not reproduce the executed
+source.
+
+A corrected pass must save:
+
+* commit, dirty status, source hash, command line, and full configuration;
+* per-seed endpoint metrics and trajectories;
+* wall time and kernel-evaluation count;
+* paired uncertainty summaries and proper censored-time statistics.
+
+Phase C must also be recorded in `ResearchStatus.md`, as required by the
+standing deliverable rule.
+
+### Revised Phase C status after audit
+
+| Item | Audited status |
+|---|---|
+| C1 bandwidth ladder | **PROVISIONAL** — strong combined-policy signal; step-size-controlled validation required |
+| C2 step size | **CORRECTION REQUIRED** — first `eta*` was not the coupled generator |
+| C3 mask policy | **PROVISIONAL** — SNIS signal only; paper estimator and stability tests required |
+
+The strongest currently defensible claim is:
+
+> On the tested synthetic multimodal targets, a combined coarse-to-fine
+> bandwidth-and-step schedule substantially outperforms a permanently fine
+> kernel, and eye masking has a strong particle-count-dependent effect.
+
+It is not yet defensible to claim tuning-free optimal rules or improvement
+over the paper's exact estimator.  The validation pass above is required before
+restoring `DONE` status.
+
+### Validation pass completed (2026-07-19)
+
+The required pass is implemented in `numerics/driftbench_v2.py`, specified in
+`numerics/PhaseCValidation.md`, and reported in the rewritten
+`numerics/DesignRules.md`.  Standard-profile raw runs, source snapshots,
+manifests, per-seed CSVs, and trajectories live under
+`numerics/bench_runs_v2/`; uncertainty figures live in
+`numerics/bench_figs_v2/`.
+
+The corrected conclusions are:
+
+1. **C1 complete as an experiment, universal annealing claim rejected.**
+   Coarse coupling reliably repairs missing-mode transport.  Annealing wins in
+   the tested 2-D targets, ties fixed coarse in 1-D, and loses to fixed coarse
+   in the tested 5-D target.  Unsupervised estimates of `L,sigma` match oracle
+   scheduling on these clean mixtures.  Bandwidth-only and joint-step results
+   are now reported separately at equal kernel cost.
+2. **C2 implementation corrected.**  The full `N*d` generator includes all
+   particle couplings and its spectral formula satisfies
+   `rho(I + eta* J) = 1`.  The boundary is a ceiling and can be a poor training
+   step; `0.1 eta*` performs well in the coarse regime, while no universal
+   fraction of `tau` is established.
+3. **C3 expanded to the paper estimator.**  The eye mask is decisively harmful
+   at `N/K <= 2` and harmful on median at `N/K = 4` under both SNIS and the
+   exact bi-softmax affinity.  Its median effect is near neutral at `N/K = 8`
+   and configuration-dependent thereafter.  Across 480 endpoint rows and 134
+   long continuations, zero states met the strengthened stable-wrong gate.
+
+Phase C is therefore **complete as a synthetic validation phase**, with
+qualified rather than universal design rules.  It does not establish
+real-feature or neural-model improvement, and it does not replace the open
+Phase-B convergence theory.

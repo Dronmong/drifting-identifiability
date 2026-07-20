@@ -1613,3 +1613,46 @@ dividing line for normalized displacement drift.  The mechanism: near each
 atom the other is out of range so the mixing weight cancels in the ratio
 `D/Z`; in the dead zone both normalizers vanish and the `(0)^{-1}=0`
 convention makes the field zero.
+
+## 2026-07-19: dynamics program Phase C validated (synthetic scope)
+
+The original Phase C benchmark was audited and rerun with the correctness and
+reproducibility issues repaired. The current protocol is
+`numerics/PhaseCValidation.md`, the executable is `numerics/driftbench_v2.py`,
+and the qualified results are in `numerics/DesignRules.md`. Standard-profile
+runs retain their exact source snapshot and hash, full configuration, dirty
+working-tree provenance, per-seed rows, compressed trajectories, wall time,
+and kernel-pair/field-call accounting.
+
+**C1 — bandwidth ladder: validated but not universal.** Bandwidth and step
+size are now controlled separately, multi-bandwidth arms receive equal kernel
+cost, the paper's normalized temperature set is an explicit baseline, and
+oracle geometry is compared with scales estimated from unlabeled target
+samples. Coarse coupling reliably repairs missing-mode transport. Annealing
+wins on the tested two-dimensional mixtures, ties fixed coarse in one
+dimension, and loses to fixed coarse on the tested five-dimensional simplex.
+The supported rule is to begin at separation scale when modes are missing and
+to make refinement adaptive; it is not that annealing always wins.
+
+**C2 — step-size rule: corrected.** The benchmark now differentiates the full
+coupled `N*d` empirical particle field rather than the target mean shift of a
+singleton. It retains expanding eigenmodes and verifies the spectral identity
+`rho(I + eta* J) = 1` at the computed Euler boundary. That boundary is an exact
+local ceiling, not a reliable operating point: a safety factor works better in
+the tested coarse regimes, and no universal multiple of `tau` is established.
+
+**C3 — eye mask: validated under both estimators.** The sweep now includes the
+SNIS field and an independently cross-checked implementation of the paper's
+row/column bi-softmax affinity, equal and unequal mode weights, two target
+batch sizes, longer continuations, residuals, the full local generator, and
+perturb-and-return tests. Masking is strongly harmful at one or two particles
+per mode and harmful on median at four; its effect is approximately neutral
+near eight and configuration-dependent thereafter. Across 480 endpoints and
+134 long continuations, no endpoint passed the strengthened stable-wrong
+equilibrium gate.
+
+This completes Phase C as a **synthetic validation experiment**. It does not
+prove convergence, establish a universal optimizer rule, or demonstrate an
+improvement over the paper's trained neural model. Real encoder features,
+neural training, and the open quantitative Phase-B theory remain separate
+future work.
