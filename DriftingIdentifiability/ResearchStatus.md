@@ -391,6 +391,23 @@ transfer through the tested generator. The winning mechanism is the certified
 `P*Q`-drop plus cross-fitting; jitter was empirically unhelpful and frozen out,
 so the planned T5 (jitter/fission) is intentionally not formalized.
 
+**Program conclusion (honest accounting).** This program did **not** produce a
+practically meaningful improvement over the paper method. The large E4 particle
+win is real but **optimizer-conditional**: it cures an off-support freezing
+pathology of the constant-step particle update that an adaptive optimizer (Adam)
+independently cures, so in the deployment-relevant setting — a learned generator
+trained with Adam — the modified field only **ties** the paper baseline
+(E5 ratio 1.07; H1 tempered-gain screen flat, best interior γ ~0.96 with CI
+including 1; optimizer-switch sweep a wash). Under matched, standard training we
+improved no end-to-end metric over the paper. What the program yields is
+therefore a **negative-with-mechanism**, not a performance result: a
+pre-registered, honestly-gated characterization that the low-dimensional
+Adam-trained generator has negligible drift-field-design headroom, plus the
+certified T1–T4 layer (which stands on its own as formalization, independent of
+any performance claim). A genuine algorithmic win, if one exists, requires a
+harder venue (higher dimension or learned features), not a different gain or
+optimizer at this scale. See `numerics/GeneratorTransferResearch.md`.
+
 ## Objectives and remaining priorities
 
 ### Objective 1: explicit lower frame certificate — complete
