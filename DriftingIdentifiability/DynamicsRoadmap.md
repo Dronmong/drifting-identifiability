@@ -389,3 +389,18 @@ tested learned generator.
 See `numerics/IdentifiabilityImprovementResults.md`.  A learned-generator
 improvement remains unearned; the next attempt must redesign the field→generator
 coupling on a fresh split rather than reuse this particle policy.
+
+### Next target: mode-recovery program (2026-07-20)
+
+The cross-program ledger
+(`docs/04-empirical-experimentation/PaperImprovementAttempts.md`) shows aggregate
+error on easy, well-tuned, low-dimensional targets has no headroom, but
+**missing-mode / mode-coverage recovery** is the one axis with real, repeated,
+non-conditional wins (atlas two-bandwidth 31–38×; coarse bandwidth; NCJ
+missing-mode KM 60 vs 114).  The active roadmap
+`numerics/ModeRecoveryRoadmap.md` reframes the objective to a **coverage gate**
+in a regime where one fixed bandwidth cannot both reach and resolve, with a
+fixed multi-scale field, a headroom precondition (M1), an early
+optimizer diagnostic (the NCJ lesson), and a directional-reach transfer
+hypothesis (why it may survive Adam where NCJ did not) plus a mode-reach
+theorem target (M5).

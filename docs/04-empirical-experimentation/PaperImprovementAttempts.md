@@ -131,3 +131,6 @@ aside for failing the *aggregate* gate — the wrong gate for this question.
 
 This is the pattern the ledger reveals: we were winning the whole time, just on
 a scoreboard we then threw away by averaging it into aggregate error.
+
+**→ Active roadmap for this target:**
+[`ModeRecoveryRoadmap.md`](../../numerics/ModeRecoveryRoadmap.md).
