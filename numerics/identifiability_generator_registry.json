@@ -1,0 +1,54 @@
+{
+  "registry": "NCJ-generator-test-v1",
+  "master_seed": 20260722,
+  "targets": [
+    {
+      "name": "NCJG-gaussian-1d",
+      "family": "gaussian",
+      "d": 1,
+      "params": {"std": 0.55}
+    },
+    {
+      "name": "NCJG-gmix-1d-K4-uneq",
+      "family": "gauss_mixture",
+      "d": 1,
+      "params": {"K": 4, "L": 0.91, "sigmas": [0.08, 0.12, 0.17, 0.23], "weights": [0.11, 0.19, 0.29, 0.41]}
+    },
+    {
+      "name": "NCJG-gmix-2d-K5-uneq",
+      "family": "gauss_mixture",
+      "d": 2,
+      "params": {"K": 5, "L": 1.19, "sigmas": [0.08, 0.11, 0.15, 0.20, 0.25], "weights": [0.08, 0.13, 0.19, 0.26, 0.34]}
+    },
+    {
+      "name": "NCJG-ring-118",
+      "family": "ring",
+      "d": 2,
+      "params": {"radius": 1.18, "width": 0.061}
+    },
+    {
+      "name": "NCJG-moons-127",
+      "family": "moons",
+      "d": 2,
+      "params": {"scale": 1.27, "noise": 0.058, "upper_weight": 0.53}
+    },
+    {
+      "name": "NCJG-banana-068",
+      "family": "banana",
+      "d": 2,
+      "params": {"curvature": 0.68, "noise": 0.10, "xscale": 0.92}
+    },
+    {
+      "name": "NCJG-student-5d",
+      "family": "student",
+      "d": 5,
+      "params": {"df": 6.0, "scale": 0.33}
+    },
+    {
+      "name": "NCJG-shell-5d",
+      "family": "sphere_shell",
+      "d": 5,
+      "params": {"radius": 0.91, "width": 0.071}
+    }
+  ]
+}
