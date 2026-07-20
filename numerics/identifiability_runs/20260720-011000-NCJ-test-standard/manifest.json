@@ -1,0 +1,195 @@
+{
+  "stage": "test",
+  "profile": {
+    "name": "standard",
+    "steps": 400,
+    "N": 48,
+    "batch": 64,
+    "validation_seeds": 8,
+    "test_seeds": 20,
+    "ref_final": 1024,
+    "ref_cross": 256
+  },
+  "master_seed": 20260719,
+  "commit": "6ef492ad5a97024aa420aafcf138db791aca0f9e",
+  "git_dirty": false,
+  "git_status": [],
+  "cmdline": [
+    "numerics/run_identifiability_improvement.py",
+    "test",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "protocol": "IdentifiabilityImprovementProtocol.md",
+    "registry_name": "NCJ-test-v1",
+    "targets": [
+      "NCJT-gaussian-2d-aniso",
+      "NCJT-student-5d",
+      "NCJT-gmix-1d-K7-uneq",
+      "NCJT-gmix-2d-K4-hetero",
+      "NCJT-gmix-5d-K5-uneq",
+      "NCJT-gmix-2d-overlap",
+      "NCJT-grid-3x3",
+      "NCJT-ring-142",
+      "NCJT-circles-036-131",
+      "NCJT-moons-111",
+      "NCJT-banana-083",
+      "NCJT-spiral-21",
+      "NCJT-sine-048",
+      "NCJT-contaminated-1d",
+      "NCJT-helix-3d",
+      "NCJT-shell-5d"
+    ],
+    "initializations": [
+      "covered",
+      "missing",
+      "far",
+      "concentrated"
+    ],
+    "arms": [
+      {
+        "label": "paper",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "normalized-only",
+        "gain": "constant",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "crossfit-only",
+        "gain": "paper",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "jitter-only",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "normalized-crossfit",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      }
+    ],
+    "trajectory_columns": [
+      "step",
+      "ed2",
+      "support_coverage",
+      "mode_coverage",
+      "mass_error",
+      "spread_ratio",
+      "pq_p10",
+      "pq_median",
+      "delta_norm_median",
+      "ess_pos_median",
+      "ess_neg_median",
+      "self_leverage_mean",
+      "field_norm_median",
+      "degenerate_rows"
+    ],
+    "frozen_policy_path": "numerics\\identifiability_runs\\20260720-002409-NCJ-validation-standard\\ncj_policy_frozen.json",
+    "frozen_policy_sha256": "35AE4EC58C62CAF0B1555C71AD5080B9D6C614FF4844313EC76A344C72254FC0",
+    "frozen_policy": {
+      "profile": "standard",
+      "winner_label": "ncj__eta-0p0525__sigma-0p0",
+      "eta": 0.0525,
+      "sigma_ratio": 0.0,
+      "tau": 0.35,
+      "norm_clip": 2.0,
+      "validation_aggregate": 0.0034880740719276334,
+      "paper_aggregate": 0.03943953197100487,
+      "winner_to_paper_ratio": 0.08844106148348803,
+      "all_aggregates": {
+        "paper": 0.03943953197100487,
+        "normalized__eta-0p025": 0.013010965563881772,
+        "normalized__eta-0p0525": 0.012146048193380807,
+        "crossfit-only": 0.03147262001545925,
+        "jitter-only__sigma-0p1": 0.03997324399935519,
+        "jitter-only__sigma-0p25": 0.04112825281471226,
+        "jitter-only__sigma-0p5": 0.04533255853499452,
+        "normalized-crossfit__eta-0p025": 0.006962330947079119,
+        "normalized-crossfit__eta-0p0525": 0.0034880740719276334,
+        "ncj__eta-0p025__sigma-0p0": 0.006962330947079119,
+        "ncj__eta-0p025__sigma-0p1": 0.006957711740973448,
+        "ncj__eta-0p025__sigma-0p25": 0.007479819754065904,
+        "ncj__eta-0p025__sigma-0p5": 0.009389081316078789,
+        "ncj__eta-0p0525__sigma-0p0": 0.0034880740719276334,
+        "ncj__eta-0p0525__sigma-0p1": 0.003541907693619655,
+        "ncj__eta-0p0525__sigma-0p25": 0.003898459860080632,
+        "ncj__eta-0p0525__sigma-0p5": 0.004974931391084568
+      },
+      "validation_registry_sha256": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97",
+      "test_registry_sha256": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5",
+      "source_commit": "22bcada1c8f611ef49295141d72a0199b0df1579",
+      "protocol_sha256": "25522ED13701ED14AB9D7AB099DBDE15E2A012AB3D3E2CCCCA1897EC433D18FF"
+    },
+    "gate": {
+      "ratio_le": 0.8,
+      "hierarchical_ci_hi_lt": 1.0,
+      "winning_cells_fraction_ge": 0.6,
+      "max_family_ratio_le": 1.1,
+      "gaussian_mixture_ci_hi_lt": 1.0,
+      "non_gaussian_ci_hi_lt": 1.0,
+      "missing_km_not_worse": true,
+      "divergence_increase_le": 0.02,
+      "equal_kernel_pairs": true
+    }
+  },
+  "registry": "identifiability_test_registry.json",
+  "registry_sha256": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5",
+  "all_frozen_registry_hashes": {
+    "identifiability_validation_registry.json": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97",
+    "identifiability_test_registry.json": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5"
+  },
+  "source_hashes": {
+    "numerics\\run_identifiability_improvement.py": "20258770F17A5FC0AFC0F48EB038D2F1EAEEFF91F1C5E3085AF60B62F5F3A2D5",
+    "numerics\\identifiability_drift.py": "CE24E5E62E945AA9253AD549121C0C2792C76D30C71C35C8DF8AC1E68627FBE2",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6",
+    "numerics\\IdentifiabilityImprovementProtocol.md": "25522ED13701ED14AB9D7AB099DBDE15E2A012AB3D3E2CCCCA1897EC433D18FF",
+    "numerics\\IdentifiabilityDrivenImprovementPlan.md": "75989FD0608962326FFF4900422D6D20E767ED79A5CBE5AE940AF5BF73871820",
+    "numerics\\identifiability_test_registry.json": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5",
+    "numerics\\identifiability_runs\\20260720-002409-NCJ-validation-standard\\ncj_policy_frozen.json": "35AE4EC58C62CAF0B1555C71AD5080B9D6C614FF4844313EC76A344C72254FC0"
+  },
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "expected_rows": 7680,
+  "start": "20260720-011000",
+  "realized_rows": 7680,
+  "wall_seconds": 5200.123,
+  "kernel_pairs": 16556359680,
+  "field_calls": 3079680
+}

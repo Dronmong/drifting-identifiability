@@ -1,0 +1,102 @@
+{
+  "registry": "NCJ-test-v1",
+  "master_seed": 20260721,
+  "targets": [
+    {
+      "name": "NCJT-gaussian-2d-aniso",
+      "family": "gaussian",
+      "d": 2,
+      "params": {"stds": [0.31, 0.63], "rotation": 0.37}
+    },
+    {
+      "name": "NCJT-student-5d",
+      "family": "student",
+      "d": 5,
+      "params": {"df": 4.0, "scale": 0.29}
+    },
+    {
+      "name": "NCJT-gmix-1d-K7-uneq",
+      "family": "gauss_mixture",
+      "d": 1,
+      "params": {"K": 7, "L": 0.68, "sigmas": 0.09, "weights": "descending"}
+    },
+    {
+      "name": "NCJT-gmix-2d-K4-hetero",
+      "family": "gauss_mixture",
+      "d": 2,
+      "params": {"K": 4, "L": 1.43, "sigmas": [0.08, 0.13, 0.19, 0.27], "weights": [0.10, 0.20, 0.30, 0.40]}
+    },
+    {
+      "name": "NCJT-gmix-5d-K5-uneq",
+      "family": "gauss_mixture",
+      "d": 5,
+      "params": {"K": 5, "L": 1.28, "sigmas": 0.16, "weights": [0.08, 0.14, 0.20, 0.25, 0.33]}
+    },
+    {
+      "name": "NCJT-gmix-2d-overlap",
+      "family": "gauss_mixture",
+      "d": 2,
+      "params": {"K": 3, "L": 0.58, "sigmas": 0.30, "weights": "equal"}
+    },
+    {
+      "name": "NCJT-grid-3x3",
+      "family": "grid_mixture",
+      "d": 2,
+      "params": {"side": 3, "spacing": 0.62, "sigma": 0.085, "weights": "checker"}
+    },
+    {
+      "name": "NCJT-ring-142",
+      "family": "ring",
+      "d": 2,
+      "params": {"radius": 1.42, "width": 0.052}
+    },
+    {
+      "name": "NCJT-circles-036-131",
+      "family": "circles",
+      "d": 2,
+      "params": {"radii": [0.36, 1.31], "width": 0.047, "outer_weight": 0.37}
+    },
+    {
+      "name": "NCJT-moons-111",
+      "family": "moons",
+      "d": 2,
+      "params": {"scale": 1.11, "noise": 0.073, "upper_weight": 0.58}
+    },
+    {
+      "name": "NCJT-banana-083",
+      "family": "banana",
+      "d": 2,
+      "params": {"curvature": 0.83, "noise": 0.09, "xscale": 0.78}
+    },
+    {
+      "name": "NCJT-spiral-21",
+      "family": "spiral",
+      "d": 2,
+      "params": {"turns": 2.1, "noise": 0.048, "radius": 1.24}
+    },
+    {
+      "name": "NCJT-sine-048",
+      "family": "sine",
+      "d": 2,
+      "params": {"amplitude": 0.48, "frequency": 2.6, "width": 0.065, "xrange": 1.85}
+    },
+    {
+      "name": "NCJT-contaminated-1d",
+      "family": "contaminated",
+      "d": 1,
+      "params": {"core_std": 0.46, "contamination": 0.17, "tail_std": 3.1}
+    },
+    {
+      "name": "NCJT-helix-3d",
+      "family": "helix",
+      "d": 3,
+      "params": {"turns": 1.75, "radius": 0.82, "height": 1.35, "noise": 0.045}
+    },
+    {
+      "name": "NCJT-shell-5d",
+      "family": "sphere_shell",
+      "d": 5,
+      "params": {"radius": 1.07, "width": 0.055}
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+NCJ test: 16 targets x 4 inits x 6 arms x 20 seeds = 7680 rows
+  [PASS] 1. paper gain bitwise == drift_paper (mask=True)
+  [PASS] 1. paper gain bitwise == drift_paper (mask=False)
+  [PASS] 2. power(gamma=1) == paper gain (rtol 1e-9)
+  [PASS] 3. constant gain == Cpos - Cneg (bitwise)
+  [PASS] 4. matched batches -> zero field (gain=paper)
+  [PASS] 4. matched batches -> zero field (gain=constant)
+  [PASS] 4. matched batches -> zero field (gain=power)
+  [PASS] 5a. negative-batch permutation invariance
+  [PASS] 5b. cross-fitted mask rejected
+  [PASS] 6. sigma=0 bitwise == no-jitter arm
+  [PASS] 7a. same seed -> bitwise identical jittered field
+  [PASS] 7b. different seed -> different field
+  [PASS] 7c. query/pos/neg jitter streams mutually distinct
+  [PASS] 8. kernel pairs + wall time recorded
+  [PASS] 9a. underflowed mass raises by default
+  [PASS] 9b. zeroed degenerate rows are counted
+  [PASS] 9c. non-finite input raises
+all invariant tests passed
+  [PASS] cached ED2 is bitwise equal to frozen ED2
+  completed NCJT-gaussian-2d-aniso in 196.5s
+  completed NCJT-student-5d in 348.7s
+  completed NCJT-gmix-1d-K7-uneq in 252.1s
+  completed NCJT-gmix-2d-K4-hetero in 428.4s
+  completed NCJT-gmix-5d-K5-uneq in 561.9s
+  completed NCJT-gmix-2d-overlap in 490.7s
+  completed NCJT-grid-3x3 in 469.7s
+  completed NCJT-ring-142 in 475.7s
+  completed NCJT-circles-036-131 in 491.3s
+  completed NCJT-moons-111 in 480.7s
+  completed NCJT-banana-083 in 416.4s
+  completed NCJT-spiral-21 in 111.7s
+  completed NCJT-sine-048 in 119.1s
+  completed NCJT-contaminated-1d in 47.6s
+  completed NCJT-helix-3d in 119.7s
+  completed NCJT-shell-5d in 134.3s
+  normalized-only       : ratio=0.3152 hierCI=[0.15168392104065195, 0.6230708148182715]
+  crossfit-only         : ratio=0.8174 hierCI=[0.728267260675884, 0.9219358606518134]
+  jitter-only           : ratio=1.0000 hierCI=[1.0, 1.0]
+  normalized-crossfit   : ratio=0.1004 hierCI=[0.0503108855129329, 0.1940429093325049]
+  ncj                   : ratio=0.1004 hierCI=[0.04983375246943744, 0.19467243514177068]
+  mixture CI=[0.026180643552308633, 0.2793162985470738]; nonGaussian CI=[0.04429435228461951, 0.24177249182258348]
+  winning cells=0.938; max family=0.892; missing KM paper=114 ncj=60
+E4 GATE: PASS
