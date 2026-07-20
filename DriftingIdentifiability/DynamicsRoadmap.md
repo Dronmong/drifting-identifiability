@@ -359,3 +359,33 @@ finished algorithm.  See `numerics/LowDimAttributionResults.md`.  Any next
 performance attempt must use a new split and should test an affinity-leverage
 or self-mass trigger; Phase B1 may proceed independently but cannot yet be
 presented as explaining an aggregate performance win.
+
+### NCJ identifiability-driven program (2026-07-20)
+
+`numerics/IdentifiabilityDrivenImprovementPlan.md` replaced the rejected
+mask-trigger policy with a mechanism-separated candidate — normalized (drop the
+`P*Q` gain), cross-fitted (independent reference batch, no eye mask), jittered
+(symmetric Gaussian) drifting — backed by four trust-audited theorems
+(`NCJIdentifiability.lean`, T1–T4).
+
+**Outcome: the pre-registered particle gate PASSED; the pre-registered
+learned-generator gate FAILED.**  The earned claim (plan §9) is an
+empirical-particle estimator improvement over the exact paper implementation,
+under matched architecture and compute, that does **not** transfer through the
+tested learned generator.
+
+* E4 particle gate PASS: target-balanced geo-mean ED² ratio **0.100**,
+  hierarchical CI `[0.050, 0.195]`, 93.75% winning cells, every family < 1, all
+  eight criteria met (`20260720-011000-NCJ-test-standard/e4_gate.json`).
+* E5 generator gate FAIL: ratio **1.072** vs paper, CI `[0.946, 1.208]`, 28% of
+  cells winning; the constant-gain field is an excellent free-particle mover but
+  not a better MLP regression target under the paper loop
+  (`20260720-024712-NCJ-generator-standard/e5_gate.json`).
+* Mechanism attribution (validation): dropping `P*Q` is dominant (0.31×),
+  cross-fitting compounds it (→ 0.088×); **jitter never helped** and was frozen
+  out at `sigma=0`.  Consequently **T5 (jitter/fission) is intentionally not
+  formalized** — the data give it no support.
+
+See `numerics/IdentifiabilityImprovementResults.md`.  A learned-generator
+improvement remains unearned; the next attempt must redesign the field→generator
+coupling on a fresh split rather than reuse this particle policy.

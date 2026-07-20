@@ -356,6 +356,41 @@ interaction frame consumed by the proof.
 `finitePopulationMeanShiftCandidate_isLegitimate` requires an independently
 distinct represented pair and makes no zero-drift assumption.
 
+### 15. The NCJ improvement program: certified layer and empirical verdict (2026-07-20)
+
+`NCJIdentifiability.lean` adds four trust-audited theorems (T1–T4) motivating a
+concrete estimator modification. `#print axioms` shows only
+`propext / Classical.choice / Quot.sound` for T1/T2/T4 and additionally the
+single allowlisted `Paper.sampleMean_meanSquare_le` for T3.
+
+- **T1** (`positiveGainField_eq_zero_iff_algorithm2Drift_eq_zero`,
+  `positiveGain_zeroSet_preservation`): any strictly positive gain, in
+  particular the constant gain `1`, has exactly the zero set of the exact
+  unmasked Algorithm-2 drift. Dropping the `P*Q` gain cannot change what `V=0`
+  identifies.
+- **T2** (`laplaceZeroDrift_jittered_identifies_euclidean`): zero ℓ²-Laplace
+  drift between symmetric-Gaussian-jittered laws `p∗N(0,σ²I)`, `q∗N(0,σ²I)`
+  forces `p=q`, composing the general Euclidean converse with certified
+  Gaussian-convolution injectivity.
+- **T3** (`crossFitted_centroidDiff_meanSquare_le`): the cross-fitted
+  centroid-difference estimator is the audited fixed-anchor self-normalized
+  object; explicit MSE bound with batch size and weight floor.
+- **T4** (`positiveGain_noFreeze_and_paper_exponential_attenuation`): the
+  normalized field has a positive speed floor `gmin·c`, while the paper field
+  inherits any certified exponential bound on `P*Q` — the certified shadow of
+  the empirical no-freeze mechanism.
+
+These are the formal contract only; they do not by themselves establish any
+performance improvement. The paired empirical program
+(`numerics/IdentifiabilityImprovementResults.md`) reached a **split verdict**:
+the pre-registered particle gate **passed** (target-balanced ED² ratio 0.100,
+all eight criteria) but the pre-registered learned-generator gate **failed**
+(ratio 1.072, CI upper 1.208). The earned claim is therefore an
+empirical-particle estimator improvement under matched compute that does **not**
+transfer through the tested generator. The winning mechanism is the certified
+`P*Q`-drop plus cross-fitting; jitter was empirically unhelpful and frozen out,
+so the planned T5 (jitter/fission) is intentionally not formalized.
+
 ## Objectives and remaining priorities
 
 ### Objective 1: explicit lower frame certificate — complete

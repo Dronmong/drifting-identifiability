@@ -1,0 +1,120 @@
+{
+  "stage": "abc-comparison",
+  "not_a_gate": true,
+  "profile": {
+    "name": "abc-context",
+    "steps": 400,
+    "N": 48,
+    "batch": 64,
+    "validation_seeds": 6,
+    "test_seeds": 6,
+    "ref_final": 1024,
+    "ref_cross": 256
+  },
+  "frozen_eta": 0.0525,
+  "context_seeds": 6,
+  "arm_stats_vs_paper": {
+    "normalized-only": {
+      "point_ratio": 0.315272772906851,
+      "hierarchical_ci": [
+        0.1507433155884877,
+        0.6357857642914342
+      ],
+      "winning_cells_fraction": 0.359375,
+      "family_ratios": {
+        "banana": 5.050859888864688,
+        "circles": 1.196605172323479,
+        "contaminated": 1.4953649869824852,
+        "gauss_mixture": 0.8573248139586783,
+        "gaussian": 2.2717177198721643,
+        "grid_mixture": 1.055761142765454,
+        "helix": 1.1488587209709582,
+        "moons": 1.196366501740466,
+        "ring": 0.9456678932605694,
+        "sine": 1.1493163674325657,
+        "sphere_shell": 1.3446002905664998,
+        "spiral": 1.125729716276213,
+        "student": 4.646879457535478
+      },
+      "gaussian_mixture_point": 0.252756061074669,
+      "gaussian_mixture_ci": [
+        0.07383424068656473,
+        0.7901061922502026
+      ],
+      "non_gaussian_point": 0.3599791931158713,
+      "non_gaussian_ci": [
+        0.1394195516127113,
+        0.8585189562279941
+      ]
+    },
+    "abc": {
+      "point_ratio": 0.3255147987169318,
+      "hierarchical_ci": [
+        0.15570729225539012,
+        0.6534955999270554
+      ],
+      "winning_cells_fraction": 0.375,
+      "family_ratios": {
+        "banana": 5.168296668352652,
+        "circles": 1.1752675935789678,
+        "contaminated": 1.4437412819377715,
+        "gauss_mixture": 0.8895917854109636,
+        "gaussian": 2.2846960572335235,
+        "grid_mixture": 1.0051574094614812,
+        "helix": 1.1311138657172066,
+        "moons": 1.1581951461199125,
+        "ring": 0.9446461511215901,
+        "sine": 1.1164469760297124,
+        "sphere_shell": 1.416096758160225,
+        "spiral": 1.0587115301272445,
+        "student": 5.341208702902999
+      },
+      "gaussian_mixture_point": 0.26443212516465714,
+      "gaussian_mixture_ci": [
+        0.0780639299665481,
+        0.8215018543356924
+      ],
+      "non_gaussian_point": 0.36874373535939703,
+      "non_gaussian_ci": [
+        0.14383472552098633,
+        0.874809774061521
+      ]
+    },
+    "normalized-crossfit": {
+      "point_ratio": 0.10119269985005544,
+      "hierarchical_ci": [
+        0.05008468547718866,
+        0.19597611497642392
+      ],
+      "winning_cells_fraction": 0.953125,
+      "family_ratios": {
+        "banana": 0.5301491338772341,
+        "circles": 0.3975310328975156,
+        "contaminated": 0.5474409981791106,
+        "gauss_mixture": 0.3198281009931357,
+        "gaussian": 0.5403624794749683,
+        "grid_mixture": 0.46664707939071143,
+        "helix": 0.2939888708843698,
+        "moons": 0.413672720318021,
+        "ring": 0.3836601687553352,
+        "sine": 0.35869380824395286,
+        "sphere_shell": 0.42173174567122224,
+        "spiral": 0.4335183863083199,
+        "student": 0.8602446957422969
+      },
+      "gaussian_mixture_point": 0.09099299576077233,
+      "gaussian_mixture_ci": [
+        0.027718038723979026,
+        0.26859062924429383
+      ],
+      "non_gaussian_point": 0.10785341849378009,
+      "non_gaussian_ci": [
+        0.04402890047256892,
+        0.2422045643100739
+      ]
+    }
+  },
+  "distinct_total_kernel_pairs": [
+    2155776
+  ]
+}

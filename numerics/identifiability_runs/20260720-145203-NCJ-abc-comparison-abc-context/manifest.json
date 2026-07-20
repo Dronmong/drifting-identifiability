@@ -1,0 +1,131 @@
+{
+  "stage": "abc-comparison",
+  "profile": {
+    "name": "abc-context",
+    "steps": 400,
+    "N": 48,
+    "batch": 64,
+    "validation_seeds": 6,
+    "test_seeds": 6,
+    "ref_final": 1024,
+    "ref_cross": 256
+  },
+  "master_seed": 20260719,
+  "commit": "a9a048d8940e20cb2cc555a4cbc1448c95885a54",
+  "git_dirty": false,
+  "git_status": [],
+  "cmdline": [
+    "numerics/ncj_abc_comparison.py"
+  ],
+  "config": {
+    "protocol": "IdentifiabilityImprovementProtocol.md",
+    "registry_name": "NCJ-test-v1",
+    "targets": [
+      "NCJT-gaussian-2d-aniso",
+      "NCJT-student-5d",
+      "NCJT-gmix-1d-K7-uneq",
+      "NCJT-gmix-2d-K4-hetero",
+      "NCJT-gmix-5d-K5-uneq",
+      "NCJT-gmix-2d-overlap",
+      "NCJT-grid-3x3",
+      "NCJT-ring-142",
+      "NCJT-circles-036-131",
+      "NCJT-moons-111",
+      "NCJT-banana-083",
+      "NCJT-spiral-21",
+      "NCJT-sine-048",
+      "NCJT-contaminated-1d",
+      "NCJT-helix-3d",
+      "NCJT-shell-5d"
+    ],
+    "initializations": [
+      "covered",
+      "missing",
+      "far",
+      "concentrated"
+    ],
+    "arms": [
+      {
+        "label": "paper",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "normalized-only",
+        "gain": "constant",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "abc",
+        "gain": "abc",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "normalized-crossfit",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      }
+    ],
+    "trajectory_columns": [
+      "step",
+      "ed2",
+      "support_coverage",
+      "mode_coverage",
+      "mass_error",
+      "spread_ratio",
+      "pq_p10",
+      "pq_median",
+      "delta_norm_median",
+      "ess_pos_median",
+      "ess_neg_median",
+      "self_leverage_mean",
+      "field_norm_median",
+      "degenerate_rows"
+    ],
+    "purpose": "post-gate ABC mechanism comparison (plan section 7)",
+    "not_a_gate": true,
+    "frozen_e4_reference": "20260720-011000-NCJ-test-standard/e4_gate.json",
+    "frozen_eta": 0.0525
+  },
+  "registry": "identifiability_test_registry.json",
+  "registry_sha256": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5",
+  "all_frozen_registry_hashes": {
+    "identifiability_validation_registry.json": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97",
+    "identifiability_test_registry.json": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5"
+  },
+  "source_hashes": {
+    "numerics\\run_identifiability_improvement.py": "20258770F17A5FC0AFC0F48EB038D2F1EAEEFF91F1C5E3085AF60B62F5F3A2D5",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6",
+    "numerics\\IdentifiabilityImprovementProtocol.md": "25522ED13701ED14AB9D7AB099DBDE15E2A012AB3D3E2CCCCA1897EC433D18FF",
+    "numerics\\IdentifiabilityDrivenImprovementPlan.md": "75989FD0608962326FFF4900422D6D20E767ED79A5CBE5AE940AF5BF73871820",
+    "numerics\\identifiability_test_registry.json": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5",
+    "numerics\\ncj_abc_comparison.py": "C3FAC52ABCF5EF758043B6F0A03BC5D6BD42A26DF647B9C65C3987774CEC0AFA"
+  },
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "expected_rows": 1536,
+  "start": "20260720-145203",
+  "realized_rows": 1536,
+  "wall_seconds": 387.48,
+  "kernel_pairs": 3311271936,
+  "field_calls": 615936
+}
