@@ -1,0 +1,78 @@
+{
+  "registry": "NCJ-validation-v1",
+  "master_seed": 20260720,
+  "targets": [
+    {
+      "name": "NCJV-gaussian-1d",
+      "family": "gaussian",
+      "d": 1,
+      "params": {"std": 0.42}
+    },
+    {
+      "name": "NCJV-student-2d",
+      "family": "student",
+      "d": 2,
+      "params": {"df": 5.0, "scale": 0.38}
+    },
+    {
+      "name": "NCJV-gmix-1d-K5-uneq",
+      "family": "gauss_mixture",
+      "d": 1,
+      "params": {"K": 5, "L": 0.73, "sigmas": [0.10, 0.12, 0.14, 0.16, 0.18], "weights": "ascending"}
+    },
+    {
+      "name": "NCJV-gmix-2d-K3-hetero",
+      "family": "gauss_mixture",
+      "d": 2,
+      "params": {"K": 3, "L": 1.37, "sigmas": [0.09, 0.17, 0.24], "weights": [0.18, 0.31, 0.51]}
+    },
+    {
+      "name": "NCJV-gmix-5d-K6",
+      "family": "gauss_mixture",
+      "d": 5,
+      "params": {"K": 6, "L": 1.05, "sigmas": 0.18, "weights": "equal"}
+    },
+    {
+      "name": "NCJV-ring-097",
+      "family": "ring",
+      "d": 2,
+      "params": {"radius": 0.97, "width": 0.045}
+    },
+    {
+      "name": "NCJV-circles-042-108",
+      "family": "circles",
+      "d": 2,
+      "params": {"radii": [0.42, 1.08], "width": 0.055, "outer_weight": 0.61}
+    },
+    {
+      "name": "NCJV-moons-093",
+      "family": "moons",
+      "d": 2,
+      "params": {"scale": 0.93, "noise": 0.065, "upper_weight": 0.44}
+    },
+    {
+      "name": "NCJV-banana-057",
+      "family": "banana",
+      "d": 2,
+      "params": {"curvature": 0.57, "noise": 0.11, "xscale": 0.85}
+    },
+    {
+      "name": "NCJV-spiral-16",
+      "family": "spiral",
+      "d": 2,
+      "params": {"turns": 1.6, "noise": 0.055, "radius": 1.05}
+    },
+    {
+      "name": "NCJV-sine-067",
+      "family": "sine",
+      "d": 2,
+      "params": {"amplitude": 0.67, "frequency": 1.75, "width": 0.075, "xrange": 2.1}
+    },
+    {
+      "name": "NCJV-contaminated-2d",
+      "family": "contaminated",
+      "d": 2,
+      "params": {"core_std": 0.34, "contamination": 0.12, "tail_std": 2.7}
+    }
+  ]
+}

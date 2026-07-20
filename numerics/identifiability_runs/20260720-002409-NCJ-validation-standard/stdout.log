@@ -1,0 +1,50 @@
+NCJ validation: 12 targets x 4 inits x 17 arms x 8 seeds = 6528 rows
+  [PASS] 1. paper gain bitwise == drift_paper (mask=True)
+  [PASS] 1. paper gain bitwise == drift_paper (mask=False)
+  [PASS] 2. power(gamma=1) == paper gain (rtol 1e-9)
+  [PASS] 3. constant gain == Cpos - Cneg (bitwise)
+  [PASS] 4. matched batches -> zero field (gain=paper)
+  [PASS] 4. matched batches -> zero field (gain=constant)
+  [PASS] 4. matched batches -> zero field (gain=power)
+  [PASS] 5a. negative-batch permutation invariance
+  [PASS] 5b. cross-fitted mask rejected
+  [PASS] 6. sigma=0 bitwise == no-jitter arm
+  [PASS] 7a. same seed -> bitwise identical jittered field
+  [PASS] 7b. different seed -> different field
+  [PASS] 7c. query/pos/neg jitter streams mutually distinct
+  [PASS] 8. kernel pairs + wall time recorded
+  [PASS] 9a. underflowed mass raises by default
+  [PASS] 9b. zeroed degenerate rows are counted
+  [PASS] 9c. non-finite input raises
+all invariant tests passed
+  [PASS] cached ED2 is bitwise equal to frozen ED2
+  completed NCJV-gaussian-1d in 61.0s
+  completed NCJV-student-2d in 135.5s
+  completed NCJV-gmix-1d-K5-uneq in 70.5s
+  completed NCJV-gmix-2d-K3-hetero in 149.9s
+  completed NCJV-gmix-5d-K6 in 179.6s
+  completed NCJV-ring-097 in 146.6s
+  completed NCJV-circles-042-108 in 148.3s
+  completed NCJV-moons-093 in 346.7s
+  completed NCJV-banana-057 in 851.7s
+  completed NCJV-spiral-16 in 340.4s
+  completed NCJV-sine-067 in 128.3s
+  completed NCJV-contaminated-2d in 129.0s
+  normalized-crossfit__eta-0p0525               ED2=0.00348807
+  ncj__eta-0p0525__sigma-0p0                    ED2=0.00348807
+  ncj__eta-0p0525__sigma-0p1                    ED2=0.00354191
+  ncj__eta-0p0525__sigma-0p25                   ED2=0.00389846
+  ncj__eta-0p0525__sigma-0p5                    ED2=0.00497493
+  ncj__eta-0p025__sigma-0p1                     ED2=0.00695771
+  normalized-crossfit__eta-0p025                ED2=0.00696233
+  ncj__eta-0p025__sigma-0p0                     ED2=0.00696233
+  ncj__eta-0p025__sigma-0p25                    ED2=0.00747982
+  ncj__eta-0p025__sigma-0p5                     ED2=0.00938908
+  normalized__eta-0p0525                        ED2=0.01214605
+  normalized__eta-0p025                         ED2=0.01301097
+  crossfit-only                                 ED2=0.03147262
+  paper                                         ED2=0.03943953
+  jitter-only__sigma-0p1                        ED2=0.03997324
+  jitter-only__sigma-0p25                       ED2=0.04112825
+  jitter-only__sigma-0p5                        ED2=0.04533256
+FROZEN: ncj__eta-0p0525__sigma-0p0, ratio-to-paper=0.0884

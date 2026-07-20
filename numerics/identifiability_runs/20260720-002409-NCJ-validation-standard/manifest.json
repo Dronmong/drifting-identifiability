@@ -1,0 +1,258 @@
+{
+  "stage": "validation",
+  "profile": {
+    "name": "standard",
+    "steps": 400,
+    "N": 48,
+    "batch": 64,
+    "validation_seeds": 8,
+    "test_seeds": 20,
+    "ref_final": 1024,
+    "ref_cross": 256
+  },
+  "master_seed": 20260719,
+  "commit": "22bcada1c8f611ef49295141d72a0199b0df1579",
+  "git_dirty": false,
+  "git_status": [],
+  "cmdline": [
+    "numerics/run_identifiability_improvement.py",
+    "validation",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "protocol": "IdentifiabilityImprovementProtocol.md",
+    "registry_name": "NCJ-validation-v1",
+    "targets": [
+      "NCJV-gaussian-1d",
+      "NCJV-student-2d",
+      "NCJV-gmix-1d-K5-uneq",
+      "NCJV-gmix-2d-K3-hetero",
+      "NCJV-gmix-5d-K6",
+      "NCJV-ring-097",
+      "NCJV-circles-042-108",
+      "NCJV-moons-093",
+      "NCJV-banana-057",
+      "NCJV-spiral-16",
+      "NCJV-sine-067",
+      "NCJV-contaminated-2d"
+    ],
+    "initializations": [
+      "covered",
+      "missing",
+      "far",
+      "concentrated"
+    ],
+    "arms": [
+      {
+        "label": "paper",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "normalized__eta-0p025",
+        "gain": "constant",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "normalized__eta-0p0525",
+        "gain": "constant",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "crossfit-only",
+        "gain": "paper",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "jitter-only__sigma-0p1",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.1,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "jitter-only__sigma-0p25",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.25,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "jitter-only__sigma-0p5",
+        "gain": "paper",
+        "crossfit": false,
+        "mask": true,
+        "sigma_ratio": 0.5,
+        "eta": 0.0525,
+        "norm_clip": null
+      },
+      {
+        "label": "normalized-crossfit__eta-0p025",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "normalized-crossfit__eta-0p0525",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p025__sigma-0p0",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p025__sigma-0p1",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.1,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p025__sigma-0p25",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.25,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p025__sigma-0p5",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.5,
+        "eta": 0.025,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p0525__sigma-0p0",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.0,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p0525__sigma-0p1",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.1,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p0525__sigma-0p25",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.25,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      },
+      {
+        "label": "ncj__eta-0p0525__sigma-0p5",
+        "gain": "constant",
+        "crossfit": true,
+        "mask": false,
+        "sigma_ratio": 0.5,
+        "eta": 0.0525,
+        "norm_clip": 2.0
+      }
+    ],
+    "trajectory_columns": [
+      "step",
+      "ed2",
+      "support_coverage",
+      "mode_coverage",
+      "mass_error",
+      "spread_ratio",
+      "pq_p10",
+      "pq_median",
+      "delta_norm_median",
+      "ess_pos_median",
+      "ess_neg_median",
+      "self_leverage_mean",
+      "field_norm_median",
+      "degenerate_rows"
+    ],
+    "selection": "minimum target-balanced geometric mean of cell-median ED2",
+    "candidate_eta": [
+      0.025,
+      0.0525
+    ],
+    "candidate_sigma_ratio": [
+      0.0,
+      0.1,
+      0.25,
+      0.5
+    ],
+    "tie_break": [
+      "smaller sigma",
+      "smaller eta",
+      "label"
+    ]
+  },
+  "registry": "identifiability_validation_registry.json",
+  "registry_sha256": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97",
+  "all_frozen_registry_hashes": {
+    "identifiability_validation_registry.json": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97",
+    "identifiability_test_registry.json": "938B51C36178313D145DEA05A3E6FED04A033C4977B49D48CB92903D10D4A2B5"
+  },
+  "source_hashes": {
+    "numerics\\run_identifiability_improvement.py": "20258770F17A5FC0AFC0F48EB038D2F1EAEEFF91F1C5E3085AF60B62F5F3A2D5",
+    "numerics\\identifiability_drift.py": "CE24E5E62E945AA9253AD549121C0C2792C76D30C71C35C8DF8AC1E68627FBE2",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6",
+    "numerics\\IdentifiabilityImprovementProtocol.md": "25522ED13701ED14AB9D7AB099DBDE15E2A012AB3D3E2CCCCA1897EC433D18FF",
+    "numerics\\IdentifiabilityDrivenImprovementPlan.md": "75989FD0608962326FFF4900422D6D20E767ED79A5CBE5AE940AF5BF73871820",
+    "numerics\\identifiability_validation_registry.json": "1DAAB55F47D4C557EB10A3960171CAA39AD2FD5BB482D11339B423CE8FBB5B97"
+  },
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "expected_rows": 6528,
+  "start": "20260720-002409",
+  "realized_rows": 6528,
+  "wall_seconds": 2689.189,
+  "kernel_pairs": 14072905728,
+  "field_calls": 2617728
+}
