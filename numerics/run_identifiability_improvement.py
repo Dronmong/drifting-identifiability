@@ -436,6 +436,28 @@ def particle_spread(q: np.ndarray) -> float:
     return float(np.sqrt(np.mean(np.sum((q - q.mean(0)) ** 2, axis=1))))
 
 
+def mean_pairwise_distance(P: np.ndarray, Q: np.ndarray) -> float:
+    """The exact pairwise-distance reduction used by ``energy_distance2``.
+
+    Kept local so the immutable reference-reference term can be cached across
+    paired arms without changing the primary statistic or its summation
+    order.
+    """
+    total = 0.0
+    for start in range(0, len(P), 256):
+        total += norm(
+            P[start:start + 256, None, :] - Q[None, :, :], axis=2
+        ).sum()
+    return float(total / (len(P) * len(Q)))
+
+
+def energy_distance2_with_reference_self(
+        A: np.ndarray, B: np.ndarray, reference_self: float) -> float:
+    """Energy distance with the immutable ``B`` self-term precomputed."""
+    return (2 * mean_pairwise_distance(A, B) -
+            mean_pairwise_distance(A, A) - reference_self)
+
+
 def clip_vectors(V: np.ndarray, bound: float | None) -> np.ndarray:
     if bound is None:
         return V
@@ -479,7 +501,8 @@ TRAJECTORY_COLUMNS = [
 
 def run_trial(target: StudyTarget, target_index: int, init_kind: str,
               init_index: int, arm: Arm, seed: int, profile: Profile,
-              registry_seed: int, counter: WorkCounter) \
+              registry_seed: int, counter: WorkCounter,
+              reference_self_terms: tuple[float, float]) \
         -> tuple[dict, np.ndarray, np.ndarray]:
     wall0 = time.perf_counter()
     base = seed_base(registry_seed, target_index, init_index, seed)
@@ -491,6 +514,7 @@ def run_trial(target: StudyTarget, target_index: int, init_kind: str,
                               np.random.default_rng(base + 4))
     ref_cross = target.sample(profile.ref_cross,
                               np.random.default_rng(base + 5))
+    ref_final_self, ref_cross_self = reference_self_terms
     target_spread = max(particle_spread(ref_final), 1e-12)
     sigma = arm.sigma_ratio * TAU
     track_every = max(1, profile.steps // 40)
@@ -528,7 +552,8 @@ def run_trial(target: StudyTarget, target_index: int, init_kind: str,
             diverged = True
             break
 
-        ed = max(0.0, energy_distance2(q, ref_cross))
+        ed = max(0.0, energy_distance2_with_reference_self(
+            q, ref_cross, ref_cross_self))
         if event_time is None and ed <= 0.05 * target.scale:
             event_time = step
         if tracked:
@@ -583,7 +608,8 @@ def run_trial(target: StudyTarget, target_index: int, init_kind: str,
         fdiag = diagnostic_values(final_field.diagnostics)
         final_V = clip_vectors(final_field.V, arm.norm_clip)
         residual = float(np.sqrt(np.mean(np.sum(final_V ** 2, axis=1))))
-        final_ed = max(0.0, energy_distance2(q, ref_final))
+        final_ed = max(0.0, energy_distance2_with_reference_self(
+            q, ref_final, ref_final_self))
         final_sw = sliced_w1(
             q, ref_final, 32, np.random.default_rng(base + 8))
         coverage, mass_error = mode_metrics(q, target)
@@ -757,6 +783,17 @@ def run_grid_with_sources(stage: str, profile: Profile, registry_path: Path,
     run.log(f"NCJ {stage}: {len(targets)} targets x {len(INITS)} inits x "
             f"{len(arms)} arms x {seeds} seeds = {expected} rows")
     invariant_tests(run.log)
+    metric_rng = np.random.default_rng(MASTER + 909)
+    metric_a = metric_rng.normal(size=(19, 3))
+    metric_b = metric_rng.normal(size=(31, 3))
+    metric_exact = energy_distance2(metric_a, metric_b)
+    metric_cached = energy_distance2_with_reference_self(
+        metric_a, metric_b, mean_pairwise_distance(metric_b, metric_b))
+    if metric_cached != metric_exact:
+        raise RuntimeError(
+            "cached energy-distance path changed the frozen statistic: "
+            f"{metric_cached} != {metric_exact}")
+    run.log("  [PASS] cached ED2 is bitwise equal to frozen ED2")
     rows: list[dict] = []
     trajectories: dict[str, np.ndarray] = {}
     finals: dict[str, np.ndarray] = {}
@@ -764,11 +801,26 @@ def run_grid_with_sources(stage: str, profile: Profile, registry_path: Path,
     for ti, target in enumerate(targets):
         target_start = time.perf_counter()
         for ii, init_kind in enumerate(INITS):
+            # Final and threshold references are paired across arms.  Cache
+            # only their immutable self-distance terms; each trial still
+            # reconstructs the same reference arrays from its recorded seed.
+            reference_self_by_seed: dict[int, tuple[float, float]] = {}
+            for seed in range(seeds):
+                base = seed_base(registry_seed, ti, ii, seed)
+                ref_final = target.sample(
+                    profile.ref_final, np.random.default_rng(base + 4))
+                ref_cross = target.sample(
+                    profile.ref_cross, np.random.default_rng(base + 5))
+                reference_self_by_seed[seed] = (
+                    mean_pairwise_distance(ref_final, ref_final),
+                    mean_pairwise_distance(ref_cross, ref_cross),
+                )
             for arm in arms:
                 for seed in range(seeds):
                     row, trajectory, final_q = run_trial(
                         target, ti, init_kind, ii, arm, seed, profile,
-                        registry_seed, run.counter)
+                        registry_seed, run.counter,
+                        reference_self_by_seed[seed])
                     rows.append(row)
                     key = safe_key(
                         f"{arm.label}__{target.name}__{init_kind}__s{seed}")
