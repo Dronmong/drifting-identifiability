@@ -1,0 +1,464 @@
+{
+  "stage": "learned-generator-transfer",
+  "arm_statistics": {
+    "paper-matched": {
+      "point_ratio": 1.0,
+      "hierarchical_ci": [
+        1.0,
+        1.0
+      ],
+      "cell_only_ci": [
+        1.0,
+        1.0
+      ],
+      "fixed_suite_row_ci": [
+        1.0,
+        1.0
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.0,
+        "NCJG-banana-068/concentrated": 1.0,
+        "NCJG-banana-068/far": 1.0,
+        "NCJG-banana-068/missing": 1.0,
+        "NCJG-gaussian-1d/broad": 1.0,
+        "NCJG-gaussian-1d/concentrated": 1.0,
+        "NCJG-gaussian-1d/far": 1.0,
+        "NCJG-gaussian-1d/missing": 1.0,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.0,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.0,
+        "NCJG-gmix-1d-K4-uneq/far": 1.0,
+        "NCJG-gmix-1d-K4-uneq/missing": 1.0,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0,
+        "NCJG-gmix-2d-K5-uneq/far": 1.0,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0,
+        "NCJG-moons-127/broad": 1.0,
+        "NCJG-moons-127/concentrated": 1.0,
+        "NCJG-moons-127/far": 1.0,
+        "NCJG-moons-127/missing": 1.0,
+        "NCJG-ring-118/broad": 1.0,
+        "NCJG-ring-118/concentrated": 1.0,
+        "NCJG-ring-118/far": 1.0,
+        "NCJG-ring-118/missing": 1.0,
+        "NCJG-shell-5d/broad": 1.0,
+        "NCJG-shell-5d/concentrated": 1.0,
+        "NCJG-shell-5d/far": 1.0,
+        "NCJG-shell-5d/missing": 1.0,
+        "NCJG-student-5d/broad": 1.0,
+        "NCJG-student-5d/concentrated": 1.0,
+        "NCJG-student-5d/far": 1.0,
+        "NCJG-student-5d/missing": 1.0
+      },
+      "family_ratios": {
+        "banana": 1.0,
+        "gauss_mixture": 1.0,
+        "gaussian": 1.0,
+        "moons": 1.0,
+        "ring": 1.0,
+        "sphere_shell": 1.0,
+        "student": 1.0
+      }
+    },
+    "normalized-only": {
+      "point_ratio": 1.0282604214019406,
+      "hierarchical_ci": [
+        0.9232505649354769,
+        1.1223123255271297
+      ],
+      "cell_only_ci": [
+        0.9383785337698496,
+        1.11333817144794
+      ],
+      "fixed_suite_row_ci": [
+        0.9683572530169219,
+        1.0622670368561073
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.3021900462846745,
+        "NCJG-banana-068/concentrated": 0.9565298348705927,
+        "NCJG-banana-068/far": 1.9769348809991418,
+        "NCJG-banana-068/missing": 1.3781252744272892,
+        "NCJG-gaussian-1d/broad": 0.9813249512516075,
+        "NCJG-gaussian-1d/concentrated": 0.9837820522575177,
+        "NCJG-gaussian-1d/far": 0.8799472233804582,
+        "NCJG-gaussian-1d/missing": 0.9742097495211691,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.055019184097555,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 0.9812162918250237,
+        "NCJG-gmix-1d-K4-uneq/far": 1.1068781988018512,
+        "NCJG-gmix-1d-K4-uneq/missing": 0.8936857206986009,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0281057010944665,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.091226052011804,
+        "NCJG-gmix-2d-K5-uneq/far": 1.2174821186695879,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.045288866896706,
+        "NCJG-moons-127/broad": 0.9668571540960021,
+        "NCJG-moons-127/concentrated": 0.9306954134506665,
+        "NCJG-moons-127/far": 1.3542702338637755,
+        "NCJG-moons-127/missing": 0.9492806950508541,
+        "NCJG-ring-118/broad": 1.0406872516414976,
+        "NCJG-ring-118/concentrated": 1.002732480628051,
+        "NCJG-ring-118/far": 1.3149493216280432,
+        "NCJG-ring-118/missing": 0.9976373077559305,
+        "NCJG-shell-5d/broad": 1.058771375713169,
+        "NCJG-shell-5d/concentrated": 1.021201384624061,
+        "NCJG-shell-5d/far": 0.8386953640880913,
+        "NCJG-shell-5d/missing": 1.006767991268442,
+        "NCJG-student-5d/broad": 1.0449744948856465,
+        "NCJG-student-5d/concentrated": 1.0397161219778273,
+        "NCJG-student-5d/far": 0.3685964641895346,
+        "NCJG-student-5d/missing": 1.026096318250251
+      },
+      "family_ratios": {
+        "banana": 1.3396197277184863,
+        "gauss_mixture": 1.0501427557716239,
+        "gaussian": 0.9777608782098525,
+        "moons": 0.9580286171378931,
+        "ring": 1.0215336065918084,
+        "sphere_shell": 1.0139590064092914,
+        "student": 1.0328837711896133
+      }
+    },
+    "crossfit-only": {
+      "point_ratio": 1.015812164060309,
+      "hierarchical_ci": [
+        0.948457491332743,
+        1.101478452287753
+      ],
+      "cell_only_ci": [
+        0.9729765554986689,
+        1.0602940773675291
+      ],
+      "fixed_suite_row_ci": [
+        0.961324505129097,
+        1.059011170228332
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 0.7886948905735941,
+        "NCJG-banana-068/concentrated": 0.9801018316384373,
+        "NCJG-banana-068/far": 0.8354137754282512,
+        "NCJG-banana-068/missing": 1.313022298485879,
+        "NCJG-gaussian-1d/broad": 1.1289781190944759,
+        "NCJG-gaussian-1d/concentrated": 0.9581203082667374,
+        "NCJG-gaussian-1d/far": 0.8043504912644135,
+        "NCJG-gaussian-1d/missing": 0.9936474672178796,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.3045761868665748,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.007506901357409,
+        "NCJG-gmix-1d-K4-uneq/far": 1.112307862300635,
+        "NCJG-gmix-1d-K4-uneq/missing": 1.0785519134273855,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.051049489528366,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0427884356679558,
+        "NCJG-gmix-2d-K5-uneq/far": 0.9964185354675492,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0125601311873373,
+        "NCJG-moons-127/broad": 0.9798378708037024,
+        "NCJG-moons-127/concentrated": 0.9421129379338571,
+        "NCJG-moons-127/far": 1.2730125032444704,
+        "NCJG-moons-127/missing": 0.8749940750443309,
+        "NCJG-ring-118/broad": 1.0045337025791126,
+        "NCJG-ring-118/concentrated": 1.1524395458538137,
+        "NCJG-ring-118/far": 1.1402432860193843,
+        "NCJG-ring-118/missing": 1.083064701267784,
+        "NCJG-shell-5d/broad": 0.9324845674755167,
+        "NCJG-shell-5d/concentrated": 1.0496256760090739,
+        "NCJG-shell-5d/far": 0.8196768342402108,
+        "NCJG-shell-5d/missing": 1.045602377169829,
+        "NCJG-student-5d/broad": 1.0783683577829983,
+        "NCJG-student-5d/concentrated": 1.0189410715229554,
+        "NCJG-student-5d/far": 0.9191416945720954,
+        "NCJG-student-5d/missing": 1.0377979597185019
+      },
+      "family_ratios": {
+        "banana": 0.9048704722076034,
+        "gauss_mixture": 1.0469108142506163,
+        "gaussian": 0.9757222030881831,
+        "moons": 0.960790265959086,
+        "ring": 1.111286306018922,
+        "sphere_shell": 0.9874249745811476,
+        "student": 1.0283262931092967
+      }
+    },
+    "jitter-only": {
+      "point_ratio": 1.0,
+      "hierarchical_ci": [
+        1.0,
+        1.0
+      ],
+      "cell_only_ci": [
+        1.0,
+        1.0
+      ],
+      "fixed_suite_row_ci": [
+        1.0,
+        1.0
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.0,
+        "NCJG-banana-068/concentrated": 1.0,
+        "NCJG-banana-068/far": 1.0,
+        "NCJG-banana-068/missing": 1.0,
+        "NCJG-gaussian-1d/broad": 1.0,
+        "NCJG-gaussian-1d/concentrated": 1.0,
+        "NCJG-gaussian-1d/far": 1.0,
+        "NCJG-gaussian-1d/missing": 1.0,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.0,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.0,
+        "NCJG-gmix-1d-K4-uneq/far": 1.0,
+        "NCJG-gmix-1d-K4-uneq/missing": 1.0,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0,
+        "NCJG-gmix-2d-K5-uneq/far": 1.0,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0,
+        "NCJG-moons-127/broad": 1.0,
+        "NCJG-moons-127/concentrated": 1.0,
+        "NCJG-moons-127/far": 1.0,
+        "NCJG-moons-127/missing": 1.0,
+        "NCJG-ring-118/broad": 1.0,
+        "NCJG-ring-118/concentrated": 1.0,
+        "NCJG-ring-118/far": 1.0,
+        "NCJG-ring-118/missing": 1.0,
+        "NCJG-shell-5d/broad": 1.0,
+        "NCJG-shell-5d/concentrated": 1.0,
+        "NCJG-shell-5d/far": 1.0,
+        "NCJG-shell-5d/missing": 1.0,
+        "NCJG-student-5d/broad": 1.0,
+        "NCJG-student-5d/concentrated": 1.0,
+        "NCJG-student-5d/far": 1.0,
+        "NCJG-student-5d/missing": 1.0
+      },
+      "family_ratios": {
+        "banana": 1.0,
+        "gauss_mixture": 1.0,
+        "gaussian": 1.0,
+        "moons": 1.0,
+        "ring": 1.0,
+        "sphere_shell": 1.0,
+        "student": 1.0
+      }
+    },
+    "normalized-crossfit": {
+      "point_ratio": 1.0715140737831248,
+      "hierarchical_ci": [
+        0.9465072381111576,
+        1.2057343423932743
+      ],
+      "cell_only_ci": [
+        0.9583580200152954,
+        1.1881171177390517
+      ],
+      "fixed_suite_row_ci": [
+        0.9822147520533971,
+        1.1033712220873964
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.1939530787986858,
+        "NCJG-banana-068/concentrated": 1.104518195339111,
+        "NCJG-banana-068/far": 2.2331884153664414,
+        "NCJG-banana-068/missing": 1.8837962044792056,
+        "NCJG-gaussian-1d/broad": 1.129090464543069,
+        "NCJG-gaussian-1d/concentrated": 0.8323144077824842,
+        "NCJG-gaussian-1d/far": 0.8737954876094947,
+        "NCJG-gaussian-1d/missing": 1.0163721532661172,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.435911278604862,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.0776481401106077,
+        "NCJG-gmix-1d-K4-uneq/far": 1.028192275892057,
+        "NCJG-gmix-1d-K4-uneq/missing": 0.9769429903482921,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0711406812467275,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0932612789871647,
+        "NCJG-gmix-2d-K5-uneq/far": 1.5948059384384403,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0013916338761917,
+        "NCJG-moons-127/broad": 1.307978155847982,
+        "NCJG-moons-127/concentrated": 0.8277554078533188,
+        "NCJG-moons-127/far": 1.2921489471948833,
+        "NCJG-moons-127/missing": 0.8756923642927925,
+        "NCJG-ring-118/broad": 0.9262068679340175,
+        "NCJG-ring-118/concentrated": 1.2968003870975842,
+        "NCJG-ring-118/far": 1.3358237509482238,
+        "NCJG-ring-118/missing": 1.1360362438304827,
+        "NCJG-shell-5d/broad": 0.8387006845903321,
+        "NCJG-shell-5d/concentrated": 1.1144245879401273,
+        "NCJG-shell-5d/far": 0.7701545272363011,
+        "NCJG-shell-5d/missing": 1.0105675632108415,
+        "NCJG-student-5d/broad": 1.162295565999909,
+        "NCJG-student-5d/concentrated": 1.0523632729041124,
+        "NCJG-student-5d/far": 0.3355016820727126,
+        "NCJG-student-5d/missing": 1.0163342931118937
+      },
+      "family_ratios": {
+        "banana": 1.4997214001831227,
+        "gauss_mixture": 1.0743894838196923,
+        "gaussian": 0.9423913206603077,
+        "moons": 1.063731623384174,
+        "ring": 1.2137595481627552,
+        "sphere_shell": 0.9206322322674328,
+        "student": 1.034191898568114
+      }
+    },
+    "ncj": {
+      "point_ratio": 1.0715140737831248,
+      "hierarchical_ci": [
+        0.9461226401400793,
+        1.2083975486320175
+      ],
+      "cell_only_ci": [
+        0.9574093545766427,
+        1.188978648618294
+      ],
+      "fixed_suite_row_ci": [
+        0.9825832632324718,
+        1.102811185238577
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.1939530787986858,
+        "NCJG-banana-068/concentrated": 1.104518195339111,
+        "NCJG-banana-068/far": 2.2331884153664414,
+        "NCJG-banana-068/missing": 1.8837962044792056,
+        "NCJG-gaussian-1d/broad": 1.129090464543069,
+        "NCJG-gaussian-1d/concentrated": 0.8323144077824842,
+        "NCJG-gaussian-1d/far": 0.8737954876094947,
+        "NCJG-gaussian-1d/missing": 1.0163721532661172,
+        "NCJG-gmix-1d-K4-uneq/broad": 1.435911278604862,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.0776481401106077,
+        "NCJG-gmix-1d-K4-uneq/far": 1.028192275892057,
+        "NCJG-gmix-1d-K4-uneq/missing": 0.9769429903482921,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0711406812467275,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0932612789871647,
+        "NCJG-gmix-2d-K5-uneq/far": 1.5948059384384403,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0013916338761917,
+        "NCJG-moons-127/broad": 1.307978155847982,
+        "NCJG-moons-127/concentrated": 0.8277554078533188,
+        "NCJG-moons-127/far": 1.2921489471948833,
+        "NCJG-moons-127/missing": 0.8756923642927925,
+        "NCJG-ring-118/broad": 0.9262068679340175,
+        "NCJG-ring-118/concentrated": 1.2968003870975842,
+        "NCJG-ring-118/far": 1.3358237509482238,
+        "NCJG-ring-118/missing": 1.1360362438304827,
+        "NCJG-shell-5d/broad": 0.8387006845903321,
+        "NCJG-shell-5d/concentrated": 1.1144245879401273,
+        "NCJG-shell-5d/far": 0.7701545272363011,
+        "NCJG-shell-5d/missing": 1.0105675632108415,
+        "NCJG-student-5d/broad": 1.162295565999909,
+        "NCJG-student-5d/concentrated": 1.0523632729041124,
+        "NCJG-student-5d/far": 0.3355016820727126,
+        "NCJG-student-5d/missing": 1.0163342931118937
+      },
+      "family_ratios": {
+        "banana": 1.4997214001831227,
+        "gauss_mixture": 1.0743894838196923,
+        "gaussian": 0.9423913206603077,
+        "moons": 1.063731623384174,
+        "ring": 1.2137595481627552,
+        "sphere_shell": 0.9206322322674328,
+        "student": 1.034191898568114
+      }
+    }
+  },
+  "gate": {
+    "ratio_vs_paper": 1.0715140737831248,
+    "ci_vs_paper": [
+      0.9461226401400793,
+      1.2083975486320175
+    ],
+    "ratio_vs_paper_matched": 1.0715140737831248,
+    "ci_vs_paper_matched": [
+      0.947996173933381,
+      1.2052667127950047
+    ],
+    "crit1_ratio_le_0.80": false,
+    "crit2_ci_vs_paper_hi_lt_1": false,
+    "crit3_ci_vs_matched_hi_lt_1": false,
+    "winning_cells_fraction": 0.28125,
+    "crit4_winning_cells_ge_0.60": false,
+    "gaussian_mixture": {
+      "point_ratio": 1.1426909925382338,
+      "hierarchical_ci": [
+        0.9902646280653117,
+        1.3245062179940408
+      ],
+      "cell_only_ci": [
+        1.0297639933082317,
+        1.2935105683433819
+      ],
+      "fixed_suite_row_ci": [
+        0.9953127812057926,
+        1.1895543553201475
+      ],
+      "cell_ratios": {
+        "NCJG-gmix-1d-K4-uneq/broad": 1.435911278604862,
+        "NCJG-gmix-1d-K4-uneq/concentrated": 1.0776481401106077,
+        "NCJG-gmix-1d-K4-uneq/far": 1.028192275892057,
+        "NCJG-gmix-1d-K4-uneq/missing": 0.9769429903482921,
+        "NCJG-gmix-2d-K5-uneq/broad": 1.0711406812467275,
+        "NCJG-gmix-2d-K5-uneq/concentrated": 1.0932612789871647,
+        "NCJG-gmix-2d-K5-uneq/far": 1.5948059384384403,
+        "NCJG-gmix-2d-K5-uneq/missing": 1.0013916338761917
+      },
+      "family_ratios": {
+        "gauss_mixture": 1.0743894838196923
+      }
+    },
+    "non_gaussian": {
+      "point_ratio": 1.0684424892018476,
+      "hierarchical_ci": [
+        0.8876210671222272,
+        1.2584926291672622
+      ],
+      "cell_only_ci": [
+        0.9014381727581255,
+        1.244811642958012
+      ],
+      "fixed_suite_row_ci": [
+        0.9722827492889566,
+        1.1256691746753136
+      ],
+      "cell_ratios": {
+        "NCJG-banana-068/broad": 1.1939530787986858,
+        "NCJG-banana-068/concentrated": 1.104518195339111,
+        "NCJG-banana-068/far": 2.2331884153664414,
+        "NCJG-banana-068/missing": 1.8837962044792056,
+        "NCJG-moons-127/broad": 1.307978155847982,
+        "NCJG-moons-127/concentrated": 0.8277554078533188,
+        "NCJG-moons-127/far": 1.2921489471948833,
+        "NCJG-moons-127/missing": 0.8756923642927925,
+        "NCJG-ring-118/broad": 0.9262068679340175,
+        "NCJG-ring-118/concentrated": 1.2968003870975842,
+        "NCJG-ring-118/far": 1.3358237509482238,
+        "NCJG-ring-118/missing": 1.1360362438304827,
+        "NCJG-shell-5d/broad": 0.8387006845903321,
+        "NCJG-shell-5d/concentrated": 1.1144245879401273,
+        "NCJG-shell-5d/far": 0.7701545272363011,
+        "NCJG-shell-5d/missing": 1.0105675632108415,
+        "NCJG-student-5d/broad": 1.162295565999909,
+        "NCJG-student-5d/concentrated": 1.0523632729041124,
+        "NCJG-student-5d/far": 0.3355016820727126,
+        "NCJG-student-5d/missing": 1.0163342931118937
+      },
+      "family_ratios": {
+        "banana": 1.4997214001831227,
+        "moons": 1.063731623384174,
+        "ring": 1.2137595481627552,
+        "sphere_shell": 0.9206322322674328,
+        "student": 1.034191898568114
+      }
+    },
+    "crit5_subgroup_cis_hi_lt_1": false,
+    "paired_mode_coverage_diff": 0.0,
+    "paper_divergence_rate": 0.0,
+    "ncj_divergence_rate": 0.0,
+    "crit6_coverage_and_divergence": true,
+    "kernel_pair_counts": [
+      6561792
+    ],
+    "ncj_generator_forward_counts": [
+      1602
+    ],
+    "paper_matched_generator_forward_counts": [
+      1602
+    ],
+    "crit7_equal_compute": true,
+    "regression": {
+      "paper_vs_matched_max_ed2_diff": 0.0,
+      "paper_vs_jitter_max_ed2_diff": 0.0,
+      "ncj_vs_normalized_crossfit_max_ed2_diff": 0.0
+    },
+    "crit8_zero_sigma_regressions": true,
+    "PASS": false
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "ratio_vs_paper": 1.0715140737831248,
+  "ci_vs_paper": [
+    0.9461226401400793,
+    1.2083975486320175
+  ],
+  "ratio_vs_paper_matched": 1.0715140737831248,
+  "ci_vs_paper_matched": [
+    0.947996173933381,
+    1.2052667127950047
+  ],
+  "crit1_ratio_le_0.80": false,
+  "crit2_ci_vs_paper_hi_lt_1": false,
+  "crit3_ci_vs_matched_hi_lt_1": false,
+  "winning_cells_fraction": 0.28125,
+  "crit4_winning_cells_ge_0.60": false,
+  "gaussian_mixture": {
+    "point_ratio": 1.1426909925382338,
+    "hierarchical_ci": [
+      0.9902646280653117,
+      1.3245062179940408
+    ],
+    "cell_only_ci": [
+      1.0297639933082317,
+      1.2935105683433819
+    ],
+    "fixed_suite_row_ci": [
+      0.9953127812057926,
+      1.1895543553201475
+    ],
+    "cell_ratios": {
+      "NCJG-gmix-1d-K4-uneq/broad": 1.435911278604862,
+      "NCJG-gmix-1d-K4-uneq/concentrated": 1.0776481401106077,
+      "NCJG-gmix-1d-K4-uneq/far": 1.028192275892057,
+      "NCJG-gmix-1d-K4-uneq/missing": 0.9769429903482921,
+      "NCJG-gmix-2d-K5-uneq/broad": 1.0711406812467275,
+      "NCJG-gmix-2d-K5-uneq/concentrated": 1.0932612789871647,
+      "NCJG-gmix-2d-K5-uneq/far": 1.5948059384384403,
+      "NCJG-gmix-2d-K5-uneq/missing": 1.0013916338761917
+    },
+    "family_ratios": {
+      "gauss_mixture": 1.0743894838196923
+    }
+  },
+  "non_gaussian": {
+    "point_ratio": 1.0684424892018476,
+    "hierarchical_ci": [
+      0.8876210671222272,
+      1.2584926291672622
+    ],
+    "cell_only_ci": [
+      0.9014381727581255,
+      1.244811642958012
+    ],
+    "fixed_suite_row_ci": [
+      0.9722827492889566,
+      1.1256691746753136
+    ],
+    "cell_ratios": {
+      "NCJG-banana-068/broad": 1.1939530787986858,
+      "NCJG-banana-068/concentrated": 1.104518195339111,
+      "NCJG-banana-068/far": 2.2331884153664414,
+      "NCJG-banana-068/missing": 1.8837962044792056,
+      "NCJG-moons-127/broad": 1.307978155847982,
+      "NCJG-moons-127/concentrated": 0.8277554078533188,
+      "NCJG-moons-127/far": 1.2921489471948833,
+      "NCJG-moons-127/missing": 0.8756923642927925,
+      "NCJG-ring-118/broad": 0.9262068679340175,
+      "NCJG-ring-118/concentrated": 1.2968003870975842,
+      "NCJG-ring-118/far": 1.3358237509482238,
+      "NCJG-ring-118/missing": 1.1360362438304827,
+      "NCJG-shell-5d/broad": 0.8387006845903321,
+      "NCJG-shell-5d/concentrated": 1.1144245879401273,
+      "NCJG-shell-5d/far": 0.7701545272363011,
+      "NCJG-shell-5d/missing": 1.0105675632108415,
+      "NCJG-student-5d/broad": 1.162295565999909,
+      "NCJG-student-5d/concentrated": 1.0523632729041124,
+      "NCJG-student-5d/far": 0.3355016820727126,
+      "NCJG-student-5d/missing": 1.0163342931118937
+    },
+    "family_ratios": {
+      "banana": 1.4997214001831227,
+      "moons": 1.063731623384174,
+      "ring": 1.2137595481627552,
+      "sphere_shell": 0.9206322322674328,
+      "student": 1.034191898568114
+    }
+  },
+  "crit5_subgroup_cis_hi_lt_1": false,
+  "paired_mode_coverage_diff": 0.0,
+  "paper_divergence_rate": 0.0,
+  "ncj_divergence_rate": 0.0,
+  "crit6_coverage_and_divergence": true,
+  "kernel_pair_counts": [
+    6561792
+  ],
+  "ncj_generator_forward_counts": [
+    1602
+  ],
+  "paper_matched_generator_forward_counts": [
+    1602
+  ],
+  "crit7_equal_compute": true,
+  "regression": {
+    "paper_vs_matched_max_ed2_diff": 0.0,
+    "paper_vs_jitter_max_ed2_diff": 0.0,
+    "ncj_vs_normalized_crossfit_max_ed2_diff": 0.0
+  },
+  "crit8_zero_sigma_regressions": true,
+  "PASS": false
+}

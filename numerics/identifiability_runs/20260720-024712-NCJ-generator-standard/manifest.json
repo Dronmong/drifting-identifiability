@@ -1,0 +1,131 @@
+{
+  "stage": "learned-generator-transfer",
+  "profile": {
+    "name": "standard",
+    "steps": 800,
+    "batch": 64,
+    "seeds": 12,
+    "ref_final": 1024,
+    "ref_cross": 256
+  },
+  "master_seed": 20260723,
+  "commit": "72b943c540913e0ec72537a3f211a629c0ffc9dc",
+  "git_dirty": false,
+  "git_status": [],
+  "cmdline": [
+    "numerics/run_identifiability_generator.py",
+    "--profile",
+    "standard"
+  ],
+  "registry": "identifiability_generator_registry.json",
+  "registry_sha256": "B44BAD6F8ECE1DE7D9AE9532B037FB443378484920DEC822D23D67DFB361B93F",
+  "particle_gate_sha256": "07AD70C173CAD9F4B6B245E7F0A819901E4AF8E832A68AD39D5113C81A5235E4",
+  "source_hashes": {
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\IdentifiabilityGeneratorProtocol.md": "53219101B6FB43572F05D9F15E69CC435079EA34D4FFDDC63E6446A106A75B37",
+    "numerics\\identifiability_generator_registry.json": "B44BAD6F8ECE1DE7D9AE9532B037FB443378484920DEC822D23D67DFB361B93F",
+    "numerics\\identifiability_drift.py": "CE24E5E62E945AA9253AD549121C0C2792C76D30C71C35C8DF8AC1E68627FBE2",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6",
+    "numerics\\run_identifiability_improvement.py": "20258770F17A5FC0AFC0F48EB038D2F1EAEEFF91F1C5E3085AF60B62F5F3A2D5",
+    "numerics\\identifiability_runs\\20260720-011000-NCJ-test-standard\\e4_gate.json": "07AD70C173CAD9F4B6B245E7F0A819901E4AF8E832A68AD39D5113C81A5235E4"
+  },
+  "architecture": {
+    "hidden": [
+      32,
+      32
+    ],
+    "activation": "tanh",
+    "latent_dim": "max(2,d)"
+  },
+  "optimizer": {
+    "name": "Adam",
+    "lr": 0.0025,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "eps": 1e-08
+  },
+  "arms": [
+    {
+      "label": "paper",
+      "gain": "paper",
+      "crossfit": false,
+      "mask": true,
+      "matched_extra": false,
+      "clip": null
+    },
+    {
+      "label": "paper-matched",
+      "gain": "paper",
+      "crossfit": false,
+      "mask": true,
+      "matched_extra": true,
+      "clip": null
+    },
+    {
+      "label": "normalized-only",
+      "gain": "constant",
+      "crossfit": false,
+      "mask": true,
+      "matched_extra": false,
+      "clip": 2.0
+    },
+    {
+      "label": "crossfit-only",
+      "gain": "paper",
+      "crossfit": true,
+      "mask": false,
+      "matched_extra": false,
+      "clip": null
+    },
+    {
+      "label": "jitter-only",
+      "gain": "paper",
+      "crossfit": false,
+      "mask": true,
+      "matched_extra": false,
+      "clip": null
+    },
+    {
+      "label": "normalized-crossfit",
+      "gain": "constant",
+      "crossfit": true,
+      "mask": false,
+      "matched_extra": false,
+      "clip": 2.0
+    },
+    {
+      "label": "ncj",
+      "gain": "constant",
+      "crossfit": true,
+      "mask": false,
+      "matched_extra": false,
+      "clip": 2.0
+    }
+  ],
+  "initializations": [
+    "broad",
+    "missing",
+    "far",
+    "concentrated"
+  ],
+  "trajectory_columns": [
+    "step",
+    "ed2",
+    "spread_ratio",
+    "pq_p10",
+    "pq_median",
+    "delta_norm_median",
+    "ess_pos_median",
+    "ess_neg_median",
+    "field_norm_median",
+    "degenerate_rows"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "expected_rows": 2688,
+  "start": "20260720-024712",
+  "realized_rows": 2688,
+  "wall_seconds": 1918.208
+}

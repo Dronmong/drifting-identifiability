@@ -1,0 +1,37 @@
+NCJ generator: 8 targets x 4 inits x 7 arms x 12 seeds = 2688 rows
+  [PASS] 1. paper gain bitwise == drift_paper (mask=True)
+  [PASS] 1. paper gain bitwise == drift_paper (mask=False)
+  [PASS] 2. power(gamma=1) == paper gain (rtol 1e-9)
+  [PASS] 3. constant gain == Cpos - Cneg (bitwise)
+  [PASS] 4. matched batches -> zero field (gain=paper)
+  [PASS] 4. matched batches -> zero field (gain=constant)
+  [PASS] 4. matched batches -> zero field (gain=power)
+  [PASS] 5a. negative-batch permutation invariance
+  [PASS] 5b. cross-fitted mask rejected
+  [PASS] 6. sigma=0 bitwise == no-jitter arm
+  [PASS] 7a. same seed -> bitwise identical jittered field
+  [PASS] 7b. different seed -> different field
+  [PASS] 7c. query/pos/neg jitter streams mutually distinct
+  [PASS] 8. kernel pairs + wall time recorded
+  [PASS] 9a. underflowed mass raises by default
+  [PASS] 9b. zeroed degenerate rows are counted
+  [PASS] 9c. non-finite input raises
+all invariant tests passed
+  [PASS] cached ED2 is bitwise equal to frozen ED2
+  completed NCJG-gaussian-1d in 127.6s
+  completed NCJG-gmix-1d-K4-uneq in 135.9s
+  completed NCJG-gmix-2d-K5-uneq in 261.8s
+  completed NCJG-ring-118 in 247.6s
+  completed NCJG-moons-127 in 249.9s
+  completed NCJG-banana-068 in 244.7s
+  completed NCJG-student-5d in 305.4s
+  completed NCJG-shell-5d in 309.5s
+  paper-matched         : ratio=1.0000 hierCI=[1.0, 1.0]
+  normalized-only       : ratio=1.0283 hierCI=[0.9232505649354769, 1.1223123255271297]
+  crossfit-only         : ratio=1.0158 hierCI=[0.948457491332743, 1.101478452287753]
+  jitter-only           : ratio=1.0000 hierCI=[1.0, 1.0]
+  normalized-crossfit   : ratio=1.0715 hierCI=[0.9465072381111576, 1.2057343423932743]
+  ncj                   : ratio=1.0715 hierCI=[0.9461226401400793, 1.2083975486320175]
+  NCF vs matched CI=[0.947996173933381, 1.2052667127950047]; mixture CI=[0.9902646280653117, 1.3245062179940408]; nonGaussian CI=[0.8876210671222272, 1.2584926291672622]
+  winning cells=0.281; mode coverage diff=0.0000
+E5 GATE: FAIL
