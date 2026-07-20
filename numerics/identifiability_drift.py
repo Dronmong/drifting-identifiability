@@ -35,7 +35,7 @@ from numpy.linalg import norm
 
 from lowdim_drift import WorkCounter, drift_paper
 
-GAINS = ("paper", "constant", "power")
+GAINS = ("paper", "constant", "power", "abc")
 
 
 # ---------------------------------------------------------------------------
@@ -180,10 +180,24 @@ def compute_field(queries: np.ndarray, positives: np.ndarray,
     else:
         Cpos = (Ap / Psafe) @ pos
         Cneg = (An / Qsafe) @ neg
+        if gain == "abc":
+            # Standard first-order analytical bias correction (ABC) of the
+            # self-normalized minibatch centroid.  With normalized weights
+            # a_j = A_j / sum_k A_k, the leading O(1/N) SNIS ratio bias is
+            # -sum_j a_j^2 (y_j - Chat) (Kong-Liu-Wong self-normalized ratio
+            # expansion), so the corrected centroid adds sum_j a_j^2 (y_j - C).
+            # This is independently derived, NOT a verified reproduction of the
+            # post-cutoff arXiv:2604.27239; it is the textbook SNIS correction.
+            ap = Ap / Psafe
+            an = An / Qsafe
+            Cpos = Cpos + (ap ** 2) @ pos - \
+                (ap ** 2).sum(axis=1, keepdims=True) * Cpos
+            Cneg = Cneg + (an ** 2) @ neg - \
+                (an ** 2).sum(axis=1, keepdims=True) * Cneg
         Delta = Cpos - Cneg
         if n_bad:
             Delta[bad] = 0.0
-        if gain == "constant":
+        if gain in ("constant", "abc"):
             V = Delta
         else:
             V = ((P * Q) ** gamma)[:, None] * Delta
@@ -302,6 +316,22 @@ def invariant_tests(log=print) -> None:
         v = compute_field(q, same, same.copy(), tau=tau, gain=g).V
         check(f"4. matched batches -> zero field (gain={g})",
               float(np.abs(v).max()) < 1e-12)
+
+    # 4b. ABC bias correction: identical unmasked batches still cancel (the
+    #     masked case intentionally does not -- that residual is the self-mask
+    #     distortion ABC/cross-fit exist to remove); the correction vanishes as
+    #     weights flatten (large tau) and is nonzero for sharp weights.
+    v = compute_field(q, same, same.copy(), tau=tau, gain="abc", mask=False).V
+    check("4b. ABC identical unmasked batches -> zero",
+          float(np.abs(v).max()) < 1e-12)
+    v_abc_flat = compute_field(q, data, ref, tau=50.0, gain="abc").V
+    v_const_flat = compute_field(q, data, ref, tau=50.0, gain="constant").V
+    check("4c. ABC -> constant gain as weights flatten (large tau)",
+          np.allclose(v_abc_flat, v_const_flat, atol=2e-3))
+    v_abc_sharp = compute_field(q, data, ref, tau=0.15, gain="abc").V
+    v_const_sharp = compute_field(q, data, ref, tau=0.15, gain="constant").V
+    check("4d. ABC differs from constant under sharp weights",
+          not np.allclose(v_abc_sharp, v_const_sharp, atol=1e-6))
 
     # 5. Cross-fitted mode has no index-dependent diagonal operation:
     #    permuting the negative batch leaves the field unchanged, and
