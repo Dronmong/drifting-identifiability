@@ -1,2 +1,3 @@
 /.lake
 /papers/*.pdf
+/numerics/identifiability_runs/*-smoke/
