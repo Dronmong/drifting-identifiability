@@ -1,5 +1,12 @@
 # Low-dimensional performance roadmap
 
+> **Implementation status (2026-07-19).** Historical D0--D3 was completed but
+> failed its gate; D4 remained a smoke test. The post-audit fresh factorial
+> follow-up also failed its global gate but isolated a strong conditional mask
+> effect. See `LowDimPerformanceResults.md`,
+> `LowDimAttributionProtocol.md`, and `LowDimAttributionResults.md`. The full
+> learned-generator transfer remains blocked by the pre-declared ordering.
+
 *Proposed next program after the audited Phase C validation. The Phase C
 checkpoint is commit `627d23c`. This document separates the immediate
 performance question from the longer quantitative-theory program in

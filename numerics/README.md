@@ -53,6 +53,22 @@ The old `PhaseC_DesignRules.md`, `driftbench.py`, and `bench_runs/` are retained
 as an explicitly superseded first pass. The V2 results are synthetic particle
 experiments; they do not claim trained-model or real-encoder performance.
 
+## Low-dimensional base-versus-modified study
+
+The next-stage matched Algorithm-2 study is documented in:
+
+* `LowDimPerformanceRoadmap.md` and `LowDimPerformanceResults.md` for the
+  historical D0--D3 negative result;
+* `LowDimAttributionProtocol.md` and `lowdim_attribution.py` for the
+  audit-corrected fresh bandwidth × mask × step experiment;
+* `LowDimAttributionResults.md` for the fresh held-out result.
+
+The fresh global gate also failed, so no aggregate outperformance or learned-
+generator claim is made. The surviving empirical finding is conditional: with
+bandwidth and step fixed, disabling the eye mask substantially improves ED² on
+fresh curved ring/circle/moon targets, while a cluster-count trigger can
+misfire on a finite Gaussian mixture.
+
 The operating point is taken from the paper, not chosen for convenience:
 
 - kernel `exp(-dist/tau_tilde)` with `tau_tilde = tau*sqrt(C)` on features

@@ -1686,3 +1686,34 @@ validation parity without a new per-target sweep, while its heterogeneous
 held-out effects require a fresh factorial attribution study.  D4 remains a
 two-seed smoke wiring check only.  A new fresh-target attribution phase repairs
 the audit gaps before any decisive learned-generator run or empirical claim.
+
+## 2026-07-19: fresh low-dimensional attribution - global gate FAILED; mask mechanism isolated
+
+The audit-corrected follow-up was pre-registered in
+`numerics/LowDimAttributionProtocol.md` and run from clean source checkpoints.
+It crossed fixed/geometry bandwidth, always-on/automatic mask, and
+fixed/scaled step on fresh Gaussian, ring, circles, moons, and connected
+validation laws.  The validation winner retained the tuned base bandwidth
+`tau=0.35` and step `eta=0.0525` and changed **only** the mask, improving the
+validation aggregate by 19.1%.  Geometry-matched bandwidth was worse with both
+mask policies.  This confirms that the historical curved-target gains were
+mask-driven, not bandwidth-driven.
+
+The frozen rule (`mask on iff N >= 8 K_hat`) then faced seven new target
+configurations, two initializations, and 20 paired seeds.  The pre-declared
+global gate failed: primary paired-median ratio `1.000`, hierarchical CI
+`[0.646,1.000]`, missing-start KM time `53` versus base `51`, and non-Gaussian
+ratio `0.905 [0.558,1.000]`.  No cell's paired-median ratio exceeded 1.10 and
+there were no divergences.  The full D4 learned-generator run remains blocked.
+
+The factorial does establish a conditional finite-horizon mechanism.  When
+the rule disabled masking, ED² ratios were approximately `0.53` on circles,
+`0.62` on moons, and `0.48` on rings, with no worse trials in those mask-off
+subsets.  It misfired on eight overclustered 1-d K6 Gaussian trials, whose
+median ratio was `1.09`.  The exploratory cell-balanced geometric-mean ratio
+was `0.767 [0.652,0.908]`, but this does not replace the failed pre-declared
+median gate.  The next empirical hypothesis is an affinity-leverage or
+self-mass mask trigger rather than raw estimated cluster count; it requires a
+new split.  Full sources, realized decisions, per-run costs/wall times,
+secondary metrics, final particles, trajectories, and target-aware statistics
+are retained in the D3b run directories.

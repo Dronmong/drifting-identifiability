@@ -341,3 +341,21 @@ Phase C is therefore **complete as a synthetic validation phase**, with
 qualified rather than universal design rules.  It does not establish
 real-feature or neural-model improvement, and it does not replace the open
 Phase-B convergence theory.
+
+### Low-dimensional matched follow-up (2026-07-19)
+
+The matched exact-Algorithm-2 program in
+`numerics/LowDimPerformanceRoadmap.md` failed its original aggregate gate.  A
+post-audit fresh factorial follow-up (`LowDimAttributionProtocol.md`) corrected
+the inference, provenance, metric, and factor-confounding gaps.  Its global
+gate also failed, so D4 learned-generator transfer remains blocked.
+
+The follow-up nevertheless isolates one conditional design mechanism:
+geometry-matched bandwidth and scaled steps do not beat the tuned base on the
+fresh validation suite, while conditionally disabling the eye mask cuts ED²
+by roughly 32--52% on fresh ring/circle/moon targets.  The provisional
+cluster-count trigger can harm an overclustered Gaussian mixture and is not a
+finished algorithm.  See `numerics/LowDimAttributionResults.md`.  Any next
+performance attempt must use a new split and should test an affinity-leverage
+or self-mass trigger; Phase B1 may proceed independently but cannot yet be
+presented as explaining an aggregate performance win.

@@ -1,0 +1,126 @@
+{
+  "tau-only": {
+    "point_ratio": 1.0,
+    "hierarchical_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_only_ci": [
+      1.0,
+      1.0
+    ],
+    "fixed_suite_row_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_ratios": {
+      "AT-1d-K6-eq/covered": 1.0,
+      "AT-1d-K6-eq/missing": 1.0,
+      "AT-2d-K4-uneq/covered": 1.0,
+      "AT-2d-K4-uneq/missing": 1.0,
+      "AT-banana/covered": 1.0,
+      "AT-banana/missing": 1.0,
+      "AT-circles/covered": 1.0,
+      "AT-circles/missing": 1.0,
+      "AT-moons/covered": 1.0,
+      "AT-moons/missing": 1.0,
+      "AT-ring/covered": 1.0,
+      "AT-ring/missing": 1.0,
+      "AT-sine/covered": 1.0,
+      "AT-sine/missing": 1.0
+    }
+  },
+  "mask-only": {
+    "point_ratio": 1.0,
+    "hierarchical_ci": [
+      0.6460113875681766,
+      1.0
+    ],
+    "cell_only_ci": [
+      0.5361112430218523,
+      1.0
+    ],
+    "fixed_suite_row_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_ratios": {
+      "AT-1d-K6-eq/covered": 1.0,
+      "AT-1d-K6-eq/missing": 1.0,
+      "AT-2d-K4-uneq/covered": 1.0,
+      "AT-2d-K4-uneq/missing": 1.0,
+      "AT-banana/covered": 1.0,
+      "AT-banana/missing": 1.0,
+      "AT-circles/covered": 0.5099754102437922,
+      "AT-circles/missing": 0.56358651637152,
+      "AT-moons/covered": 0.4856310486037291,
+      "AT-moons/missing": 0.6758339573699517,
+      "AT-ring/covered": 0.5227216392819289,
+      "AT-ring/missing": 0.4968879593313121,
+      "AT-sine/covered": 1.0,
+      "AT-sine/missing": 1.0
+    }
+  },
+  "step-only": {
+    "point_ratio": 1.0,
+    "hierarchical_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_only_ci": [
+      1.0,
+      1.0
+    ],
+    "fixed_suite_row_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_ratios": {
+      "AT-1d-K6-eq/covered": 1.0,
+      "AT-1d-K6-eq/missing": 1.0,
+      "AT-2d-K4-uneq/covered": 1.0,
+      "AT-2d-K4-uneq/missing": 1.0,
+      "AT-banana/covered": 1.0,
+      "AT-banana/missing": 1.0,
+      "AT-circles/covered": 1.0,
+      "AT-circles/missing": 1.0,
+      "AT-moons/covered": 1.0,
+      "AT-moons/missing": 1.0,
+      "AT-ring/covered": 1.0,
+      "AT-ring/missing": 1.0,
+      "AT-sine/covered": 1.0,
+      "AT-sine/missing": 1.0
+    }
+  },
+  "combined": {
+    "point_ratio": 1.0,
+    "hierarchical_ci": [
+      0.6460113875681766,
+      1.0
+    ],
+    "cell_only_ci": [
+      0.5361112430218523,
+      1.0
+    ],
+    "fixed_suite_row_ci": [
+      1.0,
+      1.0
+    ],
+    "cell_ratios": {
+      "AT-1d-K6-eq/covered": 1.0,
+      "AT-1d-K6-eq/missing": 1.0,
+      "AT-2d-K4-uneq/covered": 1.0,
+      "AT-2d-K4-uneq/missing": 1.0,
+      "AT-banana/covered": 1.0,
+      "AT-banana/missing": 1.0,
+      "AT-circles/covered": 0.5099754102437922,
+      "AT-circles/missing": 0.56358651637152,
+      "AT-moons/covered": 0.4856310486037291,
+      "AT-moons/missing": 0.6758339573699517,
+      "AT-ring/covered": 0.5227216392819289,
+      "AT-ring/missing": 0.4968879593313121,
+      "AT-sine/covered": 1.0,
+      "AT-sine/missing": 1.0
+    }
+  }
+}

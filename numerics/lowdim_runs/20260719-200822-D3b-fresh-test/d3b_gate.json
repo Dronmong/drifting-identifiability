@@ -1,0 +1,21 @@
+{
+  "aggregate_ratio": 1.0,
+  "hierarchical_ci": [
+    0.6460113875681766,
+    1.0
+  ],
+  "crit1_ratio_le_0.8": false,
+  "crit2_hierarchical_ci_hi_lt_1": false,
+  "degraded_cells": [],
+  "crit3_degraded_le_20pct": true,
+  "km_base_missing": 51,
+  "km_modified_missing": 53,
+  "crit4_missing_time_not_worse": false,
+  "nongaussian_ratio": 0.9049063183654167,
+  "nongaussian_hierarchical_ci": [
+    0.5577950190550448,
+    1.0
+  ],
+  "crit5_nongaussian_ci_hi_lt_1": false,
+  "PASS": false
+}

@@ -1,0 +1,111 @@
+{
+  "which": "D3b-fresh-test",
+  "seed": 20260719,
+  "commit": "17837284540c3b8ca0c57f4b188be71854a022b4",
+  "git_dirty": false,
+  "git_status": [],
+  "git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_sha256": {
+    "numerics\\lowdim_drift.py": "71c5b49d9ceb38ce239f5baff966cb9c077485f9abc081b8798e18618ebf64f6",
+    "numerics\\lowdim_attribution.py": "552925d56795a57e84717463e6b9ffdfd65070bd954000755f0eded69f2686a8",
+    "numerics\\LowDimAttributionProtocol.md": "70674f1534bd65149a8379872dc98db58028049244a71bed52c212f359ef3eb5"
+  },
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "scipy": "1.18.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cmdline": [
+    "numerics/lowdim_attribution.py",
+    "test",
+    "--profile",
+    "standard"
+  ],
+  "config": {
+    "stage": "fresh-heldout-attribution",
+    "profile": {
+      "name": "standard",
+      "steps": 400,
+      "validation_seeds": 6,
+      "test_seeds": 20,
+      "ref_final": 1024,
+      "ref_cross": 256,
+      "N": 48,
+      "batch": 64
+    },
+    "targets": [
+      "AT-1d-K6-eq",
+      "AT-2d-K4-uneq",
+      "AT-ring",
+      "AT-circles",
+      "AT-moons",
+      "AT-banana",
+      "AT-sine"
+    ],
+    "frozen_validation_policy": {
+      "profile": "standard",
+      "winner": {
+        "label": "tau-fixed__mask-auto__eta-fixed",
+        "tau_mode": "fixed",
+        "mask_mode": "auto",
+        "eta_mode": "fixed"
+      },
+      "validation_aggregate": 0.00394250740991047,
+      "baseline_factorial_label": "tau-fixed__mask-on__eta-fixed",
+      "baseline_aggregate": 0.004876205257222735,
+      "winner_to_base_ratio": 0.8085195765848345,
+      "all_aggregates": {
+        "tau-fixed__mask-on__eta-fixed": 0.004876205257222735,
+        "tau-fixed__mask-on__eta-scaled": 0.004876205257222735,
+        "tau-fixed__mask-auto__eta-fixed": 0.00394250740991047,
+        "tau-fixed__mask-auto__eta-scaled": 0.00394250740991047,
+        "tau-geometry__mask-on__eta-fixed": 0.0051214813279801,
+        "tau-geometry__mask-on__eta-scaled": 0.005263110268298626,
+        "tau-geometry__mask-auto__eta-fixed": 0.00411883680046221,
+        "tau-geometry__mask-auto__eta-scaled": 0.00434071508798132
+      }
+    },
+    "test_arms": [
+      {
+        "label": "base",
+        "tau_mode": "fixed",
+        "mask_mode": "on",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "tau-only",
+        "tau_mode": "fixed",
+        "mask_mode": "on",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "mask-only",
+        "tau_mode": "fixed",
+        "mask_mode": "auto",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "step-only",
+        "tau_mode": "fixed",
+        "mask_mode": "on",
+        "eta_mode": "fixed"
+      },
+      {
+        "label": "combined",
+        "tau_mode": "fixed",
+        "mask_mode": "auto",
+        "eta_mode": "fixed"
+      }
+    ],
+    "gate": {
+      "ratio_le": 0.8,
+      "hierarchical_ci_hi_lt": 1.0,
+      "degraded_cells_gt_1.10_le_fraction": 0.2,
+      "missing_km_not_worse": true,
+      "nongaussian_hierarchical_ci_hi_lt": 1.0
+    }
+  },
+  "start": "20260719-200822",
+  "wall_seconds": 1108.479,
+  "kernel_pairs": 3010560000,
+  "field_calls": 560000
+}
