@@ -1,0 +1,158 @@
+{
+  "stage": "S2",
+  "profile": {
+    "name": "smoke",
+    "steps": 60,
+    "batch": 32,
+    "seeds": 1,
+    "eval_size": 512,
+    "ed_size": 256,
+    "trajectory_period": 25,
+    "bootstrap_reps": 200
+  },
+  "arguments": {
+    "stage": "S2",
+    "profile": "smoke",
+    "workers": 4,
+    "include_stress": false
+  },
+  "registry_sha256": "48AA09809A78413E2C2C2314618677FDC3B870C638EAD69C05E205DB6089AF12",
+  "plan_sha256": "A80564F3F2838728182AA83BB6DC547450C45F716185A4BFD2E39A622B60CE27",
+  "git_head": "14bbf86caa43e11538231f6696465a4be1878cd3",
+  "git_status": "?? numerics/ConservativeFinisherProtocol.md\n?? numerics/ConservativeFinisherResults.md\n?? numerics/conservative_finishers.py\n?? numerics/conservative_registry_a.json\n?? numerics/conservative_runs/\n?? numerics/run_conservative_finisher_development.py",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "arms": [
+    {
+      "label": "paper-0.5",
+      "finisher": "paper",
+      "tau": 0.5,
+      "reference_mode": "reused_masked",
+      "handoff": "continuous",
+      "standalone_paper": true
+    },
+    {
+      "label": "qld-v1",
+      "finisher": "paper",
+      "tau": 0.5,
+      "reference_mode": "reused_masked",
+      "handoff": "carry",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-full",
+      "finisher": "qld",
+      "tau": null,
+      "reference_mode": null,
+      "handoff": "carry",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-paper-reset",
+      "finisher": "paper",
+      "tau": 0.5,
+      "reference_mode": "reused_masked",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-mean-crossfit-t0.2",
+      "finisher": "mean",
+      "tau": 0.2,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-deleted-t0.2",
+      "finisher": "sharp",
+      "tau": 0.2,
+      "reference_mode": "reused_deleted",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-crossfit-t0.2",
+      "finisher": "sharp",
+      "tau": 0.2,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-kgrad-crossfit-t0.2",
+      "finisher": "kgrad",
+      "tau": 0.2,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-mean-crossfit-t0.5",
+      "finisher": "mean",
+      "tau": 0.5,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-deleted-t0.5",
+      "finisher": "sharp",
+      "tau": 0.5,
+      "reference_mode": "reused_deleted",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-crossfit-t0.5",
+      "finisher": "sharp",
+      "tau": 0.5,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-kgrad-crossfit-t0.5",
+      "finisher": "kgrad",
+      "tau": 0.5,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-mean-crossfit-t1",
+      "finisher": "mean",
+      "tau": 1.0,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-deleted-t1",
+      "finisher": "sharp",
+      "tau": 1.0,
+      "reference_mode": "reused_deleted",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-sharp-crossfit-t1",
+      "finisher": "sharp",
+      "tau": 1.0,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    },
+    {
+      "label": "qld-kgrad-crossfit-t1",
+      "finisher": "kgrad",
+      "tau": 1.0,
+      "reference_mode": "crossfit",
+      "handoff": "reset",
+      "standalone_paper": false
+    }
+  ],
+  "physical_common_prefix_sharing": true,
+  "standalone_cost_reported_per_arm": true
+}
