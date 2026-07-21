@@ -167,7 +167,7 @@ parameter geometry instead of applying another scalar gain or bandwidth.
 | # | Idea | Mechanism targeted | Setting | Outcome | Verdict |
 |---|---|---|---|---|---|
 | E1 | Random sliced-rank field / warm start | globally balanced particle-to-quantile assignment | K=32, d=2 missing-mode generator | ❌ | A tuned paper bandwidth matched or beat every variant; the naive high-dimensional extension is rejected. |
-| E2 | **70% exact 1-D quantile fission, then 30% paper Laplace refinement** | split a homogeneous swarm globally, sharpen locally | 1-D Gaussian-mixture generators | 🟡 | Missing-mode screen: ED2 ratio **0.678** against an oracle bandwidth per target, wins 3/4 targets (SW1 4/4). All-initialization stress ratio **1.055** because far starts fail badly (2.494); residual-trigger and pure-quantile repairs also fail there. Promising only as a concentrated/missing-mode fission method; requires the frozen scoped gate in `QuantileFissionDriftingPlan.md`. |
+| E2 | **70% exact 1-D quantile fission, then 30% paper Laplace refinement** | split a homogeneous swarm globally, sharpen locally | 1-D learned generators | 🟡 | Frozen 16-target test: ED2 ratio **.9105**, target-bootstrap CI `[.8270,.9873]`, SW1 `.8949`, wins 23/32 cells, ~half wall time. **Gate failed** because the predeclared effect threshold was `.80`; oracle-paper ratio `.9774`, unequal-weight family worsened, and far starts had already failed. Retain as a modest scoped/compute win, not a general paper-beating result. |
 | E3 | Output-space natural / Gauss--Newton field tracking | make the generator realize the requested particle motion | K=32, d=2 | ❌ | Large apparent win against `tau=.4` evaporated after tuning the paper arm (`tau=.8`); also expensive and did not solve mode resolution. |
 
 **New hypothesis.** Local Laplace drift is useful for refinement but is a poor
@@ -176,5 +176,5 @@ global mass allocation without labels or target-mode knowledge. The current
 candidate deliberately uses it only as a warm phase and returns to the paper
 field for its certified local endpoint.
 
-**→ Active candidate and frozen next gate:**
-[`QuantileFissionDriftingPlan.md`](../../numerics/QuantileFissionDriftingPlan.md).
+**→ Completed candidate assessment:**
+[`QuantileFissionConfirmatoryResults.md`](../../numerics/QuantileFissionConfirmatoryResults.md).

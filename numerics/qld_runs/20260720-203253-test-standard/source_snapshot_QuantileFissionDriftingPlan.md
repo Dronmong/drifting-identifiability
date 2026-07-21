@@ -1,11 +1,11 @@
 # Quantile-to-Laplace Drifting: candidate and validation plan
 
-**Status (2026-07-20): confirmatory experiment completed; strict gate failed.**
-The frozen test found ED2 ratio `.9105` with target-bootstrap 95% interval
-`[.8270, .9873]`, but the predeclared minimum-effect threshold was `.80`.
-See [`QuantileFissionConfirmatoryResults.md`](QuantileFissionConfirmatoryResults.md).
-It remains specifically a fission method for concentrated/missing-mode starts,
-not a universal cure for arbitrary initialization.
+**Status (2026-07-20): promising but conditional exploratory candidate, not a
+confirmed paper improvement.** The algorithm below was selected after looking
+at pilot results. Its current numbers therefore motivate a frozen test; they
+are not a valid final claim by themselves. It is specifically a fission method
+for concentrated/missing-mode starts, not a universal cure for arbitrary
+initialization.
 
 ## 1. The problem isolated by the repository
 
@@ -292,16 +292,3 @@ uv run --with numpy --with scipy python numerics/sliced_fission_probe.py --repai
 The commands reproduce, respectively, the rejected 2-D mechanism probe, the
 one-dimensional missing-mode table, the all-initialization stress test, and the
 failed adaptive-switch repair attempt.
-
-## 9. Confirmatory outcome
-
-The frozen protocol was executed on 16 new targets, both primary
-initializations, 20 paired seeds, and five paper bandwidths. QLD passed four of
-five gate components: its bootstrap upper bound was below one, it won 23/32
-cells, every family stayed below ratio 1.10, and divergence was no worse. It
-failed the decisive minimum-effect component because ED2 ratio `.9105` did not
-reach `.80`. Secondary SW1 ratio was `.8949`; the oracle-per-target paper ratio
-was `.9774`.
-
-The version described in this document is now closed. Do not retune it on the
-confirmatory registry.

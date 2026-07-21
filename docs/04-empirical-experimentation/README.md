@@ -8,7 +8,8 @@ tried against the paper metrics, its outcome, and the pattern across them.
 ## ⭐ Start here
 
 - **[PaperImprovementAttempts.md](PaperImprovementAttempts.md)** — the ledger of every idea tried to beat the paper, with the cross-program pattern analysis and the resulting next target.
-- **[QuantileFissionDriftingPlan.md](../../numerics/QuantileFissionDriftingPlan.md)** — the active paper-improvement candidate: a globally mass-balanced 1-D quantile-fission phase followed by the paper's Laplace refinement, with the exploratory evidence and the frozen confirmatory gate.
+- **[QuantileFissionConfirmatoryResults.md](../../numerics/QuantileFissionConfirmatoryResults.md)** — completed frozen assessment of 1-D quantile-to-Laplace drifting: a modest ED2/SW1 and compute improvement, but a failed pre-registered minimum-effect gate.
+- **[QuantileFissionDriftingPlan.md](../../numerics/QuantileFissionDriftingPlan.md)** — candidate design, exploratory evidence, and the now-completed frozen protocol.
 - **[ModeRecoveryRoadmap.md](../../numerics/ModeRecoveryRoadmap.md)** — the closed characterization that isolated the fission barrier motivating the active candidate.
 
 ## Certified dynamics layer (Lean, but empirically motivated)
