@@ -1,0 +1,141 @@
+{
+  "profile": "screen",
+  "row_count": 384,
+  "cell_count": 16,
+  "ed2_ratios_vs_qld": {
+    "bridge-calibrated": 0.9997025779077503,
+    "bridge-carry-copy": 0.9842156049489805,
+    "bridge-reset-full-lr": 0.9995884180885563,
+    "bridge-reset-quarter": 0.9968427265590539,
+    "bridge-warm-quarter": 0.9996959710237939,
+    "qld-full": 1.1834983616713801,
+    "qld-v1": 1.0
+  },
+  "sw1_ratios_vs_qld": {
+    "bridge-calibrated": 0.9905626957357696,
+    "bridge-carry-copy": 0.9996560678136478,
+    "bridge-reset-full-lr": 0.963647839267391,
+    "bridge-reset-quarter": 0.985642871455075,
+    "bridge-warm-quarter": 0.9905626957357696,
+    "qld-full": 1.0868611418777634,
+    "qld-v1": 1.0
+  },
+  "connected_control_ed2_ratios": {
+    "bridge-calibrated": {
+      "CF-A07-shifted-lognormal/concentrated": 1.019767540637269,
+      "CF-A07-shifted-lognormal/missing": 1.0105293335326113,
+      "CF-A08-student-t3.5/concentrated": 0.9832513573168822,
+      "CF-A08-student-t3.5/missing": 1.0221414954438603
+    },
+    "bridge-carry-copy": {
+      "CF-A07-shifted-lognormal/concentrated": 0.9135107380670859,
+      "CF-A07-shifted-lognormal/missing": 0.8158730219793275,
+      "CF-A08-student-t3.5/concentrated": 0.9958310381889282,
+      "CF-A08-student-t3.5/missing": 0.9979735856194911
+    },
+    "bridge-reset-full-lr": {
+      "CF-A07-shifted-lognormal/concentrated": 1.003966046077487,
+      "CF-A07-shifted-lognormal/missing": 1.0421203518785007,
+      "CF-A08-student-t3.5/concentrated": 0.889784990782,
+      "CF-A08-student-t3.5/missing": 0.9955955777528541
+    },
+    "bridge-reset-quarter": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0196547973671628,
+      "CF-A07-shifted-lognormal/missing": 1.0220458827707475,
+      "CF-A08-student-t3.5/concentrated": 0.9385471689214816,
+      "CF-A08-student-t3.5/missing": 1.0280236893697847
+    },
+    "bridge-warm-quarter": {
+      "CF-A07-shifted-lognormal/concentrated": 1.019767540637269,
+      "CF-A07-shifted-lognormal/missing": 1.0105293335326113,
+      "CF-A08-student-t3.5/concentrated": 0.9832513573168822,
+      "CF-A08-student-t3.5/missing": 1.0221414954438603
+    },
+    "qld-full": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0732668676513237,
+      "CF-A07-shifted-lognormal/missing": 0.7494800804324049,
+      "CF-A08-student-t3.5/concentrated": 1.1168788977957635,
+      "CF-A08-student-t3.5/missing": 1.21379791106013
+    },
+    "qld-v1": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0,
+      "CF-A07-shifted-lognormal/missing": 1.0,
+      "CF-A08-student-t3.5/concentrated": 1.0,
+      "CF-A08-student-t3.5/missing": 1.0
+    }
+  },
+  "initialization_ed2_ratios": {
+    "bridge-calibrated": {
+      "missing": 1.0089092743921892,
+      "concentrated": 0.9905798961730098
+    },
+    "bridge-carry-copy": {
+      "missing": 0.9874210895829915,
+      "concentrated": 0.9810205263432055
+    },
+    "bridge-reset-full-lr": {
+      "missing": 1.0756749283518532,
+      "concentrated": 0.928883791228377
+    },
+    "bridge-reset-quarter": {
+      "missing": 1.0213922154137791,
+      "concentrated": 0.9728832925274744
+    },
+    "bridge-warm-quarter": {
+      "missing": 1.0089092743921892,
+      "concentrated": 0.9905668030292253
+    },
+    "qld-full": {
+      "missing": 1.2259973836002866,
+      "concentrated": 1.1424725621890088
+    },
+    "qld-v1": {
+      "missing": 1.0,
+      "concentrated": 1.0
+    }
+  },
+  "primary_hierarchical_ed2_bootstrap": {
+    "mean": 0.9929857191275262,
+    "standard_error": 0.011560426816338431,
+    "ci_low": 0.9657728730198655,
+    "ci_high": 1.0104694171072095
+  },
+  "primary_median_step_ratio": 0.3549319772771625,
+  "primary_p90_step_ratio": 0.7992753154151037,
+  "primary_cap_activation_count": 30,
+  "arm_phase_changes": {
+    "bridge-calibrated": {
+      "bridge_ed2_change_mean": -0.003283712121188632,
+      "paper_ed2_change_mean": 0.0004930391674546897
+    },
+    "bridge-carry-copy": {
+      "bridge_ed2_change_mean": -0.0011306369168047937,
+      "paper_ed2_change_mean": -0.0005384818878500114
+    },
+    "bridge-reset-full-lr": {
+      "bridge_ed2_change_mean": -1.6026353457897213e-05,
+      "paper_ed2_change_mean": -0.004092972925202872
+    },
+    "bridge-reset-quarter": {
+      "bridge_ed2_change_mean": -0.0032844533479741652,
+      "paper_ed2_change_mean": 8.184544949249584e-05
+    },
+    "bridge-warm-quarter": {
+      "bridge_ed2_change_mean": -0.0032866071860426296,
+      "paper_ed2_change_mean": 0.0004894432048932728
+    }
+  },
+  "gates": {
+    "ed2_vs_qld_at_most_0.98": false,
+    "sw1_vs_qld_at_most_0.99": false,
+    "worst_connected_ed2_at_most_1.05": true,
+    "each_initialization_ed2_at_most_1.02": true,
+    "no_divergence": true,
+    "no_denominator_floor": true,
+    "median_step_ratio_between_0.5_and_1.5": false,
+    "p90_step_ratio_at_most_2": true,
+    "paper_state_restoration_exact": true
+  },
+  "gate_pass": false,
+  "decision": "optimizer calibration fails; stop before scale stage"
+}

@@ -1,0 +1,76 @@
+{
+  "stage": "B1-optimizer-calibration",
+  "profile": {
+    "name": "screen",
+    "steps": 400,
+    "batch": 64,
+    "seeds": 3,
+    "eval_size": 2048,
+    "ed_size": 512,
+    "trajectory_period": 25,
+    "bootstrap_reps": 2000
+  },
+  "arguments": {
+    "stage": "B1",
+    "profile": "screen",
+    "workers": 4
+  },
+  "registry_sha256": "48AA09809A78413E2C2C2314618677FDC3B870C638EAD69C05E205DB6089AF12",
+  "plan_sha256": "058C6E77F28875AC9CA71894D0CAD9D4716B4C0BEA9AA0B3A218DCDD36F03AA0",
+  "protocol_sha256": "94FFB2B4F6A42AEFEF23E30169FBDD3C8C7BAFA8629584598C3E9956128BFBDA",
+  "git_head": "8d6f9525780735ab81190169039fb41feae46e08",
+  "git_status": "?? numerics/bridge_runs/20260721-161822-B1-screen/\n?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "arms": [
+    {
+      "label": "qld-v1",
+      "kind": "qld-paper",
+      "sharp_optimizer": null,
+      "eligible": true
+    },
+    {
+      "label": "qld-full",
+      "kind": "qld-full",
+      "sharp_optimizer": null,
+      "eligible": true
+    },
+    {
+      "label": "bridge-reset-full-lr",
+      "kind": "bridge",
+      "sharp_optimizer": "reset-full",
+      "eligible": true
+    },
+    {
+      "label": "bridge-reset-quarter",
+      "kind": "bridge",
+      "sharp_optimizer": "reset-quarter",
+      "eligible": true
+    },
+    {
+      "label": "bridge-warm-quarter",
+      "kind": "bridge",
+      "sharp_optimizer": "warm-quarter",
+      "eligible": true
+    },
+    {
+      "label": "bridge-calibrated",
+      "kind": "bridge",
+      "sharp_optimizer": "calibrated",
+      "eligible": true
+    },
+    {
+      "label": "bridge-carry-copy",
+      "kind": "bridge",
+      "sharp_optimizer": "carry-copy",
+      "eligible": true
+    },
+    {
+      "label": "qld-sharp20-only",
+      "kind": "bridge-only",
+      "sharp_optimizer": "calibrated",
+      "eligible": false
+    }
+  ]
+}

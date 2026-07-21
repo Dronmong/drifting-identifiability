@@ -1,0 +1,65 @@
+{
+  "conservative_fields": {
+    "status": "pass",
+    "check_count": 21,
+    "checks": [
+      "vectorized_equals_slow:mean:crossfit",
+      "vectorized_equals_slow:mean:reused_deleted",
+      "swap_negates:mean",
+      "translation_invariant:mean",
+      "identical_cloud_zero:mean",
+      "vectorized_equals_slow:sharp:crossfit",
+      "vectorized_equals_slow:sharp:reused_deleted",
+      "swap_negates:sharp",
+      "translation_invariant:sharp",
+      "identical_cloud_zero:sharp",
+      "vectorized_equals_slow:kgrad:crossfit",
+      "vectorized_equals_slow:kgrad:reused_deleted",
+      "swap_negates:kgrad",
+      "translation_invariant:kgrad",
+      "identical_cloud_zero:kgrad",
+      "sharp_positive_scale_invariant",
+      "exact_diagonal_deletion",
+      "sharp_kernel_derivative",
+      "sharp_field_equals_loss_descent",
+      "copy_and_layout_invariant",
+      "floor_activation_reported"
+    ]
+  },
+  "historical_baseline_regression": {
+    "status": "pass",
+    "check_count": 7,
+    "checks": [
+      "qld_update_bitwise_compatible",
+      "carry_matches_uninterrupted",
+      "reset_is_zero",
+      "dual_states_roundtrip",
+      "branch_mutation_isolated",
+      "sharp_parameter_gradient_matches_loss",
+      "paper_baseline_invariants"
+    ]
+  },
+  "calibrated_bridge": {
+    "status": "pass",
+    "check_count": 9,
+    "checks": [
+      "base_no_cap_bitwise",
+      "learning_rate_scales_first_step",
+      "active_cap_has_requested_norm",
+      "inactive_cap_is_bitwise_noop",
+      "first_step_descent_alignment",
+      "optimizer_state_roundtrip",
+      "saved_state_isolated",
+      "uniform_weight_ess",
+      "integrated_bridge_step"
+    ]
+  },
+  "runner": {
+    "status": "pass",
+    "check_count": 2,
+    "checks": [
+      "calibration_clone_and_ledger",
+      "calibration_backward_and_unique_samples"
+    ]
+  }
+}

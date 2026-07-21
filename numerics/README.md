@@ -106,6 +106,23 @@ Neither frozen LB-QCD registry may be reused to tune the successor. The result
 is limited to the documented one-dimensional synthetic generator benchmark
 and does not assert ImageNet, real-feature, or multidimensional superiority.
 
+## Calibrated conservative bridge experiment
+
+The later QLD-to-sharp-to-paper mechanism experiment is documented in:
+
+* `CalibratedConservativeBridgePlan.md` for the gated implementation order;
+* `CalibratedBridgeProtocol.md` for the pre-outcome frozen arms and thresholds;
+* `calibrated_bridge.py` and `run_calibrated_bridge_development.py` for the
+  configurable Adam, optimizer-state isolation, ESS diagnostics, and runner;
+* `CalibratedBridgeResults.md` for the completed Registry-A decision;
+* `bridge_runs/` for immutable smoke and screen artifacts.
+
+The calibrated primary was numerically safe but failed its registered ED2,
+SW1, and median-step gates. Consequently no scale-normalized or multiscale
+candidate was implemented and no fresh registry was opened under that plan.
+The short sharp bridge improved mean ED2 transiently, but the final schedule
+did not establish general endpoint superiority over QLD-v1.
+
 ## Formula crosswalk (Python -> Lean)
 
 | `driftlab.py` | Lean declaration |
