@@ -1,0 +1,35 @@
+{
+  "protocol": "QLD-confirmatory-v1",
+  "stage": "validation",
+  "profile": {
+    "name": "standard",
+    "steps": 1200,
+    "batch": 128,
+    "validation_seeds": 8,
+    "test_seeds": 20,
+    "eval_size": 4096,
+    "ed_size": 1024,
+    "bootstrap_reps": 10000
+  },
+  "workers": 8,
+  "registry_sha256": "7FEF49789904464A3103E09A166AD1C49A28C72DCAE00C61B87D72AA0CB1B8F8",
+  "selection_path": null,
+  "selection_sha256": null,
+  "commit": "53ff195b9e64a10b724a93ffa59658dbdc35c5a0",
+  "git_status": [
+    "?? numerics/qld_runs/"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 167.79328900000837,
+  "source_sha256": {
+    "numerics\\run_qld_confirmatory.py": "3203DBC9D937C434EC9FE7662F2D979461BBA1446336F7DA72C25E73A70A59EA",
+    "numerics\\qld_confirmatory_registry.json": "7FEF49789904464A3103E09A166AD1C49A28C72DCAE00C61B87D72AA0CB1B8F8",
+    "numerics\\QuantileFissionConfirmatoryProtocol.md": "AFDE95AF447C6231F502FF483D925B8FC73977AC1A351AB7B0D08F91D53E383E",
+    "numerics\\QuantileFissionDriftingPlan.md": "6CFB53778CEC03B1C5338BB77B79B15E3AFC42569B3776A3DB22E3AE4BE40E2A",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "registry": "QLD-confirmatory-v1",
+  "master_seed": 20260720,
+  "validation_targets": [
+    {
+      "name": "QLD-V01-eq-K5",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 5,
+      "spacing": 0.55,
+      "sigmas": 0.10,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-V02-eq-K11",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 11,
+      "spacing": 0.82,
+      "sigmas": 0.055,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-V03-unequal-K15",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 15,
+      "spacing": 0.64,
+      "sigmas": 0.06,
+      "weights": [1, 1, 2, 2, 3, 5, 8, 13, 8, 5, 3, 2, 2, 1, 1]
+    },
+    {
+      "name": "QLD-V04-hetero-K23",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 23,
+      "spacing": 0.58,
+      "sigmas": [0.03, 0.08, 0.05, 0.11, 0.04, 0.09, 0.06, 0.12, 0.035, 0.075, 0.05, 0.10, 0.05, 0.075, 0.035, 0.12, 0.06, 0.09, 0.04, 0.11, 0.05, 0.08, 0.03],
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-V05-overlap-K8",
+      "family": "overlap",
+      "kind": "mixture",
+      "K": 8,
+      "spacing": 0.30,
+      "sigmas": 0.17,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-V06-contaminated",
+      "family": "contaminated",
+      "kind": "mixture",
+      "means": [-1.8, -1.2, -0.6, 0.0, 0.6, 1.2, 1.8, 5.2],
+      "sigmas": [0.07, 0.06, 0.08, 0.05, 0.08, 0.06, 0.07, 0.11],
+      "weights": [0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.03]
+    }
+  ],
+  "test_targets": [
+    {
+      "name": "QLD-T01-eq-K7",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 7,
+      "spacing": 0.66,
+      "sigmas": 0.075,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T02-eq-K9",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 1.12,
+      "sigmas": 0.05,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T03-eq-K13",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 13,
+      "spacing": 0.57,
+      "sigmas": 0.065,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T04-eq-K17",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 17,
+      "spacing": 0.97,
+      "sigmas": 0.04,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T05-eq-K22",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 22,
+      "spacing": 0.73,
+      "sigmas": 0.055,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T06-eq-K26",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 26,
+      "spacing": 0.51,
+      "sigmas": 0.07,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T07-eq-K30",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 30,
+      "spacing": 0.86,
+      "sigmas": 0.038,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T08-eq-K32",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 32,
+      "spacing": 0.61,
+      "sigmas": 0.05,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T09-unequal-K8",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 8,
+      "spacing": 0.90,
+      "sigmas": 0.06,
+      "weights": [0.40, 0.20, 0.12, 0.09, 0.07, 0.05, 0.04, 0.03]
+    },
+    {
+      "name": "QLD-T10-unequal-K12",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 12,
+      "spacing": 0.65,
+      "sigmas": 0.055,
+      "weights": [1, 2, 3, 5, 8, 13, 13, 8, 5, 3, 2, 1]
+    },
+    {
+      "name": "QLD-T11-unequal-K16",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 16,
+      "spacing": 0.90,
+      "sigmas": 0.045,
+      "weights": [1, 1, 1, 2, 3, 5, 8, 21, 21, 8, 5, 3, 2, 1, 1, 1]
+    },
+    {
+      "name": "QLD-T12-hetero-K10",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 10,
+      "spacing": 0.80,
+      "sigmas": [0.03, 0.05, 0.08, 0.12, 0.06, 0.04, 0.11, 0.07, 0.045, 0.09],
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T13-hetero-K19",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 19,
+      "spacing": 0.60,
+      "sigmas": [0.03, 0.10, 0.04, 0.09, 0.05, 0.11, 0.035, 0.08, 0.06, 0.12, 0.06, 0.08, 0.035, 0.11, 0.05, 0.09, 0.04, 0.10, 0.03],
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T14-overlap-K7",
+      "family": "overlap",
+      "kind": "mixture",
+      "K": 7,
+      "spacing": 0.25,
+      "sigmas": 0.15,
+      "weights": "equal"
+    },
+    {
+      "name": "QLD-T15-contaminated",
+      "family": "contaminated",
+      "kind": "mixture",
+      "means": [-2.1, -1.4, -0.7, 0.0, 0.7, 1.4, 2.1, 6.0],
+      "sigmas": [0.055, 0.07, 0.06, 0.05, 0.06, 0.07, 0.055, 0.10],
+      "weights": [0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.1385714286, 0.03]
+    },
+    {
+      "name": "QLD-T16-student-t4",
+      "family": "connected-heavy-tail",
+      "kind": "student",
+      "df": 4.0,
+      "scale": 0.80
+    }
+  ]
+}

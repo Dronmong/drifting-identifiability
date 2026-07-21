@@ -1,0 +1,14 @@
+{
+  "protocol": "QLD-confirmatory-v1",
+  "profile": "standard",
+  "registry_sha256": "7FEF49789904464A3103E09A166AD1C49A28C72DCAE00C61B87D72AA0CB1B8F8",
+  "selected_tau": 0.5,
+  "selection_rule": "minimum geometric mean of cell-median ED2",
+  "scores": {
+    "0.2": 0.009189007376211655,
+    "0.5": 0.0088069528656016,
+    "1.0": 0.009100967044309061,
+    "2.0": 0.010286229693709334,
+    "4.0": 0.014212342447362919
+  }
+}
