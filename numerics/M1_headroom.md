@@ -58,10 +58,35 @@ splitting/capacity, not bandwidth.
   no resolution gain in any regime with genuine headroom.
 - Do **not** proceed to freeze registries / build the full M3 gate for this
   candidate.
-- The open question the data raises is whether the hard-regime deficit is a
-  *field-design* opportunity at all, or a *capacity* limit (too few
-  particles/steps to populate many modes from a degenerate start). Distinguishing
-  these — hold the field fixed, scale N and steps — is the honest next diagnostic
-  before proposing any new candidate. If it is capacity-bound, there is no
-  field-design win to be had, matching every prior program.
+- **Capacity diagnostic (`m1_cap2` probe), K=32 d=2, single τ=0.4:**
+
+  | N | steps | reach | resolve |
+  |---:|---:|---:|---:|
+  | 128 | 800 | 0.42 | 0.20 |
+  | 128 | 2400 | 0.84 | 0.27 |
+  | 384 | 800 | 0.41 | 0.16 |
+  | 384 | 2400 | 0.83 | 0.23 |
+  | 1024 | 800 | 0.42 | 0.19 |
+
+  **More particles do not help at all** (resolve ~0.16–0.20 flat across
+  N = 128/384/1024). **More steps lift reach** (0.42 → 0.84) **but not
+  resolution** (plateau ~0.23–0.27). So resolution is *barriered* around ~0.25 —
+  it is neither a capacity limit (N is inert) nor fixed by running longer.
+
+- **Why additive two-scale cannot break the barrier.** The fine field
+  `V(τ_fine≈3σ)` is active only within ~`3σ` of a mode; but a coarse field
+  spreads particles across the whole basin (radius ~0.2–0.3 ≫ 3σ). Most
+  particles sit in a "no-man's-land" — inside the basin, outside the fine
+  field's reach — so nothing pulls them onto the mode. The two scales do not
+  overlap in their active regions, which is exactly why the additive field lifts
+  reach but not resolution.
+
+- **Net:** the hard-regime deficit is a genuine dynamical barrier, but it is
+  neither capacity-bound nor closed by the proposed candidate. The only untested
+  bridge is a **coarse-to-fine anneal** (shrink τ so the active region contracts
+  with the cloud), which the ledger flags as dimension-fragile (A2: 2-D win, 5-D
+  loss). Absent evidence that annealing survives high dimension, the
+  mode-recovery program is following the ledger's meta-pattern (candidate fails
+  where the baseline fails) and should not proceed to a frozen gate without a new
+  idea that demonstrably breaks the resolution barrier.
 - Reproduce: `uv run --with numpy --with scipy python numerics/m1_headroom.py`.
