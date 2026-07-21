@@ -154,3 +154,27 @@ a scoreboard we then threw away by averaging it into aggregate error.
 
 **→ Active roadmap for this target:**
 [`ModeRecoveryRoadmap.md`](../../numerics/ModeRecoveryRoadmap.md).
+
+---
+
+## E. Global assignment / functional-geometry probes
+
+The closed mode-recovery program made the missing mechanism more precise: the
+learned generator needs different members of a concentrated minibatch to
+receive different destinations. These probes therefore change coupling or
+parameter geometry instead of applying another scalar gain or bandwidth.
+
+| # | Idea | Mechanism targeted | Setting | Outcome | Verdict |
+|---|---|---|---|---|---|
+| E1 | Random sliced-rank field / warm start | globally balanced particle-to-quantile assignment | K=32, d=2 missing-mode generator | ❌ | A tuned paper bandwidth matched or beat every variant; the naive high-dimensional extension is rejected. |
+| E2 | **70% exact 1-D quantile fission, then 30% paper Laplace refinement** | split a homogeneous swarm globally, sharpen locally | 1-D Gaussian-mixture generators | 🟡 | Missing-mode screen: ED2 ratio **0.678** against an oracle bandwidth per target, wins 3/4 targets (SW1 4/4). All-initialization stress ratio **1.055** because far starts fail badly (2.494); residual-trigger and pure-quantile repairs also fail there. Promising only as a concentrated/missing-mode fission method; requires the frozen scoped gate in `QuantileFissionDriftingPlan.md`. |
+| E3 | Output-space natural / Gauss--Newton field tracking | make the generator realize the requested particle motion | K=32, d=2 | ❌ | Large apparent win against `tau=.4` evaporated after tuning the paper arm (`tau=.8`); also expensive and did not solve mode resolution. |
+
+**New hypothesis.** Local Laplace drift is useful for refinement but is a poor
+fission operator. In one dimension, exact rank coupling supplies the missing
+global mass allocation without labels or target-mode knowledge. The current
+candidate deliberately uses it only as a warm phase and returns to the paper
+field for its certified local endpoint.
+
+**→ Active candidate and frozen next gate:**
+[`QuantileFissionDriftingPlan.md`](../../numerics/QuantileFissionDriftingPlan.md).

@@ -8,7 +8,8 @@ tried against the paper metrics, its outcome, and the pattern across them.
 ## ⭐ Start here
 
 - **[PaperImprovementAttempts.md](PaperImprovementAttempts.md)** — the ledger of every idea tried to beat the paper, with the cross-program pattern analysis and the resulting next target.
-- **[ModeRecoveryRoadmap.md](../../numerics/ModeRecoveryRoadmap.md)** — the active roadmap for the next target the ledger points to: mode-coverage / missing-mode recovery in a regime where one fixed bandwidth cannot both reach and resolve.
+- **[QuantileFissionDriftingPlan.md](../../numerics/QuantileFissionDriftingPlan.md)** — the active paper-improvement candidate: a globally mass-balanced 1-D quantile-fission phase followed by the paper's Laplace refinement, with the exploratory evidence and the frozen confirmatory gate.
+- **[ModeRecoveryRoadmap.md](../../numerics/ModeRecoveryRoadmap.md)** — the closed characterization that isolated the fission barrier motivating the active candidate.
 
 ## Certified dynamics layer (Lean, but empirically motivated)
 
