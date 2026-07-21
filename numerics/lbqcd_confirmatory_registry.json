@@ -1,0 +1,145 @@
+{
+  "registry": "LBQCD-confirmatory-v1",
+  "master_seed": 20260803,
+  "targets": [
+    {
+      "name": "LBQCD-C01-unequal-min045-K7",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 7,
+      "spacing": 0.83,
+      "sigmas": 0.058,
+      "weights": [0.045, 0.12, 0.14, 0.18, 0.20, 0.17, 0.145]
+    },
+    {
+      "name": "LBQCD-C02-unequal-min030-K9",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.67,
+      "sigmas": 0.052,
+      "weights": [0.03, 0.12125, 0.12125, 0.12125, 0.12125, 0.12125, 0.12125, 0.12125, 0.12125]
+    },
+    {
+      "name": "LBQCD-C03-unequal-min020-K11",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 11,
+      "spacing": 0.91,
+      "sigmas": 0.046,
+      "weights": [0.098, 0.098, 0.098, 0.098, 0.098, 0.098, 0.098, 0.098, 0.098, 0.098, 0.02]
+    },
+    {
+      "name": "LBQCD-C04-unequal-min012-K13",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 13,
+      "spacing": 0.59,
+      "sigmas": 0.049,
+      "weights": [0.012, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333, 0.082333333333333]
+    },
+    {
+      "name": "LBQCD-C05-unequal-min0075-K16",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 16,
+      "spacing": 0.77,
+      "sigmas": 0.041,
+      "weights": [0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.066166666666667, 0.0075]
+    },
+    {
+      "name": "LBQCD-C06-unequal-min004-K20",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 20,
+      "spacing": 0.54,
+      "sigmas": 0.044,
+      "weights": [0.004, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579, 0.052421052631579]
+    },
+    {
+      "name": "LBQCD-C07-unequal-resolved-K2",
+      "family": "unequal",
+      "kind": "mixture",
+      "means": [-1.4, 1.4],
+      "sigmas": [0.13, 0.09],
+      "weights": [0.90, 0.10]
+    },
+    {
+      "name": "LBQCD-C08-equal-K6",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 6,
+      "spacing": 0.88,
+      "sigmas": 0.07,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C09-equal-K12",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 12,
+      "spacing": 0.64,
+      "sigmas": 0.054,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C10-equal-K24",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 24,
+      "spacing": 0.49,
+      "sigmas": 0.047,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C11-hetero-K10",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 10,
+      "spacing": 0.73,
+      "sigmas": [0.035, 0.095, 0.05, 0.12, 0.065, 0.04, 0.105, 0.055, 0.085, 0.03],
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C12-hetero-K18",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 18,
+      "spacing": 0.56,
+      "sigmas": [0.03, 0.08, 0.045, 0.105, 0.06, 0.035, 0.09, 0.05, 0.115, 0.115, 0.05, 0.09, 0.035, 0.06, 0.105, 0.045, 0.08, 0.03],
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C13-overlap-K10",
+      "family": "overlap",
+      "kind": "mixture",
+      "K": 10,
+      "spacing": 0.24,
+      "sigmas": 0.19,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-C14-contaminated",
+      "family": "contaminated",
+      "kind": "mixture",
+      "means": [-2.4, -1.6, -0.8, 0.0, 0.8, 1.6, 2.4, 6.1],
+      "sigmas": [0.065, 0.075, 0.055, 0.09, 0.055, 0.075, 0.065, 0.13],
+      "weights": [0.140714285714286, 0.140714285714286, 0.140714285714286, 0.140714285714286, 0.140714285714286, 0.140714285714286, 0.140714285714286, 0.015]
+    },
+    {
+      "name": "LBQCD-C15-heavy-t3p5",
+      "family": "heavy-tail",
+      "kind": "student",
+      "df": 3.5,
+      "scale": 0.78
+    },
+    {
+      "name": "LBQCD-C16-connected-normal",
+      "family": "connected",
+      "kind": "mixture",
+      "means": [0.25],
+      "sigmas": [0.95],
+      "weights": [1.0]
+    }
+  ]
+}
