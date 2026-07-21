@@ -79,6 +79,23 @@ The operating point is taken from the paper, not chosen for convenience:
   with the `eye(N)*1e6` self-mask (Algorithm 2);
 - CFG scale `alpha in [1, 4]` (Table 8).
 
+## Quantile-to-Laplace learned-generator program
+
+The later one-dimensional learned-generator program is recorded separately:
+
+* `QLDNextGenerationResearch.md` develops the large-batch successor to the
+  original quantile-to-Laplace candidate;
+* `LBQCDDevelopmentResults.md` records the development selection;
+* `LBQCDConfirmatoryProtocol.md` and `LBQCDConfirmatoryResults.md` contain the
+  frozen confirmatory protocol and its scoped 17.8% ED2 improvement;
+* `OccupancyAdaptiveQuantileResearch.md` audits why large-batch transport
+  improves early coverage more reliably than final error and specifies the
+  next state-aware, stratified successor experiment.
+
+Neither frozen LB-QCD registry may be reused to tune the successor. The result
+is limited to the documented one-dimensional synthetic generator benchmark
+and does not assert ImageNet, real-feature, or multidimensional superiority.
+
 ## Formula crosswalk (Python -> Lean)
 
 | `driftlab.py` | Lean declaration |
