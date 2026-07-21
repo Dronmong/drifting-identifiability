@@ -11,6 +11,7 @@ tried against the paper metrics, its outcome, and the pattern across them.
 - **[QuantileFissionConfirmatoryResults.md](../../numerics/QuantileFissionConfirmatoryResults.md)** — completed frozen assessment of 1-D quantile-to-Laplace drifting: a modest ED2/SW1 and compute improvement, but a failed pre-registered minimum-effect gate.
 - **[QLDNextGenerationResearch.md](../../numerics/QLDNextGenerationResearch.md)** — forensic analysis of QLD's confirmed strengths and weaknesses, literature cross-check, and the recommended large-batch/quantile-calibrated successor.
 - **[LBQCDDevelopmentResults.md](../../numerics/LBQCDDevelopmentResults.md)** — implemented successor: target-gated virtual-large-batch quantile transport reaches `.7948` ED2 versus the selected paper baseline and `.8685` versus its hindsight oracle on a new development suite, with explicit compute and far-start limitations.
+- **[LBQCDConfirmatoryResults.md](../../numerics/LBQCDConfirmatoryResults.md)** — frozen 4,480-trial test: broad ED2/SW1 improvement and `.9437` versus the paper oracle, but a narrow gate failure because ED2 `.8218` missed the required `.80` effect threshold.
 - **[QuantileFissionDriftingPlan.md](../../numerics/QuantileFissionDriftingPlan.md)** — candidate design, exploratory evidence, and the now-completed frozen protocol.
 - **[ModeRecoveryRoadmap.md](../../numerics/ModeRecoveryRoadmap.md)** — the closed characterization that isolated the fission barrier motivating the active candidate.
 

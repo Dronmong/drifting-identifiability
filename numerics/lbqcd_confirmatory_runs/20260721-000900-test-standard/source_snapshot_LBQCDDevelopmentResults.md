@@ -227,14 +227,3 @@ optimizer/architecture   = unchanged TanhMLP + Adam
 The next legitimate claim-bearing step is a new immutable registry and at
 least 20 paired seeds. The development registry and its thresholds must not be
 retuned again or reused as confirmatory evidence.
-
-## 10. Confirmatory outcome
-
-That test has now been completed without retuning. The frozen candidate reached
-ED2 `.8218` versus the selected paper baseline, bootstrap interval
-`[.7649,.8915]`, and `.9437` versus the per-cell paper oracle. It won 30/32
-cells and every family was favorable, but the protocol verdict is **FAIL**
-because `.8218` narrowly missed the required `.80` minimum effect.
-
-See [LBQCDConfirmatoryResults.md](LBQCDConfirmatoryResults.md). The frozen
-registry must not be reused for further selection.

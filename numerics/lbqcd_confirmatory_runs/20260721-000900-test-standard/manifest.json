@@ -1,0 +1,38 @@
+{
+  "protocol": "LBQCD-confirmatory-v1",
+  "profile": {
+    "name": "standard",
+    "steps": 1200,
+    "batch": 128,
+    "seeds": 20,
+    "eval_size": 4096,
+    "ed_size": 1024,
+    "selector_probe": 256
+  },
+  "workers": 10,
+  "task_count": 4480,
+  "registry_sha256": "C2A5F01048F732EC0574A70BBD249079E4E04250EAB6D522C3449D80DC310231",
+  "pre_run_git_status": [],
+  "commit": "bbce00819fdd32b4613bab2cbc866e00b1f8e17f",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 1512.7862281999987,
+  "command": [
+    "numerics/run_lbqcd_confirmatory.py",
+    "--profile",
+    "standard",
+    "--workers",
+    "10"
+  ],
+  "source_sha256": {
+    "numerics\\run_lbqcd_confirmatory.py": "BB99ED0E86E75A76DA7F1AC2829BD0BF6947408646DC5A52FAF78D1A37B7C2FF",
+    "numerics\\lbqcd_confirmatory_registry.json": "C2A5F01048F732EC0574A70BBD249079E4E04250EAB6D522C3449D80DC310231",
+    "numerics\\LBQCDConfirmatoryProtocol.md": "300F08B3B60A80AFF05E231B2B6C3F191641CDF3F3ABF9D2DDD3A3F38FA74899",
+    "numerics\\LBQCDDevelopmentResults.md": "11C7990ED320ED19B002303E656D6AACD1CE16D6AA52723B367C987A2EF74ADF",
+    "numerics\\lbqcd.py": "CAE08DEA43DA1D5650D5527688EF4FF8F0A7378831F2D400B60D1E7FA43B2067",
+    "numerics\\run_lbqcd_development.py": "FDFC3FF8B2A0459CE9F1C88268FAB40391471149649A61AFC4C057E1C9BBFB12",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6"
+  }
+}

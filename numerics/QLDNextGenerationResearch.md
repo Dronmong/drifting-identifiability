@@ -430,3 +430,9 @@ diagnostic remains unfavorable (`3.3089x` paper ED2).
 
 Full details and the frozen-candidate recommendation are in
 [LBQCDDevelopmentResults.md](LBQCDDevelopmentResults.md).
+
+The subsequent frozen N4 test produced ED2 `.8218` with interval
+`[.7649,.8915]`, SW1 `.8679`, 30/32 cell wins, all families favorable, and
+`.9437` versus a per-cell hindsight paper oracle. Its formal gate nevertheless
+failed because the predeclared ED2 effect threshold was `.80`. See
+[LBQCDConfirmatoryResults.md](LBQCDConfirmatoryResults.md).
