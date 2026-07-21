@@ -1,0 +1,149 @@
+{
+  "program": "OASQD-development-v1",
+  "stage": "o2",
+  "targets": [
+    "OASQD-D01-tail-min060-K7",
+    "OASQD-D02-tail-min035-K9",
+    "OASQD-D03-tail-min018-K11",
+    "OASQD-D04-tail-min009-K15",
+    "OASQD-D05-tail-min0045-K19",
+    "OASQD-D06-tail-min003-K21",
+    "OASQD-D07-interior-min012-K9",
+    "OASQD-D08-interior-min005-K14",
+    "OASQD-D09-equal-K17",
+    "OASQD-D10-hetero-K13",
+    "OASQD-D11-contaminated-min012",
+    "OASQD-D12-overlap-K9",
+    "OASQD-D13-connected-skew",
+    "OASQD-D14-heavy-t4p2",
+    "OASQD-D15-connected-normal",
+    "OASQD-D16-near-overlap-tail"
+  ],
+  "inits": [
+    "concentrated",
+    "missing"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "arms": [
+    "fixed-lbqcd",
+    "oa-pulse-full-H25-P25-N2048-K8",
+    "oa-stop-full-H25-P25-N2048-K8",
+    "paper-0.5",
+    "qld-v1"
+  ],
+  "ed2_ratios": {
+    "fixed-lbqcd": {
+      "paper-0.5": 0.8859367992479716,
+      "qld-v1": 1.0366406500484908,
+      "fixed-lbqcd": 1.0
+    },
+    "oa-pulse-full-H25-P25-N2048-K8": {
+      "paper-0.5": 0.8814406216598286,
+      "qld-v1": 1.0313796421959416,
+      "fixed-lbqcd": 0.9949249454453641
+    },
+    "oa-stop-full-H25-P25-N2048-K8": {
+      "paper-0.5": 0.8533950221096763,
+      "qld-v1": 0.998563296184185,
+      "fixed-lbqcd": 0.9632685117426905
+    },
+    "paper-0.5": {
+      "paper-0.5": 1.0,
+      "qld-v1": 1.1701067739013036,
+      "fixed-lbqcd": 1.1287486882234163
+    },
+    "qld-v1": {
+      "paper-0.5": 0.8546228620366471,
+      "qld-v1": 1.0,
+      "fixed-lbqcd": 0.9646544344496071
+    }
+  },
+  "best_candidate": "oa-stop-full-H25-P25-N2048-K8",
+  "best_vs_paper_oracle": null,
+  "best_details": {
+    "ed2_bootstrap_ci_vs_paper": [
+      0.7735440327422329,
+      1.0233813148653719
+    ],
+    "ed2_bootstrap_ci_vs_qld": [
+      0.9150974881507488,
+      1.0499044578003562
+    ],
+    "cell_win_fraction_vs_paper": 0.71875,
+    "sw1_ratio_vs_paper": 0.891592062885193,
+    "family_ed2_ratios_vs_qld": {
+      "connected": 1.0,
+      "contaminated": 0.8612097701246628,
+      "equal": 0.944209717318587,
+      "heavy-tail": 1.0,
+      "heteroscedastic": 1.0,
+      "overlap": 1.0,
+      "resolution-boundary": 0.9702060337582055,
+      "unequal-interior": 1.0122311904733428,
+      "unequal-tail": 1.0449823588111506
+    },
+    "init_ed2_ratios_vs_qld": {
+      "concentrated": 1.0062127952581141,
+      "missing": 0.9909719506503
+    },
+    "event_time_ratio_vs_fixed": 0.9963260456818589,
+    "generator_eval_ratio_vs_paper": 5.1106589916633585,
+    "work_totals": {
+      "fixed-lbqcd": {
+        "wall_seconds": 70.86147770017851,
+        "generator_example_evals": 33178624.0,
+        "backward_example_evals": 17960960.0,
+        "kernel_pairs": 377487360.0,
+        "total_new_target_samples": 18354176.0,
+        "global_updates": 14560.0,
+        "divergences": 0.0
+      },
+      "oa-pulse-full-H25-P25-N2048-K8": {
+        "wall_seconds": 49.82858990007662,
+        "generator_example_evals": 14787456.0,
+        "backward_example_evals": 8270720.0,
+        "kernel_pairs": 377487360.0,
+        "total_new_target_samples": 9057152.0,
+        "global_updates": 3745.0,
+        "divergences": 0.0
+      },
+      "oa-stop-full-H25-P25-N2048-K8": {
+        "wall_seconds": 67.58919980021892,
+        "generator_example_evals": 26365440.0,
+        "backward_example_evals": 13749760.0,
+        "kernel_pairs": 377487360.0,
+        "total_new_target_samples": 14536192.0,
+        "global_updates": 9860.0,
+        "divergences": 0.0
+      },
+      "paper-0.5": {
+        "wall_seconds": 58.29003000003286,
+        "generator_example_evals": 5158912.0,
+        "backward_example_evals": 4915200.0,
+        "kernel_pairs": 1258291200.0,
+        "total_new_target_samples": 4915200.0,
+        "global_updates": 0.0,
+        "divergences": 0.0
+      },
+      "qld-v1": {
+        "wall_seconds": 29.208917000243673,
+        "generator_example_evals": 5236736.0,
+        "backward_example_evals": 4915200.0,
+        "kernel_pairs": 377487360.0,
+        "total_new_target_samples": 4915200.0,
+        "global_updates": 0.0,
+        "divergences": 0.0
+      }
+    }
+  },
+  "advancement_gate": {
+    "endpoint_improves_vs_fixed": true,
+    "fair_event_time_no_worse_than_fixed": true,
+    "uses_fewer_global_updates_than_fixed": true
+  },
+  "gate_passed": true
+}

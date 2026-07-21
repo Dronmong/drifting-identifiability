@@ -1,19 +1,10 @@
 # Occupancy-adaptive quantile drifting: forensic audit and successor plan
 
-**Date:** 2026-07-21
-
-**Evidence base:** frozen `LBQCD-confirmatory-v1` result and completed
-`OASQD-development-v1` campaign
-
+**Date:** 2026-07-21  
+**Evidence base:** frozen `LBQCD-confirmatory-v1` result  
 **Purpose:** determine what worked in resolution-gated LB-QCD, isolate what
 limited it, and specify the next experiment without reusing either frozen
 target registry as a tuning set.
-
-> **Audit correction (2026-07-21).** The old LB-QCD coverage-event comparison
-> was not cross-arm fair: its event diagnostic used the training batch, so RSR
-> received 1,024 samples and QLD received 128. Endpoint ED2/SW1/mass results
-> remain valid, but the old “13 earlier, 5 tied” timing claim is withdrawn.
-> The OA-SQD runner uses a same-sized independent event probe for every arm.
 
 ## Executive conclusion
 
@@ -25,22 +16,21 @@ and remained favorable against a per-cell hindsight paper-bandwidth oracle.
 The result is meaningful even though it correctly failed the predeclared
 `20%` minimum-effect gate.
 
-The forensic pass changed the interpretation of the large-batch component:
+The new forensic pass changes the interpretation of the large-batch component:
 
 - the quantile-to-Laplace hybrid supplies most of the aggregate improvement;
 - fixed `M=1024` large-batch transport adds only about `1.7%` overall relative
   to QLD-v1;
+- nevertheless, in the 18 routed target/initialization cells it reached the
+  coverage event earlier in 13 and tied in 5--never later;
 - it improved final mass-L1 in 13 of those 18 cells;
 - but it improved final ED2 in only 8 of 18 cells.
 
-The first version of this plan also cited a 13/18 coverage acceleration. That
-comparison is invalid for the reason in the audit correction above. In the
-new fair O2 experiment, state-aware full RSR was approximately tied with
-fixed LB-QCD on event time (`.9963` ratio), not decisively faster.
-
-The mass and endpoint signature motivated the hypothesis that large-batch rank
-transport helps support discovery but is over-applied by a target-only router.
-That was a testable hypothesis, not an established timing result.
+This is a coherent failure signature: large-batch rank transport is effective
+at **early support discovery and mass allocation**, but a target-only router
+keeps applying a costly global correction after the generator state no longer
+needs it. The fixed 70% warm phase can then damage endpoint geometry that the
+ordinary-batch quantile or final paper field would have refined more gently.
 
 The recommended successor is **Occupancy-Adaptive Stratified Quantile
 Drifting (OA-SQD)**:
@@ -61,11 +51,9 @@ empirical finite basis cells, the controller enforces observable support of
 those cells, and positive stratum weights preserve every cell rather than
 discarding inconvenient mass.
 
-The plan has now been implemented through O5. The authoritative outcome is
-[`OASQDDevelopmentResults.md`](OASQDDevelopmentResults.md): the standard
-development gate failed, so no O6 confirmation was launched. The two existing
-LB-QCD registries remained sealed and were not used to choose any OA-SQD
-hyperparameter.
+This document is a research and implementation plan, not a result. The two
+existing LB-QCD registries remain sealed and must not be used to choose any
+OA-SQD hyperparameter.
 
 ## 1. Frozen evidence that must not move
 
@@ -136,11 +124,10 @@ more stable estimate of the target quantile interval and allows the generator
 to receive a correction toward that interval. This is exactly the qualitative
 benefit for which Run-Sort-ReRun was designed.
 
-The frozen mass-L1 data suggests that large-batch transport can reallocate
-probability mass even when final geometric error is worse. The old timing data
-does not establish faster support discovery because its probe sizes differed
-by arm. The fair OA-SQD development runner was created to test that mechanism
-without this confound.
+The frozen timing data supports the mechanism rather than merely its endpoint:
+large-batch transport was faster or equal on the coverage event in every
+routed cell. Its frequent mass-L1 improvement also shows that it reallocates
+probability mass effectively even when the final geometric error is worse.
 
 ### 3.3 The final paper field is still valuable
 
@@ -186,12 +173,12 @@ needs a generated-distribution diagnostic.
 
 ### 4.2 Fixed duration confuses discovery with refinement
 
-The 13/18 mass-L1 improvement, combined with only 8/18 endpoint ED2
-improvements, suggested that the large-batch operator might be useful earlier
-than it is useful later. The coverage timing evidence originally paired with
-this observation is withdrawn. The present fixed 70% duration still cannot
-stop when a rare region has been populated, which made state-aware stopping a
-reasonable causal experiment.
+The 13/18 coverage acceleration and 13/18 mass-L1 improvement, combined with
+only 8/18 endpoint ED2 improvements, suggest that the large-batch operator is
+often useful earlier than it is useful later. The present fixed 70% duration
+cannot stop when the rare region has been populated. Continuing full global
+rank corrections can trade local shape quality for already-achieved mass
+allocation.
 
 The most direct repair is therefore a state-aware stopping rule, not a larger
 fixed batch or a longer fixed phase.
@@ -755,7 +742,7 @@ Scores are informed judgments, not measured effects.
 | More fixed large-batch training | `3/10` | low | high compute/endpoint risk | reject |
 | Unbalanced mass deletion | `2.5/10` | medium | conflicts with goal | diagnostic only |
 
-## 13. Decision rule and observed outcome
+## 13. Decision rule after the next pass
 
 Proceed to a fresh confirmation only if the causal sequence is visible:
 
@@ -775,14 +762,6 @@ compute reduction as a separate problem. If the atlas fails on connected
 tails, retain state-aware control using a label-free quantile residual without
 claiming explicit component discovery.
 
-Observed outcome: O1 passed; O2 showed a small improvement over fixed LB-QCD
-but only a tie with QLD; O3 succeeded as an estimator and compute reduction;
-O4 produced a small three-seed screen signal; and the predeclared O5 candidate
-failed four of seven advancement gates. In particular, candidate/QLD ED2 was
-`1.0031`, not the required `.95`. The correct decision is to retain the atlas
-and estimator infrastructure, stop this tuning branch, and not launch O6 or
-O7. See [`OASQDDevelopmentResults.md`](OASQDDevelopmentResults.md).
-
 ## Bottom line
 
 The current result already demonstrates a broad low-dimensional improvement
@@ -791,8 +770,7 @@ uniform improvement over QLD-v1. The data says the next gain is most likely to
 come from using global transport **only when the current generator lacks
 target support**, then stopping it as soon as that support is restored.
 
-OA-SQD was a direct, falsifiable implementation of that lesson. Its atlas and
-stratified estimator worked, but the full training hypothesis did not survive
-the standard development tournament: the candidate improved on the paper arm
-while failing to improve on QLD. The evidence now favors changing the training
-signal or optimizer dynamics rather than further occupancy-threshold tuning.
+OA-SQD is the most direct, falsifiable implementation of that lesson. It does
+not ask a larger batch to solve every part of learning. It uses a large forward
+table to see rare mass, a small stratified backward set to act on it, and the
+paper field to finish.

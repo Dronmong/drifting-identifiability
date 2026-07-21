@@ -1,0 +1,145 @@
+{
+  "registry": "OASQD-development-v1",
+  "master_seed": 20260917,
+  "description": "Fresh OA-SQD development registry. Disjoint from both frozen LB-QCD registries; never use it for a confirmatory claim.",
+  "targets": [
+    {
+      "name": "OASQD-D01-tail-min060-K7",
+      "family": "unequal-tail",
+      "kind": "mixture",
+      "K": 7,
+      "spacing": 0.76,
+      "sigmas": 0.061,
+      "weights": [0.06, 0.14, 0.18, 0.19, 0.17, 0.14, 0.12]
+    },
+    {
+      "name": "OASQD-D02-tail-min035-K9",
+      "family": "unequal-tail",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.72,
+      "sigmas": 0.049,
+      "weights": [0.120625, 0.120625, 0.120625, 0.120625, 0.120625, 0.120625, 0.120625, 0.120625, 0.035]
+    },
+    {
+      "name": "OASQD-D03-tail-min018-K11",
+      "family": "unequal-tail",
+      "kind": "mixture",
+      "K": 11,
+      "spacing": 0.81,
+      "sigmas": 0.047,
+      "weights": [0.018, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982, 0.0982]
+    },
+    {
+      "name": "OASQD-D04-tail-min009-K15",
+      "family": "unequal-tail",
+      "kind": "mixture",
+      "K": 15,
+      "spacing": 0.66,
+      "sigmas": 0.043,
+      "weights": [0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.070785714285714, 0.009]
+    },
+    {
+      "name": "OASQD-D05-tail-min0045-K19",
+      "family": "unequal-tail",
+      "kind": "mixture",
+      "K": 19,
+      "spacing": 0.61,
+      "sigmas": 0.041,
+      "weights": [0.0045, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556, 0.055305555555556]
+    },
+    {
+      "name": "OASQD-D06-tail-min003-K21",
+      "family": "resolution-boundary",
+      "kind": "mixture",
+      "K": 21,
+      "spacing": 0.58,
+      "sigmas": 0.039,
+      "weights": [0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.04985, 0.003]
+    },
+    {
+      "name": "OASQD-D07-interior-min012-K9",
+      "family": "unequal-interior",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.79,
+      "sigmas": 0.052,
+      "weights": [0.1235, 0.1235, 0.1235, 0.1235, 0.012, 0.1235, 0.1235, 0.1235, 0.1235]
+    },
+    {
+      "name": "OASQD-D08-interior-min005-K14",
+      "family": "unequal-interior",
+      "kind": "mixture",
+      "K": 14,
+      "spacing": 0.69,
+      "sigmas": 0.044,
+      "weights": [0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.005, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462, 0.076538461538462]
+    },
+    {
+      "name": "OASQD-D09-equal-K17",
+      "family": "equal",
+      "kind": "mixture",
+      "K": 17,
+      "spacing": 0.57,
+      "sigmas": 0.046,
+      "weights": "equal"
+    },
+    {
+      "name": "OASQD-D10-hetero-K13",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 13,
+      "spacing": 0.68,
+      "sigmas": [0.032, 0.088, 0.047, 0.112, 0.058, 0.039, 0.125, 0.039, 0.058, 0.112, 0.047, 0.088, 0.032],
+      "weights": "equal"
+    },
+    {
+      "name": "OASQD-D11-contaminated-min012",
+      "family": "contaminated",
+      "kind": "mixture",
+      "means": [-2.25, -1.5, -0.75, 0.0, 0.75, 1.5, 2.25, 5.85],
+      "sigmas": [0.068, 0.058, 0.082, 0.052, 0.082, 0.058, 0.068, 0.115],
+      "weights": [0.141142857142857, 0.141142857142857, 0.141142857142857, 0.141142857142857, 0.141142857142857, 0.141142857142857, 0.141142857142857, 0.012]
+    },
+    {
+      "name": "OASQD-D12-overlap-K9",
+      "family": "overlap",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.22,
+      "sigmas": 0.17,
+      "weights": "equal"
+    },
+    {
+      "name": "OASQD-D13-connected-skew",
+      "family": "connected",
+      "kind": "mixture",
+      "means": [-0.42, 0.68],
+      "sigmas": [0.72, 0.91],
+      "weights": [0.72, 0.28]
+    },
+    {
+      "name": "OASQD-D14-heavy-t4p2",
+      "family": "heavy-tail",
+      "kind": "student",
+      "df": 4.2,
+      "scale": 0.82
+    },
+    {
+      "name": "OASQD-D15-connected-normal",
+      "family": "connected",
+      "kind": "mixture",
+      "means": [-0.15],
+      "sigmas": [1.03],
+      "weights": [1.0]
+    },
+    {
+      "name": "OASQD-D16-near-overlap-tail",
+      "family": "resolution-boundary",
+      "kind": "mixture",
+      "means": [-1.8, -1.1, -0.4, 0.3, 1.0, 1.7, 2.75],
+      "sigmas": [0.08, 0.075, 0.085, 0.07, 0.085, 0.075, 0.28],
+      "weights": [0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.04]
+    }
+  ]
+}

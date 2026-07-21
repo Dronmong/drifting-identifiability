@@ -1,0 +1,13 @@
+{
+  "virtual_batch": 128,
+  "backward_batch": 32,
+  "repetitions": 400,
+  "gradient_dimension": 1185,
+  "mean_error_norm": 0.17969339335344572,
+  "monte_carlo_se_norm": 0.08142063146698685,
+  "error_over_se": 2.2069761695020134,
+  "stratified_gradient_mse": 2.677388087779549,
+  "uniform_gradient_mse": 5.005828481289459,
+  "stratified_over_uniform_mse": 0.5348541400862933,
+  "bias_audit_passed": true
+}

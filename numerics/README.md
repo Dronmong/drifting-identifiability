@@ -88,9 +88,19 @@ The later one-dimensional learned-generator program is recorded separately:
 * `LBQCDDevelopmentResults.md` records the development selection;
 * `LBQCDConfirmatoryProtocol.md` and `LBQCDConfirmatoryResults.md` contain the
   frozen confirmatory protocol and its scoped 17.8% ED2 improvement;
-* `OccupancyAdaptiveQuantileResearch.md` audits why large-batch transport
-  improves early coverage more reliably than final error and specifies the
-  next state-aware, stratified successor experiment.
+* `OccupancyAdaptiveQuantileResearch.md` audits the hypothesis that
+  large-batch transport could improve coarse mass allocation more reliably
+  than final error and specifies the state-aware, stratified successor;
+* `OASQDDevelopmentProtocol.md`, `oasqd.py`, and
+  `run_oasqd_development.py` implement that fresh staged campaign;
+* `OASQDDevelopmentResults.md` records the negative O5 decision: the atlas and
+  unbiased stratified estimator worked, but the frozen OA-SQD candidate tied
+  QLD rather than surpassing it, so no confirmation was launched.
+
+The earlier cross-arm LB-QCD coverage-time comparison used unequal event
+sample sizes and is withdrawn. The OA-SQD runner uses the same independent
+event-probe size for every arm; endpoint LB-QCD results are unaffected by this
+correction.
 
 Neither frozen LB-QCD registry may be reused to tune the successor. The result
 is limited to the documented one-dimensional synthetic generator benchmark

@@ -1,0 +1,41 @@
+{
+  "program": "OASQD-development-v1",
+  "stage": "o1",
+  "rows": 56,
+  "control_false_positive_rate": 0.0,
+  "synthetic_rare_detection_rate": 1.0,
+  "separated_exact_region_rate": 1.0,
+  "synthetic_rare_results": {
+    "synthetic-rare-0.05": {
+      "region_count": 2,
+      "minimum_mass": 0.050048828125,
+      "unresolved": 0
+    },
+    "synthetic-rare-0.02": {
+      "region_count": 2,
+      "minimum_mass": 0.02001953125,
+      "unresolved": 0
+    },
+    "synthetic-rare-0.01": {
+      "region_count": 2,
+      "minimum_mass": 0.010009765625,
+      "unresolved": 0
+    },
+    "synthetic-rare-0.005": {
+      "region_count": 2,
+      "minimum_mass": 0.0050048828125,
+      "unresolved": 0
+    },
+    "synthetic-rare-0.0025": {
+      "region_count": 2,
+      "minimum_mass": 0.00244140625,
+      "unresolved": 0
+    }
+  },
+  "gate": {
+    "no_control_false_positives": true,
+    "detects_rare_mass_at_least_0.005": true,
+    "recovers_declared_separated_regions": true
+  },
+  "gate_passed": true
+}
