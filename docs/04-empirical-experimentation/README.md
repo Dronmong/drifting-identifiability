@@ -9,6 +9,7 @@ tried against the paper metrics, its outcome, and the pattern across them.
 
 - **[PaperImprovementAttempts.md](PaperImprovementAttempts.md)** — the ledger of every idea tried to beat the paper, with the cross-program pattern analysis and the resulting next target.
 - **[QuantileFissionConfirmatoryResults.md](../../numerics/QuantileFissionConfirmatoryResults.md)** — completed frozen assessment of 1-D quantile-to-Laplace drifting: a modest ED2/SW1 and compute improvement, but a failed pre-registered minimum-effect gate.
+- **[QLDNextGenerationResearch.md](../../numerics/QLDNextGenerationResearch.md)** — forensic analysis of QLD's confirmed strengths and weaknesses, literature cross-check, and the recommended large-batch/quantile-calibrated successor.
 - **[QuantileFissionDriftingPlan.md](../../numerics/QuantileFissionDriftingPlan.md)** — candidate design, exploratory evidence, and the now-completed frozen protocol.
 - **[ModeRecoveryRoadmap.md](../../numerics/ModeRecoveryRoadmap.md)** — the closed characterization that isolated the fission barrier motivating the active candidate.
 
