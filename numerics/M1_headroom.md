@@ -81,12 +81,31 @@ splitting/capacity, not bandwidth.
   overlap in their active regions, which is exactly why the additive field lifts
   reach but not resolution.
 
-- **Net:** the hard-regime deficit is a genuine dynamical barrier, but it is
-  neither capacity-bound nor closed by the proposed candidate. The only untested
-  bridge is a **coarse-to-fine anneal** (shrink τ so the active region contracts
-  with the cloud), which the ledger flags as dimension-fragile (A2: 2-D win, 5-D
-  loss). Absent evidence that annealing survives high dimension, the
-  mode-recovery program is following the ledger's meta-pattern (candidate fails
-  where the baseline fails) and should not proceed to a frozen gate without a new
-  idea that demonstrably breaks the resolution barrier.
+- **Coarse-to-fine annealing also fails to break the barrier** (`m2_anneal`
+  probe: τ shrinks τ0→τ1, optional coarse hold):
+
+  | Regime | single best (reach, resolve) | anneal best (reach, resolve) | resolve gain |
+  |---|---|---|---:|
+  | K=32 d=2 | (1.00, 0.31) | (0.84, 0.34) | +0.03 |
+  | K=16 d=5 | (0.25, 0.12) | (0.44, 0.25) | +0.12 |
+
+  Annealing is negligible in d=2 (+0.03, and it *loses* reach) and only doubles a
+  tiny number in d=5 (0.12 → 0.25) — best-case resolution ~0.34, still leaving
+  ~two-thirds of modes unresolved. It does not approach the ~1.0 that would
+  constitute solving the problem.
+
+## Program outcome: characterized negative
+
+No candidate breaks the resolution barrier. Across the hard regimes (where
+genuine headroom exists), the best resolution achievable is: single bandwidth
+≈0.12–0.31, additive two-scale ≈ same (gains ±0.06), annealed ≈0.25–0.34. The
+mode-recovery program therefore follows the ledger's **meta-pattern** exactly:
+where the paper baseline succeeds (K=16 d=2) no candidate is needed; where it
+fails (K≥32 or d≥5) every candidate fails too, because the binding constraint is
+the swarm's inability to **split into enough correctly-placed sub-clusters from a
+degenerate start and concentrate each onto a mode** — a dynamical/capacity
+barrier that neither bandwidth choice, bandwidth scheduling, nor added particles
+overcomes. The program is closed as a characterized negative; `mode_recovery.py`
+(the metric layer) is retained as reusable infrastructure.
+
 - Reproduce: `uv run --with numpy --with scipy python numerics/m1_headroom.py`.

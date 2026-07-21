@@ -1,5 +1,14 @@
 # Mode-recovery program: roadmap
 
+> **OUTCOME (2026-07-20): CLOSED as a characterized negative.** M0 (metric
+> library) and M1 (headroom + candidate screen) were executed. Genuine headroom
+> exists only at K≥32 or d≥5, but no candidate — additive two-scale (D2) or
+> coarse-to-fine annealing (D3) — breaks the resolution barrier (best ≈0.34), and
+> the barrier is dynamical, not capacity-bound (D4). The M3 gate / M4 transfer /
+> M5 theorem were therefore NOT built. See `M1_headroom.md` and the ledger
+> `docs/04-empirical-experimentation/PaperImprovementAttempts.md` §D. The plan
+> below is retained as the design record.
+
 Status: proposed next empirical target, 2026-07-20. Supersedes aggregate-ED2
 chasing as the primary objective. Motivated by the cross-program pattern in
 [`docs/04-empirical-experimentation/PaperImprovementAttempts.md`](../docs/04-empirical-experimentation/PaperImprovementAttempts.md):

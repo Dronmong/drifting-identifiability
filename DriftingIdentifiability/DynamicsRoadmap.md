@@ -404,3 +404,14 @@ fixed multi-scale field, a headroom precondition (M1), an early
 optimizer diagnostic (the NCJ lesson), and a directional-reach transfer
 hypothesis (why it may survive Adam where NCJ did not) plus a mode-reach
 theorem target (M5).
+
+**Mode-recovery outcome (2026-07-20): CLOSED as a characterized negative.**
+M0 (metric library `numerics/mode_recovery.py`) and M1 were executed. A first
+headroom claim was confounded (selected the step for reach, reported resolve)
+and corrected: no headroom at K=16 d=2, genuine headroom only at K≥32 or d≥5.
+But no candidate breaks the resolution barrier there — additive two-scale gives
+zero resolve gain (±0.06), coarse-to-fine annealing gives +0.03 (d=2) / +0.12
+(d=5) to a best of ~0.34, and the barrier is dynamical not capacity-bound (more
+particles inert). The M3 gate onward were not built. This is the same
+meta-pattern as the NCJ program: where the baseline works no candidate is
+needed; where it fails every candidate fails too. See `numerics/M1_headroom.md`.

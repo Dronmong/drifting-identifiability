@@ -54,6 +54,26 @@ scale): H2 ESS / inverse-variance reliability weight; H3 loss-level confidence
 decoupling; H4 variance-reduced cross-fit; adaptive bandwidth from field
 diagnostics.
 
+## D. Mode-recovery program (coverage scoreboard)
+
+Reframed the objective from aggregate ED2 to mode coverage under missing-mode
+init (`ModeRecoveryRoadmap.md`), targeting the axis where prior programs won.
+
+| # | Idea | Mechanism targeted | Setting | Outcome | Verdict |
+|---|---|---|---|---|---|
+| D0 | Coverage metric (reach vs resolution) | change the scoreboard | `mode_recovery.py` | — | Retained infrastructure. Reach = basin mass; resolution = intra-mode precision. |
+| D1 | Headroom precondition | verify a real deficit | K∈{16,32,64}, d∈{2,5,10} | ⚪ | Confounded first (selected η by reach); corrected. No headroom at K=16 d=2 (single bandwidth solves it, resolve 1.0); genuine headroom only at K≥32 or d≥5. |
+| D2 | Additive two-scale field `V(τc)+αV(τf)` | reach + resolve simultaneously | hard regimes | ❌ | Resolve gains +0.06/+0.03/+0.00/−0.06/+0.00 = zero within noise. Fine scale active only within ~3σ; coarse spreads across the basin — no overlap. |
+| D3 | Coarse-to-fine annealing `τ0→τ1` | contract the resolving region with the cloud | hard regimes | ❌ | +0.03 (d=2), +0.12 (d=5); best resolution ~0.34, still ~⅔ modes unresolved. |
+| D4 | Capacity check (scale N, steps) | is the deficit field-fixable? | K=32 d=2 | — | More particles INERT; more steps lift reach not resolve. Barrier is dynamical, not capacity. |
+
+**Pattern reinforced.** The mode-recovery program hit the same meta-pattern:
+where the baseline works no candidate is needed; where it fails every candidate
+fails too. The binding constraint is the swarm's inability to split from a
+degenerate start and concentrate onto many tiny modes — a dynamical barrier no
+bandwidth/schedule/particle-count change overcomes. Closed as a characterized
+negative; details in [`numerics/M1_headroom.md`](../../numerics/M1_headroom.md).
+
 ---
 
 ## The pattern (read the outcome column top to bottom)
