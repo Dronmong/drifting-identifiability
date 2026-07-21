@@ -406,27 +406,3 @@ In priority order:
 
 This path is effective, honest about existing literature, computationally
 plausible, and unusually compatible with the project's identifiability results.
-
-## 11. Implementation outcome (2026-07-20)
-
-N0--N2 have now been executed. Unconditional virtual batching verified the
-rare-quantile diagnosis but failed the control-family guardrail. Phase-fraction,
-periodic-pulse, and mean-zero noise-restoration repairs did not remove the
-overlap failure. A target-only quantile-resolution router did: it invokes
-`M=1024` RSR only when a compact separated target region has fewer than eight
-expected representatives in the ordinary batch.
-
-On the 1,200-update, eight-seed development run, resolution-gated LB-QCD reached
-ED2 ratios `.7948` against the globally selected paper baseline and `.8685`
-against the per-cell hindsight paper oracle. Its target-bootstrap interval
-against the selected paper was `[.7063,.8910]`, and every family was favorable.
-It cost `1.2217x` measured worker wall time and `7.8906x` generator-example
-evaluations while retaining the `.30` kernel-pair ratio.
-
-Both bandwidth selectors were rejected: cosine alignment produced `.9779` and
-an exact cloned-Adam lookahead produced `.9350` at the screen profile, versus
-`.9059` for fixed `tau=.5`. N3 weighting was therefore skipped. A far-start
-diagnostic remains unfavorable (`3.3089x` paper ED2).
-
-Full details and the frozen-candidate recommendation are in
-[LBQCDDevelopmentResults.md](LBQCDDevelopmentResults.md).

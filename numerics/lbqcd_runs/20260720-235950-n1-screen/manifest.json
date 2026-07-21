@@ -1,0 +1,95 @@
+{
+  "program": "LBQCD-development-v1",
+  "stage": "n1",
+  "profile": {
+    "name": "screen",
+    "steps": 400,
+    "batch": 128,
+    "seeds": 3,
+    "eval_size": 2048,
+    "ed_size": 512,
+    "selector_probe": 128
+  },
+  "arms": [
+    {
+      "label": "paper-0.5",
+      "kind": "paper",
+      "tau": 0.5,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50,
+      "pulse_period": 0,
+      "noise_mix": 0.0
+    },
+    {
+      "label": "qld-v1",
+      "kind": "qld",
+      "tau": 0.5,
+      "virtual_batch": 0,
+      "warm_fraction": 0.7,
+      "budget": "update",
+      "selector_period": 50,
+      "pulse_period": 0,
+      "noise_mix": 0.0
+    },
+    {
+      "label": "gated-M1024-f0.70-u",
+      "kind": "gated",
+      "tau": 0.5,
+      "virtual_batch": 1024,
+      "warm_fraction": 0.7,
+      "budget": "update",
+      "selector_period": 50,
+      "pulse_period": 0,
+      "noise_mix": 0.0
+    }
+  ],
+  "task_count": 27,
+  "workers": 8,
+  "registry_sha256": "7910F46457EA1C7CC82F0F8DCC09D780D8C7683CA602D8A26260098D611192A0",
+  "commit": "1ad505cc8f8b2b5890f38ab0b78508c73995a45b",
+  "git_status": [
+    "?? numerics/lbqcd.py",
+    "?? numerics/lbqcd_development_registry.json",
+    "?? numerics/lbqcd_runs/",
+    "?? numerics/run_lbqcd_development.py"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 3.2237037000013515,
+  "command": [
+    "numerics/run_lbqcd_development.py",
+    "--stage",
+    "n1",
+    "--profile",
+    "screen",
+    "--virtual-batches",
+    "1024",
+    "--warm-fractions",
+    "0.70",
+    "--budgets",
+    "update",
+    "--include-gated",
+    "--arms",
+    "paper-0.5,qld-v1,gated-M1024-f0.70-u",
+    "--inits",
+    "far",
+    "--targets",
+    "LBQCD-D03-unequal-min020-K12,LBQCD-D09-overlap-K8,LBQCD-D11-heavy-t5",
+    "--seeds",
+    "3",
+    "--workers",
+    "8"
+  ],
+  "source_sha256": {
+    "numerics\\run_lbqcd_development.py": "FDFC3FF8B2A0459CE9F1C88268FAB40391471149649A61AFC4C057E1C9BBFB12",
+    "numerics\\lbqcd.py": "CAE08DEA43DA1D5650D5527688EF4FF8F0A7378831F2D400B60D1E7FA43B2067",
+    "numerics\\lbqcd_development_registry.json": "7910F46457EA1C7CC82F0F8DCC09D780D8C7683CA602D8A26260098D611192A0",
+    "numerics\\QLDNextGenerationResearch.md": "2AA740255AF10912DBF35119DC819F71AF5D0F82C2211162AD58F95D9A9DEF4D",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6"
+  }
+}

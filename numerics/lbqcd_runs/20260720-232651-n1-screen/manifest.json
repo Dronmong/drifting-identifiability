@@ -1,0 +1,175 @@
+{
+  "program": "LBQCD-development-v1",
+  "stage": "n1",
+  "profile": {
+    "name": "screen",
+    "steps": 400,
+    "batch": 128,
+    "seeds": 3,
+    "eval_size": 2048,
+    "ed_size": 512,
+    "selector_probe": 128
+  },
+  "arms": [
+    {
+      "label": "paper-0.2",
+      "kind": "paper",
+      "tau": 0.2,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "paper-0.5",
+      "kind": "paper",
+      "tau": 0.5,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "paper-1",
+      "kind": "paper",
+      "tau": 1.0,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "paper-2",
+      "kind": "paper",
+      "tau": 2.0,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "paper-4",
+      "kind": "paper",
+      "tau": 4.0,
+      "virtual_batch": 0,
+      "warm_fraction": 0.0,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "qld-v1",
+      "kind": "qld",
+      "tau": 0.5,
+      "virtual_batch": 0,
+      "warm_fraction": 0.7,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M512-f0.60-u",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 512,
+      "warm_fraction": 0.6,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M512-f0.60-e",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 512,
+      "warm_fraction": 0.6,
+      "budget": "examples",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M512-f0.80-u",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 512,
+      "warm_fraction": 0.8,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M512-f0.80-e",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 512,
+      "warm_fraction": 0.8,
+      "budget": "examples",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M1024-f0.60-u",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 1024,
+      "warm_fraction": 0.6,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M1024-f0.60-e",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 1024,
+      "warm_fraction": 0.6,
+      "budget": "examples",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M1024-f0.80-u",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 1024,
+      "warm_fraction": 0.8,
+      "budget": "update",
+      "selector_period": 50
+    },
+    {
+      "label": "rsr-M1024-f0.80-e",
+      "kind": "rsr",
+      "tau": 0.5,
+      "virtual_batch": 1024,
+      "warm_fraction": 0.8,
+      "budget": "examples",
+      "selector_period": 50
+    }
+  ],
+  "task_count": 1008,
+  "workers": 8,
+  "registry_sha256": "7910F46457EA1C7CC82F0F8DCC09D780D8C7683CA602D8A26260098D611192A0",
+  "commit": "1ad505cc8f8b2b5890f38ab0b78508c73995a45b",
+  "git_status": [
+    "?? numerics/lbqcd.py",
+    "?? numerics/lbqcd_development_registry.json",
+    "?? numerics/lbqcd_runs/",
+    "?? numerics/run_lbqcd_development.py"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 74.69853819999844,
+  "command": [
+    "numerics/run_lbqcd_development.py",
+    "--stage",
+    "n1",
+    "--profile",
+    "screen",
+    "--warm-fractions",
+    "0.6,0.8",
+    "--workers",
+    "8"
+  ],
+  "source_sha256": {
+    "numerics\\run_lbqcd_development.py": "EBD456D887179223476A13EFF1BE13527593DE1AD2C79D6ADC5562025644C77C",
+    "numerics\\lbqcd.py": "F65224F9AF126B298FCCEEFF0D17CDCE8995198FF27F04CBE34CD48D3DA17859",
+    "numerics\\lbqcd_development_registry.json": "7910F46457EA1C7CC82F0F8DCC09D780D8C7683CA602D8A26260098D611192A0",
+    "numerics\\QLDNextGenerationResearch.md": "2AA740255AF10912DBF35119DC819F71AF5D0F82C2211162AD58F95D9A9DEF4D",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6"
+  }
+}

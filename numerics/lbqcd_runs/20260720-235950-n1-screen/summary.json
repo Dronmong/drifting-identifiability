@@ -1,0 +1,141 @@
+{
+  "program": "LBQCD-development-v1",
+  "stage": "n1",
+  "selected_paper_tau": 0.5,
+  "selected_baseline": "paper-0.5",
+  "targets": [
+    "LBQCD-D03-unequal-min020-K12",
+    "LBQCD-D09-overlap-K8",
+    "LBQCD-D11-heavy-t5"
+  ],
+  "inits": [
+    "far"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "ratios_vs_selected_paper": {
+    "gated-M1024-f0.70-u": 3.3089265394189242,
+    "qld-v1": 3.5330972249286825
+  },
+  "sw1_ratios_vs_selected_paper": {
+    "gated-M1024-f0.70-u": 1.6102496981401666,
+    "qld-v1": 1.6988758944050544
+  },
+  "ratios_vs_paper_oracle": {
+    "gated-M1024-f0.70-u": 3.3089265394189242,
+    "qld-v1": 3.5330972249286825
+  },
+  "family_ratios_vs_selected_paper": {
+    "gated-M1024-f0.70-u": {
+      "control-heavy-tail": 2.0467452425289387,
+      "control-overlap": 1.333179230948997,
+      "unequal": 13.277277978202848
+    },
+    "qld-v1": {
+      "control-heavy-tail": 2.0467452425289387,
+      "control-overlap": 1.333179230948997,
+      "unequal": 16.162719541580085
+    }
+  },
+  "family_ratios_vs_qld_v1": {
+    "gated-M1024-f0.70-u": {
+      "control-heavy-tail": 1.0,
+      "control-overlap": 1.0,
+      "unequal": 0.8214754914261693
+    },
+    "qld-v1": {}
+  },
+  "best_update_candidate": "gated-M1024-f0.70-u",
+  "eligible_n1_candidates": [
+    "gated-M1024-f0.70-u"
+  ],
+  "advancement_gate": {
+    "unequal_ed2_improves_vs_qld_v1": true,
+    "no_control_family_loses_more_than_5pct_vs_qld_v1": true
+  },
+  "gate_passed": true,
+  "work_medians": {
+    "gated-M1024-f0.70-u": {
+      "wall_seconds": 0.3627635999873746,
+      "generator_example_evals": 51200.0,
+      "unique_latent_samples": 51200.0,
+      "kernel_pairs": 3932160.0,
+      "sort_work": 501760.0,
+      "selector_kernel_pairs": 0.0,
+      "divergences": 0.0
+    },
+    "paper-0.5": {
+      "wall_seconds": 0.6560485999943921,
+      "generator_example_evals": 51200.0,
+      "unique_latent_samples": 51200.0,
+      "kernel_pairs": 13107200.0,
+      "sort_work": 0.0,
+      "selector_kernel_pairs": 0.0,
+      "divergences": 0.0
+    },
+    "qld-v1": {
+      "wall_seconds": 0.37129370000911877,
+      "generator_example_evals": 51200.0,
+      "unique_latent_samples": 51200.0,
+      "kernel_pairs": 3932160.0,
+      "sort_work": 501760.0,
+      "selector_kernel_pairs": 0.0,
+      "divergences": 0.0
+    }
+  },
+  "work_totals": {
+    "gated-M1024-f0.70-u": {
+      "wall_seconds": 6.386756699997932,
+      "generator_example_evals": 2073600.0,
+      "unique_latent_samples": 1213440.0,
+      "target_samples": 1213440.0,
+      "diagnostic_target_samples": 36864.0,
+      "kernel_pairs": 35389440.0,
+      "selector_kernel_pairs": 0.0
+    },
+    "paper-0.5": {
+      "wall_seconds": 6.325742199987872,
+      "generator_example_evals": 460800.0,
+      "unique_latent_samples": 460800.0,
+      "target_samples": 460800.0,
+      "diagnostic_target_samples": 0.0,
+      "kernel_pairs": 117964800.0,
+      "selector_kernel_pairs": 0.0
+    },
+    "qld-v1": {
+      "wall_seconds": 3.362421700017876,
+      "generator_example_evals": 460800.0,
+      "unique_latent_samples": 460800.0,
+      "target_samples": 460800.0,
+      "diagnostic_target_samples": 0.0,
+      "kernel_pairs": 35389440.0,
+      "selector_kernel_pairs": 0.0
+    }
+  },
+  "best_candidate_details": {
+    "ed2_bootstrap_ci_vs_selected_paper": [
+      0.8742458628483198,
+      8.92288354143193
+    ],
+    "sw1_bootstrap_ci_vs_selected_paper": [
+      0.748355859694316,
+      3.1478351175284645
+    ],
+    "cell_win_fraction_vs_selected_paper": 0.0,
+    "init_ed2_ratios_vs_selected_paper": {
+      "far": 3.3089265394189242
+    },
+    "summed_wall_ratio_vs_selected_paper": 1.0096454294343795,
+    "generator_eval_ratio_vs_selected_paper": 4.5,
+    "kernel_pair_ratio_vs_selected_paper": 0.3,
+    "divergences": 0,
+    "routing_rate_by_target": {
+      "LBQCD-D03-unequal-min020-K12": 1.0,
+      "LBQCD-D09-overlap-K8": 0.0,
+      "LBQCD-D11-heavy-t5": 0.0
+    }
+  }
+}

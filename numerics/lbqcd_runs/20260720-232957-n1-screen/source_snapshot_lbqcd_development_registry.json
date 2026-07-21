@@ -1,0 +1,111 @@
+{
+  "registry": "LBQCD-development-v1",
+  "master_seed": 20260731,
+  "description": "Mutable development-only registry, disjoint from QLD-confirmatory-v1. Never use it for a confirmatory claim.",
+  "targets": [
+    {
+      "name": "LBQCD-D01-unequal-min050-K8",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 8,
+      "spacing": 0.78,
+      "sigmas": 0.065,
+      "weights": [0.05, 0.20, 0.17, 0.15, 0.13, 0.11, 0.10, 0.09]
+    },
+    {
+      "name": "LBQCD-D02-unequal-min030-K10",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 10,
+      "spacing": 0.62,
+      "sigmas": 0.055,
+      "weights": [0.18, 0.16, 0.14, 0.12, 0.10, 0.09, 0.07, 0.06, 0.05, 0.03]
+    },
+    {
+      "name": "LBQCD-D03-unequal-min020-K12",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 12,
+      "spacing": 0.86,
+      "sigmas": 0.048,
+      "weights": [0.02, 0.16, 0.14, 0.12, 0.11, 0.10, 0.09, 0.08, 0.07, 0.05, 0.04, 0.02]
+    },
+    {
+      "name": "LBQCD-D04-unequal-min015-K14",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 14,
+      "spacing": 0.69,
+      "sigmas": 0.052,
+      "weights": [0.16, 0.14, 0.12, 0.105, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.02, 0.015]
+    },
+    {
+      "name": "LBQCD-D05-unequal-min010-K18",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 18,
+      "spacing": 0.57,
+      "sigmas": 0.045,
+      "weights": [0.01, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647, 0.058235294117647]
+    },
+    {
+      "name": "LBQCD-D06-unequal-min005-K20",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 20,
+      "spacing": 0.74,
+      "sigmas": 0.042,
+      "weights": [0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.052368421052632, 0.005]
+    },
+    {
+      "name": "LBQCD-D07-equal-K9",
+      "family": "control-equal",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.71,
+      "sigmas": 0.06,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-D08-hetero-K15",
+      "family": "control-heteroscedastic",
+      "kind": "mixture",
+      "K": 15,
+      "spacing": 0.63,
+      "sigmas": [0.035, 0.09, 0.05, 0.11, 0.04, 0.075, 0.055, 0.12, 0.055, 0.075, 0.04, 0.11, 0.05, 0.09, 0.035],
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-D09-overlap-K8",
+      "family": "control-overlap",
+      "kind": "mixture",
+      "K": 8,
+      "spacing": 0.27,
+      "sigmas": 0.18,
+      "weights": "equal"
+    },
+    {
+      "name": "LBQCD-D10-contaminated",
+      "family": "control-contaminated",
+      "kind": "mixture",
+      "means": [-2.1, -1.4, -0.7, 0.0, 0.7, 1.4, 2.1, 5.7],
+      "sigmas": [0.07, 0.06, 0.08, 0.05, 0.08, 0.06, 0.07, 0.12],
+      "weights": [0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.02]
+    },
+    {
+      "name": "LBQCD-D11-heavy-t5",
+      "family": "control-heavy-tail",
+      "kind": "student",
+      "df": 5.0,
+      "scale": 0.85
+    },
+    {
+      "name": "LBQCD-D12-connected-normal",
+      "family": "control-connected",
+      "kind": "mixture",
+      "means": [0.0],
+      "sigmas": [1.1],
+      "weights": [1.0]
+    }
+  ]
+}
