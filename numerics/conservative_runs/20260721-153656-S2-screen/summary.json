@@ -1,0 +1,166 @@
+{
+  "profile": "screen",
+  "trial_rows": 768,
+  "primary_cells": 16,
+  "ed2_ratios_vs_qld": {
+    "paper-0.5": 0.9825432128544394,
+    "qld-full": 1.1588775120875674,
+    "qld-kgrad-crossfit-t0.2": 1.2914650404564672,
+    "qld-kgrad-crossfit-t0.5": 1.1284317675685158,
+    "qld-kgrad-crossfit-t1": 1.0129737678169664,
+    "qld-mean-crossfit-t0.2": 1.5112498468514926,
+    "qld-mean-crossfit-t0.5": 1.2335004865869479,
+    "qld-mean-crossfit-t1": 1.245688381924678,
+    "qld-paper-reset": 1.0442621390527536,
+    "qld-sharp-crossfit-t0.2": 1.1673571602619486,
+    "qld-sharp-crossfit-t0.5": 1.1426263826178862,
+    "qld-sharp-crossfit-t1": 1.1774932241131788,
+    "qld-sharp-deleted-t0.2": 1.0146134196393948,
+    "qld-sharp-deleted-t0.5": 1.061452885581855,
+    "qld-sharp-deleted-t1": 1.152664884179462,
+    "qld-v1": 1.0
+  },
+  "sw1_ratios_vs_qld": {
+    "paper-0.5": 1.092824097315213,
+    "qld-full": 1.1553041729860323,
+    "qld-kgrad-crossfit-t0.2": 1.2779675607871548,
+    "qld-kgrad-crossfit-t0.5": 1.1012254799040224,
+    "qld-kgrad-crossfit-t1": 1.0950058217580945,
+    "qld-mean-crossfit-t0.2": 1.3766195612708791,
+    "qld-mean-crossfit-t0.5": 1.2073068472297546,
+    "qld-mean-crossfit-t1": 1.2498178712848582,
+    "qld-paper-reset": 1.0832786025228578,
+    "qld-sharp-crossfit-t0.2": 1.1381008290883143,
+    "qld-sharp-crossfit-t0.5": 1.159714430281357,
+    "qld-sharp-crossfit-t1": 1.1790965221200582,
+    "qld-sharp-deleted-t0.2": 1.1107523463248417,
+    "qld-sharp-deleted-t0.5": 1.0950109758169444,
+    "qld-sharp-deleted-t1": 1.1228538052779005,
+    "qld-v1": 1.0
+  },
+  "safe_candidate_ranking": [],
+  "best_safe_candidate": null,
+  "connected_control_ed2_ratios": {
+    "qld-kgrad-crossfit-t0.2": {
+      "CF-A07-shifted-lognormal/concentrated": 1.3070647055214395,
+      "CF-A07-shifted-lognormal/missing": 3.126713074163716,
+      "CF-A08-student-t3.5/concentrated": 1.263481055905718,
+      "CF-A08-student-t3.5/missing": 1.049430081654661
+    },
+    "qld-kgrad-crossfit-t0.5": {
+      "CF-A07-shifted-lognormal/concentrated": 1.7917438639606884,
+      "CF-A07-shifted-lognormal/missing": 2.5617709288605295,
+      "CF-A08-student-t3.5/concentrated": 1.4978784159532716,
+      "CF-A08-student-t3.5/missing": 1.3151752287347835
+    },
+    "qld-kgrad-crossfit-t1": {
+      "CF-A07-shifted-lognormal/concentrated": 0.9984077409914153,
+      "CF-A07-shifted-lognormal/missing": 1.970959268647868,
+      "CF-A08-student-t3.5/concentrated": 1.1241585711381892,
+      "CF-A08-student-t3.5/missing": 0.8068562138926189
+    },
+    "qld-mean-crossfit-t0.2": {
+      "CF-A07-shifted-lognormal/concentrated": 0.6986299053143428,
+      "CF-A07-shifted-lognormal/missing": 3.541131946843031,
+      "CF-A08-student-t3.5/concentrated": 1.1251282153559345,
+      "CF-A08-student-t3.5/missing": 1.6706036566012872
+    },
+    "qld-mean-crossfit-t0.5": {
+      "CF-A07-shifted-lognormal/concentrated": 0.9152819554183597,
+      "CF-A07-shifted-lognormal/missing": 5.11740489574362,
+      "CF-A08-student-t3.5/concentrated": 1.3212703550816953,
+      "CF-A08-student-t3.5/missing": 1.0689973735882397
+    },
+    "qld-mean-crossfit-t1": {
+      "CF-A07-shifted-lognormal/concentrated": 0.9606428425350041,
+      "CF-A07-shifted-lognormal/missing": 4.4851105158794065,
+      "CF-A08-student-t3.5/concentrated": 1.3353726568888558,
+      "CF-A08-student-t3.5/missing": 1.2102069148503702
+    },
+    "qld-paper-reset": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0973872877402944,
+      "CF-A07-shifted-lognormal/missing": 1.614168131318543,
+      "CF-A08-student-t3.5/concentrated": 0.8725335621444553,
+      "CF-A08-student-t3.5/missing": 1.3565608285057926
+    },
+    "qld-sharp-crossfit-t0.2": {
+      "CF-A07-shifted-lognormal/concentrated": 1.8243582951356203,
+      "CF-A07-shifted-lognormal/missing": 2.5094771980294373,
+      "CF-A08-student-t3.5/concentrated": 1.3716602258092263,
+      "CF-A08-student-t3.5/missing": 1.1837682990705924
+    },
+    "qld-sharp-crossfit-t0.5": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0169770878897906,
+      "CF-A07-shifted-lognormal/missing": 3.179305812157594,
+      "CF-A08-student-t3.5/concentrated": 1.467677441400514,
+      "CF-A08-student-t3.5/missing": 0.966152092119234
+    },
+    "qld-sharp-crossfit-t1": {
+      "CF-A07-shifted-lognormal/concentrated": 1.2320826381209067,
+      "CF-A07-shifted-lognormal/missing": 2.861047911484242,
+      "CF-A08-student-t3.5/concentrated": 1.3003432619402817,
+      "CF-A08-student-t3.5/missing": 1.1394527361048505
+    },
+    "qld-sharp-deleted-t0.2": {
+      "CF-A07-shifted-lognormal/concentrated": 0.7563813798695785,
+      "CF-A07-shifted-lognormal/missing": 1.256895348207805,
+      "CF-A08-student-t3.5/concentrated": 1.490208276355304,
+      "CF-A08-student-t3.5/missing": 1.2157296520320513
+    },
+    "qld-sharp-deleted-t0.5": {
+      "CF-A07-shifted-lognormal/concentrated": 1.0775849357978327,
+      "CF-A07-shifted-lognormal/missing": 1.2100777854529021,
+      "CF-A08-student-t3.5/concentrated": 1.3183793620792008,
+      "CF-A08-student-t3.5/missing": 1.3817931425949712
+    },
+    "qld-sharp-deleted-t1": {
+      "CF-A07-shifted-lognormal/concentrated": 1.1690186599508265,
+      "CF-A07-shifted-lognormal/missing": 3.1261077164101643,
+      "CF-A08-student-t3.5/concentrated": 0.9620419596956604,
+      "CF-A08-student-t3.5/missing": 1.4353705944948925
+    }
+  },
+  "hierarchical_ed2_bootstrap_vs_qld": {},
+  "divergence_counts": {
+    "paper-0.5": 0,
+    "qld-full": 0,
+    "qld-kgrad-crossfit-t0.2": 0,
+    "qld-kgrad-crossfit-t0.5": 0,
+    "qld-kgrad-crossfit-t1": 0,
+    "qld-mean-crossfit-t0.2": 0,
+    "qld-mean-crossfit-t0.5": 0,
+    "qld-mean-crossfit-t1": 0,
+    "qld-paper-reset": 0,
+    "qld-sharp-crossfit-t0.2": 0,
+    "qld-sharp-crossfit-t0.5": 0,
+    "qld-sharp-crossfit-t1": 0,
+    "qld-sharp-deleted-t0.2": 0,
+    "qld-sharp-deleted-t0.5": 0,
+    "qld-sharp-deleted-t1": 0,
+    "qld-v1": 0
+  },
+  "floor_activation_counts": {
+    "paper-0.5": 0,
+    "qld-full": 0,
+    "qld-kgrad-crossfit-t0.2": 0,
+    "qld-kgrad-crossfit-t0.5": 0,
+    "qld-kgrad-crossfit-t1": 0,
+    "qld-mean-crossfit-t0.2": 0,
+    "qld-mean-crossfit-t0.5": 0,
+    "qld-mean-crossfit-t1": 0,
+    "qld-paper-reset": 0,
+    "qld-sharp-crossfit-t0.2": 0,
+    "qld-sharp-crossfit-t0.5": 0,
+    "qld-sharp-crossfit-t1": 0,
+    "qld-sharp-deleted-t0.2": 0,
+    "qld-sharp-deleted-t0.5": 0,
+    "qld-sharp-deleted-t1": 0,
+    "qld-v1": 0
+  },
+  "mechanism_questions": {
+    "paper_reset_ed2_ratio_vs_qld_v1": 1.0442621390527536,
+    "full_qld_ed2_ratio_vs_qld_v1": 1.1588775120875674,
+    "primary_sharp_crossfit_t05_ed2_ratio_vs_qld_v1": 1.1426263826178862
+  },
+  "status": "mechanism screen only; no candidate promoted"
+}
