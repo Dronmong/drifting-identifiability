@@ -1,66 +1,67 @@
-# M1 — headroom precondition (2026-07-20)
+# M1 — headroom precondition (2026-07-20, CORRECTED)
 
-*Roadmap: `ModeRecoveryRoadmap.md` phase M1, design invariant **L2** ("verify
-headroom first"). Probe: `m1_headroom.py`. Metrics: `mode_recovery.py`.*
+*Roadmap: `ModeRecoveryRoadmap.md` phase M1, design invariant **L2**. Probe:
+`m1_headroom.py`. Metrics: `mode_recovery.py`.*
 
-## Verdict
+> **Correction notice.** The first version of this file (commit 1f7ec8b) claimed
+> broad headroom including at K=16, d=2. That was **confounded**: it selected the
+> step size `eta` to maximize *reach* and then reported *resolution* at that
+> `eta`. Selecting `eta` for the actual objective (resolution) removes the
+> apparent headroom at K=16, d=2 — a single tuned bandwidth solves it. This file
+> is the corrected analysis and supersedes the earlier claim.
 
-**Headroom confirmed in every tested regime.** Under missing-mode initialization
-(all particles start in one mode), no single fixed Laplace bandwidth — each given
-its best shot via an `η` sweep — can both **reach** the distant modes and
-**resolve** them. This is a real, large coverage deficit for a multi-scale field
-to attack, so the program has a genuine problem worth solving (unlike the
-aggregate-ED2 setting, where the tuned baseline was already near-optimal).
+## Verdict (corrected)
 
-## Evidence (paper field, missing-mode init, best over η)
+1. **No headroom in easy regimes.** At K=16, d=2 a single tuned Laplace
+   bandwidth achieves reach = 1.00 and resolve = 1.00 from a missing-mode start.
+   There is nothing to beat.
+2. **Genuine headroom exists only in hard regimes** (K ≥ 32, or d ≥ 5): the best
+   single bandwidth resolves only a small fraction of modes.
+3. **But the proposed additive two-scale field does NOT close that headroom.**
+   Where the baseline fails, the two-scale field fails too: it sometimes lifts
+   *reach* but never *resolution*, the actual target.
 
-`reach` = basin coverage (mass in the Voronoi basin, needs coarse τ) ·
-`resolve` = σ-precision coverage (needs fine τ) · `spread` = cloud std / target
-std (did the swarm split).
+## Evidence (best over τ and η, selecting for resolution)
 
-**K=16, d=2, L/σ=33**
+| Regime | single (reach, resolve) | two-scale (reach, resolve) | headroom | 2-scale resolve gain |
+|---|---|---|---|---:|
+| K=16 d=2 L/σ=33 | (1.00, **1.00**) | (1.00, 1.00) | no | +0.00 |
+| K=32 d=2 L/σ=50 | (0.41, 0.22) | (0.59, 0.28) | yes | +0.06 |
+| K=64 d=2 L/σ=67 | (0.22, 0.06) | (0.23, 0.09) | yes | +0.03 |
+| K=16 d=5 L/σ=33 | (0.19, 0.12) | (0.44, 0.12) | yes | +0.00 |
+| K=32 d=5 L/σ=50 | (0.28, 0.12) | (0.28, 0.06) | yes | −0.06 |
+| K=16 d=10 L/σ=33 | (0.25, 0.06) | (0.44, 0.06) | yes | +0.00 |
 
-| τ | reach | resolve | spread | reading |
-|---:|---:|---:|---:|---|
-| ≤0.10 (fine) | 0.06 | 0.06 | 0.02 | swarm **frozen** at the start mode — can't even move |
-| 0.20 | 0.38 | 0.31 | 0.57 | partial |
-| 0.40 | **1.00** | 0.31 | 0.97 | reaches every basin, resolves only 31% |
-| 0.80 (coarse) | **1.00** | 0.06 | 1.02 | reaches every basin, resolves ~nothing (over-smoothed) |
+Two-scale resolution gains are zero within run-to-run noise across every hard
+regime. Reach improves in some cases (e.g. K=16 d=5: 0.19 → 0.44) without a
+matching resolution improvement — the cloud reaches more basins but still does
+not concentrate onto the modes.
 
-Best resolution at full reach (reach ≥ 0.9): **0.31** → HEADROOM.
+## Why the two-scale idea does not work here
 
-**K=16, d=5, L/σ=33:** best resolution at full reach **0.00** → HEADROOM.
-**K=32, d=2, L/σ=50:** best resolution at full reach **0.16** → HEADROOM.
+The reach-vs-resolve framing was incomplete. Adding a fine scale only helps
+resolution *for particles that already sit in the correct basin*. In the hard
+regimes the binding constraint is upstream of that: from a single degenerate
+start, the swarm cannot **split** into enough correctly-placed sub-clusters —
+the homogeneous-swarm / fission bottleneck (`LaplaceFissionInstability.lean`),
+made worse by capacity limits (K = 32–64 modes with N = 128 particles is only
+2–4 particles per mode). A fine resolution scale does nothing for a mode the
+cloud never populated, so it cannot lift resolution where reach/split already
+failed. This is the same squeeze the ledger's meta-pattern describes: where the
+baseline is fine (K=16 d=2), the candidate is unnecessary; where the baseline
+fails (hard regimes), the candidate fails too — the bottleneck is
+splitting/capacity, not bandwidth.
 
-## Mechanism (why one bandwidth cannot win)
+## Consequence
 
-Two distinct failures bracket the bandwidth axis, exactly as the theory predicts:
-
-- **Fine τ freezes the swarm.** The pull toward a mode at distance `L` decays
-  like `e^{-L/τ}`; with `τ ≲ σ` the cloud cannot feel any distant mode, and
-  because every particle starts identical it receives identical drift — a
-  homogeneous blob that neither moves nor splits (spread ≈ 0.02). This is the
-  fission-instability / homogeneous-swarm failure certified in
-  `LaplaceFissionInstability.lean`.
-- **Coarse τ reaches and splits but cannot resolve.** With `τ ~ L` the cloud
-  feels all modes, spreads (spread ≈ 1.0), and its symmetry breaks so it
-  populates every basin (reach → 1.0) — but the same wide kernel over-smooths,
-  so particles sit spread across each basin rather than concentrating on the
-  mode (resolve ≤ 0.31).
-
-The **gap between the reach-optimal τ (~0.4–0.8) and the resolve-optimal τ (~σ)**
-is the headroom. A field carrying *both* scales — coarse for reach + split, fine
-for resolution once particles are in the right basin — is the natural remedy
-(the M2 candidate), and it is the atlas two-bandwidth mechanism (A3) aimed at the
-right scoreboard.
-
-## Consequence for the next steps
-
-- The precondition (L2) is satisfied → proceed to freeze fresh
-  validation/test registries (M1b) drawn from this regime family (large `L/σ`,
-  `K ∈ {8,16,32}`, `d ∈ {2,5,10}`, adversarial inits) and build the M2 two-scale
-  field.
-- The pre-registered coverage gate (M3) should target lifting **resolution at
-  full reach** from ≈0.16–0.31 toward ≈1.0 while keeping reach at 1.0 — a large,
-  well-defined target that no single bandwidth achieves.
-- Reproduce with: `uv run --with numpy --with scipy python numerics/m1_headroom.py`.
+- The M2 additive two-scale field is **rejected** as the mode-recovery candidate:
+  no resolution gain in any regime with genuine headroom.
+- Do **not** proceed to freeze registries / build the full M3 gate for this
+  candidate.
+- The open question the data raises is whether the hard-regime deficit is a
+  *field-design* opportunity at all, or a *capacity* limit (too few
+  particles/steps to populate many modes from a degenerate start). Distinguishing
+  these — hold the field fixed, scale N and steps — is the honest next diagnostic
+  before proposing any new candidate. If it is capacity-bound, there is no
+  field-design win to be had, matching every prior program.
+- Reproduce: `uv run --with numpy --with scipy python numerics/m1_headroom.py`.
