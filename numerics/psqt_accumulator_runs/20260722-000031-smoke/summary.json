@@ -1,0 +1,28 @@
+{
+  "development_selected_bounded_arm": "reservoir-R1024",
+  "selected_ed2_ratio_vs_historical": 0.16141569317572063,
+  "selected_ed2_ratio_vs_paper": 0.014850499137169659,
+  "selected_sw1_ratio_vs_historical": 0.4432372322675676,
+  "exact_ed2_ratio_vs_historical": 0.16403881702122272,
+  "exact_ed2_ratio_vs_paper": 0.015091830680825159,
+  "selected_family_ed2_ratios_vs_historical": {
+    "dependence": 0.27431378064362877,
+    "gauss": 0.36200164277553215,
+    "rare": 0.0482867502541619,
+    "skew": 0.4732761880707012
+  },
+  "selected_family_ed2_ratios_vs_paper": {
+    "dependence": 0.04108796727052838,
+    "gauss": 0.019485488884292627,
+    "rare": 0.005182743575182253,
+    "skew": 0.03358612096975585
+  },
+  "decision_gates": {
+    "finite_and_no_divergence": true,
+    "diagonal_better_than_historical": true,
+    "diagonal_better_than_paper": true,
+    "aggregate_ed2_better_than_historical": true,
+    "aggregate_sw1_better_than_historical": true,
+    "no_family_regression_over_5pct": true,
+    "median_excess_bridge_at_most_one_particle": true,
+    "rare_05_10_majority_recovered": 

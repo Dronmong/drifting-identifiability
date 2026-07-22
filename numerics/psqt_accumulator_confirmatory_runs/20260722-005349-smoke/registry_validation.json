@@ -1,0 +1,90 @@
+{
+  "target_count": 8,
+  "families": [
+    "correlated-unimodal",
+    "curved-connected",
+    "dependence-trap",
+    "disconnected-nongaussian",
+    "gaussian-mixture",
+    "multiple-curves",
+    "rare-mode",
+    "skew-heavy"
+  ],
+  "direction_overlap_max": 0.9996988186962044,
+  "duplicate_parameter_count": 0,
+  "reference_stability": [
+    {
+      "target": "CF-F1-GMM-00",
+      "family": "gaussian-mixture",
+      "reference_ed2": 0.001806876790922951,
+      "reference_sw1": 0.03005654704498413,
+      "scale": 1.968539788286,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F2-ELLIPSES-00",
+      "family": "disconnected-nongaussian",
+      "reference_ed2": 0.004701711206574921,
+      "reference_sw1": 0.047970316574206216,
+      "scale": 1.815718106606,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F3-RARE-02-00",
+      "family": "rare-mode",
+      "reference_ed2": 0.0003245707197343517,
+      "reference_sw1": 0.005944642062380559,
+      "scale": 1.710949477236,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F4-CORRELATED-00",
+      "family": "correlated-unimodal",
+      "reference_ed2": 0.0013766378879773722,
+      "reference_sw1": 0.022847436416206405,
+      "scale": 2.123602824226,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F5-PERTURBED-RING-00",
+      "family": "curved-connected",
+      "reference_ed2": 0.000762470615878863,
+      "reference_sw1": 0.016770247136491626,
+      "scale": 1.16246202505,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F6-MULTICURVE-00",
+      "family": "multiple-curves",
+      "reference_ed2": 0.003612715923816623,
+      "reference_sw1": 0.040862198904197435,
+      "scale": 1.287946443291,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F7-SKEW-00",
+      "family": "skew-heavy",
+      "reference_ed2": 0.0015829354659443462,
+      "reference_sw1": 0.028666673297318857,
+      "scale": 2.084083154451,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F8-OFFAXIS-BINARY-00",
+      "family": "dependence-trap",
+      "reference_ed2": 0.0006053397298513286,
+      "reference_sw1": 0.015397182764887798,
+      "scale": 1.561150258687,
+      "ed2_stable": true,
+      "sw1_stable": true
+    }
+  ],
+  "pass": true
+}

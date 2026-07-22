@@ -1,0 +1,79 @@
+{
+  "config": {
+    "n": 19200,
+    "knots": 64,
+    "k": 128,
+    "repeats": 12,
+    "theoretical_rank_error": 0.020517839594286266
+  },
+  "apache": {
+    "max_rank_error": 0.016718750000000004,
+    "p95_max_rank_error": 0.01151822916666669,
+    "median_max_rank_error": 0.006510416666666678,
+    "median_quantile_rmse": 0.005159083986654878,
+    "median_retained_items": 344.0,
+    "median_serialized_bytes": 1436.0
+  },
+  "local_fixed_capacity": {
+    "max_rank_error": 0.01317708333333334,
+    "p95_max_rank_error": 0.01286458333333329,
+    "median_max_rank_error": 0.009531249999999991,
+    "median_quantile_rmse": 0.0356866791844368,
+    "median_retained_items": 75.0
+  },
+  "memory_scaling": [
+    {
+      "n": 1000,
+      "implementation": "apache",
+      "chunks": 1,
+      "merged": 0,
+      "retained_items": 293,
+      "serialized_bytes": 1216,
+      "max_rank_error": 0.008437499999999987,
+      "mean_rank_error": 0.0033837890625000046,
+      "quantile_rmse": 0.049671828746795654,
+      "monotone": 1,
+      "observed_support": 1,
+      "serialized_replay": 1
+    },
+    {
+      "n": 10000,
+      "implementation": "apache",
+      "chunks": 1,
+      "merged": 0,
+      "retained_items": 350,
+      "serialized_bytes": 1456,
+      "max_rank_error": 0.009887499999999994,
+      "mean_rank_error": 0.0035089843750000013,
+      "quantile_rmse": 0.03990328311920166,
+      "monotone": 1,
+      "observed_support": 1,
+      "serialized_replay": 1
+    },
+    {
+      "n": 100000,
+      "implementation": "apache",
+      "chunks": 1,
+      "merged": 0,
+      "retained_items": 381,
+      "serialized_bytes": 1592,
+      "max_rank_error": 0.006397499999999945,
+      "mean_rank_error": 0.0021095312500000007,
+      "quantile_rmse": 0.031174330040812492,
+      "monotone": 1,
+      "observed_support": 1,
+      "serialized_replay": 1
+    }
+  ],
+  "gates": {
+    "counts": true,
+    "monotone": true,
+    "observed_support": true,
+    "serialized_replay": true,
+    "max_rank_error_le_3x_official": true,
+    "p95_rank_error_le_2x_official": true,
+    "bounded_state_at_100k": true
+  },
+  "all_gates_pass": true,
+  "reproducibility_boundary": "Apache DataSketches Python KLL does not expose its compaction RNG seed; final serialized states must be preserved."
+}

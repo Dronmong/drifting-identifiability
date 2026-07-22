@@ -1,0 +1,124 @@
+{
+  "protocol_status": "development-not-frozen",
+  "master_seed": 20260723,
+  "profile": {
+    "name": "smoke",
+    "updates": 40,
+    "seeds": 1,
+    "particles": 32,
+    "batch": 32,
+    "reference": 512,
+    "directions": 16,
+    "knots": 32,
+    "reconstruction_steps": 60,
+    "reconstruction_step_size": 0.5,
+    "target_mode": "smoke"
+  },
+  "arms": [
+    {
+      "name": "paper-tau1",
+      "kind": "paper",
+      "parameter": null
+    },
+    {
+      "name": "historical-online-psqt",
+      "kind": "historical",
+      "parameter": null
+    },
+    {
+      "name": "batch-mean-table",
+      "kind": "batch-mean",
+      "parameter": null
+    },
+    {
+      "name": "batch-median-table",
+      "kind": "batch-median",
+      "parameter": null
+    },
+    {
+      "name": "reservoir-R512",
+      "kind": "reservoir",
+      "parameter": 512
+    },
+    {
+      "name": "reservoir-R1024",
+      "kind": "reservoir",
+      "parameter": 1024
+    },
+    {
+      "name": "reservoir-R2048",
+      "kind": "reservoir",
+      "parameter": 2048
+    },
+    {
+      "name": "kll-style-k64",
+      "kind": "kll-style",
+      "parameter": 64
+    },
+    {
+      "name": "kll-style-k128",
+      "kind": "kll-style",
+      "parameter": 128
+    },
+    {
+      "name": "exact-pooled-ceiling",
+      "kind": "exact-pooled",
+      "parameter": null
+    }
+  ],
+  "quantile_convention": {
+    "historical": "linear per-batch quantiles",
+    "repairs": "inverted empirical CDF where applicable"
+  },
+  "git_commit": "cfd89957d8393cf2edaa98748a2a29391bac78bc",
+  "git_status": [
+    "M numerics/README.md",
+    " M numerics/lbqcd.py",
+    "?? numerics/PSQT2DDevelopmentResults.md",
+    "?? numerics/PSQTHigherDimImplementationPlan.md",
+    "?? numerics/PSQTQuantileAccumulatorDefectAnalysis.md",
+    "?? numerics/PSQTQuantileAccumulatorRepairPlan.md",
+    "?? numerics/PSQTQuantileAccumulatorRepairResults.md",
+    "?? numerics/QuantileGuardedDriftingProtocol.md",
+    "?? numerics/QuantileGuardedDriftingResearchPlan.md",
+    "?? numerics/QuantileGuardedDriftingResults.md",
+    "?? numerics/QuantileSafetyGuardProtocol.md",
+    "?? numerics/QuantileSafetyGuardResults.md",
+    "?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+    "?? numerics/persistent_sliced_quantile_transport.py",
+    "?? numerics/projected_quantile_accumulators.py",
+    "?? numerics/psqt_2d_runs/",
+    "?? numerics/psqt_accumulator_runs/",
+    "?? numerics/qgd_development_registry.json",
+    "?? numerics/qgd_runs/",
+    "?? numerics/quantile_guarded_drifting.py",
+    "?? numerics/run_psqt_2d_development.py",
+    "?? numerics/run_psqt_accumulator_repair.py",
+    "?? numerics/run_quantile_guarded_development.py",
+    "?? numerics/transport_aligned_runs/20260721-202812-smoke-smoke/",
+    "?? numerics/transport_aligned_runs/20260721-202838-screen-mechanism-screen/",
+    "?? numerics/transport_aligned_runs/20260721-203012-standard-first-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203215-standard-budget-matched-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203549-standard-K256-standard/"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "command": [
+    "numerics\\run_psqt_accumulator_repair.py",
+    "--profile",
+    "smoke"
+  ],
+  "started": "20260722-000828",
+  "source_sha256": {
+    "numerics\\run_psqt_accumulator_repair.py": "b6aa8803a82b7855bf722d1db4e338736b237ed6a42f896ccacb10821a75a594",
+    "numerics\\projected_quantile_accumulators.py": "489ac7199bc7ac2fec2001549c2bac40f06d1bdd7149e8f6897299a8049ea6e7",
+    "numerics\\persistent_sliced_quantile_transport.py": "e9818b532dbfecf386cd98408011af3d1114ceab5fda244e7e96f8cdc82cbbe5",
+    "numerics\\persistent_quantile_transport.py": "0e3a7c07f6d2d26220d7796878796835b4c9172ce49b3ab57b4eecfed4afd57e",
+    "numerics\\run_psqt_2d_development.py": "22f1df3d9d13af46433b443dc638198cd969408085c037834a5ee8f30b866b71",
+    "numerics\\lowdim_drift.py": "71c5b49d9ceb38ce239f5baff966cb9c077485f9abc081b8798e18618ebf64f6",
+    "numerics\\PSQTQuantileAccumulatorDefectAnalysis.md": "3f871e4203b4ff98fc6e20f9635c9382f3a3f9f4b1284c67406c5bc5ea53f2ba",
+    "numerics\\PSQTQuantileAccumulatorRepairPlan.md": "5a3df97704a0d706d7734a3854364f4b128628ddf9d344bb6967be7fe34a5656"
+  },
+  "wall_seconds": 5.438185691833496
+}

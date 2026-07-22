@@ -1,0 +1,160 @@
+# PSQT target-quantile accumulator repair
+
+Status: exploratory development; not frozen confirmation.
+
+## Invariants
+- accumulator invariants: PASS
+- historical PSQT invariants: PASS
+- completed paired cell 1/120: PS2-GMM4-equal/concentrated/seed0
+- completed paired cell 2/120: PS2-GMM4-equal/concentrated/seed1
+- completed paired cell 3/120: PS2-GMM4-equal/concentrated/seed2
+- completed paired cell 4/120: PS2-GMM4-equal/concentrated/seed3
+- completed paired cell 5/120: PS2-GMM4-equal/concentrated/seed4
+- completed paired cell 6/120: PS2-GMM4-equal/far/seed0
+- completed paired cell 7/120: PS2-GMM4-equal/far/seed1
+- completed paired cell 8/120: PS2-GMM4-equal/far/seed2
+- completed paired cell 9/120: PS2-GMM4-equal/far/seed3
+- completed paired cell 10/120: PS2-GMM4-equal/far/seed4
+- completed paired cell 11/120: PS2-GMM5-unequal/concentrated/seed0
+- completed paired cell 12/120: PS2-GMM5-unequal/concentrated/seed1
+- completed paired cell 13/120: PS2-GMM5-unequal/concentrated/seed2
+- completed paired cell 14/120: PS2-GMM5-unequal/concentrated/seed3
+- completed paired cell 15/120: PS2-GMM5-unequal/concentrated/seed4
+- completed paired cell 16/120: PS2-GMM5-unequal/far/seed0
+- completed paired cell 17/120: PS2-GMM5-unequal/far/seed1
+- completed paired cell 18/120: PS2-GMM5-unequal/far/seed2
+- completed paired cell 19/120: PS2-GMM5-unequal/far/seed3
+- completed paired cell 20/120: PS2-GMM5-unequal/far/seed4
+- completed paired cell 21/120: PS2-GMM4-hetero/concentrated/seed0
+- completed paired cell 22/120: PS2-GMM4-hetero/concentrated/seed1
+- completed paired cell 23/120: PS2-GMM4-hetero/concentrated/seed2
+- completed paired cell 24/120: PS2-GMM4-hetero/concentrated/seed3
+- completed paired cell 25/120: PS2-GMM4-hetero/concentrated/seed4
+- completed paired cell 26/120: PS2-GMM4-hetero/far/seed0
+- completed paired cell 27/120: PS2-GMM4-hetero/far/seed1
+- completed paired cell 28/120: PS2-GMM4-hetero/far/seed2
+- completed paired cell 29/120: PS2-GMM4-hetero/far/seed3
+- completed paired cell 30/120: PS2-GMM4-hetero/far/seed4
+- completed paired cell 31/120: PS2-diagonal-dependence/concentrated/seed0
+- completed paired cell 32/120: PS2-diagonal-dependence/concentrated/seed1
+- completed paired cell 33/120: PS2-diagonal-dependence/concentrated/seed2
+- completed paired cell 34/120: PS2-diagonal-dependence/concentrated/seed3
+- completed paired cell 35/120: PS2-diagonal-dependence/concentrated/seed4
+- completed paired cell 36/120: PS2-diagonal-dependence/far/seed0
+- completed paired cell 37/120: PS2-diagonal-dependence/far/seed1
+- completed paired cell 38/120: PS2-diagonal-dependence/far/seed2
+- completed paired cell 39/120: PS2-diagonal-dependence/far/seed3
+- completed paired cell 40/120: PS2-diagonal-dependence/far/seed4
+- completed paired cell 41/120: PS2-correlated-rho085/concentrated/seed0
+- completed paired cell 42/120: PS2-correlated-rho085/concentrated/seed1
+- completed paired cell 43/120: PS2-correlated-rho085/concentrated/seed2
+- completed paired cell 44/120: PS2-correlated-rho085/concentrated/seed3
+- completed paired cell 45/120: PS2-correlated-rho085/concentrated/seed4
+- completed paired cell 46/120: PS2-correlated-rho085/far/seed0
+- completed paired cell 47/120: PS2-correlated-rho085/far/seed1
+- completed paired cell 48/120: PS2-correlated-rho085/far/seed2
+- completed paired cell 49/120: PS2-correlated-rho085/far/seed3
+- completed paired cell 50/120: PS2-correlated-rho085/far/seed4
+- completed paired cell 51/120: PS2-ring/concentrated/seed0
+- completed paired cell 52/120: PS2-ring/concentrated/seed1
+- completed paired cell 53/120: PS2-ring/concentrated/seed2
+- completed paired cell 54/120: PS2-ring/concentrated/seed3
+- completed paired cell 55/120: PS2-ring/concentrated/seed4
+- completed paired cell 56/120: PS2-ring/far/seed0
+- completed paired cell 57/120: PS2-ring/far/seed1
+- completed paired cell 58/120: PS2-ring/far/seed2
+- completed paired cell 59/120: PS2-ring/far/seed3
+- completed paired cell 60/120: PS2-ring/far/seed4
+- completed paired cell 61/120: PS2-circles/concentrated/seed0
+- completed paired cell 62/120: PS2-circles/concentrated/seed1
+- completed paired cell 63/120: PS2-circles/concentrated/seed2
+- completed paired cell 64/120: PS2-circles/concentrated/seed3
+- completed paired cell 65/120: PS2-circles/concentrated/seed4
+- completed paired cell 66/120: PS2-circles/far/seed0
+- completed paired cell 67/120: PS2-circles/far/seed1
+- completed paired cell 68/120: PS2-circles/far/seed2
+- completed paired cell 69/120: PS2-circles/far/seed3
+- completed paired cell 70/120: PS2-circles/far/seed4
+- completed paired cell 71/120: PS2-moons/concentrated/seed0
+- completed paired cell 72/120: PS2-moons/concentrated/seed1
+- completed paired cell 73/120: PS2-moons/concentrated/seed2
+- completed paired cell 74/120: PS2-moons/concentrated/seed3
+- completed paired cell 75/120: PS2-moons/concentrated/seed4
+- completed paired cell 76/120: PS2-moons/far/seed0
+- completed paired cell 77/120: PS2-moons/far/seed1
+- completed paired cell 78/120: PS2-moons/far/seed2
+- completed paired cell 79/120: PS2-moons/far/seed3
+- completed paired cell 80/120: PS2-moons/far/seed4
+- completed paired cell 81/120: PS2-skew/concentrated/seed0
+- completed paired cell 82/120: PS2-skew/concentrated/seed1
+- completed paired cell 83/120: PS2-skew/concentrated/seed2
+- completed paired cell 84/120: PS2-skew/concentrated/seed3
+- completed paired cell 85/120: PS2-skew/concentrated/seed4
+- completed paired cell 86/120: PS2-skew/far/seed0
+- completed paired cell 87/120: PS2-skew/far/seed1
+- completed paired cell 88/120: PS2-skew/far/seed2
+- completed paired cell 89/120: PS2-skew/far/seed3
+- completed paired cell 90/120: PS2-skew/far/seed4
+- completed paired cell 91/120: PS2-diagonal-minority-01/concentrated/seed0
+- completed paired cell 92/120: PS2-diagonal-minority-01/concentrated/seed1
+- completed paired cell 93/120: PS2-diagonal-minority-01/concentrated/seed2
+- completed paired cell 94/120: PS2-diagonal-minority-01/concentrated/seed3
+- completed paired cell 95/120: PS2-diagonal-minority-01/concentrated/seed4
+- completed paired cell 96/120: PS2-diagonal-minority-01/far/seed0
+- completed paired cell 97/120: PS2-diagonal-minority-01/far/seed1
+- completed paired cell 98/120: PS2-diagonal-minority-01/far/seed2
+- completed paired cell 99/120: PS2-diagonal-minority-01/far/seed3
+- completed paired cell 100/120: PS2-diagonal-minority-01/far/seed4
+- completed paired cell 101/120: PS2-diagonal-minority-05/concentrated/seed0
+- completed paired cell 102/120: PS2-diagonal-minority-05/concentrated/seed1
+- completed paired cell 103/120: PS2-diagonal-minority-05/concentrated/seed2
+- completed paired cell 104/120: PS2-diagonal-minority-05/concentrated/seed3
+- completed paired cell 105/120: PS2-diagonal-minority-05/concentrated/seed4
+- completed paired cell 106/120: PS2-diagonal-minority-05/far/seed0
+- completed paired cell 107/120: PS2-diagonal-minority-05/far/seed1
+- completed paired cell 108/120: PS2-diagonal-minority-05/far/seed2
+- completed paired cell 109/120: PS2-diagonal-minority-05/far/seed3
+- completed paired cell 110/120: PS2-diagonal-minority-05/far/seed4
+- completed paired cell 111/120: PS2-diagonal-minority-10/concentrated/seed0
+- completed paired cell 112/120: PS2-diagonal-minority-10/concentrated/seed1
+- completed paired cell 113/120: PS2-diagonal-minority-10/concentrated/seed2
+- completed paired cell 114/120: PS2-diagonal-minority-10/concentrated/seed3
+- completed paired cell 115/120: PS2-diagonal-minority-10/concentrated/seed4
+- completed paired cell 116/120: PS2-diagonal-minority-10/far/seed0
+- completed paired cell 117/120: PS2-diagonal-minority-10/far/seed1
+- completed paired cell 118/120: PS2-diagonal-minority-10/far/seed2
+- completed paired cell 119/120: PS2-diagonal-minority-10/far/seed3
+- completed paired cell 120/120: PS2-diagonal-minority-10/far/seed4
+
+## Development outcome
+- selected bounded accumulator: `kll-style-k128`
+- ED2 ratio / historical online PSQT: `0.4897`
+- ED2 ratio / selected paper: `0.1850`
+- held-out SW1 ratio / historical online PSQT: `0.6171`
+- rare-mode ED2 ratio / historical online PSQT: `0.1853`
+- exact-pooled ED2 ratio / historical online PSQT: `0.4910`
+- exact-pooled ED2 ratio / selected paper: `0.1854`
+- family ED2 ratios, selected / historical:
+  - `circles`: `0.6579`
+  - `correlated`: `0.7762`
+  - `dependence`: `0.0796`
+  - `gauss`: `0.4823`
+  - `moons`: `0.6039`
+  - `rare`: `0.1853`
+  - `ring`: `0.6877`
+  - `skew`: `0.8558`
+- decision gates:
+  - `finite_and_no_divergence`: **PASS**
+  - `diagonal_better_than_historical`: **PASS**
+  - `diagonal_better_than_paper`: **PASS**
+  - `aggregate_ed2_better_than_historical`: **PASS**
+  - `aggregate_sw1_better_than_historical`: **PASS**
+  - `no_family_regression_over_5pct`: **PASS**
+  - `median_excess_bridge_at_most_one_particle`: **PASS**
+  - `rare_05_10_majority_recovered`: **PASS**
+  - `bounded_memory_below_exact_pool`: **PASS**
+- all development gates: **PASS**
+
+## Interpretation boundary
+
+The selected arm and every threshold were evaluated on reused development families. Exact pooling is an unbounded finite-stream ceiling. The KLL-style arm uses fixed-capacity random compactors and does not claim the optimal KLL space theorem. A fresh registry is required before a confirmatory superiority claim.

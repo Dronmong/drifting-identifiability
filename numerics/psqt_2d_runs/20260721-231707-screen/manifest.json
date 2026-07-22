@@ -1,0 +1,94 @@
+{
+  "protocol_status": "development-not-frozen",
+  "master_seed": 20260722,
+  "profile": {
+    "name": "screen",
+    "updates": 300,
+    "seeds": 5,
+    "particles": 64,
+    "batch": 64,
+    "reference": 1024,
+    "cross_reference": 256,
+    "track_every": 20,
+    "target_limit": null
+  },
+  "psqt_configs": [
+    {
+      "directions": 8,
+      "knots": 64,
+      "reconstruction_steps": 3,
+      "reconstruction_step_size": 0.5
+    },
+    {
+      "directions": 16,
+      "knots": 64,
+      "reconstruction_steps": 3,
+      "reconstruction_step_size": 0.5
+    },
+    {
+      "directions": 32,
+      "knots": 64,
+      "reconstruction_steps": 3,
+      "reconstruction_step_size": 0.5
+    },
+    {
+      "directions": 16,
+      "knots": 64,
+      "reconstruction_steps": 6,
+      "reconstruction_step_size": 0.5
+    },
+    {
+      "directions": 16,
+      "knots": 64,
+      "reconstruction_steps": 3,
+      "reconstruction_step_size": 1.0
+    }
+  ],
+  "paper_taus": [
+    0.2,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "git_commit": "cfd89957d8393cf2edaa98748a2a29391bac78bc",
+  "git_status": [
+    "M numerics/README.md",
+    " M numerics/lbqcd.py",
+    "?? numerics/PSQTHigherDimImplementationPlan.md",
+    "?? numerics/QuantileGuardedDriftingProtocol.md",
+    "?? numerics/QuantileGuardedDriftingResearchPlan.md",
+    "?? numerics/QuantileGuardedDriftingResults.md",
+    "?? numerics/QuantileSafetyGuardProtocol.md",
+    "?? numerics/QuantileSafetyGuardResults.md",
+    "?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+    "?? numerics/persistent_sliced_quantile_transport.py",
+    "?? numerics/psqt_2d_runs/",
+    "?? numerics/qgd_development_registry.json",
+    "?? numerics/qgd_runs/",
+    "?? numerics/quantile_guarded_drifting.py",
+    "?? numerics/run_psqt_2d_development.py",
+    "?? numerics/run_quantile_guarded_development.py",
+    "?? numerics/transport_aligned_runs/20260721-202812-smoke-smoke/",
+    "?? numerics/transport_aligned_runs/20260721-202838-screen-mechanism-screen/",
+    "?? numerics/transport_aligned_runs/20260721-203012-standard-first-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203215-standard-budget-matched-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203549-standard-K256-standard/"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "command": [
+    "numerics/run_psqt_2d_development.py",
+    "--profile",
+    "screen"
+  ],
+  "started": "20260721-231707",
+  "source_sha256": {
+    "numerics\\run_psqt_2d_development.py": "22f1df3d9d13af46433b443dc638198cd969408085c037834a5ee8f30b866b71",
+    "numerics\\persistent_sliced_quantile_transport.py": "d4ea3aeeed68220bfd70be81b96be42e05b8c46126244fa12999acd5f41be63b",
+    "numerics\\persistent_quantile_transport.py": "0e3a7c07f6d2d26220d7796878796835b4c9172ce49b3ab57b4eecfed4afd57e",
+    "numerics\\lowdim_drift.py": "71c5b49d9ceb38ce239f5baff966cb9c077485f9abc081b8798e18618ebf64f6",
+    "numerics\\PSQTHigherDimImplementationPlan.md": "a6575fb917bc3c5df7711f74ee09c7be60bbfbe35c84b4fcbe23e6c1bb4407d2"
+  },
+  "wall_seconds": 216.1827220916748
+}

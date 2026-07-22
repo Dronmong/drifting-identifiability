@@ -1,0 +1,90 @@
+{
+  "target_count": 64,
+  "families": [
+    "correlated-unimodal",
+    "curved-connected",
+    "dependence-trap",
+    "disconnected-nongaussian",
+    "gaussian-mixture",
+    "multiple-curves",
+    "rare-mode",
+    "skew-heavy"
+  ],
+  "direction_overlap_max": 0.9996988186962044,
+  "duplicate_parameter_count": 0,
+  "reference_stability": [
+    {
+      "target": "CF-F1-GMM-00",
+      "family": "gaussian-mixture",
+      "reference_ed2": 0.0002229053175067941,
+      "reference_sw1": 0.010407847692372962,
+      "scale": 2.072479067656,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F2-ELLIPSES-00",
+      "family": "disconnected-nongaussian",
+      "reference_ed2": 0.0008095497563178622,
+      "reference_sw1": 0.01909650603652256,
+      "scale": 1.304570455955,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F3-RARE-02-00",
+      "family": "rare-mode",
+      "reference_ed2": 0.0002707006706440529,
+      "reference_sw1": 0.006299599527501705,
+      "scale": 1.599927801626,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F4-CORRELATED-00",
+      "family": "correlated-unimodal",
+      "reference_ed2": 0.0013878228165773443,
+      "reference_sw1": 0.028557798351888725,
+      "scale": 3.53533106576,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F5-PERTURBED-RING-00",
+      "family": "curved-connected",
+      "reference_ed2": 0.0008647810926361021,
+      "reference_sw1": 0.02144154591279796,
+      "scale": 1.531873580026,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F6-MULTICURVE-00",
+      "family": "multiple-curves",
+      "reference_ed2": 0.0003877315962863559,
+      "reference_sw1": 0.01234239183160041,
+      "scale": 1.226741628259,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F7-SKEW-00",
+      "family": "skew-heavy",
+      "reference_ed2": 0.0003954830128976017,
+      "reference_sw1": 0.015406636586371331,
+      "scale": 2.931013714859,
+      "ed2_stable": true,
+      "sw1_stable": true
+    },
+    {
+      "target": "CF-F8-OFFAXIS-BINARY-00",
+      "family": "dependence-trap",
+      "reference_ed2": 0.0008390080764721919,
+      "reference_sw1": 0.021841536412512352,
+      "scale": 1.577738254506,
+      "ed2_stable": true,
+      "sw1_stable": true
+    }
+  ],
+  "pass": true
+}

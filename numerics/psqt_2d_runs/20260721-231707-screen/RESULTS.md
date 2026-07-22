@@ -1,0 +1,121 @@
+# PSQT 2D development results
+
+Status: exploratory development; not a frozen confirmation.
+
+## Invariants
+- PSQT mathematical/implementation invariants: PASS
+- invariant paper: translation/finite PASS
+- invariant snis: translation/finite PASS
+- invariant paper matched-batch cancellation: PASS
+- invariant paper-ND vs driftlab.compute_v_paper: PASS
+- completed paired cell 1/90: PS2-GMM4-equal/concentrated/seed0
+- completed paired cell 2/90: PS2-GMM4-equal/concentrated/seed1
+- completed paired cell 3/90: PS2-GMM4-equal/concentrated/seed2
+- completed paired cell 4/90: PS2-GMM4-equal/concentrated/seed3
+- completed paired cell 5/90: PS2-GMM4-equal/concentrated/seed4
+- completed paired cell 6/90: PS2-GMM4-equal/far/seed0
+- completed paired cell 7/90: PS2-GMM4-equal/far/seed1
+- completed paired cell 8/90: PS2-GMM4-equal/far/seed2
+- completed paired cell 9/90: PS2-GMM4-equal/far/seed3
+- completed paired cell 10/90: PS2-GMM4-equal/far/seed4
+- completed paired cell 11/90: PS2-GMM5-unequal/concentrated/seed0
+- completed paired cell 12/90: PS2-GMM5-unequal/concentrated/seed1
+- completed paired cell 13/90: PS2-GMM5-unequal/concentrated/seed2
+- completed paired cell 14/90: PS2-GMM5-unequal/concentrated/seed3
+- completed paired cell 15/90: PS2-GMM5-unequal/concentrated/seed4
+- completed paired cell 16/90: PS2-GMM5-unequal/far/seed0
+- completed paired cell 17/90: PS2-GMM5-unequal/far/seed1
+- completed paired cell 18/90: PS2-GMM5-unequal/far/seed2
+- completed paired cell 19/90: PS2-GMM5-unequal/far/seed3
+- completed paired cell 20/90: PS2-GMM5-unequal/far/seed4
+- completed paired cell 21/90: PS2-GMM4-hetero/concentrated/seed0
+- completed paired cell 22/90: PS2-GMM4-hetero/concentrated/seed1
+- completed paired cell 23/90: PS2-GMM4-hetero/concentrated/seed2
+- completed paired cell 24/90: PS2-GMM4-hetero/concentrated/seed3
+- completed paired cell 25/90: PS2-GMM4-hetero/concentrated/seed4
+- completed paired cell 26/90: PS2-GMM4-hetero/far/seed0
+- completed paired cell 27/90: PS2-GMM4-hetero/far/seed1
+- completed paired cell 28/90: PS2-GMM4-hetero/far/seed2
+- completed paired cell 29/90: PS2-GMM4-hetero/far/seed3
+- completed paired cell 30/90: PS2-GMM4-hetero/far/seed4
+- completed paired cell 31/90: PS2-diagonal-dependence/concentrated/seed0
+- completed paired cell 32/90: PS2-diagonal-dependence/concentrated/seed1
+- completed paired cell 33/90: PS2-diagonal-dependence/concentrated/seed2
+- completed paired cell 34/90: PS2-diagonal-dependence/concentrated/seed3
+- completed paired cell 35/90: PS2-diagonal-dependence/concentrated/seed4
+- completed paired cell 36/90: PS2-diagonal-dependence/far/seed0
+- completed paired cell 37/90: PS2-diagonal-dependence/far/seed1
+- completed paired cell 38/90: PS2-diagonal-dependence/far/seed2
+- completed paired cell 39/90: PS2-diagonal-dependence/far/seed3
+- completed paired cell 40/90: PS2-diagonal-dependence/far/seed4
+- completed paired cell 41/90: PS2-correlated-rho085/concentrated/seed0
+- completed paired cell 42/90: PS2-correlated-rho085/concentrated/seed1
+- completed paired cell 43/90: PS2-correlated-rho085/concentrated/seed2
+- completed paired cell 44/90: PS2-correlated-rho085/concentrated/seed3
+- completed paired cell 45/90: PS2-correlated-rho085/concentrated/seed4
+- completed paired cell 46/90: PS2-correlated-rho085/far/seed0
+- completed paired cell 47/90: PS2-correlated-rho085/far/seed1
+- completed paired cell 48/90: PS2-correlated-rho085/far/seed2
+- completed paired cell 49/90: PS2-correlated-rho085/far/seed3
+- completed paired cell 50/90: PS2-correlated-rho085/far/seed4
+- completed paired cell 51/90: PS2-ring/concentrated/seed0
+- completed paired cell 52/90: PS2-ring/concentrated/seed1
+- completed paired cell 53/90: PS2-ring/concentrated/seed2
+- completed paired cell 54/90: PS2-ring/concentrated/seed3
+- completed paired cell 55/90: PS2-ring/concentrated/seed4
+- completed paired cell 56/90: PS2-ring/far/seed0
+- completed paired cell 57/90: PS2-ring/far/seed1
+- completed paired cell 58/90: PS2-ring/far/seed2
+- completed paired cell 59/90: PS2-ring/far/seed3
+- completed paired cell 60/90: PS2-ring/far/seed4
+- completed paired cell 61/90: PS2-circles/concentrated/seed0
+- completed paired cell 62/90: PS2-circles/concentrated/seed1
+- completed paired cell 63/90: PS2-circles/concentrated/seed2
+- completed paired cell 64/90: PS2-circles/concentrated/seed3
+- completed paired cell 65/90: PS2-circles/concentrated/seed4
+- completed paired cell 66/90: PS2-circles/far/seed0
+- completed paired cell 67/90: PS2-circles/far/seed1
+- completed paired cell 68/90: PS2-circles/far/seed2
+- completed paired cell 69/90: PS2-circles/far/seed3
+- completed paired cell 70/90: PS2-circles/far/seed4
+- completed paired cell 71/90: PS2-moons/concentrated/seed0
+- completed paired cell 72/90: PS2-moons/concentrated/seed1
+- completed paired cell 73/90: PS2-moons/concentrated/seed2
+- completed paired cell 74/90: PS2-moons/concentrated/seed3
+- completed paired cell 75/90: PS2-moons/concentrated/seed4
+- completed paired cell 76/90: PS2-moons/far/seed0
+- completed paired cell 77/90: PS2-moons/far/seed1
+- completed paired cell 78/90: PS2-moons/far/seed2
+- completed paired cell 79/90: PS2-moons/far/seed3
+- completed paired cell 80/90: PS2-moons/far/seed4
+- completed paired cell 81/90: PS2-skew/concentrated/seed0
+- completed paired cell 82/90: PS2-skew/concentrated/seed1
+- completed paired cell 83/90: PS2-skew/concentrated/seed2
+- completed paired cell 84/90: PS2-skew/concentrated/seed3
+- completed paired cell 85/90: PS2-skew/concentrated/seed4
+- completed paired cell 86/90: PS2-skew/far/seed0
+- completed paired cell 87/90: PS2-skew/far/seed1
+- completed paired cell 88/90: PS2-skew/far/seed2
+- completed paired cell 89/90: PS2-skew/far/seed3
+- completed paired cell 90/90: PS2-skew/far/seed4
+
+## Development selection
+- selected paper arm: `paper-tau1`
+- selected PSQT arm: `psqt-L32-K64-R3-e0.5`
+- target-balanced ED2 ratio, PSQT / selected paper: `0.3684`
+- held-out SW1 ratio, PSQT / selected paper: `0.6908`
+- ED2 ratio, PSQT / coordinate-PQT: `0.1373`
+- ED2 ratio, PSQT / per-cell paper oracle: `0.4635`
+- cell wins versus selected paper: `16/18`
+- family ED2 ratios versus selected paper:
+  - `circles`: `0.3409`
+  - `correlated`: `0.5475`
+  - `dependence`: `1.3540`
+  - `gauss`: `0.2694`
+  - `moons`: `0.3650`
+  - `ring`: `0.1998`
+  - `skew`: `0.3470`
+
+## Interpretation boundary
+
+These outcomes are development evidence on reused target families. They select hyperparameters and cannot support a confirmatory claim. A fresh registry, frozen arm, target-level uncertainty, and full sample/work gates are required next.

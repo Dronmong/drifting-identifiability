@@ -1,0 +1,317 @@
+{
+  "construction_rejections": [
+    {
+      "label": "F1-00",
+      "reason": "minimum center separation",
+      "rejected_draws": 8
+    },
+    {
+      "label": "F2-00",
+      "reason": "minimum center separation",
+      "rejected_draws": 1
+    }
+  ],
+  "families": [
+    "gaussian-mixture",
+    "disconnected-nongaussian",
+    "rare-mode",
+    "correlated-unimodal",
+    "curved-connected",
+    "multiple-curves",
+    "skew-heavy",
+    "dependence-trap"
+  ],
+  "master_seed": 2026072500,
+  "registry_version": 1,
+  "status": "disposable-smoke",
+  "structural_validation": [
+    {
+      "empirical_coordinate_scale": 1.938042628562,
+      "finite": true,
+      "id": "CF-F1-GMM-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.492229986249,
+      "finite": true,
+      "id": "CF-F2-ELLIPSES-00"
+    },
+    {
+      "empirical_coordinate_scale": 0.243440642857,
+      "finite": true,
+      "id": "CF-F3-RARE-02-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.212718549967,
+      "finite": true,
+      "id": "CF-F4-CORRELATED-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.011479800575,
+      "finite": true,
+      "id": "CF-F5-PERTURBED-RING-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.151157286027,
+      "finite": true,
+      "id": "CF-F6-MULTICURVE-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.287609930078,
+      "finite": true,
+      "id": "CF-F7-SKEW-00"
+    },
+    {
+      "empirical_coordinate_scale": 1.957235923114,
+      "finite": true,
+      "id": "CF-F8-OFFAXIS-BINARY-00"
+    }
+  ],
+  "target_count": 8,
+  "targets": [
+    {
+      "family": "gaussian-mixture",
+      "id": "CF-F1-GMM-00",
+      "parameters": {
+        "dirichlet_alpha": 1.156515937925,
+        "generation_angle": 2.697627209131,
+        "means": [
+          [
+            0.306815286789,
+            1.473933706118
+          ],
+          [
+            -0.213402238117,
+            1.796351669261
+          ],
+          [
+            0.327802598718,
+            0.843744985715
+          ],
+          [
+            0.696396849951,
+            0.018052708429
+          ],
+          [
+            -0.232661119472,
+            -0.141959830699
+          ],
+          [
+            1.322506642762,
+            -0.365226484725
+          ]
+        ],
+        "sigmas": [
+          0.071493819975,
+          0.195678908573,
+          0.1516847036,
+          0.063303086821,
+          0.123966146431,
+          0.195812959444
+        ],
+        "translation": [
+          0.48893335922,
+          0.607165211136
+        ],
+        "weights": [
+          0.052874618923,
+          0.17993445386,
+          0.184811814474,
+          0.064444201761,
+          0.427981879296,
+          0.089953031685
+        ]
+      },
+      "registry_seed": 2026172503,
+      "scale": 1.968539788286
+    },
+    {
+      "family": "disconnected-nongaussian",
+      "id": "CF-F2-ELLIPSES-00",
+      "parameters": {
+        "axes": [
+          [
+            0.19236854113,
+            0.119990979346
+          ],
+          [
+            0.293293022267,
+            0.076732442832
+          ],
+          [
+            0.125329814121,
+            0.138343779702
+          ],
+          [
+            0.121511163506,
+            0.054855420496
+          ]
+        ],
+        "centers": [
+          [
+            0.310220429889,
+            0.488465700718
+          ],
+          [
+            0.585535611545,
+            -0.919345143104
+          ],
+          [
+            -0.164654690179,
+            -1.581619415968
+          ],
+          [
+            1.531705299834,
+            -1.615702516325
+          ]
+        ],
+        "component_angles": [
+          2.262540051419,
+          0.433307838243,
+          2.936824274396,
+          0.258148244005
+        ],
+        "weights": [
+          0.153650773015,
+          0.657368830493,
+          0.138107163768,
+          0.050873232724
+        ]
+      },
+      "registry_seed": 2026272506,
+      "scale": 1.815718106606
+    },
+    {
+      "family": "rare-mode",
+      "id": "CF-F3-RARE-02-00",
+      "parameters": {
+        "means": [
+          [
+            -1.280601080162,
+            -0.794962727406
+          ],
+          [
+            1.36093175674,
+            0.322220884395
+          ]
+        ],
+        "minority": 0.02,
+        "sigmas": [
+          0.09230571409,
+          0.079066495833
+        ],
+        "weights": [
+          0.98,
+          0.02
+        ]
+      },
+      "registry_seed": 2026372509,
+      "scale": 1.710949477236
+    },
+    {
+      "family": "correlated-unimodal",
+      "id": "CF-F4-CORRELATED-00",
+      "parameters": {
+        "angle": 1.499139183972,
+        "radial": "gaussian",
+        "scales": [
+          0.606743664065,
+          0.111159997015
+        ],
+        "translation": [
+          0.531937203441,
+          0.403244268267
+        ]
+      },
+      "registry_seed": 2026472512,
+      "scale": 2.123602824226
+    },
+    {
+      "family": "curved-connected",
+      "id": "CF-F5-PERTURBED-RING-00",
+      "parameters": {
+        "amplitude": 0.146659282774,
+        "angle": 2.117178418254,
+        "frequency": 4,
+        "kind": "perturbed-ring",
+        "phase": 5.723660477923,
+        "radius": 0.83634975521,
+        "translation": [
+          0.109394101205,
+          -0.276217293657
+        ],
+        "width": 0.067817938197
+      },
+      "registry_seed": 2026572515,
+      "scale": 1.16246202505
+    },
+    {
+      "family": "multiple-curves",
+      "id": "CF-F6-MULTICURVE-00",
+      "parameters": {
+        "amplitude": 0.030617648879,
+        "angle": 3.001927541265,
+        "frequency": 6,
+        "phase": 0.754878702707,
+        "radii": [
+          0.49619106984,
+          1.075031506103
+        ],
+        "translation": [
+          0.386942201079,
+          -0.39265624813
+        ],
+        "weights": [
+          0.305428002232,
+          0.694571997768
+        ],
+        "widths": [
+          0.033625731594,
+          0.039610984829
+        ]
+      },
+      "registry_seed": 2026672518,
+      "scale": 1.287946443291
+    },
+    {
+      "family": "skew-heavy",
+      "id": "CF-F7-SKEW-00",
+      "parameters": {
+        "angle": 2.669839701549,
+        "coupling": -0.379169734737,
+        "df": 6.882561154558,
+        "log_mean": -0.120413498472,
+        "log_sigma": 0.650481872346,
+        "translation": [
+          -0.28175895678,
+          -0.024049721731
+        ],
+        "x_scale": 0.521020788613,
+        "y_scale": 0.41950194438
+      },
+      "registry_seed": 2026772521,
+      "scale": 2.084083154451
+    },
+    {
+      "family": "dependence-trap",
+      "id": "CF-F8-OFFAXIS-BINARY-00",
+      "parameters": {
+        "angle": 2.576541930917,
+        "axial_noise": 0.102294730413,
+        "half_separation": 1.061150258687,
+        "kind": "offaxis-binary",
+        "orthogonal_noise": 0.117194969706,
+        "translation": [
+          -0.520518716682,
+          -0.212525780964
+        ],
+        "weights": [
+          0.5,
+          0.5
+        ]
+      },
+      "registry_seed": 2026872524,
+      "scale": 1.561150258687
+    }
+  ],
+  "targets_per_family": 1
+}

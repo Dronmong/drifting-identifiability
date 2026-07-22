@@ -106,6 +106,28 @@ Neither frozen LB-QCD registry may be reused to tune the successor. The result
 is limited to the documented one-dimensional synthetic generator benchmark
 and does not assert ImageNet, real-feature, or multidimensional superiority.
 
+### Two-dimensional PSQT accumulator confirmation
+
+The pooled-rank repair of persistent sliced quantile transport is documented
+in `PSQTAccumulatorConfirmatoryRoadmap.md`,
+`PSQTAccumulatorConfirmatoryProtocol.md`, and
+`PSQTAccumulatorConfirmatoryResults.md`. The quality arm uses independently
+audited Apache DataSketches KLL summaries; the efficiency arm uses a bounded
+reservoir of raw 2D samples.
+
+On one sealed registry of 64 fresh 2D targets, KLL-k128 passed every
+preregistered gate. Its geometric-mean ED2 ratio was `.3370` versus historical
+online PSQT (95% target-bootstrap interval `[.3111,.3669]`) and `.0762` versus
+the registered paper `tau = 1` arm (`[.0634,.0927]`). It also improved held-out
+SW1 in every target and had no family-level ED2 regression. Reservoir-1024
+passed its separate efficiency gates at essentially the same persistent-state
+size as historical PSQT. The full immutable output is under
+`psqt_accumulator_confirmatory_runs/20260722-005506-confirmatory/`.
+
+This supports the protocol's scoped general low-dimensional improvement claim
+for the nonparametric 2D particle testbed. It does not establish superiority on
+images, learned encoder features, neural generators, or arbitrary dimension.
+
 ## Calibrated conservative bridge experiment
 
 The later QLD-to-sharp-to-paper mechanism experiment is documented in:

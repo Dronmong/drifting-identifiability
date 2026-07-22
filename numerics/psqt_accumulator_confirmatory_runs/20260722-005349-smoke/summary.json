@@ -1,0 +1,276 @@
+{
+  "profile": {
+    "name": "smoke",
+    "streams": 1,
+    "updates": 40,
+    "particles": 32,
+    "batch": 32,
+    "reference": 1024,
+    "directions": 16,
+    "knots": 32,
+    "reconstruction_steps": 60,
+    "reconstruction_step_size": 0.5,
+    "bootstrap_draws": 500
+  },
+  "comparisons": {
+    "kll_hist_ed2": {
+      "candidate": "pooled-rank-kll128",
+      "baseline": "historical-online-psqt",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.19319097059453538,
+      "median_target_ratio": 0.26679407311764824,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.19319097059453536,
+        0.19319097059453536
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.19191795643075946,
+        "curved-connected": 0.41020854338403295,
+        "dependence-trap": 0.08142627832076976,
+        "disconnected-nongaussian": 0.09062028248259403,
+        "gaussian-mixture": 0.46861966921190057,
+        "multiple-curves": 0.3416701898045371,
+        "rare-mode": 0.057675591746186326,
+        "skew-heavy": 0.361713422904375
+      },
+      "target_count": 8
+    },
+    "kll_paper_ed2": {
+      "candidate": "pooled-rank-kll128",
+      "baseline": "paper-tau1",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.007733174873194762,
+      "median_target_ratio": 0.006212959124927848,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.007733174873194769,
+        0.007733174873194769
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.006031484834513015,
+        "curved-connected": 0.01588819289084974,
+        "dependence-trap": 0.006394433415342683,
+        "disconnected-nongaussian": 0.004952803355729192,
+        "gaussian-mixture": 0.0264989027425411,
+        "multiple-curves": 0.017633282515354683,
+        "rare-mode": 0.001993197973018833,
+        "skew-heavy": 0.004524798635891879
+      },
+      "target_count": 8
+    },
+    "res_hist_ed2": {
+      "candidate": "pooled-rank-reservoir1024",
+      "baseline": "historical-online-psqt",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.17460440013640038,
+      "median_target_ratio": 0.2715464950758176,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.17460440013640044,
+        0.17460440013640044
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.20139024453699497,
+        "curved-connected": 0.39822985693684076,
+        "dependence-trap": 0.08187539924005648,
+        "disconnected-nongaussian": 0.0779555144947951,
+        "gaussian-mixture": 0.4782664284824158,
+        "multiple-curves": 0.34170274561464015,
+        "rare-mode": 0.02711693195344107,
+        "skew-heavy": 0.3808114827291661
+      },
+      "target_count": 8
+    },
+    "res_paper_ed2": {
+      "candidate": "pooled-rank-reservoir1024",
+      "baseline": "paper-tau1",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.006989179441092623,
+      "median_target_ratio": 0.006379438688523396,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.006989179441092623,
+        0.006989179441092623
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.006329174342693614,
+        "curved-connected": 0.015424234536199323,
+        "dependence-trap": 0.006429703034353181,
+        "disconnected-nongaussian": 0.004260617195290435,
+        "gaussian-mixture": 0.02704439528688946,
+        "multiple-curves": 0.017634962690606118,
+        "rare-mode": 0.0009371280322869378,
+        "skew-heavy": 0.004763702888738038
+      },
+      "target_count": 8
+    },
+    "kll_hist_sw1": {
+      "candidate": "pooled-rank-kll128",
+      "baseline": "historical-online-psqt",
+      "metric": "heldout_sw1",
+      "geometric_mean_ratio": 0.4292781340232053,
+      "median_target_ratio": 0.44489979390670453,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.42927813402320525,
+        0.42927813402320525
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.3984063746386771,
+        "curved-connected": 0.5575823253267085,
+        "dependence-trap": 0.2632492577066798,
+        "disconnected-nongaussian": 0.3548799906758968,
+        "gaussian-mixture": 0.6447100067915776,
+        "multiple-curves": 0.49139321317473195,
+        "rare-mode": 0.3204460004969514,
+        "skew-heavy": 0.547365945413984
+      },
+      "target_count": 8
+    },
+    "kll_paper_sw1": {
+      "candidate": "pooled-rank-kll128",
+      "baseline": "paper-tau1",
+      "metric": "heldout_sw1",
+      "geometric_mean_ratio": 0.07429969121630384,
+      "median_target_ratio": 0.07111082530149478,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.07429969121630384,
+        0.07429969121630384
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.0553895858633955,
+        "curved-connected": 0.10799556504360941,
+        "dependence-trap": 0.06380645818690071,
+        "disconnected-nongaussian": 0.07841519241608885,
+        "gaussian-mixture": 0.1472144888283452,
+        "multiple-curves": 0.11013356894241043,
+        "rare-mode": 0.034743797516876375,
+        "skew-heavy": 0.05508706417196547
+      },
+      "target_count": 8
+    },
+    "res_hist_sw1": {
+      "candidate": "pooled-rank-reservoir1024",
+      "baseline": "historical-online-psqt",
+      "metric": "heldout_sw1",
+      "geometric_mean_ratio": 0.40956825059270463,
+      "median_target_ratio": 0.43969865598012414,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.40956825059270463,
+        0.40956825059270463
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.3954113417380589,
+        "curved-connected": 0.5434130536639038,
+        "dependence-trap": 0.26652242325679076,
+        "disconnected-nongaussian": 0.31605630291945797,
+        "gaussian-mixture": 0.6469984721676826,
+        "multiple-curves": 0.4839859702221893,
+        "rare-mode": 0.242636833688918,
+        "skew-heavy": 0.575758170248798
+      },
+      "target_count": 8
+    },
+    "exact_hist_ed2": {
+      "candidate": "exact-pooled-ceiling",
+      "baseline": "historical-online-psqt",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.17494141123903348,
+      "median_target_ratio": 0.24846164058296455,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.17494141123903342,
+        0.17494141123903342
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.18679326579011563,
+        "curved-connected": 0.4146188376221593,
+        "dependence-trap": 0.1045132908475168,
+        "disconnected-nongaussian": 0.07881796451967317,
+        "gaussian-mixture": 0.47042239199665165,
+        "multiple-curves": 0.3101300153758135,
+        "rare-mode": 0.026274080529727472,
+        "skew-heavy": 0.3587357916716532
+      },
+      "target_count": 8
+    },
+    "exact_paper_ed2": {
+      "candidate": "exact-pooled-ceiling",
+      "baseline": "paper-tau1",
+      "metric": "ed2",
+      "geometric_mean_ratio": 0.007002669542533951,
+      "median_target_ratio": 0.007038946725853229,
+      "target_win_fraction": 1.0,
+      "ci95": [
+        0.007002669542533951,
+        0.007002669542533951
+      ],
+      "family_ratios": {
+        "correlated-unimodal": 0.005870429066436587,
+        "curved-connected": 0.016059012359851268,
+        "dependence-trap": 0.008207464385269871,
+        "disconnected-nongaussian": 0.004307753942830206,
+        "gaussian-mixture": 0.0266008407935521,
+        "multiple-curves": 0.016005523281798443,
+        "rare-mode": 0.0009080001170208918,
+        "skew-heavy": 0.00448755041426984
+      },
+      "target_count": 8
+    }
+  },
+  "median_persistent_bytes": {
+    "paper-tau1": 512.0,
+    "historical-online-psqt": 5128.0,
+    "pooled-rank-kll128": 18944.0,
+    "pooled-rank-reservoir1024": 17424.0,
+    "exact-pooled-ceiling": 21504.0
+  },
+  "median_wall_seconds": {
+    "paper-tau1": 0.0038433500012615696,
+    "historical-online-psqt": 0.005773449986008927,
+    "pooled-rank-kll128": 0.0022922499920241535,
+    "pooled-rank-reservoir1024": 0.002143449994036928,
+    "exact-pooled-ceiling": 0.0015951499954098836
+  },
+  "divergence_counts": {
+    "paper-tau1": 0,
+    "historical-online-psqt": 0,
+    "pooled-rank-kll128": 0,
+    "pooled-rank-reservoir1024": 0,
+    "exact-pooled-ceiling": 0
+  },
+  "rare_recovery_05_10": {
+    "paper-tau1": NaN,
+    "historical-online-psqt": NaN,
+    "pooled-rank-kll128": NaN,
+    "pooled-rank-reservoir1024": NaN,
+    "exact-pooled-ceiling": NaN
+  },
+  "kll_median_excess_bridge": 0.03125,
+  "kll_gates": {
+    "ed2_vs_historical": true,
+    "ed2_vs_paper": true,
+    "sw1_vs_both": true,
+    "target_wins": true,
+    "family_robustness": true,
+    "zero_divergence": true,
+    "rare_recovery": false,
+    "bridge_occupancy": true
+  },
+  "reservoir_gates": {
+    "ed2_vs_historical": true,
+    "ed2_vs_paper": true,
+    "sw1_nonregression": true,
+    "target_wins": true,
+    "state": false,
+    "wall_time": true,
+    "zero_divergence": true,
+    "rare_recovery": false
+  },
+  "kll_promoted": false,
+  "reservoir_promoted": false,
+  "general_improvement_claim": false
+}

@@ -1,0 +1,61 @@
+{
+  "status": "pre-confirmation-engineering-audit",
+  "master_seed": 20260724,
+  "config": {
+    "n": 19200,
+    "knots": 64,
+    "k": 128,
+    "repeats": 12,
+    "theoretical_rank_error": 0.020517839594286266
+  },
+  "git_commit": "cfd89957d8393cf2edaa98748a2a29391bac78bc",
+  "git_status": [
+    "M numerics/README.md",
+    " M numerics/lbqcd.py",
+    "?? numerics/PSQT2DDevelopmentResults.md",
+    "?? numerics/PSQTAccumulatorConfirmatoryRoadmap.md",
+    "?? numerics/PSQTHigherDimImplementationPlan.md",
+    "?? numerics/PSQTQuantileAccumulatorDefectAnalysis.md",
+    "?? numerics/PSQTQuantileAccumulatorRepairPlan.md",
+    "?? numerics/PSQTQuantileAccumulatorRepairResults.md",
+    "?? numerics/QuantileGuardedDriftingProtocol.md",
+    "?? numerics/QuantileGuardedDriftingResearchPlan.md",
+    "?? numerics/QuantileGuardedDriftingResults.md",
+    "?? numerics/QuantileSafetyGuardProtocol.md",
+    "?? numerics/QuantileSafetyGuardResults.md",
+    "?? numerics/audit_projected_kll.py",
+    "?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+    "?? numerics/persistent_sliced_quantile_transport.py",
+    "?? numerics/projected_quantile_accumulators.py",
+    "?? numerics/psqt_2d_runs/",
+    "?? numerics/psqt_accumulator_runs/",
+    "?? numerics/qgd_development_registry.json",
+    "?? numerics/qgd_runs/",
+    "?? numerics/quantile_guarded_drifting.py",
+    "?? numerics/run_psqt_2d_development.py",
+    "?? numerics/run_psqt_accumulator_repair.py",
+    "?? numerics/run_quantile_guarded_development.py",
+    "?? numerics/standard_projected_kll.py",
+    "?? numerics/transport_aligned_runs/20260721-202812-smoke-smoke/",
+    "?? numerics/transport_aligned_runs/20260721-202838-screen-mechanism-screen/",
+    "?? numerics/transport_aligned_runs/20260721-203012-standard-first-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203215-standard-budget-matched-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203549-standard-K256-standard/"
+  ],
+  "python": "3.12.13 (main, Apr  7 2026, 20:53:22) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "datasketches": "5.2.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "command": [
+    "numerics\\audit_projected_kll.py",
+    "--repeats",
+    "12"
+  ],
+  "source_sha256": {
+    "numerics\\audit_projected_kll.py": "289ef7883798f3fec3ee6e58e9b2059e65cbc261b8336a40a6f89f6d8f88f09e",
+    "numerics\\standard_projected_kll.py": "716f231b5633ba1bf16b6e64457330b19ea471ea1c29d92595f8152c53517f86",
+    "numerics\\projected_quantile_accumulators.py": "489ac7199bc7ac2fec2001549c2bac40f06d1bdd7149e8f6897299a8049ea6e7",
+    "numerics\\PSQTAccumulatorConfirmatoryRoadmap.md": "ee50a393593b42cb0d2d2308df6b5385d6416978ecc2ae35000c804a6cfcadbc"
+  },
+  "wall_seconds": 1.9667458534240723
+}
