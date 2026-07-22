@@ -1,5 +1,9 @@
 # Persistent Quantile Transport: development and replication results
 
+> **Update:** the subsequent fresh frozen confirmation passed all predeclared
+> gates. See [`PQTConfirmatoryResults.md`](PQTConfirmatoryResults.md). The
+> material below remains the development record that preceded that test.
+
 **Program:** `transport-aligned-generator-development-v1`  
 **Candidate:** `gated-pqt-M1024-f0.70`, 128 monotone knots  
 **Status:** development success plus cross-registry replication; not a new
@@ -204,4 +208,3 @@ programs repeatedly erased good transient states.  The next steps are:
    parametric implementation;
 5. treat higher dimensions as a separate convex-potential or minibatch-OT
    research program.
-

@@ -1,5 +1,9 @@
 # Transport-aligned generator research plan
 
+> **Final status:** completed. The selected 128-knot budget-matched candidate
+> passed the fresh `PQT-confirmatory-v1` protocol. See
+> [`PQTConfirmatoryResults.md`](PQTConfirmatoryResults.md).
+
 ## Decision
 
 The next program will not add another gain, guard, bandwidth, or suffix to the
