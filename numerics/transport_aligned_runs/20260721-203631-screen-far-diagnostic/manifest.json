@@ -1,0 +1,19 @@
+{
+  "program": "transport-aligned-generator-development-v1",
+  "profile": "screen",
+  "arms": [
+    "pqt-B128",
+    "gated-pqt-M1024-f0.70"
+  ],
+  "inits": [
+    "far"
+  ],
+  "seeds": 3,
+  "knots": 128,
+  "initialization_samples": 4096,
+  "prior_batches": 1.0,
+  "diagnostic_samples": 4096,
+  "baseline_rows": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\lbqcd_runs\\20260720-234146-n1-screen\\rows.csv",
+  "tasks": 18,
+  "bootstrap_reps": 5000
+}

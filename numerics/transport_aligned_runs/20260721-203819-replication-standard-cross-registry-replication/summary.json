@@ -1,0 +1,70 @@
+{
+  "comparisons": {
+    "gated-pqt-M1024-f0.70": {
+      "ed2_vs_paper-0.5": 0.5281450556427552,
+      "sw1_vs_paper-0.5": 0.6113242183786978,
+      "ed2_ci_vs_paper-0.5": [
+        0.42925838446806974,
+        0.6398832181181664
+      ],
+      "sw1_ci_vs_paper-0.5": [
+        0.549440681416341,
+        0.6814561873547591
+      ],
+      "ed2_vs_qld-v1": 0.6318163843275387,
+      "sw1_vs_qld-v1": 0.7006217501514235,
+      "ed2_ci_vs_qld-v1": [
+        0.5061946477138879,
+        0.7702705296522975
+      ],
+      "sw1_ci_vs_qld-v1": [
+        0.6133557211609629,
+        0.7905651444096162
+      ],
+      "ed2_vs_gated-M1024-f0.70-u": 0.6426919875232847,
+      "sw1_vs_gated-M1024-f0.70-u": 0.7043736141816902,
+      "ed2_ci_vs_gated-M1024-f0.70-u": [
+        0.5167053770216599,
+        0.7884252253376396
+      ],
+      "sw1_ci_vs_gated-M1024-f0.70-u": [
+        0.618850384206731,
+        0.7926377407531411
+      ],
+      "family_ed2_vs_lbqcd": {
+        "connected": 0.9041878487044748,
+        "contaminated": 0.33722984012493185,
+        "equal": 0.7951772363393415,
+        "heavy-tail": 0.8066330267938967,
+        "heteroscedastic": 0.7774390062449276,
+        "overlap": 0.7006252980114984,
+        "unequal": 0.5548036599566619
+      },
+      "init_ed2_vs_lbqcd": {
+        "concentrated": 0.6642193361186969,
+        "missing": 0.6218623402929915
+      },
+      "cell_win_fraction_vs_lbqcd": 0.90625,
+      "median_work": {
+        "wall_seconds": 0.2180139000120107,
+        "target_samples": 906240.0,
+        "generator_example_evals": 8192.0,
+        "sort_work": 8924160.0,
+        "stored_scalars": 256.0,
+        "w2_quantile_rmse": 0.14090630791884928
+      },
+      "divergences": 0
+    }
+  },
+  "development_gate": {
+    "gated-pqt-M1024-f0.70": {
+      "ed2_vs_lbqcd_at_most_0.90": true,
+      "ed2_vs_paper_at_most_0.75": true,
+      "sw1_improves_vs_lbqcd": true,
+      "all_families_at_most_1.05_vs_lbqcd": true,
+      "both_inits_improve_vs_lbqcd": true,
+      "no_divergences": true,
+      "passed": true
+    }
+  }
+}

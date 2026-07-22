@@ -1,0 +1,21 @@
+{
+  "program": "transport-aligned-generator-development-v1",
+  "registry_role": "replication",
+  "registry_id": "LBQCD-confirmatory-v1",
+  "profile": "standard",
+  "arms": [
+    "gated-pqt-M1024-f0.70"
+  ],
+  "inits": [
+    "missing",
+    "concentrated"
+  ],
+  "seeds": 20,
+  "knots": 128,
+  "initialization_samples": 4096,
+  "prior_batches": 1.0,
+  "diagnostic_samples": 4096,
+  "baseline_rows": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\lbqcd_confirmatory_runs\\20260721-000900-test-standard\\rows.csv",
+  "tasks": 640,
+  "bootstrap_reps": 5000
+}

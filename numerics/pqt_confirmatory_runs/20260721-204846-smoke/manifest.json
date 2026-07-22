@@ -1,0 +1,33 @@
+{
+  "protocol": "PQT-confirmatory-v1",
+  "profile": "smoke",
+  "workers": 6,
+  "tasks": 36,
+  "bootstrap_reps": 100,
+  "wall_seconds": 0.9682810000085738,
+  "git_revision": "90b9710ad5ba50523bd4dfd95453805579d4be74",
+  "git_status_short": "M docs/04-empirical-experimentation/PaperImprovementAttempts.md\n M numerics/README.md\n M numerics/lbqcd.py\n?? numerics/PQTConfirmatoryProtocol.md\n?? numerics/QuantileGuardedDriftingProtocol.md\n?? numerics/QuantileGuardedDriftingResearchPlan.md\n?? numerics/QuantileGuardedDriftingResults.md\n?? numerics/QuantileSafetyGuardProtocol.md\n?? numerics/QuantileSafetyGuardResults.md\n?? numerics/TransportAlignedGeneratorDevelopmentResults.md\n?? numerics/TransportAlignedGeneratorResearchPlan.md\n?? numerics/conservative_runs/20260721-153352-S2-smoke/\n?? numerics/persistent_quantile_transport.py\n?? numerics/pqt_confirmatory_registry.json\n?? numerics/pqt_confirmatory_runs/\n?? numerics/qgd_development_registry.json\n?? numerics/qgd_runs/\n?? numerics/quantile_guarded_drifting.py\n?? numerics/run_pqt_confirmatory.py\n?? numerics/run_quantile_guarded_development.py\n?? numerics/run_transport_aligned_development.py\n?? numerics/transport_aligned_runs/",
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "argv": [
+    "numerics/run_pqt_confirmatory.py",
+    "--profile",
+    "smoke",
+    "--workers",
+    "6",
+    "--bootstrap-reps",
+    "100"
+  ],
+  "source_sha256": {
+    "run_pqt_confirmatory.py": "E4224D11EBAE8D63705819953DA175A6872855D4F4BE2B1F44CC438ABD1C49D7",
+    "persistent_quantile_transport.py": "0E3A7C07F6D2D26220D7796878796835B4C9172CE49B3AB57B4EECFED4AFD57E",
+    "run_transport_aligned_development.py": "8B8D04416E812B4628C99ADFE3E57C85536C550D5E3D869E384468954F9B4824",
+    "run_lbqcd_development.py": "FDFC3FF8B2A0459CE9F1C88268FAB40391471149649A61AFC4C057E1C9BBFB12",
+    "lbqcd.py": "E41F73F5C6F71A97D171BBF239D241D78A3360B2C1C1FE692BF686FFB14428A5",
+    "run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "pqt_confirmatory_registry.json": "E4B914DE6B94BB8359CCC3C3DF86E731EBE5F22855E7A6D311202D84B46DE755",
+    "PQTConfirmatoryProtocol.md": "86D8D567B3B43B2A482527181DF95AAA4645FC0715FB81A371937BA71E4F9034"
+  }
+}
