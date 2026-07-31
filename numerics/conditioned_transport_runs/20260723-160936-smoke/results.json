@@ -1,0 +1,76 @@
+{
+  "by_arm": {
+    "cta-exact-fixed-control": {
+      "count": 4,
+      "maximum_rare_mass_error": 0.05,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.06794360589188897,
+      "median_heldout_sw1": 0.17660778601563906,
+      "median_online_training_wall_seconds": 0.035197950004658196,
+      "median_paper_kernel_pairs": 262144.0,
+      "median_rare_mass_error": 0.05,
+      "median_setup_plus_training_wall_seconds": 0.040579349999461556,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 1,
+      "representative_leaf_population_range": [
+        4,
+        4
+      ]
+    },
+    "cta-exact-gated-hybrid": {
+      "count": 4,
+      "maximum_rare_mass_error": 0.05,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.0667475089778049,
+      "median_heldout_sw1": 0.1778615504723018,
+      "median_online_training_wall_seconds": 0.04459800000040559,
+      "median_paper_kernel_pairs": 393216.0,
+      "median_rare_mass_error": 0.05,
+      "median_setup_plus_training_wall_seconds": 0.04969205000452348,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 1,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout2": {
+      "count": 4,
+      "maximum_rare_mass_error": 0.048046875,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.056613887067915813,
+      "median_heldout_sw1": 0.17328675722820847,
+      "median_online_training_wall_seconds": 0.04739839999820106,
+      "median_paper_kernel_pairs": 393216.0,
+      "median_rare_mass_error": 0.048046875,
+      "median_setup_plus_training_wall_seconds": 0.05391415000121924,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 1,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout4-safe-balanced": {
+      "count": 4,
+      "maximum_rare_mass_error": 0.030468750000000003,
+      "mean_selected_local_weight": 0.07017822528723627,
+      "median_ed2": 0.06914643729157155,
+      "median_heldout_sw1": 0.18886197007912592,
+      "median_online_training_wall_seconds": 0.05722634999983711,
+      "median_paper_kernel_pairs": 393216.0,
+      "median_rare_mass_error": 0.030468750000000003,
+      "median_setup_plus_training_wall_seconds": 0.06474835000699386,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 1,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    }
+  }
+}

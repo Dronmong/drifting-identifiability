@@ -1,0 +1,33 @@
+=== Phase 14A: the encoder-quality ladder on cuda ===
+    G1_pretrained_resnet   seed0 fid=  298.36 ed2= 11.8315 score= 14.552 ESS= 0.992 OK 
+    G1_pretrained_resnet   seed1 fid=  313.63 ed2= 10.5503 score= 12.250 ESS= 0.993 OK 
+    G1_pretrained_resnet   seed2 fid=  293.71 ed2= 10.0261 score=  9.103 ESS= 0.992 OK 
+    G2_random_resnet       seed0 fid=  292.52 ed2=  5.6663 score=  9.695 ESS= 0.945 OK 
+    G2_random_resnet       seed1 fid=  280.48 ed2=  5.3849 score=  8.721 ESS= 0.947 OK 
+    G2_random_resnet       seed2 fid=  310.98 ed2=  5.5221 score=  7.179 ESS= 0.948 OK 
+    G3_autoencoder         seed0 fid=  250.39 ed2=  2.4970 score=  6.268 ESS= 0.952 OK 
+    G3_autoencoder         seed1 fid=  270.22 ed2=  3.1937 score=  6.706 ESS= 0.958 OK 
+    G3_autoencoder         seed2 fid=  264.55 ed2=  2.8268 score=  5.058 ESS= 0.952 OK 
+    G4_raw_pixels          seed0 fid=  249.34 ed2=  2.3479 score=  5.897 ESS= 0.963 OK 
+    G4_raw_pixels          seed1 fid=  283.12 ed2=  2.8872 score=  6.407 ESS= 0.961 OK 
+    G4_raw_pixels          seed2 fid=  258.54 ed2=  3.5732 score=  5.763 ESS= 0.963 OK 
+    G5_degraded            seed0 fid=  247.76 ed2=  2.3321 score=  5.983 ESS= 0.989 OK 
+    G5_degraded            seed1 fid=  263.67 ed2=  3.6006 score=  7.284 ESS= 0.993 OK 
+    G5_degraded            seed2 fid=  276.10 ed2=  2.0993 score=  4.577 ESS= 0.992 OK 
+
+=== PHASE 14A ===
+geometry                  learned       FID       ed2   score     2nd     ESS  health
+G4_raw_pixels               False    258.54    2.8872   5.897   0.296   0.963  OK
+G5_degraded                  True    263.67    2.3321   5.983   0.340   0.992  OK
+G3_autoencoder               True    264.55    2.8268   6.268   0.309   0.952  OK
+G2_random_resnet             True    292.52    5.5221   8.721   0.133   0.947  OK
+G1_pretrained_resnet         True    298.36   10.5503  12.250   0.022   0.992  OK
+
+  ranking by FID: G4_raw_pixels < G5_degraded < G3_autoencoder < G2_random_resnet < G1_pretrained_resnet
+  ranking by ED2: G5_degraded < G3_autoencoder < G4_raw_pixels < G2_random_resnet < G1_pretrained_resnet
+  pretrained beats random: False
+  pretrained beats raw:    False
+
+  raw pixels match or beat a real pretrained encoder here -- either semantic geometry does not help at this scale, or the harness is blind to it; 14B cannot be interpreted until this is resolved
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase14a.json sha256=1a10984cb79254f7...

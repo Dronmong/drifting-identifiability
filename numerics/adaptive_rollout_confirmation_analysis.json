@@ -1,0 +1,2279 @@
+{
+  "artifact_audit_sha256": {
+    "broad": "b2d5c389f8775ba9eda829dc047511e0d9dddef082eeff52ef24d3c727c8a2d9",
+    "concentrated": "3635ff41d3fdf764effe5a55d9149dc96bfb6954d52a0865f747ffb516380c08"
+  },
+  "artifact_directories": {
+    "broad": "numerics\\conditioned_transport_runs\\20260723-162201-consumed",
+    "concentrated": "numerics\\conditioned_transport_runs\\20260723-161850-consumed"
+  },
+  "bootstrap_resamples": 20000,
+  "bootstrap_seed": 2026110709,
+  "candidate": "cta-exact-adaptive-rollout",
+  "comparators": [
+    "cta-exact-fixed-control",
+    "cta-exact-gated-hybrid",
+    "paper-neural-optimized"
+  ],
+  "cost": {
+    "cta-exact-fixed-control": {
+      "generator_forward_calls_training": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.0,
+          "NCT-d16-balanced-gmm-i1": 1.0,
+          "NCT-d16-correlated-t-i0": 1.0,
+          "NCT-d16-correlated-t-i1": 1.0,
+          "NCT-d16-nonlinear-i0": 1.0,
+          "NCT-d16-nonlinear-i1": 1.0,
+          "NCT-d16-rare-gmm-i0": 1.0,
+          "NCT-d16-rare-gmm-i1": 1.0,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.0,
+          "NCT-d8-balanced-gmm-i1": 1.0,
+          "NCT-d8-correlated-t-i0": 1.0,
+          "NCT-d8-correlated-t-i1": 1.0,
+          "NCT-d8-nonlinear-i0": 1.0,
+          "NCT-d8-nonlinear-i1": 1.0,
+          "NCT-d8-rare-gmm-i0": 1.0,
+          "NCT-d8-rare-gmm-i1": 1.0
+        },
+        "targets": 32,
+        "ties": 32,
+        "wins": 0
+      },
+      "online_training_wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 2.0433781069698993,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.002627431070254,
+            "targets": 8,
+            "wins": 2
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0057045226215648,
+            "targets": 8,
+            "wins": 3
+          },
+          "8": {
+            "geometric_mean_ratio": 1.8255175233141117,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.3938396215850153,
+            "targets": 8,
+            "wins": 2
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.410912649522561,
+            "targets": 8,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.3941964771456508,
+            "targets": 8,
+            "wins": 2
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.3718537468589669,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.3926313962074364,
+        "median_ratio": 1.3947399862229557,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 2.024712623856405,
+          "NCT-d16-balanced-gmm-i1": 2.042062837048785,
+          "NCT-d16-correlated-t-i0": 2.102459415833765,
+          "NCT-d16-correlated-t-i1": 2.0399790882702353,
+          "NCT-d16-nonlinear-i0": 2.111821718792862,
+          "NCT-d16-nonlinear-i1": 2.1118812692848548,
+          "NCT-d16-rare-gmm-i0": 1.9920087537581173,
+          "NCT-d16-rare-gmm-i1": 1.9292391464034395,
+          "NCT-d2-balanced-gmm-i0": 0.9165768662556824,
+          "NCT-d2-balanced-gmm-i1": 1.035509998303481,
+          "NCT-d2-correlated-t-i0": 1.0126004073396682,
+          "NCT-d2-correlated-t-i1": 1.055218203520276,
+          "NCT-d2-nonlinear-i0": 0.9854525963444289,
+          "NCT-d2-nonlinear-i1": 1.0122804881781298,
+          "NCT-d2-rare-gmm-i0": 1.0046928658612042,
+          "NCT-d2-rare-gmm-i1": 1.0047156706666465,
+          "NCT-d4-balanced-gmm-i0": 0.9852001226789926,
+          "NCT-d4-balanced-gmm-i1": 1.0249349020270917,
+          "NCT-d4-correlated-t-i0": 1.0143586662118427,
+          "NCT-d4-correlated-t-i1": 0.9852585479639401,
+          "NCT-d4-nonlinear-i0": 0.9953682171961469,
+          "NCT-d4-nonlinear-i1": 1.0167967845031343,
+          "NCT-d4-rare-gmm-i0": 1.005952574497771,
+          "NCT-d4-rare-gmm-i1": 1.0186037957635063,
+          "NCT-d8-balanced-gmm-i0": 1.8404986578656373,
+          "NCT-d8-balanced-gmm-i1": 1.9533970170842696,
+          "NCT-d8-correlated-t-i0": 1.8724403547210327,
+          "NCT-d8-correlated-t-i1": 1.8311231792267577,
+          "NCT-d8-nonlinear-i0": 1.8280830004493718,
+          "NCT-d8-nonlinear-i1": 1.7342617689256352,
+          "NCT-d8-rare-gmm-i0": 1.811303013012299,
+          "NCT-d8-rare-gmm-i1": 1.7423475988466948
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 5
+      },
+      "paper_kernel_pairs": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 2.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 2.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.414213562373095,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.414213562373095,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.414213562373095,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.414213562373095,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.414213562373095,
+        "median_ratio": 1.5,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 2.0,
+          "NCT-d16-balanced-gmm-i1": 2.0,
+          "NCT-d16-correlated-t-i0": 2.0,
+          "NCT-d16-correlated-t-i1": 2.0,
+          "NCT-d16-nonlinear-i0": 2.0,
+          "NCT-d16-nonlinear-i1": 2.0,
+          "NCT-d16-rare-gmm-i0": 2.0,
+          "NCT-d16-rare-gmm-i1": 2.0,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 2.0,
+          "NCT-d8-balanced-gmm-i1": 2.0,
+          "NCT-d8-correlated-t-i0": 2.0,
+          "NCT-d8-correlated-t-i1": 2.0,
+          "NCT-d8-nonlinear-i0": 2.0,
+          "NCT-d8-nonlinear-i1": 2.0,
+          "NCT-d8-rare-gmm-i0": 2.0,
+          "NCT-d8-rare-gmm-i1": 2.0
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 0
+      },
+      "projection_scalar_products": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.3395348837209302,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.471264367816092,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.1848440343212503,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.1848440343212503,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.1848440343212503,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.1848440343212503,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.1848440343212503,
+        "median_ratio": 1.169767441860465,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.3395348837209302,
+          "NCT-d16-balanced-gmm-i1": 1.3395348837209302,
+          "NCT-d16-correlated-t-i0": 1.3395348837209302,
+          "NCT-d16-correlated-t-i1": 1.3395348837209302,
+          "NCT-d16-nonlinear-i0": 1.3395348837209302,
+          "NCT-d16-nonlinear-i1": 1.3395348837209302,
+          "NCT-d16-rare-gmm-i0": 1.3395348837209302,
+          "NCT-d16-rare-gmm-i1": 1.3395348837209302,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.471264367816092,
+          "NCT-d8-balanced-gmm-i1": 1.471264367816092,
+          "NCT-d8-correlated-t-i0": 1.471264367816092,
+          "NCT-d8-correlated-t-i1": 1.471264367816092,
+          "NCT-d8-nonlinear-i0": 1.471264367816092,
+          "NCT-d8-nonlinear-i1": 1.471264367816092,
+          "NCT-d8-rare-gmm-i0": 1.471264367816092,
+          "NCT-d8-rare-gmm-i1": 1.471264367816092
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 0
+      },
+      "sort_work": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.147829720345919,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1324138854053862,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0677526621229598,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0677526621229598,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0677526621229598,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0677526621229598,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0677526621229598,
+        "median_ratio": 1.066206942702693,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.147829720345919,
+          "NCT-d16-balanced-gmm-i1": 1.147829720345919,
+          "NCT-d16-correlated-t-i0": 1.147829720345919,
+          "NCT-d16-correlated-t-i1": 1.147829720345919,
+          "NCT-d16-nonlinear-i0": 1.147829720345919,
+          "NCT-d16-nonlinear-i1": 1.147829720345919,
+          "NCT-d16-rare-gmm-i0": 1.147829720345919,
+          "NCT-d16-rare-gmm-i1": 1.147829720345919,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.1324138854053862,
+          "NCT-d8-balanced-gmm-i1": 1.1324138854053862,
+          "NCT-d8-correlated-t-i0": 1.1324138854053862,
+          "NCT-d8-correlated-t-i1": 1.1324138854053862,
+          "NCT-d8-nonlinear-i0": 1.1324138854053862,
+          "NCT-d8-nonlinear-i1": 1.1324138854053862,
+          "NCT-d8-rare-gmm-i0": 1.1324138854053862,
+          "NCT-d8-rare-gmm-i1": 1.1324138854053862
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 0
+      },
+      "wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 2.0433781069698993,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.002627431070254,
+            "targets": 8,
+            "wins": 2
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0057045226215648,
+            "targets": 8,
+            "wins": 3
+          },
+          "8": {
+            "geometric_mean_ratio": 1.8255175233141117,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.3938396215850153,
+            "targets": 8,
+            "wins": 2
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.410912649522561,
+            "targets": 8,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.3941964771456508,
+            "targets": 8,
+            "wins": 2
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.3718537468589669,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.3926313962074364,
+        "median_ratio": 1.3947399862229557,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 2.024712623856405,
+          "NCT-d16-balanced-gmm-i1": 2.042062837048785,
+          "NCT-d16-correlated-t-i0": 2.102459415833765,
+          "NCT-d16-correlated-t-i1": 2.0399790882702353,
+          "NCT-d16-nonlinear-i0": 2.111821718792862,
+          "NCT-d16-nonlinear-i1": 2.1118812692848548,
+          "NCT-d16-rare-gmm-i0": 1.9920087537581173,
+          "NCT-d16-rare-gmm-i1": 1.9292391464034395,
+          "NCT-d2-balanced-gmm-i0": 0.9165768662556824,
+          "NCT-d2-balanced-gmm-i1": 1.035509998303481,
+          "NCT-d2-correlated-t-i0": 1.0126004073396682,
+          "NCT-d2-correlated-t-i1": 1.055218203520276,
+          "NCT-d2-nonlinear-i0": 0.9854525963444289,
+          "NCT-d2-nonlinear-i1": 1.0122804881781298,
+          "NCT-d2-rare-gmm-i0": 1.0046928658612042,
+          "NCT-d2-rare-gmm-i1": 1.0047156706666465,
+          "NCT-d4-balanced-gmm-i0": 0.9852001226789926,
+          "NCT-d4-balanced-gmm-i1": 1.0249349020270917,
+          "NCT-d4-correlated-t-i0": 1.0143586662118427,
+          "NCT-d4-correlated-t-i1": 0.9852585479639401,
+          "NCT-d4-nonlinear-i0": 0.9953682171961469,
+          "NCT-d4-nonlinear-i1": 1.0167967845031343,
+          "NCT-d4-rare-gmm-i0": 1.005952574497771,
+          "NCT-d4-rare-gmm-i1": 1.0186037957635063,
+          "NCT-d8-balanced-gmm-i0": 1.8404986578656373,
+          "NCT-d8-balanced-gmm-i1": 1.9533970170842696,
+          "NCT-d8-correlated-t-i0": 1.8724403547210327,
+          "NCT-d8-correlated-t-i1": 1.8311231792267577,
+          "NCT-d8-nonlinear-i0": 1.8280830004493718,
+          "NCT-d8-nonlinear-i1": 1.7342617689256352,
+          "NCT-d8-rare-gmm-i0": 1.811303013012299,
+          "NCT-d8-rare-gmm-i1": 1.7423475988466948
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 5
+      }
+    },
+    "cta-exact-gated-hybrid": {
+      "generator_forward_calls_training": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.0,
+          "NCT-d16-balanced-gmm-i1": 1.0,
+          "NCT-d16-correlated-t-i0": 1.0,
+          "NCT-d16-correlated-t-i1": 1.0,
+          "NCT-d16-nonlinear-i0": 1.0,
+          "NCT-d16-nonlinear-i1": 1.0,
+          "NCT-d16-rare-gmm-i0": 1.0,
+          "NCT-d16-rare-gmm-i1": 1.0,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.0,
+          "NCT-d8-balanced-gmm-i1": 1.0,
+          "NCT-d8-correlated-t-i0": 1.0,
+          "NCT-d8-correlated-t-i1": 1.0,
+          "NCT-d8-nonlinear-i0": 1.0,
+          "NCT-d8-nonlinear-i1": 1.0,
+          "NCT-d8-rare-gmm-i0": 1.0,
+          "NCT-d8-rare-gmm-i1": 1.0
+        },
+        "targets": 32,
+        "ties": 32,
+        "wins": 0
+      },
+      "online_training_wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1976666671873828,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 0.9920364308264906,
+            "targets": 8,
+            "wins": 5
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0028104979334906,
+            "targets": 8,
+            "wins": 4
+          },
+          "8": {
+            "geometric_mean_ratio": 1.05916489302147,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0671508173824809,
+            "targets": 8,
+            "wins": 2
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0655748965898415,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0581564695277577,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0487847391422556,
+            "targets": 8,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0598917414661226,
+        "median_ratio": 1.0332908296027654,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.1967277337206348,
+          "NCT-d16-balanced-gmm-i1": 1.197311598224466,
+          "NCT-d16-correlated-t-i0": 1.1951194102517801,
+          "NCT-d16-correlated-t-i1": 1.1791158630920549,
+          "NCT-d16-nonlinear-i0": 1.271270826318523,
+          "NCT-d16-nonlinear-i1": 1.2162226456980716,
+          "NCT-d16-rare-gmm-i0": 1.1746716391860512,
+          "NCT-d16-rare-gmm-i1": 1.154382473196748,
+          "NCT-d2-balanced-gmm-i0": 0.9770751408811452,
+          "NCT-d2-balanced-gmm-i1": 0.9927540063945773,
+          "NCT-d2-correlated-t-i0": 1.0122521495687042,
+          "NCT-d2-correlated-t-i1": 1.0436794266813034,
+          "NCT-d2-nonlinear-i0": 0.9861750183935399,
+          "NCT-d2-nonlinear-i1": 0.9987048096627354,
+          "NCT-d2-rare-gmm-i0": 1.0150915688768922,
+          "NCT-d2-rare-gmm-i1": 0.9155860514478759,
+          "NCT-d4-balanced-gmm-i0": 1.0167978568022853,
+          "NCT-d4-balanced-gmm-i1": 1.0295544877105778,
+          "NCT-d4-correlated-t-i0": 0.989214501297462,
+          "NCT-d4-correlated-t-i1": 0.9792166312145614,
+          "NCT-d4-nonlinear-i0": 0.9891113484544338,
+          "NCT-d4-nonlinear-i1": 0.9818573482595793,
+          "NCT-d4-rare-gmm-i0": 1.026646376729034,
+          "NCT-d4-rare-gmm-i1": 1.011540561717643,
+          "NCT-d8-balanced-gmm-i0": 1.037027171494953,
+          "NCT-d8-balanced-gmm-i1": 1.1147055400561003,
+          "NCT-d8-correlated-t-i0": 1.0676848521040538,
+          "NCT-d8-correlated-t-i1": 1.079532933479373,
+          "NCT-d8-nonlinear-i0": 1.0247449628700216,
+          "NCT-d8-nonlinear-i1": 1.0371640528026378,
+          "NCT-d8-rare-gmm-i0": 1.072271638739664,
+          "NCT-d8-rare-gmm-i1": 1.0430647724782984
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 9
+      },
+      "paper_kernel_pairs": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.0,
+          "NCT-d16-balanced-gmm-i1": 1.0,
+          "NCT-d16-correlated-t-i0": 1.0,
+          "NCT-d16-correlated-t-i1": 1.0,
+          "NCT-d16-nonlinear-i0": 1.0,
+          "NCT-d16-nonlinear-i1": 1.0,
+          "NCT-d16-rare-gmm-i0": 1.0,
+          "NCT-d16-rare-gmm-i1": 1.0,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.0,
+          "NCT-d8-balanced-gmm-i1": 1.0,
+          "NCT-d8-correlated-t-i0": 1.0,
+          "NCT-d8-correlated-t-i1": 1.0,
+          "NCT-d8-nonlinear-i0": 1.0,
+          "NCT-d8-nonlinear-i1": 1.0,
+          "NCT-d8-rare-gmm-i0": 1.0,
+          "NCT-d8-rare-gmm-i1": 1.0
+        },
+        "targets": 32,
+        "ties": 32,
+        "wins": 0
+      },
+      "projection_scalar_products": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.2,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1428571428571428,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0821645381078793,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0821645381078793,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0821645381078793,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0821645381078793,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0821645381078793,
+        "median_ratio": 1.0714285714285714,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.2,
+          "NCT-d16-balanced-gmm-i1": 1.2,
+          "NCT-d16-correlated-t-i0": 1.2,
+          "NCT-d16-correlated-t-i1": 1.2,
+          "NCT-d16-nonlinear-i0": 1.2,
+          "NCT-d16-nonlinear-i1": 1.2,
+          "NCT-d16-rare-gmm-i0": 1.2,
+          "NCT-d16-rare-gmm-i1": 1.2,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.1428571428571428,
+          "NCT-d8-balanced-gmm-i1": 1.1428571428571428,
+          "NCT-d8-correlated-t-i0": 1.1428571428571428,
+          "NCT-d8-correlated-t-i1": 1.1428571428571428,
+          "NCT-d8-nonlinear-i0": 1.1428571428571428,
+          "NCT-d8-nonlinear-i1": 1.1428571428571428,
+          "NCT-d8-rare-gmm-i0": 1.1428571428571428,
+          "NCT-d8-rare-gmm-i1": 1.1428571428571428
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 0
+      },
+      "sort_work": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.147048301775989,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1303635316089355,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.06708732412098,
+            "targets": 8,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.06708732412098,
+            "targets": 8,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.06708732412098,
+            "targets": 8,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.06708732412098,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.06708732412098,
+        "median_ratio": 1.0651817658044678,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.147048301775989,
+          "NCT-d16-balanced-gmm-i1": 1.147048301775989,
+          "NCT-d16-correlated-t-i0": 1.147048301775989,
+          "NCT-d16-correlated-t-i1": 1.147048301775989,
+          "NCT-d16-nonlinear-i0": 1.147048301775989,
+          "NCT-d16-nonlinear-i1": 1.147048301775989,
+          "NCT-d16-rare-gmm-i0": 1.147048301775989,
+          "NCT-d16-rare-gmm-i1": 1.147048301775989,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 1.1303635316089355,
+          "NCT-d8-balanced-gmm-i1": 1.1303635316089355,
+          "NCT-d8-correlated-t-i0": 1.1303635316089355,
+          "NCT-d8-correlated-t-i1": 1.1303635316089355,
+          "NCT-d8-nonlinear-i0": 1.1303635316089355,
+          "NCT-d8-nonlinear-i1": 1.1303635316089355,
+          "NCT-d8-rare-gmm-i0": 1.1303635316089355,
+          "NCT-d8-rare-gmm-i1": 1.1303635316089355
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 0
+      },
+      "wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1976666671873828,
+            "targets": 8,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 0.9920364308264906,
+            "targets": 8,
+            "wins": 5
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0028104979334906,
+            "targets": 8,
+            "wins": 4
+          },
+          "8": {
+            "geometric_mean_ratio": 1.05916489302147,
+            "targets": 8,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0671508173824809,
+            "targets": 8,
+            "wins": 2
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0655748965898415,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0581564695277577,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0487847391422556,
+            "targets": 8,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0598917414661226,
+        "median_ratio": 1.0332908296027654,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 1.1967277337206348,
+          "NCT-d16-balanced-gmm-i1": 1.197311598224466,
+          "NCT-d16-correlated-t-i0": 1.1951194102517801,
+          "NCT-d16-correlated-t-i1": 1.1791158630920549,
+          "NCT-d16-nonlinear-i0": 1.271270826318523,
+          "NCT-d16-nonlinear-i1": 1.2162226456980716,
+          "NCT-d16-rare-gmm-i0": 1.1746716391860512,
+          "NCT-d16-rare-gmm-i1": 1.154382473196748,
+          "NCT-d2-balanced-gmm-i0": 0.9770751408811452,
+          "NCT-d2-balanced-gmm-i1": 0.9927540063945773,
+          "NCT-d2-correlated-t-i0": 1.0122521495687042,
+          "NCT-d2-correlated-t-i1": 1.0436794266813034,
+          "NCT-d2-nonlinear-i0": 0.9861750183935399,
+          "NCT-d2-nonlinear-i1": 0.9987048096627354,
+          "NCT-d2-rare-gmm-i0": 1.0150915688768922,
+          "NCT-d2-rare-gmm-i1": 0.9155860514478759,
+          "NCT-d4-balanced-gmm-i0": 1.0167978568022853,
+          "NCT-d4-balanced-gmm-i1": 1.0295544877105778,
+          "NCT-d4-correlated-t-i0": 0.989214501297462,
+          "NCT-d4-correlated-t-i1": 0.9792166312145614,
+          "NCT-d4-nonlinear-i0": 0.9891113484544338,
+          "NCT-d4-nonlinear-i1": 0.9818573482595793,
+          "NCT-d4-rare-gmm-i0": 1.026646376729034,
+          "NCT-d4-rare-gmm-i1": 1.011540561717643,
+          "NCT-d8-balanced-gmm-i0": 1.037027171494953,
+          "NCT-d8-balanced-gmm-i1": 1.1147055400561003,
+          "NCT-d8-correlated-t-i0": 1.0676848521040538,
+          "NCT-d8-correlated-t-i1": 1.079532933479373,
+          "NCT-d8-nonlinear-i0": 1.0247449628700216,
+          "NCT-d8-nonlinear-i1": 1.0371640528026378,
+          "NCT-d8-rare-gmm-i0": 1.072271638739664,
+          "NCT-d8-rare-gmm-i1": 1.0430647724782984
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 9
+      }
+    }
+  },
+  "gates": {
+    "all_primary_gates_pass": true,
+    "candidate_vs_cta-exact-fixed-control_ed2_upper_below_one": true,
+    "candidate_vs_cta-exact-fixed-control_heldout_sw1_upper_below_one": true,
+    "candidate_vs_paper-neural-optimized_ed2_upper_below_one": true,
+    "candidate_vs_paper-neural-optimized_heldout_sw1_upper_below_one": true
+  },
+  "low_dimension_identity": {
+    "bitwise_metric_identity": true,
+    "maximum_quality_metric_difference": 0.0,
+    "rows_checked": 32
+  },
+  "quality": {
+    "cta-exact-fixed-control": {
+      "ed2": {
+        "bootstrap_95_interval": [
+          0.8097191332499483,
+          0.9071096039490989
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7872845697908073,
+            "targets": 8,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.68526026954308,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.7960708833719604,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9057112441868789,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.8144163415254312,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9187541502775406,
+            "targets": 8,
+            "wins": 4
+          }
+        },
+        "geometric_mean_ratio": 0.8570315759566057,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.6199514527222386,
+          "NCT-d16-balanced-gmm-i1": 0.6021841543762455,
+          "NCT-d16-correlated-t-i0": 1.1001995010471297,
+          "NCT-d16-correlated-t-i1": 0.6400797710597167,
+          "NCT-d16-nonlinear-i0": 0.8306349586688506,
+          "NCT-d16-nonlinear-i1": 0.8256776370892186,
+          "NCT-d16-rare-gmm-i0": 0.9001367701284291,
+          "NCT-d16-rare-gmm-i1": 0.9093522296503695,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.6132144269705243,
+          "NCT-d8-balanced-gmm-i1": 0.7045544273176728,
+          "NCT-d8-correlated-t-i0": 0.45518637951169444,
+          "NCT-d8-correlated-t-i1": 1.4126132370528446,
+          "NCT-d8-nonlinear-i0": 0.448827410211557,
+          "NCT-d8-nonlinear-i1": 0.6287409336006494,
+          "NCT-d8-rare-gmm-i0": 0.9247522948799969,
+          "NCT-d8-rare-gmm-i1": 0.6707002294904713
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 14
+      },
+      "heldout_sw1": {
+        "bootstrap_95_interval": [
+          0.9016516747509079,
+          0.9476898294260436
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8808977829175332,
+            "targets": 8,
+            "wins": 6
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8286762830994439,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.8890130211883932,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9394809139692347,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.91530263864644,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9548818276140898,
+            "targets": 8,
+            "wins": 3
+          }
+        },
+        "geometric_mean_ratio": 0.9243311873779595,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.8013914653445273,
+          "NCT-d16-balanced-gmm-i1": 0.7672062795853548,
+          "NCT-d16-correlated-t-i0": 1.0069753753396773,
+          "NCT-d16-correlated-t-i1": 0.7868196139851482,
+          "NCT-d16-nonlinear-i0": 0.9161596920919536,
+          "NCT-d16-nonlinear-i1": 0.9007945772387301,
+          "NCT-d16-rare-gmm-i0": 1.0018630697524853,
+          "NCT-d16-rare-gmm-i1": 0.900218500831468,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.7631582878821371,
+          "NCT-d8-balanced-gmm-i1": 0.8315598063529532,
+          "NCT-d8-correlated-t-i0": 0.6940016175961309,
+          "NCT-d8-correlated-t-i1": 1.1036952722444178,
+          "NCT-d8-nonlinear-i0": 0.7116282070795212,
+          "NCT-d8-nonlinear-i1": 0.8388177605160034,
+          "NCT-d8-rare-gmm-i0": 0.9434460673949852,
+          "NCT-d8-rare-gmm-i1": 0.8123134534470751
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 13
+      },
+      "training_quantile_rmse": {
+        "bootstrap_95_interval": [
+          0.9211462807144049,
+          0.9622966540469509
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8796832547193242,
+            "targets": 8,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8932784046822695,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.898491940087946,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9729579962510988,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9140804980931299,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9833778893851404,
+            "targets": 8,
+            "wins": 4
+          }
+        },
+        "geometric_mean_ratio": 0.941517268700856,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.8018236440805812,
+          "NCT-d16-balanced-gmm-i1": 0.7220633221813179,
+          "NCT-d16-correlated-t-i0": 1.095123006123608,
+          "NCT-d16-correlated-t-i1": 0.8198590780859102,
+          "NCT-d16-nonlinear-i0": 0.7913209165461377,
+          "NCT-d16-nonlinear-i1": 0.9004172583756677,
+          "NCT-d16-rare-gmm-i0": 0.9881563307787032,
+          "NCT-d16-rare-gmm-i1": 0.9797882581267566,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.8102600093055924,
+          "NCT-d8-balanced-gmm-i1": 0.9053884223118351,
+          "NCT-d8-correlated-t-i0": 0.7953778073779899,
+          "NCT-d8-correlated-t-i1": 1.1245458098791863,
+          "NCT-d8-nonlinear-i0": 0.7959237447288252,
+          "NCT-d8-nonlinear-i1": 0.8594243015512757,
+          "NCT-d8-rare-gmm-i0": 0.9952060461234478,
+          "NCT-d8-rare-gmm-i1": 0.9075960982302766
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 14
+      }
+    },
+    "cta-exact-gated-hybrid": {
+      "ed2": {
+        "bootstrap_95_interval": [
+          0.8384368471125425,
+          0.9331812436787628
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8208203262492682,
+            "targets": 8,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.7407913154864355,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.8007437793131132,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9311054748621835,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.8701260175546357,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9372800569996246,
+            "targets": 8,
+            "wins": 4
+          }
+        },
+        "geometric_mean_ratio": 0.8830514260300627,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.6081419854852421,
+          "NCT-d16-balanced-gmm-i1": 0.6105348277980583,
+          "NCT-d16-correlated-t-i0": 1.1926342291435081,
+          "NCT-d16-correlated-t-i1": 0.7044351581782656,
+          "NCT-d16-nonlinear-i0": 0.873309115516666,
+          "NCT-d16-nonlinear-i1": 0.8674502211698457,
+          "NCT-d16-rare-gmm-i0": 0.9331712451848053,
+          "NCT-d16-rare-gmm-i1": 0.9344309027068703,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.624685786638056,
+          "NCT-d8-balanced-gmm-i1": 0.7287381944617995,
+          "NCT-d8-correlated-t-i0": 0.47696792800184756,
+          "NCT-d8-correlated-t-i1": 1.4097872283960822,
+          "NCT-d8-nonlinear-i0": 0.5955313461018992,
+          "NCT-d8-nonlinear-i1": 0.7283498850994699,
+          "NCT-d8-rare-gmm-i0": 0.9908944887311045,
+          "NCT-d8-rare-gmm-i1": 0.6893171088623249
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 14
+      },
+      "heldout_sw1": {
+        "bootstrap_95_interval": [
+          0.9138144216728498,
+          0.958324425412287
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8981315424365902,
+            "targets": 8,
+            "wins": 6
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8543689481061976,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.8908732447120506,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9525469560172468,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9405989143936063,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9613435613106066,
+            "targets": 8,
+            "wins": 3
+          }
+        },
+        "geometric_mean_ratio": 0.9359364284416788,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.7903315655019301,
+          "NCT-d16-balanced-gmm-i1": 0.7735265187267056,
+          "NCT-d16-correlated-t-i0": 1.0535970555894059,
+          "NCT-d16-correlated-t-i1": 0.8242692902854886,
+          "NCT-d16-nonlinear-i0": 0.9395636165091503,
+          "NCT-d16-nonlinear-i1": 0.9194729229717933,
+          "NCT-d16-rare-gmm-i0": 1.009751047764035,
+          "NCT-d16-rare-gmm-i1": 0.9141383777765947,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.7677319385571826,
+          "NCT-d8-balanced-gmm-i1": 0.8453434380157203,
+          "NCT-d8-correlated-t-i0": 0.7082238067453865,
+          "NCT-d8-correlated-t-i1": 1.1019882373195502,
+          "NCT-d8-nonlinear-i0": 0.8067547383215855,
+          "NCT-d8-nonlinear-i1": 0.8790814687286153,
+          "NCT-d8-rare-gmm-i0": 0.9605025615238852,
+          "NCT-d8-rare-gmm-i1": 0.8228187761010898
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 13
+      },
+      "training_quantile_rmse": {
+        "bootstrap_95_interval": [
+          0.9284047214061921,
+          0.9683928491513022
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8905055660328675,
+            "targets": 8,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.9078483762328363,
+            "targets": 8,
+            "wins": 7
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.9023398617245628,
+            "targets": 8,
+            "wins": 4
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9785617916861842,
+            "targets": 8,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9321774686348546,
+            "targets": 8,
+            "wins": 4
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9821842377191862,
+            "targets": 8,
+            "wins": 4
+          }
+        },
+        "geometric_mean_ratio": 0.9482273766810486,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.7967902343031878,
+          "NCT-d16-balanced-gmm-i1": 0.7295870339580803,
+          "NCT-d16-correlated-t-i0": 1.1186721257743386,
+          "NCT-d16-correlated-t-i1": 0.8336573932299248,
+          "NCT-d16-nonlinear-i0": 0.8066970647237155,
+          "NCT-d16-nonlinear-i1": 0.9151414218562417,
+          "NCT-d16-rare-gmm-i0": 0.9984750205739658,
+          "NCT-d16-rare-gmm-i1": 0.989568083952803,
+          "NCT-d2-balanced-gmm-i0": 1.0,
+          "NCT-d2-balanced-gmm-i1": 1.0,
+          "NCT-d2-correlated-t-i0": 1.0,
+          "NCT-d2-correlated-t-i1": 1.0,
+          "NCT-d2-nonlinear-i0": 1.0,
+          "NCT-d2-nonlinear-i1": 1.0,
+          "NCT-d2-rare-gmm-i0": 1.0,
+          "NCT-d2-rare-gmm-i1": 1.0,
+          "NCT-d4-balanced-gmm-i0": 1.0,
+          "NCT-d4-balanced-gmm-i1": 1.0,
+          "NCT-d4-correlated-t-i0": 1.0,
+          "NCT-d4-correlated-t-i1": 1.0,
+          "NCT-d4-nonlinear-i0": 1.0,
+          "NCT-d4-nonlinear-i1": 1.0,
+          "NCT-d4-rare-gmm-i0": 1.0,
+          "NCT-d4-rare-gmm-i1": 1.0,
+          "NCT-d8-balanced-gmm-i0": 0.8184140150217593,
+          "NCT-d8-balanced-gmm-i1": 0.9237766437784173,
+          "NCT-d8-correlated-t-i0": 0.8060396974645113,
+          "NCT-d8-correlated-t-i1": 1.1185597361407178,
+          "NCT-d8-nonlinear-i0": 0.865582757987451,
+          "NCT-d8-nonlinear-i1": 0.8922396636029274,
+          "NCT-d8-rare-gmm-i0": 0.9680191479710406,
+          "NCT-d8-rare-gmm-i1": 0.905475803875225
+        },
+        "targets": 32,
+        "ties": 16,
+        "wins": 14
+      }
+    },
+    "paper-neural-optimized": {
+      "ed2": {
+        "bootstrap_95_interval": [
+          0.24693748067097712,
+          0.2931391580235261
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.3233998241984193,
+            "targets": 8,
+            "wins": 8
+          },
+          "2": {
+            "geometric_mean_ratio": 0.21765644359599914,
+            "targets": 8,
+            "wins": 8
+          },
+          "4": {
+            "geometric_mean_ratio": 0.2625173399273466,
+            "targets": 8,
+            "wins": 8
+          },
+          "8": {
+            "geometric_mean_ratio": 0.28299277519578336,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.47481436023736684,
+            "targets": 8,
+            "wins": 8
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.23036261513749287,
+            "targets": 8,
+            "wins": 8
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.1812584816685449,
+            "targets": 8,
+            "wins": 8
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.2637609316611532,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "geometric_mean_ratio": 0.2689126068653643,
+        "median_ratio": 0.2705874309611406,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.2832072953426099,
+          "NCT-d16-balanced-gmm-i1": 0.4574675552520393,
+          "NCT-d16-correlated-t-i0": 0.36833257497498184,
+          "NCT-d16-correlated-t-i1": 0.37216599559507435,
+          "NCT-d16-nonlinear-i0": 0.24020082686782787,
+          "NCT-d16-nonlinear-i1": 0.4023944743162627,
+          "NCT-d16-rare-gmm-i0": 0.261560527079213,
+          "NCT-d16-rare-gmm-i1": 0.26648819311209765,
+          "NCT-d2-balanced-gmm-i0": 0.2904821047175675,
+          "NCT-d2-balanced-gmm-i1": 0.34094983257968425,
+          "NCT-d2-correlated-t-i0": 0.24431351655270483,
+          "NCT-d2-correlated-t-i1": 0.15167693131299725,
+          "NCT-d2-nonlinear-i0": 0.13085706638462924,
+          "NCT-d2-nonlinear-i1": 0.2257114067421569,
+          "NCT-d2-rare-gmm-i0": 0.2766955750713065,
+          "NCT-d2-rare-gmm-i1": 0.16793547073964063,
+          "NCT-d4-balanced-gmm-i0": 0.5357081903606025,
+          "NCT-d4-balanced-gmm-i1": 0.7796843580728106,
+          "NCT-d4-correlated-t-i0": 0.10986633035642383,
+          "NCT-d4-correlated-t-i1": 0.23010043784365383,
+          "NCT-d4-nonlinear-i0": 0.1555254315883506,
+          "NCT-d4-nonlinear-i1": 0.1441144115333784,
+          "NCT-d4-rare-gmm-i0": 0.27468666881018355,
+          "NCT-d4-rare-gmm-i1": 0.3469671646335598,
+          "NCT-d8-balanced-gmm-i0": 0.7492743271307155,
+          "NCT-d8-balanced-gmm-i1": 0.6433217028949579,
+          "NCT-d8-correlated-t-i0": 0.13511684777643268,
+          "NCT-d8-correlated-t-i1": 0.45704670791308966,
+          "NCT-d8-nonlinear-i0": 0.18866067267677764,
+          "NCT-d8-nonlinear-i1": 0.09652044193908135,
+          "NCT-d8-rare-gmm-i0": 0.2606492718922691,
+          "NCT-d8-rare-gmm-i1": 0.2911430608648183
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 32
+      },
+      "heldout_sw1": {
+        "bootstrap_95_interval": [
+          0.47406870556663,
+          0.5198823257794888
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.5321025227356504,
+            "targets": 8,
+            "wins": 8
+          },
+          "2": {
+            "geometric_mean_ratio": 0.4416395591701648,
+            "targets": 8,
+            "wins": 8
+          },
+          "4": {
+            "geometric_mean_ratio": 0.49189523329487206,
+            "targets": 8,
+            "wins": 8
+          },
+          "8": {
+            "geometric_mean_ratio": 0.5263435242981234,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.688898105817886,
+            "targets": 8,
+            "wins": 8
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.4470118952949732,
+            "targets": 8,
+            "wins": 8
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.4013164346519546,
+            "targets": 8,
+            "wins": 8
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.4923162464777468,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "geometric_mean_ratio": 0.49665097907083827,
+        "median_ratio": 0.4985724222707696,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.504632291759528,
+          "NCT-d16-balanced-gmm-i1": 0.6588523555070889,
+          "NCT-d16-correlated-t-i0": 0.5524686801883866,
+          "NCT-d16-correlated-t-i1": 0.550029710490439,
+          "NCT-d16-nonlinear-i0": 0.46626014378983244,
+          "NCT-d16-nonlinear-i1": 0.5905849993050994,
+          "NCT-d16-rare-gmm-i0": 0.49251255278201117,
+          "NCT-d16-rare-gmm-i1": 0.469005118146695,
+          "NCT-d2-balanced-gmm-i0": 0.539140005061849,
+          "NCT-d2-balanced-gmm-i1": 0.6256821696661207,
+          "NCT-d2-correlated-t-i0": 0.43355334007578694,
+          "NCT-d2-correlated-t-i1": 0.36995609190686224,
+          "NCT-d2-nonlinear-i0": 0.29585226485660704,
+          "NCT-d2-nonlinear-i1": 0.44755197641015404,
+          "NCT-d2-rare-gmm-i0": 0.544310194566872,
+          "NCT-d2-rare-gmm-i1": 0.3711340825138099,
+          "NCT-d4-balanced-gmm-i0": 0.7413937528476242,
+          "NCT-d4-balanced-gmm-i1": 0.8388226881161913,
+          "NCT-d4-correlated-t-i0": 0.32159662837084724,
+          "NCT-d4-correlated-t-i1": 0.461721089971977,
+          "NCT-d4-nonlinear-i0": 0.36398446307920085,
+          "NCT-d4-nonlinear-i1": 0.3630451429344165,
+          "NCT-d4-rare-gmm-i0": 0.5224048941234414,
+          "NCT-d4-rare-gmm-i1": 0.5376750804715611,
+          "NCT-d8-balanced-gmm-i0": 0.879674954334199,
+          "NCT-d8-balanced-gmm-i1": 0.8267612800450359,
+          "NCT-d8-correlated-t-i0": 0.34627440537906373,
+          "NCT-d8-correlated-t-i1": 0.6361426575917151,
+          "NCT-d8-nonlinear-i0": 0.4482103829221513,
+          "NCT-d8-nonlinear-i1": 0.31155956568547866,
+          "NCT-d8-rare-gmm-i0": 0.4884932830863773,
+          "NCT-d8-rare-gmm-i1": 0.5390082426094588
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 32
+      },
+      "training_quantile_rmse": {
+        "bootstrap_95_interval": [
+          0.4066053654499196,
+          0.45086092383599957
+        ],
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.46788120504520564,
+            "targets": 8,
+            "wins": 8
+          },
+          "2": {
+            "geometric_mean_ratio": 0.41033062697068967,
+            "targets": 8,
+            "wins": 8
+          },
+          "4": {
+            "geometric_mean_ratio": 0.4111137612542414,
+            "targets": 8,
+            "wins": 8
+          },
+          "8": {
+            "geometric_mean_ratio": 0.4260285164417813,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 0.6732340210683468,
+            "targets": 8,
+            "wins": 8
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.44042342130026135,
+            "targets": 8,
+            "wins": 8
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.28368523904569215,
+            "targets": 8,
+            "wins": 8
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.39975786602754587,
+            "targets": 8,
+            "wins": 8
+          }
+        },
+        "geometric_mean_ratio": 0.4282205987647374,
+        "median_ratio": 0.4593462880131318,
+        "per_target": {
+          "NCT-d16-balanced-gmm-i0": 0.5025974613440523,
+          "NCT-d16-balanced-gmm-i1": 0.566730191561033,
+          "NCT-d16-correlated-t-i0": 0.4996476936789516,
+          "NCT-d16-correlated-t-i1": 0.46741368554355284,
+          "NCT-d16-nonlinear-i0": 0.3637846013396509,
+          "NCT-d16-nonlinear-i1": 0.5040552511163,
+          "NCT-d16-rare-gmm-i0": 0.4172106371756023,
+          "NCT-d16-rare-gmm-i1": 0.45127889048271086,
+          "NCT-d2-balanced-gmm-i0": 0.6431164050135837,
+          "NCT-d2-balanced-gmm-i1": 0.6712346588180534,
+          "NCT-d2-correlated-t-i0": 0.48965028241959846,
+          "NCT-d2-correlated-t-i1": 0.4058823969232369,
+          "NCT-d2-nonlinear-i0": 0.21174390300510704,
+          "NCT-d2-nonlinear-i1": 0.28324669261098057,
+          "NCT-d2-rare-gmm-i0": 0.5174045399584156,
+          "NCT-d2-rare-gmm-i1": 0.3018667556755996,
+          "NCT-d4-balanced-gmm-i0": 0.6785136669350215,
+          "NCT-d4-balanced-gmm-i1": 0.8527119270014186,
+          "NCT-d4-correlated-t-i0": 0.33515470730046015,
+          "NCT-d4-correlated-t-i1": 0.5116960815390458,
+          "NCT-d4-nonlinear-i0": 0.22458023238746488,
+          "NCT-d4-nonlinear-i1": 0.26397381112722995,
+          "NCT-d4-rare-gmm-i0": 0.41799290917178844,
+          "NCT-d4-rare-gmm-i1": 0.33187648182132956,
+          "NCT-d8-balanced-gmm-i0": 0.7098937903096768,
+          "NCT-d8-balanced-gmm-i1": 0.8356290307918662,
+          "NCT-d8-correlated-t-i0": 0.32468806960017965,
+          "NCT-d8-correlated-t-i1": 0.547757039318166,
+          "NCT-d8-nonlinear-i0": 0.29909457021519026,
+          "NCT-d8-nonlinear-i1": 0.215107124740714,
+          "NCT-d8-rare-gmm-i0": 0.3223543402442813,
+          "NCT-d8-rare-gmm-i1": 0.49596532809935095
+        },
+        "targets": 32,
+        "ties": 0,
+        "wins": 32
+      }
+    }
+  },
+  "rare_diagnostics_vs_fixed": {
+    "component_core_coverage": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        },
+        "2": {
+          "candidate_mean": 0.625,
+          "comparator_mean": 0.625,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        }
+      },
+      "candidate_mean": 0.53125,
+      "comparator_mean": 0.53125,
+      "mean_difference": 0.0,
+      "targets": 8,
+      "wins": 0
+    },
+    "final_teacher_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 2.0,
+          "comparator_mean": 1.25,
+          "mean_difference": 0.75
+        },
+        "2": {
+          "candidate_mean": 12.25,
+          "comparator_mean": 12.25,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 9.5,
+          "comparator_mean": 9.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 6.5,
+          "comparator_mean": 1.5,
+          "mean_difference": 5.0
+        }
+      },
+      "candidate_mean": 7.5625,
+      "comparator_mean": 6.125,
+      "mean_difference": 1.4375,
+      "targets": 8,
+      "wins": 2
+    },
+    "maximum_run_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 4.75,
+          "comparator_mean": 2.75,
+          "mean_difference": 2.0
+        },
+        "2": {
+          "candidate_mean": 14.0,
+          "comparator_mean": 14.0,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 6.5,
+          "comparator_mean": 6.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 3.5,
+          "comparator_mean": 1.0,
+          "mean_difference": 2.5
+        }
+      },
+      "candidate_mean": 7.1875,
+      "comparator_mean": 6.0625,
+      "mean_difference": 1.125,
+      "targets": 8,
+      "wins": 2
+    },
+    "maximum_teacher_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 5.25,
+          "comparator_mean": 3.5,
+          "mean_difference": 1.75
+        },
+        "2": {
+          "candidate_mean": 14.0,
+          "comparator_mean": 14.0,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 10.25,
+          "comparator_mean": 10.25,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 7.25,
+          "comparator_mean": 2.0,
+          "mean_difference": 5.25
+        }
+      },
+      "candidate_mean": 9.1875,
+      "comparator_mean": 7.4375,
+      "mean_difference": 1.75,
+      "targets": 8,
+      "wins": 3
+    },
+    "rare_bridge_mass": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0045166015625,
+          "comparator_mean": 0.0015869140625,
+          "mean_difference": 0.0029296875
+        },
+        "2": {
+          "candidate_mean": 0.01708984375,
+          "comparator_mean": 0.01708984375,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.0426025390625,
+          "comparator_mean": 0.0426025390625,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.0303955078125,
+          "comparator_mean": 0.034912109375,
+          "mean_difference": -0.0045166015625
+        }
+      },
+      "candidate_mean": 0.023651123046875,
+      "comparator_mean": 0.0240478515625,
+      "mean_difference": -0.000396728515625,
+      "targets": 8,
+      "wins": 1
+    },
+    "rare_core_mass": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0035400390625,
+          "comparator_mean": 0.002197265625,
+          "mean_difference": 0.0013427734375
+        },
+        "2": {
+          "candidate_mean": 0.0123291015625,
+          "comparator_mean": 0.0123291015625,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.0103759765625,
+          "comparator_mean": 0.0103759765625,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.0045166015625,
+          "comparator_mean": 0.0006103515625,
+          "mean_difference": 0.00390625
+        }
+      },
+      "candidate_mean": 0.0076904296875,
+      "comparator_mean": 0.006378173828125,
+      "mean_difference": 0.001312255859375,
+      "targets": 8,
+      "wins": 2
+    },
+    "rare_mass_error": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0120654296875,
+          "comparator_mean": 0.0174365234375,
+          "mean_difference": -0.00537109375
+        },
+        "2": {
+          "candidate_mean": 0.005590820312500001,
+          "comparator_mean": 0.005590820312500001,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.006982421874999999,
+          "comparator_mean": 0.006982421874999999,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.009169921874999999,
+          "comparator_mean": 0.012465820312499999,
+          "mean_difference": -0.0032958984375
+        }
+      },
+      "candidate_mean": 0.0084521484375,
+      "comparator_mean": 0.010618896484375,
+      "mean_difference": -0.002166748046875,
+      "targets": 8,
+      "wins": 4
+    }
+  },
+  "rare_diagnostics_vs_gated": {
+    "component_core_coverage": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        },
+        "2": {
+          "candidate_mean": 0.625,
+          "comparator_mean": 0.625,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.5,
+          "comparator_mean": 0.5,
+          "mean_difference": 0.0
+        }
+      },
+      "candidate_mean": 0.53125,
+      "comparator_mean": 0.53125,
+      "mean_difference": 0.0,
+      "targets": 8,
+      "wins": 0
+    },
+    "final_teacher_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 2.0,
+          "comparator_mean": 1.0,
+          "mean_difference": 1.0
+        },
+        "2": {
+          "candidate_mean": 12.25,
+          "comparator_mean": 12.25,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 9.5,
+          "comparator_mean": 9.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 6.5,
+          "comparator_mean": 1.75,
+          "mean_difference": 4.75
+        }
+      },
+      "candidate_mean": 7.5625,
+      "comparator_mean": 6.125,
+      "mean_difference": 1.4375,
+      "targets": 8,
+      "wins": 2
+    },
+    "maximum_run_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 4.75,
+          "comparator_mean": 2.75,
+          "mean_difference": 2.0
+        },
+        "2": {
+          "candidate_mean": 14.0,
+          "comparator_mean": 14.0,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 6.5,
+          "comparator_mean": 6.5,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 3.5,
+          "comparator_mean": 1.25,
+          "mean_difference": 2.25
+        }
+      },
+      "candidate_mean": 7.1875,
+      "comparator_mean": 6.125,
+      "mean_difference": 1.0625,
+      "targets": 8,
+      "wins": 2
+    },
+    "maximum_teacher_rare_core_count": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 5.25,
+          "comparator_mean": 3.5,
+          "mean_difference": 1.75
+        },
+        "2": {
+          "candidate_mean": 14.0,
+          "comparator_mean": 14.0,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 10.25,
+          "comparator_mean": 10.25,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 7.25,
+          "comparator_mean": 2.25,
+          "mean_difference": 5.0
+        }
+      },
+      "candidate_mean": 9.1875,
+      "comparator_mean": 7.5,
+      "mean_difference": 1.6875,
+      "targets": 8,
+      "wins": 3
+    },
+    "rare_bridge_mass": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0045166015625,
+          "comparator_mean": 0.00146484375,
+          "mean_difference": 0.0030517578125
+        },
+        "2": {
+          "candidate_mean": 0.01708984375,
+          "comparator_mean": 0.01708984375,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.0426025390625,
+          "comparator_mean": 0.0426025390625,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.0303955078125,
+          "comparator_mean": 0.0338134765625,
+          "mean_difference": -0.00341796875
+        }
+      },
+      "candidate_mean": 0.023651123046875,
+      "comparator_mean": 0.02374267578125,
+      "mean_difference": -9.1552734375e-05,
+      "targets": 8,
+      "wins": 1
+    },
+    "rare_core_mass": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0035400390625,
+          "comparator_mean": 0.002197265625,
+          "mean_difference": 0.0013427734375
+        },
+        "2": {
+          "candidate_mean": 0.0123291015625,
+          "comparator_mean": 0.0123291015625,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.0103759765625,
+          "comparator_mean": 0.0103759765625,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.0045166015625,
+          "comparator_mean": 0.0010986328125,
+          "mean_difference": 0.00341796875
+        }
+      },
+      "candidate_mean": 0.0076904296875,
+      "comparator_mean": 0.006500244140625,
+      "mean_difference": 0.001190185546875,
+      "targets": 8,
+      "wins": 2
+    },
+    "rare_mass_error": {
+      "by_dimension": {
+        "16": {
+          "candidate_mean": 0.0120654296875,
+          "comparator_mean": 0.0174365234375,
+          "mean_difference": -0.00537109375
+        },
+        "2": {
+          "candidate_mean": 0.005590820312500001,
+          "comparator_mean": 0.005590820312500001,
+          "mean_difference": 0.0
+        },
+        "4": {
+          "candidate_mean": 0.006982421874999999,
+          "comparator_mean": 0.006982421874999999,
+          "mean_difference": 0.0
+        },
+        "8": {
+          "candidate_mean": 0.009169921874999999,
+          "comparator_mean": 0.012832031249999999,
+          "mean_difference": -0.003662109375
+        }
+      },
+      "candidate_mean": 0.0084521484375,
+      "comparator_mean": 0.01071044921875,
+      "mean_difference": -0.00225830078125,
+      "targets": 8,
+      "wins": 4
+    }
+  },
+  "registry": "numerics\\adaptive_rollout_confirmation_registry.json",
+  "registry_sha256": "caeac33206123783cecb1ccc2954ab648056e6508a56fe60eb5025718b33f4bf",
+  "schema": "adaptive-rollout-confirmation-analysis-v1",
+  "target_count": 32
+}

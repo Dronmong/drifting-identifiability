@@ -1,0 +1,143 @@
+  res=16 steps=300 seed=20261724
+      free-particle (paper) score=  1.633
+      free-particle (standard) score=  1.764
+      C0  score=  7.351 ed2= 1.6431 eff_dim=0.269 gap=  4.50   8.7s
+      C1  score=  2.572 ed2= 0.2792 eff_dim=0.764 gap=  1.58   8.9s
+      C2  score=  2.448 ed2= 0.2409 eff_dim=0.898 gap=  1.39   8.9s
+      SKY score=  2.002 ed2= 0.1833 eff_dim=0.765
+  res=16 steps=300 seed=20261725
+      free-particle (paper) score=  1.627
+      free-particle (standard) score=  1.729
+      C0  score=  7.585 ed2= 1.8954 eff_dim=0.276 gap=  4.66   8.8s
+      C1  score=  2.306 ed2= 0.3269 eff_dim=0.848 gap=  1.42   9.2s
+      C2  score=  2.088 ed2= 0.2628 eff_dim=0.963 gap=  1.21   9.0s
+      SKY score=  3.075 ed2= 0.3706 eff_dim=0.871
+  res=16 steps=300 seed=20261726
+      free-particle (paper) score=  1.578
+      free-particle (standard) score=  1.779
+      C0  score=  6.361 ed2= 1.6666 eff_dim=0.276 gap=  4.03   9.0s
+      C1  score=  1.535 ed2= 0.1647 eff_dim=0.886 gap=  0.97   9.4s
+      C2  score=  1.704 ed2= 0.1802 eff_dim=1.159 gap=  0.96   9.3s
+      SKY score=  1.894 ed2= 0.2212 eff_dim=0.898
+  res=16 steps=600 seed=20261724
+      free-particle (paper) score=  1.744
+      free-particle (standard) score=  1.917
+      C0  score=  8.391 ed2= 2.0792 eff_dim=0.279 gap=  4.81  18.4s
+      C1  score=  1.945 ed2= 0.1651 eff_dim=0.827 gap=  1.12  18.7s
+      C2  score=  2.012 ed2= 0.1947 eff_dim=0.951 gap=  1.05  18.5s
+      SKY score=  1.867 ed2= 0.1461 eff_dim=1.134
+  res=16 steps=600 seed=20261725
+      free-particle (paper) score=  1.832
+      free-particle (standard) score=  1.998
+      C0  score=  8.641 ed2= 2.3834 eff_dim=0.259 gap=  4.72  18.8s
+      C1  score=  2.517 ed2= 0.2405 eff_dim=1.039 gap=  1.37  18.7s
+      C2  score=  2.040 ed2= 0.1782 eff_dim=1.278 gap=  1.02  18.9s
+      SKY score=  1.791 ed2= 0.1448 eff_dim=0.814
+  res=16 steps=600 seed=20261726
+      free-particle (paper) score=  1.653
+      free-particle (standard) score=  1.862
+      C0  score=  6.562 ed2= 1.7502 eff_dim=0.293 gap=  3.97  19.0s
+      C1  score=  3.486 ed2= 0.5312 eff_dim=1.057 gap=  2.11  19.0s
+      C2  score=  3.274 ed2= 0.4724 eff_dim=1.212 gap=  1.76  18.8s
+      SKY score=  1.805 ed2= 0.1449 eff_dim=0.821
+  res=16 steps=1200 seed=20261724
+      free-particle (paper) score=  2.365
+      free-particle (standard) score=  2.583
+      C0  score=  7.366 ed2= 1.6244 eff_dim=0.248 gap=  3.11  37.8s
+      C1  score=  2.096 ed2= 0.2218 eff_dim=0.777 gap=  0.89  38.0s
+      C2  score=  2.194 ed2= 0.2017 eff_dim=0.887 gap=  0.85  38.4s
+      SKY score=  1.703 ed2= 0.1297 eff_dim=0.881
+  res=16 steps=1200 seed=20261725
+      free-particle (paper) score=  2.394
+      free-particle (standard) score=  2.616
+      C0  score=  6.644 ed2= 1.4588 eff_dim=0.279 gap=  2.78  37.7s
+      C1  score=  2.645 ed2= 0.2554 eff_dim=0.723 gap=  1.10  37.9s
+      C2  score=  2.147 ed2= 0.1515 eff_dim=0.893 gap=  0.82  37.2s
+      SKY score=  1.509 ed2= 0.1373 eff_dim=1.026
+  res=16 steps=1200 seed=20261726
+      free-particle (paper) score=  2.167
+      free-particle (standard) score=  2.415
+      C0  score=  6.407 ed2= 1.6747 eff_dim=0.290 gap=  2.96  37.5s
+      C1  score=  1.626 ed2= 0.2083 eff_dim=0.794 gap=  0.75  39.0s
+      C2  score=  1.783 ed2= 0.2337 eff_dim=0.855 gap=  0.74  39.2s
+      SKY score=  1.745 ed2= 0.1471 eff_dim=0.892
+  res=32 steps=300 seed=20261724
+      free-particle (paper) score=  3.101
+      free-particle (standard) score=  3.320
+      C0  score=  7.562 ed2= 3.3752 eff_dim=0.271 gap=  2.44  34.1s
+      C1  score=  2.764 ed2= 0.4696 eff_dim=0.866 gap=  0.89  33.5s
+      C2  score=  2.796 ed2= 0.4686 eff_dim=1.056 gap=  0.84  33.4s
+      SKY score=  2.788 ed2= 0.5486 eff_dim=0.827
+  res=32 steps=300 seed=20261725
+      free-particle (paper) score=  2.991
+      free-particle (standard) score=  3.168
+      C0  score=  8.107 ed2= 4.4838 eff_dim=0.242 gap=  2.71  34.2s
+      C1  score=  2.669 ed2= 0.6145 eff_dim=0.887 gap=  0.89  33.6s
+      C2  score=  2.818 ed2= 0.6618 eff_dim=1.016 gap=  0.89  33.9s
+      SKY score=  1.778 ed2= 0.2687 eff_dim=0.674
+  res=32 steps=300 seed=20261726
+      free-particle (paper) score=  3.086
+      free-particle (standard) score=  3.350
+      C0  score=  6.523 ed2= 3.0453 eff_dim=0.301 gap=  2.11  33.5s
+      C1  score=  2.596 ed2= 0.4123 eff_dim=0.992 gap=  0.84  33.6s
+      C2  score=  2.678 ed2= 0.4363 eff_dim=1.142 gap=  0.80  33.2s
+      SKY score=  2.987 ed2= 0.9494 eff_dim=0.879
+  res=32 steps=600 seed=20261724
+      free-particle (paper) score=  2.150
+      free-particle (standard) score=  2.313
+      C0  score=  8.604 ed2= 4.3914 eff_dim=0.223 gap=  4.00  66.7s
+      C1  score=  2.894 ed2= 0.7653 eff_dim=0.849 gap=  1.35  68.7s
+      C2  score=  3.369 ed2= 0.9730 eff_dim=0.921 gap=  1.46  67.5s
+      SKY score=  2.215 ed2= 0.3577 eff_dim=0.873
+  res=32 steps=600 seed=20261725
+      free-particle (paper) score=  2.095
+      free-particle (standard) score=  2.242
+      C0  score=  8.882 ed2= 5.1589 eff_dim=0.238 gap=  4.24  64.6s
+      C1  score=  2.758 ed2= 0.5614 eff_dim=1.028 gap=  1.32  65.3s
+      C2  score=  2.886 ed2= 0.5511 eff_dim=1.348 gap=  1.29  66.2s
+      SKY score=  1.913 ed2= 0.2997 eff_dim=0.811
+  res=32 steps=600 seed=20261726
+      free-particle (paper) score=  2.138
+      free-particle (standard) score=  2.358
+      C0  score=  7.262 ed2= 3.9292 eff_dim=0.217 gap=  3.40  65.9s
+      C1  score=  1.885 ed2= 0.3360 eff_dim=0.868 gap=  0.88  66.6s
+      C2  score=  1.916 ed2= 0.3152 eff_dim=0.983 gap=  0.81  66.9s
+      SKY score=  3.069 ed2= 0.8750 eff_dim=1.066
+  res=32 steps=1200 seed=20261724
+      free-particle (paper) score=  2.152
+      free-particle (standard) score=  2.325
+      C0  score=  7.510 ed2= 3.4143 eff_dim=0.239 gap=  3.49 133.4s
+      C1  score=  2.511 ed2= 0.4435 eff_dim=0.869 gap=  1.17 135.0s
+      C2  score=  2.636 ed2= 0.4813 eff_dim=0.928 gap=  1.13 135.5s
+      SKY score=  2.075 ed2= 0.2987 eff_dim=0.856
+  res=32 steps=1200 seed=20261725
+      free-particle (paper) score=  2.073
+      free-particle (standard) score=  2.239
+      C0  score=  6.950 ed2= 3.2960 eff_dim=0.238 gap=  3.35 133.3s
+      C1  score=  2.151 ed2= 0.3318 eff_dim=1.216 gap=  1.04 133.3s
+      C2  score=  2.223 ed2= 0.3379 eff_dim=1.508 gap=  0.99 135.1s
+      SKY score=  2.188 ed2= 0.4050 eff_dim=0.793
+  res=32 steps=1200 seed=20261726
+      free-particle (paper) score=  2.203
+      free-particle (standard) score=  2.423
+      C0  score=  7.034 ed2= 3.6246 eff_dim=0.208 gap=  3.19 133.5s
+      C1  score=  2.352 ed2= 0.4868 eff_dim=0.815 gap=  1.07 135.5s
+      C2  score=  2.930 ed2= 0.7345 eff_dim=0.988 gap=  1.21 137.7s
+      SKY score=  1.751 ed2= 0.3123 eff_dim=0.847
+
+=== PHASE 3 CONFIRMATION ===
+  C0   median score   7.358   
+  C1   median score   2.514   
+  C2   median score   2.335   
+  SKY  median score   1.904   skyline (not a candidate)
+
+  [PASS] C.1_material_improvement ratio=0.3193 [0.2920,0.3506] wins=18/18
+  [PASS] C.2_every_seed
+  [PASS] C.3_both_resolutions
+  [PASS] C.4_every_budget
+  [PASS] C.5_variance_collapse_repaired
+  [PASS] C.6_reaches_the_skyline ratio=1.1403 [0.9987,1.3070] wins=7/18
+  [PASS] C.7_parametric_gap_narrows
+
+  Phase-3 gate: PASS
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase3_confirmation.json sha256=b736d26656cb564c...

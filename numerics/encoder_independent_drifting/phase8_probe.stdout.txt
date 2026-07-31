@@ -1,0 +1,82 @@
+=== N1/N2: radial demand, and the one-parameter gain ===
+    N1/N2 plain      seed0 2nd= 0.389 ed2=  1.1001 radial_rel=+0.0004 outward=0.551
+    N1/N2 gain       seed0 2nd= 0.389 ed2=  1.0862 radial_rel=+0.0009 outward=0.559 gain= 0.851
+    N1/N2 plain_r11  seed0 2nd= 0.926 ed2=  0.1140 radial_rel=-0.1260 outward=0.379
+    N1/N2 plain      seed1 2nd= 0.462 ed2=  0.8354 radial_rel=+0.0954 outward=0.566
+    N1/N2 gain       seed1 2nd= 0.476 ed2=  0.7973 radial_rel=+0.0828 outward=0.562 gain= 0.826
+    N1/N2 plain_r11  seed1 2nd= 0.910 ed2=  0.2027 radial_rel=-0.0205 outward=0.504
+    N1/N2 plain      seed2 2nd= 0.501 ed2=  0.7227 radial_rel=-0.1026 outward=0.473
+    N1/N2 gain       seed2 2nd= 0.509 ed2=  0.6939 radial_rel=-0.0975 outward=0.492 gain= 0.829
+    N1/N2 plain_r11  seed2 2nd= 1.019 ed2=  0.2949 radial_rel=-0.2759 outward=0.078
+
+=== N3: is the regression cost a capacity artifact? ===
+    N3 particles_n=64         seed0 p/v=  0.00 2nd= 0.950 ed2=  0.2847
+    N3 fit_w=64_n=64          seed0 p/v=  2.23 2nd= 0.950 ed2=  0.2833
+    N3 particles_n=128        seed0 p/v=  0.00 2nd= 0.964 ed2=  0.1598
+    N3 fit_w=64_n=128         seed0 p/v=  1.12 2nd= 0.902 ed2=  0.1764
+    N3 particles_n=256        seed0 p/v=  0.00 2nd= 0.963 ed2=  0.1031
+    N3 fit_w=64_n=256         seed0 p/v=  0.56 2nd= 0.731 ed2=  0.1801
+    N3 particles_n=512        seed0 p/v=  0.00 2nd= 0.995 ed2=  0.0690
+    N3 fit_w=64_n=512         seed0 p/v=  0.28 2nd= 0.595 ed2=  0.4651
+    N3 particles_n=256        seed0 p/v=  0.00 2nd= 0.963 ed2=  0.1031
+    N3 fit_w=128_n=256        seed0 p/v=  1.87 2nd= 0.843 ed2=  0.1948
+    N3 particles_n=64         seed1 p/v=  0.00 2nd= 0.922 ed2=  0.2989
+    N3 fit_w=64_n=64          seed1 p/v=  2.23 2nd= 0.921 ed2=  0.2919
+    N3 particles_n=128        seed1 p/v=  0.00 2nd= 0.956 ed2=  0.1495
+    N3 fit_w=64_n=128         seed1 p/v=  1.12 2nd= 0.906 ed2=  0.1543
+    N3 particles_n=256        seed1 p/v=  0.00 2nd= 0.953 ed2=  0.1031
+    N3 fit_w=64_n=256         seed1 p/v=  0.56 2nd= 0.746 ed2=  0.1688
+    N3 particles_n=512        seed1 p/v=  0.00 2nd= 0.963 ed2=  0.0728
+    N3 fit_w=64_n=512         seed1 p/v=  0.28 2nd= 0.602 ed2=  0.3894
+    N3 particles_n=256        seed1 p/v=  0.00 2nd= 0.953 ed2=  0.1031
+    N3 fit_w=128_n=256        seed1 p/v=  1.87 2nd= 0.825 ed2=  0.1217
+    N3 particles_n=64         seed2 p/v=  0.00 2nd= 0.939 ed2=  0.3174
+    N3 fit_w=64_n=64          seed2 p/v=  2.23 2nd= 0.933 ed2=  0.3144
+    N3 particles_n=128        seed2 p/v=  0.00 2nd= 0.933 ed2=  0.1541
+    N3 fit_w=64_n=128         seed2 p/v=  1.12 2nd= 0.874 ed2=  0.1539
+    N3 particles_n=256        seed2 p/v=  0.00 2nd= 0.980 ed2=  0.1009
+    N3 fit_w=64_n=256         seed2 p/v=  0.56 2nd= 0.733 ed2=  0.1753
+    N3 particles_n=512        seed2 p/v=  0.00 2nd= 0.993 ed2=  0.0686
+    N3 fit_w=64_n=512         seed2 p/v=  0.28 2nd= 0.615 ed2=  0.3168
+    N3 particles_n=256        seed2 p/v=  0.00 2nd= 0.980 ed2=  0.1009
+    N3 fit_w=128_n=256        seed2 p/v=  1.87 2nd= 0.852 ed2=  0.1325
+
+=== N4: latent dimension at the good bandwidth ===
+    N4 latent=   8 seed0 2nd= 0.400 tail=0.0015 ed2=  1.1148
+    N4 latent=  32 seed0 2nd= 0.389 tail=0.0038 ed2=  1.1001
+    N4 latent= 128 seed0 2nd= 0.385 tail=0.0051 ed2=  1.0115
+    N4 latent= 512 seed0 2nd= 0.440 tail=0.0060 ed2=  0.8864
+    N4 latent=   8 seed1 2nd= 0.427 tail=0.0014 ed2=  1.0242
+    N4 latent=  32 seed1 2nd= 0.462 tail=0.0031 ed2=  0.8354
+    N4 latent= 128 seed1 2nd= 0.499 tail=0.0041 ed2=  0.6809
+    N4 latent= 512 seed1 2nd= 0.514 tail=0.0042 ed2=  0.6609
+    N4 latent=   8 seed2 2nd= 0.388 tail=0.0024 ed2=  1.0440
+    N4 latent=  32 seed2 2nd= 0.501 tail=0.0032 ed2=  0.7227
+    N4 latent= 128 seed2 2nd= 0.479 tail=0.0042 ed2=  0.7401
+    N4 latent= 512 seed2 2nd= 0.383 tail=0.0058 ed2=  0.9995
+
+=== PHASE-7 FOLLOW-UP PROBE ===
+variant       2nd_mom      ed2  radial_rel  outward    tail    gain
+plain           0.462   0.8354     +0.0004    0.551  0.0032      --
+gain            0.476   0.7973     +0.0009    0.559  0.0029   0.829
+plain_r11       0.926   0.2027     -0.1260    0.379  0.0474      --
+    (real data tail fraction beyond top-32: 0.1375)
+
+arm           2nd_mom     tail      ed2
+latent=8        0.400   0.0015   1.0440
+latent=32       0.462   0.0032   0.8354
+latent=128      0.479   0.0042   0.7401
+latent=512      0.440   0.0058   0.8864
+
+regime                    params    p/v  2nd_mom      ed2
+fit_w=128_n=256           366723   1.87    0.843   0.1325
+fit_w=64_n=128            109635   1.12    0.902   0.1543
+fit_w=64_n=256            109635   0.56    0.733   0.1753
+fit_w=64_n=512            109635   0.28    0.602   0.3894
+fit_w=64_n=64             109635   2.23    0.933   0.2919
+particles_n=128                0   0.00    0.956   0.1541
+particles_n=256                0   0.00    0.963   0.1031
+particles_n=512                0   0.00    0.993   0.0690
+particles_n=64                 0   0.00    0.939   0.2989
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase8_probe.json sha256=15c4dfc7d56667fe...

@@ -1,0 +1,748 @@
+{
+  "artifacts": {
+    "dense": "numerics\\conditioned_transport_runs\\20260722-201428-consumed",
+    "dense_rows_sha256": "87172a4efc635534ee080201ddfcbd71a53124db15c41fdeef07ac07e22ad381",
+    "primary": "numerics\\conditioned_transport_runs\\20260722-202659-consumed",
+    "primary_outputs_sha256": "4ba9edcbbb2e1a5c0a5ef80e5f3dce0da11b846103561ba63256ed31b2e9f27f",
+    "primary_rows_sha256": "4bc6e91a514e326443b776cb816263b7ff8c848021cf05937e9c5a88b8941b88"
+  },
+  "exploratory_support_metrics": {
+    "aggregate_medians": {
+      "cta-exact-global": {
+        "normalized_mean_error": 0.055514699439853835,
+        "off_support_occupancy": 0.04443359375,
+        "relative_covariance_frobenius_error": 0.27044167084544635,
+        "support_precision": 0.95556640625,
+        "support_recall": 0.9716796875
+      },
+      "cta-exact-hybrid": {
+        "normalized_mean_error": 0.05814475334363994,
+        "off_support_occupancy": 0.035888671875,
+        "relative_covariance_frobenius_error": 0.2045599913212322,
+        "support_precision": 0.964111328125,
+        "support_recall": 0.9765625
+      },
+      "paper-neural-optimized": {
+        "normalized_mean_error": 0.10826552241109277,
+        "off_support_occupancy": 0.001708984375,
+        "relative_covariance_frobenius_error": 0.5262550063246165,
+        "support_precision": 0.998291015625,
+        "support_recall": 0.94287109375
+      }
+    },
+    "definition": {
+      "precision": "output fraction within target-calibrated radius",
+      "radius": "95th percentile target 5-NN distance to calibration split",
+      "recall": "target-evaluation fraction within radius of an output",
+      "reference_split": "even indices calibrate; odd indices evaluate recall"
+    },
+    "per_target": {
+      "NPR-d16-balanced-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.04989610549817833,
+          "off_support_occupancy": 0.53466796875,
+          "relative_covariance_frobenius_error": 0.4520696750802116,
+          "support_precision": 0.46533203125,
+          "support_recall": 0.9091796875,
+          "target_calibrated_radius": 2.6745125132208862
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.05875949560411445,
+          "off_support_occupancy": 0.29150390625,
+          "relative_covariance_frobenius_error": 0.26027608599961755,
+          "support_precision": 0.70849609375,
+          "support_recall": 0.95703125,
+          "target_calibrated_radius": 2.6745125132208862
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.11063200328933641,
+          "off_support_occupancy": 0.021484375,
+          "relative_covariance_frobenius_error": 0.2719494798451548,
+          "support_precision": 0.978515625,
+          "support_recall": 0.982421875,
+          "target_calibrated_radius": 2.6745125132208862
+        }
+      },
+      "NPR-d16-correlated-t": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.0545427824804423,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.5554450883921056,
+          "support_precision": 1.0,
+          "support_recall": 0.9609375,
+          "target_calibrated_radius": 4.303335302528737
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.06427299569654078,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.3904892346869899,
+          "support_precision": 1.0,
+          "support_recall": 0.96875,
+          "target_calibrated_radius": 4.303335302528737
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.04649075294209433,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.5320505886028495,
+          "support_precision": 1.0,
+          "support_recall": 0.9658203125,
+          "target_calibrated_radius": 4.303335302528737
+        }
+      },
+      "NPR-d16-nonlinear": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.06095290695114897,
+          "off_support_occupancy": 0.02490234375,
+          "relative_covariance_frobenius_error": 0.47551959933991456,
+          "support_precision": 0.97509765625,
+          "support_recall": 0.9658203125,
+          "target_calibrated_radius": 3.7079902593940233
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.05227550359295119,
+          "off_support_occupancy": 0.01806640625,
+          "relative_covariance_frobenius_error": 0.3739254446895437,
+          "support_precision": 0.98193359375,
+          "support_recall": 0.9716796875,
+          "target_calibrated_radius": 3.7079902593940233
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.09229950220925283,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.5785026785070815,
+          "support_precision": 1.0,
+          "support_recall": 0.951171875,
+          "target_calibrated_radius": 3.7079902593940233
+        }
+      },
+      "NPR-d16-rare-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.06086128291842886,
+          "off_support_occupancy": 0.0009765625,
+          "relative_covariance_frobenius_error": 0.711392977932837,
+          "support_precision": 0.9990234375,
+          "support_recall": 0.9521484375,
+          "target_calibrated_radius": 3.9843693636569766
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.05753001108316544,
+          "off_support_occupancy": 0.00048828125,
+          "relative_covariance_frobenius_error": 0.6120995695447472,
+          "support_precision": 0.99951171875,
+          "support_recall": 0.9619140625,
+          "target_calibrated_radius": 3.9843693636569766
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.10589904153284915,
+          "off_support_occupancy": 0.00048828125,
+          "relative_covariance_frobenius_error": 0.5204594240463837,
+          "support_precision": 0.99951171875,
+          "support_recall": 0.9619140625,
+          "target_calibrated_radius": 3.9843693636569766
+        }
+      },
+      "NPR-d2-balanced-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.02791131145065773,
+          "off_support_occupancy": 0.1318359375,
+          "relative_covariance_frobenius_error": 0.06199418159059644,
+          "support_precision": 0.8681640625,
+          "support_recall": 0.9287109375,
+          "target_calibrated_radius": 0.1458796706778458
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.030282484945695208,
+          "off_support_occupancy": 0.12451171875,
+          "relative_covariance_frobenius_error": 0.03535680459570056,
+          "support_precision": 0.87548828125,
+          "support_recall": 0.9345703125,
+          "target_calibrated_radius": 0.1458796706778458
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.05154278836377096,
+          "off_support_occupancy": 0.10595703125,
+          "relative_covariance_frobenius_error": 0.18527201489717546,
+          "support_precision": 0.89404296875,
+          "support_recall": 0.98046875,
+          "target_calibrated_radius": 0.1458796706778458
+        }
+      },
+      "NPR-d2-correlated-t": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.02492103884462812,
+          "off_support_occupancy": 0.0126953125,
+          "relative_covariance_frobenius_error": 0.08240858085880591,
+          "support_precision": 0.9873046875,
+          "support_recall": 0.9775390625,
+          "target_calibrated_radius": 0.32649919732529115
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.019248508855751717,
+          "off_support_occupancy": 0.01123046875,
+          "relative_covariance_frobenius_error": 0.1078788800931979,
+          "support_precision": 0.98876953125,
+          "support_recall": 0.9765625,
+          "target_calibrated_radius": 0.32649919732529115
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.051863427068923676,
+          "off_support_occupancy": 0.01318359375,
+          "relative_covariance_frobenius_error": 0.43224875549297403,
+          "support_precision": 0.98681640625,
+          "support_recall": 0.9326171875,
+          "target_calibrated_radius": 0.32649919732529115
+        }
+      },
+      "NPR-d2-nonlinear": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.08798041245731361,
+          "off_support_occupancy": 0.044921875,
+          "relative_covariance_frobenius_error": 0.26848627148437615,
+          "support_precision": 0.955078125,
+          "support_recall": 0.986328125,
+          "target_calibrated_radius": 0.28086533132792324
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.07282727527047851,
+          "off_support_occupancy": 0.03955078125,
+          "relative_covariance_frobenius_error": 0.3136301536912759,
+          "support_precision": 0.96044921875,
+          "support_recall": 0.982421875,
+          "target_calibrated_radius": 0.28086533132792324
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.17674051683422023,
+          "off_support_occupancy": 0.01318359375,
+          "relative_covariance_frobenius_error": 0.6832008572041026,
+          "support_precision": 0.98681640625,
+          "support_recall": 0.8564453125,
+          "target_calibrated_radius": 0.28086533132792324
+        }
+      },
+      "NPR-d2-rare-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.12122444116315653,
+          "off_support_occupancy": 0.048828125,
+          "relative_covariance_frobenius_error": 0.19539156861176274,
+          "support_precision": 0.951171875,
+          "support_recall": 0.98828125,
+          "target_calibrated_radius": 0.3192737350954721
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.08171931581631604,
+          "off_support_occupancy": 0.03564453125,
+          "relative_covariance_frobenius_error": 0.15658460193419443,
+          "support_precision": 0.96435546875,
+          "support_recall": 0.984375,
+          "target_calibrated_radius": 0.3192737350954721
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.18837506530379225,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.6032527149650758,
+          "support_precision": 1.0,
+          "support_recall": 0.9345703125,
+          "target_calibrated_radius": 0.3192737350954721
+        }
+      },
+      "NPR-d4-balanced-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.0321260689798208,
+          "off_support_occupancy": 0.169921875,
+          "relative_covariance_frobenius_error": 0.07395149936983425,
+          "support_precision": 0.830078125,
+          "support_recall": 0.9833984375,
+          "target_calibrated_radius": 0.5258113310937186
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.03460906599364539,
+          "off_support_occupancy": 0.14892578125,
+          "relative_covariance_frobenius_error": 0.07679342699950352,
+          "support_precision": 0.85107421875,
+          "support_recall": 0.9814453125,
+          "target_calibrated_radius": 0.5258113310937186
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.02246779319823859,
+          "off_support_occupancy": 0.06689453125,
+          "relative_covariance_frobenius_error": 0.16728096078509153,
+          "support_precision": 0.93310546875,
+          "support_recall": 0.884765625,
+          "target_calibrated_radius": 0.5258113310937186
+        }
+      },
+      "NPR-d4-correlated-t": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.06847643903077384,
+          "off_support_occupancy": 0.0029296875,
+          "relative_covariance_frobenius_error": 0.1216097631708786,
+          "support_precision": 0.9970703125,
+          "support_recall": 0.986328125,
+          "target_calibrated_radius": 1.0925583722881536
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.10350573692487021,
+          "off_support_occupancy": 0.00439453125,
+          "relative_covariance_frobenius_error": 0.11215492956373649,
+          "support_precision": 0.99560546875,
+          "support_recall": 0.982421875,
+          "target_calibrated_radius": 1.0925583722881536
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.09052702349728976,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.33825086886801803,
+          "support_precision": 1.0,
+          "support_recall": 0.9609375,
+          "target_calibrated_radius": 1.0925583722881536
+        }
+      },
+      "NPR-d4-nonlinear": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.05648661639926536,
+          "off_support_occupancy": 0.0439453125,
+          "relative_covariance_frobenius_error": 0.11617926161939825,
+          "support_precision": 0.9560546875,
+          "support_recall": 0.986328125,
+          "target_calibrated_radius": 1.001369209959406
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.06685085633548786,
+          "off_support_occupancy": 0.03564453125,
+          "relative_covariance_frobenius_error": 0.0790946156931602,
+          "support_precision": 0.96435546875,
+          "support_recall": 0.9921875,
+          "target_calibrated_radius": 1.001369209959406
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.11908179136825035,
+          "off_support_occupancy": 0.02294921875,
+          "relative_covariance_frobenius_error": 0.5731096609501906,
+          "support_precision": 0.97705078125,
+          "support_recall": 0.8642578125,
+          "target_calibrated_radius": 1.001369209959406
+        }
+      },
+      "NPR-d4-rare-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.07542739656130393,
+          "off_support_occupancy": 0.0390625,
+          "relative_covariance_frobenius_error": 0.2723970702065166,
+          "support_precision": 0.9609375,
+          "support_recall": 0.990234375,
+          "target_calibrated_radius": 0.9936009073857844
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.06124179084453973,
+          "off_support_occupancy": 0.0361328125,
+          "relative_covariance_frobenius_error": 0.2214402662212746,
+          "support_precision": 0.9638671875,
+          "support_recall": 0.994140625,
+          "target_calibrated_radius": 0.9936009073857844
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.14705745744437393,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.6991122534278054,
+          "support_precision": 1.0,
+          "support_recall": 0.8974609375,
+          "target_calibrated_radius": 0.9936009073857844
+        }
+      },
+      "NPR-d8-balanced-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.03746804341088471,
+          "off_support_occupancy": 0.33056640625,
+          "relative_covariance_frobenius_error": 0.17576505077604682,
+          "support_precision": 0.66943359375,
+          "support_recall": 0.95703125,
+          "target_calibrated_radius": 1.251412330859935
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.04533415382519181,
+          "off_support_occupancy": 0.2255859375,
+          "relative_covariance_frobenius_error": 0.1004031263257651,
+          "support_precision": 0.7744140625,
+          "support_recall": 0.9697265625,
+          "target_calibrated_radius": 1.251412330859935
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.11980382789185544,
+          "off_support_occupancy": 0.0517578125,
+          "relative_covariance_frobenius_error": 0.2497587432395136,
+          "support_precision": 0.9482421875,
+          "support_recall": 0.97265625,
+          "target_calibrated_radius": 1.251412330859935
+        }
+      },
+      "NPR-d8-correlated-t": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.036182209601787564,
+          "off_support_occupancy": 0.00439453125,
+          "relative_covariance_frobenius_error": 0.3351123980532054,
+          "support_precision": 0.99560546875,
+          "support_recall": 0.96484375,
+          "target_calibrated_radius": 2.249872114959215
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.033975660128607435,
+          "off_support_occupancy": 0.00341796875,
+          "relative_covariance_frobenius_error": 0.1876797164211898,
+          "support_precision": 0.99658203125,
+          "support_recall": 0.9765625,
+          "target_calibrated_radius": 2.249872114959215
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.057954495769566176,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.36078698189161035,
+          "support_precision": 1.0,
+          "support_recall": 0.958984375,
+          "target_calibrated_radius": 2.249872114959215
+        }
+      },
+      "NPR-d8-nonlinear": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.04055481339543797,
+          "off_support_occupancy": 0.06494140625,
+          "relative_covariance_frobenius_error": 0.35006258010380553,
+          "support_precision": 0.93505859375,
+          "support_recall": 0.9814453125,
+          "target_calibrated_radius": 2.0395091541000725
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.03123046623301668,
+          "off_support_occupancy": 0.04541015625,
+          "relative_covariance_frobenius_error": 0.2719682405984499,
+          "support_precision": 0.95458984375,
+          "support_recall": 0.986328125,
+          "target_calibrated_radius": 2.0395091541000725
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.15687302077937873,
+          "off_support_occupancy": 0.0029296875,
+          "relative_covariance_frobenius_error": 0.5744285547692666,
+          "support_precision": 0.9970703125,
+          "support_recall": 0.927734375,
+          "target_calibrated_radius": 2.0395091541000725
+        }
+      },
+      "NPR-d8-rare-gmm": {
+        "cta-exact-global": {
+          "normalized_mean_error": 0.08854071096998424,
+          "off_support_occupancy": 0.0546875,
+          "relative_covariance_frobenius_error": 0.569238842412629,
+          "support_precision": 0.9453125,
+          "support_recall": 0.9296875,
+          "target_calibrated_radius": 2.2186212612591176
+        },
+        "cta-exact-hybrid": {
+          "normalized_mean_error": 0.09131694251680134,
+          "off_support_occupancy": 0.04443359375,
+          "relative_covariance_frobenius_error": 0.5078971850505545,
+          "support_precision": 0.95556640625,
+          "support_recall": 0.974609375,
+          "target_calibrated_radius": 2.2186212612591176
+        },
+        "paper-neural-optimized": {
+          "normalized_mean_error": 0.2154553532106763,
+          "off_support_occupancy": 0.0,
+          "relative_covariance_frobenius_error": 0.7181367637772481,
+          "support_precision": 1.0,
+          "support_recall": 0.9033203125,
+          "target_calibrated_radius": 2.2186212612591176
+        }
+      }
+    },
+    "status": "exploratory_post_hoc"
+  },
+  "fixed_local_hybrid_vs_global": {
+    "by_dimension": {
+      "16": {
+        "ed2": {
+          "geometric_mean_ratio": 0.6937191153120708,
+          "median_ratio": 0.7237713602439513,
+          "targets": 4,
+          "wins": 4
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.8142985459218786,
+          "median_ratio": 0.8415761852685104,
+          "targets": 4,
+          "wins": 4
+        }
+      },
+      "2": {
+        "ed2": {
+          "geometric_mean_ratio": 0.906151703783597,
+          "median_ratio": 1.1444236616536072,
+          "targets": 4,
+          "wins": 1
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9558277144172789,
+          "median_ratio": 1.0415963711470941,
+          "targets": 4,
+          "wins": 1
+        }
+      },
+      "4": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9247016179943869,
+          "median_ratio": 0.9718851686403821,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9594457739069655,
+          "median_ratio": 1.0191287497646133,
+          "targets": 4,
+          "wins": 2
+        }
+      },
+      "8": {
+        "ed2": {
+          "geometric_mean_ratio": 0.6221520214875508,
+          "median_ratio": 0.6007417873734352,
+          "targets": 4,
+          "wins": 4
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.7845785778943116,
+          "median_ratio": 0.7672617236881067,
+          "targets": 4,
+          "wins": 4
+        }
+      }
+    },
+    "by_family": {
+      "balanced-gmm": {
+        "ed2": {
+          "geometric_mean_ratio": 0.7658355752033031,
+          "median_ratio": 0.7386133614836503,
+          "targets": 4,
+          "wins": 3
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.8580594878160468,
+          "median_ratio": 0.8525595702858688,
+          "targets": 4,
+          "wins": 3
+        }
+      },
+      "correlated-t": {
+        "ed2": {
+          "geometric_mean_ratio": 0.8654971888026476,
+          "median_ratio": 0.9360104962433774,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9514244927770741,
+          "median_ratio": 0.99337805612815,
+          "targets": 4,
+          "wins": 2
+        }
+      },
+      "nonlinear": {
+        "ed2": {
+          "geometric_mean_ratio": 0.8867902712235861,
+          "median_ratio": 0.898316634437867,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9146760152050737,
+          "median_ratio": 0.9068663989039734,
+          "targets": 4,
+          "wins": 2
+        }
+      },
+      "rare-gmm": {
+        "ed2": {
+          "geometric_mean_ratio": 0.6152627026294506,
+          "median_ratio": 0.6488373607225345,
+          "targets": 4,
+          "wins": 4
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.7846231940887352,
+          "median_ratio": 0.7967784431402354,
+          "targets": 4,
+          "wins": 4
+        }
+      }
+    }
+  },
+  "interpretation_guardrails": [
+    "all outputs were consumed before this diagnostic was specified",
+    "support metrics are explanatory and not original registered endpoints",
+    "the audit may design a new experiment but cannot confirm a repair"
+  ],
+  "m128_field_diagnostics_by_dimension": {
+    "16": {
+      "maximum_negative_radius": 5.261624813079834,
+      "maximum_positive_radius": 24.015457153320312,
+      "median_column_mass_relative_l2_error": 0.28682185895740986,
+      "median_field_relative_l2_error": 0.37896718829870224,
+      "median_negative_rms_radius": 2.2993776981718836,
+      "median_positive_rms_radius": 2.6973166942596434,
+      "median_row_mass_relative_l2_error": 0.27719163335859776,
+      "minimum_field_cosine": 0.8914771676063538,
+      "targets": 4
+    },
+    "2": {
+      "maximum_negative_radius": 2.1691410541534424,
+      "maximum_positive_radius": 7.763713836669922,
+      "median_column_mass_relative_l2_error": 0.037935389671474695,
+      "median_field_relative_l2_error": 0.018985150032676756,
+      "median_negative_rms_radius": 0.13565454895724544,
+      "median_positive_rms_radius": 0.2210615795105696,
+      "median_row_mass_relative_l2_error": 0.0009541448816889897,
+      "minimum_field_cosine": 0.9996788501739502,
+      "targets": 4
+    },
+    "4": {
+      "maximum_negative_radius": 3.1704390048980713,
+      "maximum_positive_radius": 14.124988555908203,
+      "median_column_mass_relative_l2_error": 0.09983974508941174,
+      "median_field_relative_l2_error": 0.06770598003640771,
+      "median_negative_rms_radius": 0.49531689793802797,
+      "median_positive_rms_radius": 0.6580402091145515,
+      "median_row_mass_relative_l2_error": 0.012501919874921441,
+      "minimum_field_cosine": 0.9920973181724548,
+      "targets": 4
+    },
+    "8": {
+      "maximum_negative_radius": 4.102945327758789,
+      "maximum_positive_radius": 14.030543327331543,
+      "median_column_mass_relative_l2_error": 0.16457963921129704,
+      "median_field_relative_l2_error": 0.20563323143869638,
+      "median_negative_rms_radius": 1.2223564747720959,
+      "median_positive_rms_radius": 1.430366614460945,
+      "median_row_mass_relative_l2_error": 0.07999021466821432,
+      "minimum_field_cosine": 0.9438185691833496,
+      "targets": 4
+    }
+  },
+  "m128_vs_dense": {
+    "by_dimension": {
+      "16": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0262782245456525,
+          "median_ratio": 1.0295517645014098,
+          "targets": 4,
+          "wins": 0
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0118859129772746,
+          "median_ratio": 1.0148776320300956,
+          "targets": 4,
+          "wins": 1
+        }
+      },
+      "2": {
+        "ed2": {
+          "geometric_mean_ratio": 0.8523445503300708,
+          "median_ratio": 0.95698767720563,
+          "targets": 4,
+          "wins": 4
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9323245184994813,
+          "median_ratio": 0.976236298069769,
+          "targets": 4,
+          "wins": 4
+        }
+      },
+      "4": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9152740676621256,
+          "median_ratio": 0.9472365677651347,
+          "targets": 4,
+          "wins": 4
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.959199480577392,
+          "median_ratio": 0.9751224960231492,
+          "targets": 4,
+          "wins": 3
+        }
+      },
+      "8": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0115423697217973,
+          "median_ratio": 1.0094529315603427,
+          "targets": 4,
+          "wins": 1
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.006465329065614,
+          "median_ratio": 1.005716903344422,
+          "targets": 4,
+          "wins": 2
+        }
+      }
+    },
+    "by_family": {
+      "balanced-gmm": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0083854027985202,
+          "median_ratio": 1.0083643832823173,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0063159935939219,
+          "median_ratio": 1.0071968816491954,
+          "targets": 4,
+          "wins": 1
+        }
+      },
+      "correlated-t": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9587550857966347,
+          "median_ratio": 0.9456487137312056,
+          "targets": 4,
+          "wins": 3
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9777379015541278,
+          "median_ratio": 0.9711111018289305,
+          "targets": 4,
+          "wins": 3
+        }
+      },
+      "nonlinear": {
+        "ed2": {
+          "geometric_mean_ratio": 0.8704406180753591,
+          "median_ratio": 0.9945426096055348,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9438052400288804,
+          "median_ratio": 0.9989866479620969,
+          "targets": 4,
+          "wins": 4
+        }
+      },
+      "rare-gmm": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9623701843387942,
+          "median_ratio": 0.9847334844136209,
+          "targets": 4,
+          "wins": 2
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9807700588309255,
+          "median_ratio": 0.9919263434383807,
+          "targets": 4,
+          "wins": 2
+        }
+      }
+    }
+  },
+  "schema": "conditioned-transport-limitation-audit-v1",
+  "status": "post_hoc_diagnostic"
+}

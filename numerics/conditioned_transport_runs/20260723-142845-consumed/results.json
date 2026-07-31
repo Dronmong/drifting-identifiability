@@ -1,0 +1,22 @@
+{
+  "by_arm": {
+    "cta-exact-hybrid": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.029101562499999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.014875790002431222,
+      "median_heldout_sw1": 0.07870382420276503,
+      "median_online_training_wall_seconds": 0.37919904999580467,
+      "median_paper_kernel_pairs": 2621440.0,
+      "median_rare_mass_error": 0.017773437500000003,
+      "median_setup_plus_training_wall_seconds": 0.4321655499988992,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        4,
+        4
+      ]
+    }
+  }
+}

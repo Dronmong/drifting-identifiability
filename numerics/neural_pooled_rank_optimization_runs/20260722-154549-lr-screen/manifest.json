@@ -1,0 +1,208 @@
+{
+  "actual_rows": 128,
+  "command": [
+    "numerics/run_neural_pooled_rank_optimization_screen.py"
+  ],
+  "cuda_available": false,
+  "datasketches": "5.2.0",
+  "expected_rows": 128,
+  "experiment": "neural-pooled-rank-development-lr-screen-v2",
+  "git_commit": "3669673e40bef4a7c4cb368609ce957e34f90864",
+  "git_dirty": true,
+  "git_status": [
+    "M numerics/README.md",
+    " M numerics/lbqcd.py",
+    "?? numerics/KLLPSQTNeuralAmortizationResearch.md",
+    "?? numerics/NeuralPooledRankPhase0Results.md",
+    "?? numerics/NeuralPooledRankPhase1Protocol.md",
+    "?? numerics/NeuralPooledRankPhase1SmokeResults.md",
+    "?? numerics/QuantileGuardedDriftingProtocol.md",
+    "?? numerics/QuantileGuardedDriftingResearchPlan.md",
+    "?? numerics/QuantileGuardedDriftingResults.md",
+    "?? numerics/QuantileSafetyGuardProtocol.md",
+    "?? numerics/QuantileSafetyGuardResults.md",
+    "?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+    "?? numerics/generate_neural_pooled_rank_registry.py",
+    "?? numerics/neural_pooled_rank.py",
+    "?? numerics/neural_pooled_rank_development_registry.json",
+    "?? numerics/neural_pooled_rank_development_registry.json.sha256",
+    "?? numerics/neural_pooled_rank_optimization_runs/",
+    "?? numerics/neural_pooled_rank_runs/",
+    "?? numerics/neural_pooled_rank_tests.py",
+    "?? numerics/qgd_development_registry.json",
+    "?? numerics/qgd_runs/",
+    "?? numerics/quantile_guarded_drifting.py",
+    "?? numerics/run_neural_pooled_rank_development.py",
+    "?? numerics/run_neural_pooled_rank_optimization_screen.py",
+    "?? numerics/run_quantile_guarded_development.py",
+    "?? numerics/transport_aligned_runs/20260721-202812-smoke-smoke/",
+    "?? numerics/transport_aligned_runs/20260721-202838-screen-mechanism-screen/",
+    "?? numerics/transport_aligned_runs/20260721-203012-standard-first-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203215-standard-budget-matched-standard/",
+    "?? numerics/transport_aligned_runs/20260721-203549-standard-K256-standard/"
+  ],
+  "kll_state_count": 256,
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "profile": {
+    "atlas_knots": 64,
+    "evaluation_samples": 512,
+    "free_particle_sweeps": 30,
+    "generator_budget": 2048,
+    "initializations": [
+      "concentrated"
+    ],
+    "large_population": 128,
+    "microbatch": 32,
+    "name": "smoke",
+    "ordinary_batch": 32,
+    "replications": 1,
+    "smoke_only": true,
+    "target_pool": 2048
+  },
+  "python": "3.12.13 (main, Apr  7 2026, 20:53:22) [MSC v.1944 64 bit (AMD64)]",
+  "registry_sha256": "7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6",
+  "scipy": "1.18.0",
+  "screen": [
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 0.25
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 0.5
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 1.0
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 2.0
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 4.0
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "paper-neural",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 0.25
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 0.5
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 1.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 2.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 4.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "minibatch-sw",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "exact-atlas-rsr",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "exact-atlas-rsr",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "exact-atlas-rsr",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "exact-atlas-rsr",
+      "lr_multiplier": 64.0
+    },
+    {
+      "arm": "kll-atlas-rsr",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "kll-atlas-rsr",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "kll-atlas-rsr",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "kll-atlas-rsr",
+      "lr_multiplier": 64.0
+    },
+    {
+      "arm": "kll-small-rsr",
+      "lr_multiplier": 4.0
+    },
+    {
+      "arm": "kll-small-rsr",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "kll-small-rsr",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "kll-small-rsr",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "kll-paper-hybrid",
+      "lr_multiplier": 8.0
+    },
+    {
+      "arm": "kll-paper-hybrid",
+      "lr_multiplier": 16.0
+    },
+    {
+      "arm": "kll-paper-hybrid",
+      "lr_multiplier": 32.0
+    },
+    {
+      "arm": "kll-paper-hybrid",
+      "lr_multiplier": 64.0
+    }
+  ],
+  "source_sha256": {
+    "numerics\\KLLPSQTNeuralAmortizationResearch.md": "9a8481eb08262857cc4d1a964bbc8cb347ad2a0a3a0379dd6cf4847765dcbfd8",
+    "numerics\\NeuralPooledRankPhase1Protocol.md": "430877130c6b4ff9a70d22beef1bd1e5b6ae225a5f15032d50748709d9fe5ec2",
+    "numerics\\NeuralPooledRankPhase1SmokeResults.md": "24c2d703334113fb6113ec476f708e7fd4388d2e8264e80c56e7f023c0e9be88",
+    "numerics\\neural_pooled_rank.py": "8765208ca4b7b2ed9f29b71de240c9c8c0800071741a61b408a61f1be7f1dcbb",
+    "numerics\\neural_pooled_rank_tests.py": "e78bb16c641fc9ffc16c265e9bc100cef2f498279c64894cdf6da619c0c5dcc0",
+    "numerics\\run_neural_pooled_rank_development.py": "f469d694d9f9b22d0f217864e844b8d23735eb6e968ca92a86427f42e8ae5d86",
+    "numerics\\run_neural_pooled_rank_optimization_screen.py": "6ca3d7aa9eacaa7564b5b360855f7a704609f1e93f825546dd3cb8f96574211c"
+  },
+  "status": "development-only; smoke targets already consumed",
+  "torch": "2.7.1+cpu",
+  "wall_seconds": 14.337769300000218
+}

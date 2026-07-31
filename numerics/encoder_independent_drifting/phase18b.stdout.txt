@@ -1,0 +1,32 @@
+    BAR (moment-matched gaussian) = 246.28
+
+    raw            seed0 FID=  268.00 ED2=  0.2736 tail= 0.1384 2nd= 1.072    176s
+    raw            seed1 FID=  283.75 ED2=  0.2075 tail= 0.1476 2nd= 0.912    177s
+    pre_layer1     seed0 FID=  283.68 ED2=  0.3893 tail= 0.1812 2nd= 0.899    569s
+    pre_layer1     seed1 FID=  387.67 ED2=  0.5795 tail= 0.2229 2nd= 0.971    559s
+    pre_layer2     seed0 FID=  330.14 ED2=  0.6878 tail= 0.2251 2nd= 1.069    683s
+    pre_layer2     seed1 FID=  363.63 ED2=  0.7017 tail= 0.2049 2nd= 1.036    683s
+    pre_layer3     seed0 FID=  299.92 ED2=  0.5531 tail= 0.2292 2nd= 1.011    837s
+    pre_layer3     seed1 FID=  389.74 ED2=  0.7830 tail= 0.1603 2nd= 1.063    837s
+    pre_layer4     seed0 FID=  343.62 ED2=  0.7294 tail= 0.2116 2nd= 1.059   1261s
+    pre_layer4     seed1 FID=  371.56 ED2=  0.7763 tail= 0.1541 2nd= 0.977   1262s
+    rand_layer3    seed0 FID=  289.18 ED2=  0.5581 tail= 0.0973 2nd= 0.929    836s
+    rand_layer3    seed1 FID=  310.51 ED2=  0.3045 tail= 0.1230 2nd= 0.977    836s
+
+=== PHASE 18B ===
+arm                   FID      ED2    tail    2nd  paired vs raw
+raw                275.87   0.2406  0.1430  0.992             --
+rand_layer3        299.85   0.4313  0.1102  0.953         +23.97
+pre_layer1         335.68   0.4844  0.2020  0.935         +59.80
+pre_layer3         344.83   0.6680  0.1947  1.037         +68.96
+pre_layer2         346.88   0.6947  0.2150  1.053         +71.01
+pre_layer4         357.59   0.7528  0.1828  1.018         +81.72
+
+    BAR 246.28   (real data tail ~= 0.13)
+    FID by depth (layer1->4): [335.7, 346.9, 344.8, 357.6]
+    rises monotonically with depth: False
+    best pretrained layer: layer1
+
+  no pretrained depth beats raw pixels; the failure is not depth alone
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase18b.json sha256=ef32604e4ed6fc95...

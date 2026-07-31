@@ -1,0 +1,53 @@
+    floor  KID -0.00008  FID512   70.34  FID2048   23.20  tail 0.1962
+    BAR    KID +0.21805  FID512  250.83  FID2048  229.07
+
+    A_control         seed0 KID=+0.16169 FID512= 222.43 FID2048= 190.91 tail=0.1497 ess=0.829  1114s
+    A_control         seed1 KID=+0.13307 FID512= 205.20 FID2048= 175.25 tail=0.1421 ess=0.810  1058s
+    A_control         seed2 KID=+0.16331 FID512= 222.21 FID2048= 192.05 tail=0.1830 ess=0.821  1059s
+    A_control         seed3 KID=+0.15999 FID512= 223.35 FID2048= 195.05 tail=0.1726 ess=0.791  1059s
+    B_sharp           seed0 KID=+0.15551 FID512= 220.45 FID2048= 189.67 tail=0.0438 ess=0.569  1060s
+    B_sharp           seed1 KID=+0.12301 FID512= 198.73 FID2048= 169.92 tail=0.0325 ess=0.527  1059s
+    B_sharp           seed2 KID=+0.16294 FID512= 208.88 FID2048= 181.52 tail=0.0472 ess=0.544  1059s
+    B_sharp           seed3 KID=+0.13769 FID512= 206.90 FID2048= 178.67 tail=0.0291 ess=0.517  1059s
+    C_sharper         seed0 KID=+0.25829 FID512= 303.43 FID2048= 286.96 tail=0.0013 ess=0.278  1060s
+    C_sharper         seed1 KID=+0.26654 FID512= 309.52 FID2048= 292.04 tail=0.0013 ess=0.286  1058s
+    C_sharper         seed2 KID=+0.24540 FID512= 286.49 FID2048= 266.34 tail=0.0027 ess=0.251  1058s
+    C_sharper         seed3 KID=+0.26148 FID512= 302.44 FID2048= 285.45 tail=0.0016 ess=0.279  1058s
+    D_pos             seed0 KID=+0.14202 FID512= 201.85 FID2048= 173.15 tail=0.0457 ess=0.532  1068s
+    D_pos             seed1 KID=+0.12844 FID512= 194.82 FID2048= 168.47 tail=0.0413 ess=0.521  1065s
+    D_pos             seed2 KID=+0.13066 FID512= 195.86 FID2048= 165.20 tail=0.0445 ess=0.527  1065s
+    D_pos             seed3 KID=+0.14327 FID512= 205.81 FID2048= 177.68 tail=0.0311 ess=0.495  1063s
+    E_sharper_pos     seed0 KID=+0.27421 FID512= 314.58 FID2048= 298.44 tail=0.0010 ess=0.239  1065s
+    E_sharper_pos     seed1 KID=+0.26878 FID512= 309.04 FID2048= 291.05 tail=0.0022 ess=0.239  1063s
+    E_sharper_pos     seed2 KID=+0.25541 FID512= 298.12 FID2048= 280.41 tail=0.0020 ess=0.233  1064s
+    E_sharper_pos     seed3 KID=+0.25949 FID512= 303.10 FID2048= 285.12 tail=0.0014 ess=0.235  1065s
+    F_mix             seed0 KID=+0.15543 FID512= 218.85 FID2048= 189.35 tail=0.0492 ess=0.745  1112s
+    F_mix             seed1 KID=+0.11841 FID512= 196.01 FID2048= 166.02 tail=0.0437 ess=0.699  1113s
+    F_mix             seed2 KID=+0.13557 FID512= 211.15 FID2048= 178.61 tail=0.0746 ess=0.715  1113s
+    F_mix             seed3 KID=+0.12674 FID512= 194.00 FID2048= 166.10 tail=0.0441 ess=0.683  1111s
+
+=== PHASE 22 ===
+arm                  ESS  lv  pos       KID   FID2048   FID512    tail  realized   imgs
+A_control          0.500   1   64  +0.16084    191.48   222.32  0.1611     0.815   52.2
+B_sharp            0.050   1   64  +0.14660    180.10   207.89  0.0382     0.536   34.3
+C_sharper          0.010   1   64  +0.25988    286.21   302.94  0.0015     0.279   17.8
+D_pos              0.050   1  256  +0.13634    170.81   198.85  0.0429     0.524  134.2
+E_sharper_pos      0.010   1  256  +0.26413    288.09   306.07  0.0017     0.237   60.6
+F_mix              0.050   5   64  +0.13116    172.36   203.58  0.0467     0.707   45.2
+
+    floor KID -0.00008 / FID2048 23.20    BAR KID +0.21805 / FID2048 229.07    real tail 0.1962
+
+    paired contrasts on KID (negative = better)
+      sharp                   -0.00973 +- 0.00464   t= -2.10  n.s.
+      sharper_at_pos64        +0.11314 +- 0.01318   t= +8.58  p<0.05
+      sharper_at_pos256       +0.12837 +- 0.00515   t=+24.91  p<0.05
+      positives_at_ess05      -0.00869 +- 0.00905   t= -0.96  n.s.
+      positives_at_ess005     +0.00654 +- 0.00399   t= +1.64  n.s.
+      mixture                 -0.01075 +- 0.00597   t= -1.80  n.s.
+      best_vs_baseline        -0.02048 +- 0.00614   t= -3.34  p<0.05
+
+    best arm: F_mix at KID +0.13116 (baseline +0.16084)
+
+  nothing resolves at 30k -- the configuration work is finished; write up the mechanism result
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase22.json sha256=8bd7b49ce2c7c80a...

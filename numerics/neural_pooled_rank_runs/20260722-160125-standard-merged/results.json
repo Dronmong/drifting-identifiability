@@ -1,0 +1,159 @@
+{
+  "by_arm": {
+    "exact-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.05928429675906832,
+      "median_heldout_sw1": 0.15971108265075262,
+      "median_wall_seconds": 0.28092280000055325,
+      "rows": 96
+    },
+    "exact-free-particle-ceiling": {
+      "divergences": 0,
+      "median_ed2": 0.004358367001120245,
+      "median_heldout_sw1": 0.04719738991759551,
+      "median_wall_seconds": 0.21791429999939282,
+      "rows": 96
+    },
+    "kll-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.059070553576420215,
+      "median_heldout_sw1": 0.16104863740823464,
+      "median_wall_seconds": 0.2840059000009205,
+      "rows": 96
+    },
+    "kll-paper-hybrid": {
+      "divergences": 0,
+      "median_ed2": 0.056986084407355975,
+      "median_heldout_sw1": 0.15847481469989955,
+      "median_wall_seconds": 0.7532743000010669,
+      "rows": 96
+    },
+    "kll-small-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.05059461107423724,
+      "median_heldout_sw1": 0.1476598247667657,
+      "median_wall_seconds": 0.4575659000001906,
+      "rows": 96
+    },
+    "minibatch-sw": {
+      "divergences": 0,
+      "median_ed2": 0.05025201311594807,
+      "median_heldout_sw1": 0.1522812992497627,
+      "median_wall_seconds": 0.9395964999966964,
+      "rows": 96
+    },
+    "paper-neural": {
+      "divergences": 0,
+      "median_ed2": 0.04631100729357773,
+      "median_heldout_sw1": 0.15257396394340322,
+      "median_wall_seconds": 0.6715965000003052,
+      "rows": 96
+    }
+  },
+  "by_dimension": {
+    "16": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.09328961793108581,
+        "median_heldout_sw1": 0.15809273844046526
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.09648728819533225,
+        "median_heldout_sw1": 0.15837340405872086
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.07256345134740627,
+        "median_heldout_sw1": 0.13603983490774318
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.1023357315279636,
+        "median_heldout_sw1": 0.16790241402410294
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.09078604964325532,
+        "median_heldout_sw1": 0.15899197009576999
+      },
+      "paper-neural": {
+        "median_ed2": 0.071362600100354,
+        "median_heldout_sw1": 0.1496934764845366
+      }
+    },
+    "2": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.02988671616804206,
+        "median_heldout_sw1": 0.15477189541598257
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.03075184579416934,
+        "median_heldout_sw1": 0.16036879490895461
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.04697009303418609,
+        "median_heldout_sw1": 0.2092982547443793
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.024928172036620122,
+        "median_heldout_sw1": 0.13828424198063222
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.029782868815333208,
+        "median_heldout_sw1": 0.1583328523825915
+      },
+      "paper-neural": {
+        "median_ed2": 0.028458233209343264,
+        "median_heldout_sw1": 0.1639945054129344
+      }
+    },
+    "4": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.05789459948534548,
+        "median_heldout_sw1": 0.1872247980674242
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.05816745764592657,
+        "median_heldout_sw1": 0.18936626074482707
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.05204293830864759,
+        "median_heldout_sw1": 0.18559669002690482
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.042030516745335866,
+        "median_heldout_sw1": 0.1481387687407802
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.04275149715590465,
+        "median_heldout_sw1": 0.1620265804826465
+      },
+      "paper-neural": {
+        "median_ed2": 0.04053654054626232,
+        "median_heldout_sw1": 0.15763268531173003
+      }
+    },
+    "8": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.06004745785589072,
+        "median_heldout_sw1": 0.1561687740274974
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.0596916964067602,
+        "median_heldout_sw1": 0.15650934506482217
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.057340347057303065,
+        "median_heldout_sw1": 0.14889607387973688
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.04707904467083135,
+        "median_heldout_sw1": 0.13416781830930058
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.05268407801913089,
+        "median_heldout_sw1": 0.13774004765106293
+      },
+      "paper-neural": {
+        "median_ed2": 0.051946602438688094,
+        "median_heldout_sw1": 0.14764457419570595
+      }
+    }
+  }
+}

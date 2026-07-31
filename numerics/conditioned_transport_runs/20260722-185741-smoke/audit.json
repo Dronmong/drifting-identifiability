@@ -1,0 +1,12 @@
+{
+  "generator_budget_per_row": 2048,
+  "kll_bytes": 437760,
+  "kll_states": 384,
+  "outputs": 20,
+  "references": 4,
+  "rows": 20,
+  "source_snapshots": 5,
+  "status": "pass",
+  "targets": 4,
+  "unique_cells": 20
+}

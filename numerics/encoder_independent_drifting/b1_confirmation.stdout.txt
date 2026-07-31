@@ -1,0 +1,13 @@
+
+=== B1 CONFIRMATION unit 300 ===
+recall=0.1689; B0=0.1475; anchor gate=True; veto=True
+
+=== B1 CONFIRMATION unit 301 ===
+recall=0.1768; B0=0.2061; anchor gate=True; veto=True
+
+=== B1 CONFIRMATION unit 302 ===
+recall=0.1548; B0=0.1528; anchor gate=True; veto=True
+
+=== B1 CONFIRMATION ===
+PASS: in at least two paired units B1 retained B0 recall within the frozen margin, reduced held-out source-anchor excess, and passed collapse, memorization, and metric controls
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\b1_confirmatory.json sha256=26770733c98ec346e0461020a6515b97e19b48389d209edb4cd98ceae6bf51c5

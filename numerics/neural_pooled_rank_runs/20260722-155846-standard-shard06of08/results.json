@@ -1,0 +1,159 @@
+{
+  "by_arm": {
+    "exact-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.0459837633476603,
+      "median_heldout_sw1": 0.13320352992424578,
+      "median_wall_seconds": 0.2653511500029708,
+      "rows": 12
+    },
+    "exact-free-particle-ceiling": {
+      "divergences": 0,
+      "median_ed2": 0.019929050231755285,
+      "median_heldout_sw1": 0.06811170126012575,
+      "median_wall_seconds": 0.21567639999921084,
+      "rows": 12
+    },
+    "kll-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.0449569913887764,
+      "median_heldout_sw1": 0.1275130274377478,
+      "median_wall_seconds": 0.27380025000093156,
+      "rows": 12
+    },
+    "kll-paper-hybrid": {
+      "divergences": 0,
+      "median_ed2": 0.05441829894667771,
+      "median_heldout_sw1": 0.13437572879870274,
+      "median_wall_seconds": 0.7297833500015258,
+      "rows": 12
+    },
+    "kll-small-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.05538836357047261,
+      "median_heldout_sw1": 0.1368734084066999,
+      "median_wall_seconds": 0.4609072500024922,
+      "rows": 12
+    },
+    "minibatch-sw": {
+      "divergences": 0,
+      "median_ed2": 0.06977168456500138,
+      "median_heldout_sw1": 0.14264687342896443,
+      "median_wall_seconds": 0.9185343999997713,
+      "rows": 12
+    },
+    "paper-neural": {
+      "divergences": 0,
+      "median_ed2": 0.042608845264975326,
+      "median_heldout_sw1": 0.13515887095922274,
+      "median_wall_seconds": 0.6507221499996376,
+      "rows": 12
+    }
+  },
+  "by_dimension": {
+    "16": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.08532603281590134,
+        "median_heldout_sw1": 0.15098129466576138
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.08486193080961701,
+        "median_heldout_sw1": 0.1537506949662903
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.05995535005945163,
+        "median_heldout_sw1": 0.12870295097335305
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.08399176007505726,
+        "median_heldout_sw1": 0.14730398036626535
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.08611546015095062,
+        "median_heldout_sw1": 0.14718704234288282
+      },
+      "paper-neural": {
+        "median_ed2": 0.06233730926323666,
+        "median_heldout_sw1": 0.14163370017458982
+      }
+    },
+    "2": {
+      "exact-atlas-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-small-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "minibatch-sw": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "paper-neural": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      }
+    },
+    "4": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.02004283949200225,
+        "median_heldout_sw1": 0.100917102285174
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.018801443347198354,
+        "median_heldout_sw1": 0.10022374384803721
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.03948777026782846,
+        "median_heldout_sw1": 0.14415334736264296
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.01465742620261068,
+        "median_heldout_sw1": 0.09641778425679028
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.027000393254656974,
+        "median_heldout_sw1": 0.12201161481991579
+      },
+      "paper-neural": {
+        "median_ed2": 0.025040404412796757,
+        "median_heldout_sw1": 0.1227828004801562
+      }
+    },
+    "8": {
+      "exact-atlas-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "kll-small-rsr": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "minibatch-sw": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      },
+      "paper-neural": {
+        "median_ed2": null,
+        "median_heldout_sw1": null
+      }
+    }
+  }
+}

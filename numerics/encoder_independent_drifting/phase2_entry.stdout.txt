@@ -1,0 +1,20 @@
+--- E1 skyline admissibility and budget ---
+    E1 steps=  300 skyline precision=1.000 required=0.473 score=  2.196 admissible=True
+    E1 steps=  600 skyline precision=1.000 required=0.473 score=  1.837 admissible=True
+    E1 steps= 1200 skyline precision=0.998 required=0.473 score=  1.361 admissible=True
+--- E2 geometry advantage ---
+    E2 k-NN content accuracy (chance 0.100): pixel=0.245 wavelet=0.364 scattering=0.383 randconv=0.272 | best/pixel=1.567
+--- E3 zero-set reachability ---
+    E3 raw::standard                        0.49 (descended  63.0%) reaches
+    E3 scattering::standard                 0.42 (descended  71.1%) reaches
+    E3 wavelet::standard                    0.43 (descended  74.1%) reaches
+
+=== PHASE 2A ENTRY GATE ===
+  [PASS] E1_solvable
+  [PASS] E2_geometry_advantage
+  [PASS] E3_zero_set
+  [PASS] E4_kernel_health
+
+  recommended budget: 600 steps
+  overall: PASS
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase2_entry.json sha256=3d7bd40365e1d0e7...

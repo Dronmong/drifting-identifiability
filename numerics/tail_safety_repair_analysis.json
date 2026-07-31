@@ -1,0 +1,1879 @@
+{
+  "artifact": "numerics\\conditioned_transport_runs\\20260723-170940-consumed",
+  "artifact_audit_sha256": "58e29003c34f006e65c410bcb0ab8248d8796a21627791f31047544a417aff0c",
+  "baseline": "cta-exact-adaptive-rollout",
+  "cost": {
+    "cta-exact-adaptive-rollout-rank-balanced": {
+      "generator_forward_calls_training": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "paper_kernel_pairs": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "projection_scalar_products": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0571882797418488,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.125,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.043898814964922,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.044705849827356,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.043898814964922,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.044705849827356,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0443022544367597,
+        "median_ratio": 1.0277777777777777,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0555555555555556,
+          "NPR-d16-correlated-t": 1.0588235294117647,
+          "NPR-d16-nonlinear": 1.0555555555555556,
+          "NPR-d16-rare-gmm": 1.0588235294117647,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.125,
+          "NPR-d8-correlated-t": 1.125,
+          "NPR-d8-nonlinear": 1.125,
+          "NPR-d8-rare-gmm": 1.125
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "sort_work": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0458279597528712,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1193333289257263,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0397704225445117,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.040572591752959,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0397704225445117,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.040572591752959,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0401714298206868,
+        "median_ratio": 1.0221080701007494,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0442161402014989,
+          "NPR-d16-correlated-t": 1.0474422672587638,
+          "NPR-d16-nonlinear": 1.0442161402014989,
+          "NPR-d16-rare-gmm": 1.0474422672587638,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.1193333289257263,
+          "NPR-d8-correlated-t": 1.1193333289257263,
+          "NPR-d8-nonlinear": 1.1193333289257263,
+          "NPR-d8-rare-gmm": 1.1193333289257263
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.135809448817075,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0103595027959456,
+            "targets": 4,
+            "wins": 2
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0163230903212566,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.131963235474238,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0836857036170044,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0842740214482556,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0668541342417202,
+            "targets": 4,
+            "wins": 1
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0531690340628432,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0719175477306917,
+        "median_ratio": 1.080243861581615,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0885601827842524,
+          "NPR-d16-correlated-t": 1.1657493136895694,
+          "NPR-d16-nonlinear": 1.1432444066746454,
+          "NPR-d16-rare-gmm": 1.1471632102604032,
+          "NPR-d2-balanced-gmm": 1.0719275403789776,
+          "NPR-d2-correlated-t": 1.0131921017699885,
+          "NPR-d2-nonlinear": 0.9904958905742745,
+          "NPR-d2-rare-gmm": 0.9687100808822292,
+          "NPR-d4-balanced-gmm": 1.0249864176501107,
+          "NPR-d4-correlated-t": 1.022302677210073,
+          "NPR-d4-nonlinear": 1.0170384266446335,
+          "NPR-d4-rare-gmm": 1.0011339743377152,
+          "NPR-d8-balanced-gmm": 1.1531276657166267,
+          "NPR-d8-correlated-t": 1.1446685420763938,
+          "NPR-d8-nonlinear": 1.1248407793224355,
+          "NPR-d8-rare-gmm": 1.1058114824510217
+        },
+        "targets": 16,
+        "ties": 0,
+        "wins": 2
+      }
+    },
+    "cta-exact-adaptive-rollout-safe": {
+      "generator_forward_calls_training": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "paper_kernel_pairs": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "projection_scalar_products": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.3431014736897027,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.75,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.2359309170224468,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.2404499354256304,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.2359309170224468,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.2404499354256304,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.2381883645920093,
+        "median_ratio": 1.1666666666666665,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.3333333333333333,
+          "NPR-d16-correlated-t": 1.3529411764705883,
+          "NPR-d16-nonlinear": 1.3333333333333333,
+          "NPR-d16-rare-gmm": 1.3529411764705883,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.75,
+          "NPR-d8-correlated-t": 1.75,
+          "NPR-d8-nonlinear": 1.75,
+          "NPR-d8-rare-gmm": 1.75
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "sort_work": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0442901473868118,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1153288548007019,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0384699864033655,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0392453981892522,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0384699864033655,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0392453981892522,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0388576199496027,
+        "median_ratio": 1.0213661885537446,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.042732377107489,
+          "NPR-d16-correlated-t": 1.04585024486753,
+          "NPR-d16-nonlinear": 1.042732377107489,
+          "NPR-d16-rare-gmm": 1.04585024486753,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.1153288548007019,
+          "NPR-d8-correlated-t": 1.1153288548007019,
+          "NPR-d8-nonlinear": 1.1153288548007019,
+          "NPR-d8-rare-gmm": 1.1153288548007019
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1261536737034759,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0184714398778245,
+            "targets": 4,
+            "wins": 1
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0165800323688199,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.105894631658106,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0397835040269745,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0689802125847576,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0584298799308554,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0960418996003938,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0656153294929933,
+        "median_ratio": 1.0376955536429984,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0302389329895278,
+          "NPR-d16-correlated-t": 1.182108784686066,
+          "NPR-d16-nonlinear": 1.0748880068225777,
+          "NPR-d16-rare-gmm": 1.2286608261389544,
+          "NPR-d2-balanced-gmm": 1.0281285209544926,
+          "NPR-d2-correlated-t": 1.0358448944392562,
+          "NPR-d2-nonlinear": 1.034864292389823,
+          "NPR-d2-rare-gmm": 0.9762698585627576,
+          "NPR-d4-balanced-gmm": 1.0260897329188368,
+          "NPR-d4-correlated-t": 1.0003319852443446,
+          "NPR-d4-nonlinear": 1.0395462128467403,
+          "NPR-d4-rare-gmm": 1.0009053304020148,
+          "NPR-d8-balanced-gmm": 1.0754766498142654,
+          "NPR-d8-correlated-t": 1.066061685601317,
+          "NPR-d8-nonlinear": 1.0853203516054946,
+          "NPR-d8-rare-gmm": 1.2020256411187984
+        },
+        "targets": 16,
+        "ties": 0,
+        "wins": 1
+      }
+    },
+    "cta-exact-adaptive-rollout-safe-rank-balanced": {
+      "generator_forward_calls_training": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "paper_kernel_pairs": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0,
+          "NPR-d16-correlated-t": 1.0,
+          "NPR-d16-nonlinear": 1.0,
+          "NPR-d16-rare-gmm": 1.0,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0,
+          "NPR-d8-correlated-t": 1.0,
+          "NPR-d8-nonlinear": 1.0,
+          "NPR-d8-rare-gmm": 1.0
+        },
+        "targets": 16,
+        "ties": 16,
+        "wins": 0
+      },
+      "projection_scalar_products": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.4002800840280099,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.875,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.2703318703865367,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.2755306478638297,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.2703318703865367,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.2755306478638297,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.27292860508208,
+        "median_ratio": 1.1944444444444444,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.3888888888888888,
+          "NPR-d16-correlated-t": 1.411764705882353,
+          "NPR-d16-nonlinear": 1.3888888888888888,
+          "NPR-d16-rare-gmm": 1.411764705882353,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.875,
+          "NPR-d8-correlated-t": 1.875,
+          "NPR-d8-nonlinear": 1.875,
+          "NPR-d8-rare-gmm": 1.875
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "sort_work": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0901158998201494,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.2346621837264282,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0763147208984363,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0778817778657799,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0763147208984363,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0778817778657799,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.077097964395587,
+        "median_ratio": 1.043474258654494,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.086948517308988,
+          "NPR-d16-correlated-t": 1.093292512126294,
+          "NPR-d16-nonlinear": 1.086948517308988,
+          "NPR-d16-rare-gmm": 1.093292512126294,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.2346621837264282,
+          "NPR-d8-correlated-t": 1.2346621837264282,
+          "NPR-d8-nonlinear": 1.2346621837264282,
+          "NPR-d8-rare-gmm": 1.2346621837264282
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 0
+      },
+      "wall_seconds": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1852576771026582,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0010572378300302,
+            "targets": 4,
+            "wins": 1
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0289515687492206,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1799513640998684,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.081797877740572,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.1094058000354652,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.1147801202401073,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0767253914756463,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0955512074124418,
+        "median_ratio": 1.1198601768199639,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.1518581612112635,
+          "NPR-d16-correlated-t": 1.2365065899342833,
+          "NPR-d16-nonlinear": 1.1974394333803846,
+          "NPR-d16-rare-gmm": 1.1571831815096552,
+          "NPR-d2-balanced-gmm": 1.0173074149182313,
+          "NPR-d2-correlated-t": 1.0183434061676546,
+          "NPR-d2-nonlinear": 1.0022043449654732,
+          "NPR-d2-rare-gmm": 0.967236981696978,
+          "NPR-d4-balanced-gmm": 1.0050231026972716,
+          "NPR-d4-correlated-t": 1.0221844935118614,
+          "NPR-d4-nonlinear": 1.0878621924286642,
+          "NPR-d4-rare-gmm": 1.0029990402551705,
+          "NPR-d8-balanced-gmm": 1.1629398206942327,
+          "NPR-d8-correlated-t": 1.1769059239973052,
+          "NPR-d8-nonlinear": 1.1829683919376004,
+          "NPR-d8-rare-gmm": 1.1972484830630397
+        },
+        "targets": 16,
+        "ties": 0,
+        "wins": 1
+      }
+    }
+  },
+  "mechanism": {
+    "cta-exact-adaptive-rollout": {
+      "mean_bulk_student_loss": 0.0,
+      "mean_tail_balanced_count": 0.0,
+      "mean_tail_student_loss": 0.0,
+      "rare": {
+        "final_post_student_rare_core_count": {
+          "arm_mean": 3.75,
+          "baseline_mean": 3.75,
+          "mean_difference": 0.0
+        },
+        "final_teacher_rare_core_count": {
+          "arm_mean": 8.5,
+          "baseline_mean": 8.5,
+          "mean_difference": 0.0
+        },
+        "maximum_post_student_rare_core_count": {
+          "arm_mean": 7.75,
+          "baseline_mean": 7.75,
+          "mean_difference": 0.0
+        },
+        "maximum_teacher_rare_core_count": {
+          "arm_mean": 11.0,
+          "baseline_mean": 11.0,
+          "mean_difference": 0.0
+        },
+        "mean_teacher_to_post_student_rare_core_ratio": {
+          "arm_mean": 0.4355805776583883,
+          "baseline_mean": 0.4355805776583883,
+          "mean_difference": 0.0
+        },
+        "rare_core_mass": {
+          "arm_mean": 0.0087890625,
+          "baseline_mean": 0.0087890625,
+          "mean_difference": 0.0
+        },
+        "rare_mass_error": {
+          "arm_mean": 0.01796875,
+          "baseline_mean": 0.01796875,
+          "mean_difference": 0.0
+        },
+        "steps_retaining_teacher_rare_core": {
+          "arm_mean": 8.0,
+          "baseline_mean": 8.0,
+          "mean_difference": 0.0
+        }
+      },
+      "tail_to_bulk_student_loss_ratio": 0.0
+    },
+    "cta-exact-adaptive-rollout-rank-balanced": {
+      "mean_bulk_student_loss": 0.17729606630523567,
+      "mean_tail_balanced_count": 26.0,
+      "mean_tail_student_loss": 0.49324214728504345,
+      "rare": {
+        "final_post_student_rare_core_count": {
+          "arm_mean": 3.75,
+          "baseline_mean": 3.75,
+          "mean_difference": 0.0
+        },
+        "final_teacher_rare_core_count": {
+          "arm_mean": 8.0,
+          "baseline_mean": 8.5,
+          "mean_difference": -0.5
+        },
+        "maximum_post_student_rare_core_count": {
+          "arm_mean": 7.75,
+          "baseline_mean": 7.75,
+          "mean_difference": 0.0
+        },
+        "maximum_teacher_rare_core_count": {
+          "arm_mean": 11.0,
+          "baseline_mean": 11.0,
+          "mean_difference": 0.0
+        },
+        "mean_teacher_to_post_student_rare_core_ratio": {
+          "arm_mean": 0.44900777546058607,
+          "baseline_mean": 0.4355805776583883,
+          "mean_difference": 0.013427197802197782
+        },
+        "rare_core_mass": {
+          "arm_mean": 0.0081787109375,
+          "baseline_mean": 0.0087890625,
+          "mean_difference": -0.0006103515625
+        },
+        "rare_mass_error": {
+          "arm_mean": 0.0176025390625,
+          "baseline_mean": 0.01796875,
+          "mean_difference": -0.0003662109375
+        },
+        "steps_retaining_teacher_rare_core": {
+          "arm_mean": 8.0,
+          "baseline_mean": 8.0,
+          "mean_difference": 0.0
+        }
+      },
+      "tail_to_bulk_student_loss_ratio": 3.1039827775016944
+    },
+    "cta-exact-adaptive-rollout-safe": {
+      "mean_bulk_student_loss": 0.0,
+      "mean_tail_balanced_count": 0.0,
+      "mean_tail_student_loss": 0.0,
+      "rare": {
+        "final_post_student_rare_core_count": {
+          "arm_mean": 4.0,
+          "baseline_mean": 3.75,
+          "mean_difference": 0.25
+        },
+        "final_teacher_rare_core_count": {
+          "arm_mean": 7.75,
+          "baseline_mean": 8.5,
+          "mean_difference": -0.75
+        },
+        "maximum_post_student_rare_core_count": {
+          "arm_mean": 7.5,
+          "baseline_mean": 7.75,
+          "mean_difference": -0.25
+        },
+        "maximum_teacher_rare_core_count": {
+          "arm_mean": 10.0,
+          "baseline_mean": 11.0,
+          "mean_difference": -1.0
+        },
+        "mean_teacher_to_post_student_rare_core_ratio": {
+          "arm_mean": 0.4455082987468236,
+          "baseline_mean": 0.4355805776583883,
+          "mean_difference": 0.009927721088435357
+        },
+        "rare_core_mass": {
+          "arm_mean": 0.0081787109375,
+          "baseline_mean": 0.0087890625,
+          "mean_difference": -0.0006103515625
+        },
+        "rare_mass_error": {
+          "arm_mean": 0.02138671875,
+          "baseline_mean": 0.01796875,
+          "mean_difference": 0.00341796875
+        },
+        "steps_retaining_teacher_rare_core": {
+          "arm_mean": 8.25,
+          "baseline_mean": 8.0,
+          "mean_difference": 0.25
+        }
+      },
+      "tail_to_bulk_student_loss_ratio": 0.0
+    },
+    "cta-exact-adaptive-rollout-safe-rank-balanced": {
+      "mean_bulk_student_loss": 0.1983684517402688,
+      "mean_tail_balanced_count": 26.0,
+      "mean_tail_student_loss": 0.5041138118276229,
+      "rare": {
+        "final_post_student_rare_core_count": {
+          "arm_mean": 3.5,
+          "baseline_mean": 3.75,
+          "mean_difference": -0.25
+        },
+        "final_teacher_rare_core_count": {
+          "arm_mean": 7.5,
+          "baseline_mean": 8.5,
+          "mean_difference": -1.0
+        },
+        "maximum_post_student_rare_core_count": {
+          "arm_mean": 7.5,
+          "baseline_mean": 7.75,
+          "mean_difference": -0.25
+        },
+        "maximum_teacher_rare_core_count": {
+          "arm_mean": 9.75,
+          "baseline_mean": 11.0,
+          "mean_difference": -1.25
+        },
+        "mean_teacher_to_post_student_rare_core_ratio": {
+          "arm_mean": 0.42648335543616606,
+          "baseline_mean": 0.4355805776583883,
+          "mean_difference": -0.009097222222222229
+        },
+        "rare_core_mass": {
+          "arm_mean": 0.008056640625,
+          "baseline_mean": 0.0087890625,
+          "mean_difference": -0.000732421875
+        },
+        "rare_mass_error": {
+          "arm_mean": 0.0188232421875,
+          "baseline_mean": 0.01796875,
+          "mean_difference": 0.0008544921875
+        },
+        "steps_retaining_teacher_rare_core": {
+          "arm_mean": 8.25,
+          "baseline_mean": 8.0,
+          "mean_difference": 0.25
+        }
+      },
+      "tail_to_bulk_student_loss_ratio": 2.889311966443999
+    }
+  },
+  "quality": {
+    "cta-exact-adaptive-rollout-rank-balanced": {
+      "ed2": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.9790796619686022,
+            "targets": 4,
+            "wins": 1
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.052694724532399,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.014066522987997,
+            "targets": 4,
+            "wins": 1
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0394128789503267,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9928926211567646,
+            "targets": 4,
+            "wins": 1
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.984835404949246,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.0075813469527777,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.104519244375279,
+          "NPR-d16-correlated-t": 1.0537657425873883,
+          "NPR-d16-nonlinear": 0.7738315894287632,
+          "NPR-d16-rare-gmm": 1.020253984399355,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 0.9573979558156088,
+          "NPR-d8-correlated-t": 1.1076646579911402,
+          "NPR-d8-nonlinear": 1.2559220292209998,
+          "NPR-d8-rare-gmm": 0.9220326775710116
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 3
+      },
+      "heldout_sw1": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.9911362840685568,
+            "targets": 4,
+            "wins": 1
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0380465157218886,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0102570413318726,
+            "targets": 4,
+            "wins": 1
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0224190347992517,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9909461442852459,
+            "targets": 4,
+            "wins": 1
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0051695543791412,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0071346724170283,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.0605340507535983,
+          "NPR-d16-correlated-t": 1.0096826480740648,
+          "NPR-d16-nonlinear": 0.8883290733871555,
+          "NPR-d16-rare-gmm": 1.0144954778533406,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 0.9822067792005859,
+          "NPR-d8-correlated-t": 1.082258019421772,
+          "NPR-d8-nonlinear": 1.0854912643373347,
+          "NPR-d8-rare-gmm": 1.0062529985411486
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 2
+      },
+      "training_quantile_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.9960896956709739,
+            "targets": 4,
+            "wins": 2
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0265895269198617,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0158588921058989,
+            "targets": 4,
+            "wins": 1
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.020713373264465,
+            "targets": 4,
+            "wins": 0
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 0.9955850982833551,
+            "targets": 4,
+            "wins": 1
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 0.9905575166928805,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "geometric_mean_ratio": 1.0055966530279012,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.070753434514473,
+          "NPR-d16-correlated-t": 1.015432398198086,
+          "NPR-d16-nonlinear": 0.9388331544155281,
+          "NPR-d16-rare-gmm": 0.9644170501569646,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 0.9945899573436855,
+          "NPR-d8-correlated-t": 1.0689667670982042,
+          "NPR-d8-nonlinear": 1.0464660230904013,
+          "NPR-d8-rare-gmm": 0.998283543332897
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 4
+      }
+    },
+    "cta-exact-adaptive-rollout-safe": {
+      "ed2": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.4081243111034325,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.171719625426642,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.1714071925645717,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9921508581068115,
+            "targets": 4,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.136506211034462,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.2491289925406395,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.1333555486530251,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.8020760642827005,
+          "NPR-d16-correlated-t": 1.0992042793334122,
+          "NPR-d16-nonlinear": 1.0572240543422506,
+          "NPR-d16-rare-gmm": 1.8773507558221452,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0448607781237043,
+          "NPR-d8-correlated-t": 0.8815205456343931,
+          "NPR-d8-nonlinear": 1.5780480328571354,
+          "NPR-d8-rare-gmm": 1.296832041509136
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 1
+      },
+      "heldout_sw1": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.199241215676425,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.103895617189644,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0819116558616988,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9995665743807857,
+            "targets": 4,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.080146484949765,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.1333090945036612,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0726514860347232,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.3225962160170588,
+          "NPR-d16-correlated-t": 1.0485223740741059,
+          "NPR-d16-nonlinear": 1.0555966998853163,
+          "NPR-d16-rare-gmm": 1.4129382497957317,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0359526906740375,
+          "NPR-d8-correlated-t": 0.952070693985533,
+          "NPR-d8-nonlinear": 1.289533422876533,
+          "NPR-d8-rare-gmm": 1.1675360882996428
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 1
+      },
+      "training_quantile_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0724981989623523,
+            "targets": 4,
+            "wins": 1
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0894694978463004,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0610835731777346,
+            "targets": 4,
+            "wins": 1
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9822716051127536,
+            "targets": 4,
+            "wins": 2
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.0755029508189315,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0423626944847146,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.0396877136942124,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.2742325190703794,
+          "NPR-d16-correlated-t": 0.9730816768357838,
+          "NPR-d16-nonlinear": 1.0377294627803255,
+          "NPR-d16-rare-gmm": 1.0282628838980086,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 0.994831848906499,
+          "NPR-d8-correlated-t": 0.9567028436076509,
+          "NPR-d8-nonlinear": 1.2893246265438572,
+          "NPR-d8-rare-gmm": 1.1480776952259244
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 3
+      }
+    },
+    "cta-exact-adaptive-rollout-safe-rank-balanced": {
+      "ed2": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.4488901728282744,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.1258626676041192,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.1835034838496388,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9902923853676054,
+            "targets": 4,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.2031862768396804,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.156791357348504,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.1301347299848419,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.87169449054576,
+          "NPR-d16-correlated-t": 1.1421888243293388,
+          "NPR-d16-nonlinear": 1.0690478705199797,
+          "NPR-d16-rare-gmm": 1.928287766367435,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0481976960347728,
+          "NPR-d8-correlated-t": 0.8420072909667184,
+          "NPR-d8-nonlinear": 1.9603532031380002,
+          "NPR-d8-rare-gmm": 0.928641942857845
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 2
+      },
+      "heldout_sw1": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.2329170644818237,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.096579047233518,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0921036452081916,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 1.0034508923564376,
+            "targets": 4,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.1141196945278873,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.1073425174031373,
+            "targets": 4,
+            "wins": 0
+          }
+        },
+        "geometric_mean_ratio": 1.07830955051306,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.3849340212227241,
+          "NPR-d16-correlated-t": 1.0841826014858138,
+          "NPR-d16-nonlinear": 1.0534107023638848,
+          "NPR-d16-rare-gmm": 1.4608519694924131,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.027132196458171,
+          "NPR-d8-correlated-t": 0.9351516843273704,
+          "NPR-d8-nonlinear": 1.462613842256018,
+          "NPR-d8-rare-gmm": 1.0292519323770668
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 1
+      },
+      "training_quantile_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.0920433111118273,
+            "targets": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.0807330419361734,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "geometric_mean_ratio": 1.0746120725315063,
+            "targets": 4,
+            "wins": 0
+          },
+          "correlated-t": {
+            "geometric_mean_ratio": 0.9875773884879963,
+            "targets": 4,
+            "wins": 1
+          },
+          "nonlinear": {
+            "geometric_mean_ratio": 1.1059856467277642,
+            "targets": 4,
+            "wins": 0
+          },
+          "rare-gmm": {
+            "geometric_mean_ratio": 1.0055089691472847,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "geometric_mean_ratio": 1.042292405074734,
+        "median_ratio": 1.0,
+        "per_target": {
+          "NPR-d16-balanced-gmm": 1.3197496065601693,
+          "NPR-d16-correlated-t": 1.022060064121605,
+          "NPR-d16-nonlinear": 1.0230746132428965,
+          "NPR-d16-rare-gmm": 1.0305858707229696,
+          "NPR-d2-balanced-gmm": 1.0,
+          "NPR-d2-correlated-t": 1.0,
+          "NPR-d2-nonlinear": 1.0,
+          "NPR-d2-rare-gmm": 1.0,
+          "NPR-d4-balanced-gmm": 1.0,
+          "NPR-d4-correlated-t": 1.0,
+          "NPR-d4-nonlinear": 1.0,
+          "NPR-d4-rare-gmm": 1.0,
+          "NPR-d8-balanced-gmm": 1.0104511438095178,
+          "NPR-d8-correlated-t": 0.9306966102350861,
+          "NPR-d8-nonlinear": 1.4624824228154891,
+          "NPR-d8-rare-gmm": 0.9918810918692224
+        },
+        "targets": 16,
+        "ties": 8,
+        "wins": 2
+      }
+    }
+  },
+  "schema": "tail-safety-repair-development-v1",
+  "status": "consumed-registry development evidence",
+  "target_count": 16,
+  "worth_fresh_confirmation": {
+    "cta-exact-adaptive-rollout-rank-balanced": false,
+    "cta-exact-adaptive-rollout-safe": false,
+    "cta-exact-adaptive-rollout-safe-rank-balanced": false
+  }
+}

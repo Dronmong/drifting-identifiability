@@ -1,0 +1,44 @@
+    floor (real) 70.26    BAR (gaussian) 248.31
+
+    A_ess9_const   seed0 live=  258.13 ema999=  257.87  ed2= 0.2549 tail=0.1618    784s
+    A_ess9_const   seed1 live=  204.89 ema999=  203.33  ed2= 0.1741 tail=0.1263    949s
+    A_ess9_const   seed2 live=  245.41 ema999=  248.10  ed2= 0.2308 tail=0.1439    687s
+    A_ess9_const   seed3 live=  264.18 ema999=  265.24  ed2= 0.1922 tail=0.1442    538s
+    B_ess5_const   seed0 live=  236.25 ema999=  240.75  ed2= 0.2219 tail=0.1433    537s
+    B_ess5_const   seed1 live=  205.33 ema999=  208.21  ed2= 0.2632 tail=0.1546    537s
+    B_ess5_const   seed2 live=  235.59 ema999=  238.26  ed2= 0.1707 tail=0.1369    537s
+    B_ess5_const   seed3 live=  234.52 ema999=  235.03  ed2= 0.1841 tail=0.1253    537s
+    C_ess9_cos     seed0 live=  248.43 ema999=  249.00  ed2= 0.2097 tail=0.1386    538s
+    C_ess9_cos     seed1 live=  214.22 ema999=  214.65  ed2= 0.1912 tail=0.1491    536s
+    C_ess9_cos     seed2 live=  235.73 ema999=  236.16  ed2= 0.1976 tail=0.1188    538s
+    C_ess9_cos     seed3 live=  238.38 ema999=  239.10  ed2= 0.2010 tail=0.1319    537s
+    D_ess5_cos     seed0 live=  255.85 ema999=  256.83  ed2= 0.1716 tail=0.1610    538s
+    D_ess5_cos     seed1 live=  209.82 ema999=  210.10  ed2= 0.1846 tail=0.1554    538s
+    D_ess5_cos     seed2 live=  225.12 ema999=  225.49  ed2= 0.1874 tail=0.1196    537s
+    D_ess5_cos     seed3 live=  221.67 ema999=  221.95  ed2= 0.1742 tail=0.1291    537s
+
+=== PHASE 19 ===
+arm               ess     sched      live    ema999   ema9999
+A_ess9_const      0.9  constant    251.77    252.99    252.81
+B_ess5_const      0.5  constant    235.06    236.64    238.10
+C_ess9_cos        0.9    cosine    237.06    237.63    238.32
+D_ess5_cos        0.5    cosine    223.39    223.72    224.15
+
+    floor 70.26    BAR 248.31    baseline (as-is) 251.77
+
+    paired contrasts (negative = better; 4/4 sign needed)
+      ess_at_constant          -15.23  spread   30.1  unresolved
+      ess_at_cosine             -6.08  spread   24.1  unresolved
+      cosine_at_ess9            -8.96  spread   35.1  unresolved
+      cosine_at_ess5            +0.19  spread   32.5  unresolved
+      ema_in_A_ess9_const       +0.48  spread    4.2  unresolved
+      ema_in_B_ess5_const       +2.64  spread    4.0  worse
+      ema_in_C_ess9_cos         +0.53  spread    0.3  worse
+      ema_in_D_ess5_cos         +0.48  spread    0.7  worse
+      best_vs_baseline         -15.04  spread   47.4  unresolved
+
+    best cell: D_ess5_cos / live at FID 223.39
+
+  neither helps -- the recipe is at its ceiling here; run the long budget as-is and write up
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase19.json sha256=4759634028d3c3ce...

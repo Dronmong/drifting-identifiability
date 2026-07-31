@@ -1,0 +1,69 @@
+=== P1: average the field, watch the particles ===
+    P1 K=  1 seed0 2nd= 1.012 ed2=  0.0829
+    P1 K=  2 seed0 2nd= 1.011 ed2=  0.0770
+    P1 K=  4 seed0 2nd= 1.016 ed2=  0.0708
+    P1 K= 16 seed0 2nd= 1.009 ed2=  0.0654
+    P1 K= 64 seed0 2nd= 1.012 ed2=  0.0662
+    P1 K=  1 seed1 2nd= 0.952 ed2=  0.1582
+    P1 K=  2 seed1 2nd= 0.962 ed2=  0.1058
+    P1 K=  4 seed1 2nd= 0.953 ed2=  0.0948
+    P1 K= 16 seed1 2nd= 0.955 ed2=  0.0997
+    P1 K= 64 seed1 2nd= 0.958 ed2=  0.1024
+    P1 K=  1 seed2 2nd= 1.018 ed2=  0.0755
+    P1 K=  2 seed2 2nd= 1.001 ed2=  0.0688
+    P1 K=  4 seed2 2nd= 1.004 ed2=  0.0676
+    P1 K= 16 seed2 2nd= 1.007 ed2=  0.0663
+    P1 K= 64 seed2 2nd= 1.006 ed2=  0.0661
+
+=== P2: average the NEGATIVE side only ===
+    P2 K=  1 seed0 2nd= 1.023 ed2=  0.0796
+    P2 K=  4 seed0 2nd= 1.022 ed2=  0.0694
+    P2 K= 16 seed0 2nd= 1.025 ed2=  0.0720
+    P2 K=  1 seed1 2nd= 0.975 ed2=  0.1092
+    P2 K=  4 seed1 2nd= 0.973 ed2=  0.1041
+    P2 K= 16 seed1 2nd= 0.973 ed2=  0.1004
+    P2 K=  1 seed2 2nd= 1.022 ed2=  0.0731
+    P2 K=  4 seed2 2nd= 1.019 ed2=  0.0704
+    P2 K= 16 seed2 2nd= 1.023 ed2=  0.0701
+
+=== P3: noise budget along the trajectory ===
+    P3 seed0 step=   0 signal=  254.7592 noise=    1.3123 noise/signal=   0.005
+    P3 seed0 step=  50 signal=  106.9216 noise=  144.5502 noise/signal=   1.352
+    P3 seed0 step= 150 signal=   88.7714 noise=  159.3089 noise/signal=   1.795
+    P3 seed0 step= 300 signal=   36.2461 noise=  239.4406 noise/signal=   6.606
+    P3 seed0 step= 599 signal=   44.3407 noise=  197.7160 noise/signal=   4.459
+    P3 seed1 step=   0 signal=  254.6927 noise=    1.7160 noise/signal=   0.007
+    P3 seed1 step=  50 signal=  194.1746 noise=   76.1949 noise/signal=   0.392
+    P3 seed1 step= 150 signal=  114.5669 noise=  163.7442 noise/signal=   1.429
+    P3 seed1 step= 300 signal=   57.5447 noise=  211.1280 noise/signal=   3.669
+    P3 seed1 step= 599 signal=   37.5455 noise=  207.9640 noise/signal=   5.539
+    P3 seed2 step=   0 signal=  253.8038 noise=    2.5090 noise/signal=   0.010
+    P3 seed2 step=  50 signal=  119.0161 noise=  149.2929 noise/signal=   1.254
+    P3 seed2 step= 150 signal=  105.4108 noise=  140.9886 noise/signal=   1.338
+    P3 seed2 step= 300 signal=   66.2300 noise=  200.8291 noise/signal=   3.032
+    P3 seed2 step= 599 signal=   86.7255 noise=  186.3321 noise/signal=   2.149
+
+=== PHASE-8 FOLLOW-UP PROBE ===
+
+P1  positive-batch averaging
+    K=1      2nd= 1.012 ed2=  0.0829  in 
+    K=2      2nd= 1.001 ed2=  0.0770  in 
+    K=4      2nd= 1.004 ed2=  0.0708  in 
+    K=16     2nd= 1.007 ed2=  0.0663  in 
+    K=64     2nd= 1.006 ed2=  0.0662  in 
+    -> falls with averaging: False  span=[1.001, 1.012]
+
+P2  negative-side averaging
+    K=1      2nd= 1.022 ed2=  0.0796  in 
+    K=4      2nd= 1.019 ed2=  0.0704  in 
+    K=16     2nd= 1.023 ed2=  0.0720  in 
+    -> falls with averaging: False  span=[1.019, 1.023]
+
+P3      step      signal       noise  noise/signal
+      step=0    254.6927      1.7160         0.007
+     step=50    119.0161    144.5502         1.254
+    step=150    105.4108    159.3089         1.429
+    step=300     57.5447    211.1280         3.669
+    step=599     44.3407    197.7160         4.459
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase9_probe.json sha256=ba6733799e7a8361...

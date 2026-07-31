@@ -1,0 +1,70 @@
+{
+  "comparisons": {
+    "gated-pqt-M1024-f0.70": {
+      "ed2_vs_paper-0.5": 0.49018547093435616,
+      "sw1_vs_paper-0.5": 0.5592476271958946,
+      "ed2_ci_vs_paper-0.5": [
+        0.38993455627088397,
+        0.6303630612022689
+      ],
+      "sw1_ci_vs_paper-0.5": [
+        0.5053754569096801,
+        0.6440810842882974
+      ],
+      "ed2_vs_qld-v1": 0.5818625011837754,
+      "sw1_vs_qld-v1": 0.6548692362115184,
+      "ed2_ci_vs_qld-v1": [
+        0.4493328814299004,
+        0.7776238818853323
+      ],
+      "sw1_ci_vs_qld-v1": [
+        0.5739388269391307,
+        0.7679828549224292
+      ],
+      "ed2_vs_gated-M1024-f0.70-u": 0.6167360849590741,
+      "sw1_vs_gated-M1024-f0.70-u": 0.6613626072900067,
+      "ed2_ci_vs_gated-M1024-f0.70-u": [
+        0.47740673487238766,
+        0.8011326935651991
+      ],
+      "sw1_ci_vs_gated-M1024-f0.70-u": [
+        0.5861362645528616,
+        0.7786630509214244
+      ],
+      "family_ed2_vs_lbqcd": {
+        "control-connected": 0.9856909059414992,
+        "control-contaminated": 0.29236822732751605,
+        "control-equal": 0.8533854319016454,
+        "control-heavy-tail": 0.7731672620013681,
+        "control-heteroscedastic": 0.8095332216017329,
+        "control-overlap": 0.494340016261807,
+        "unequal": 0.58430604258097
+      },
+      "init_ed2_vs_lbqcd": {
+        "concentrated": 0.633645611412026,
+        "missing": 0.6002778077213198
+      },
+      "cell_win_fraction_vs_lbqcd": 0.7916666666666666,
+      "median_work": {
+        "wall_seconds": 0.6477625499974238,
+        "target_samples": 906240.0,
+        "generator_example_evals": 8192.0,
+        "sort_work": 8924160.0,
+        "stored_scalars": 2048.0,
+        "w2_quantile_rmse": 0.13086197954118955
+      },
+      "divergences": 0
+    }
+  },
+  "development_gate": {
+    "gated-pqt-M1024-f0.70": {
+      "ed2_vs_lbqcd_at_most_0.90": true,
+      "ed2_vs_paper_at_most_0.75": true,
+      "sw1_improves_vs_lbqcd": true,
+      "all_families_at_most_1.05_vs_lbqcd": true,
+      "both_inits_improve_vs_lbqcd": true,
+      "no_divergences": true,
+      "passed": true
+    }
+  }
+}

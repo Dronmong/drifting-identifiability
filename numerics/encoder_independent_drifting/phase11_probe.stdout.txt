@@ -1,0 +1,49 @@
+=== R1: is the field tail-blind? ===
+    R1 generator    seed0 cloud_tail= 0.0182 FIELD_tail= 0.1922
+    R1 particles    seed0 cloud_tail= 0.2598 FIELD_tail= 0.2765
+    R1 real_data    seed0 cloud_tail= 0.1585 FIELD_tail= 0.0773
+    R1 white_noise  seed0 cloud_tail= 0.8979 FIELD_tail= 0.0815
+    R1 generator    seed1 cloud_tail= 0.0150 FIELD_tail= 0.2893
+    R1 particles    seed1 cloud_tail= 0.2627 FIELD_tail= 0.1243
+    R1 real_data    seed1 cloud_tail= 0.1637 FIELD_tail= 0.1649
+    R1 white_noise  seed1 cloud_tail= 0.8945 FIELD_tail= 0.0942
+    R1 generator    seed2 cloud_tail= 0.0196 FIELD_tail= 0.3084
+    R1 particles    seed2 cloud_tail= 0.2712 FIELD_tail= 0.1948
+    R1 real_data    seed2 cloud_tail= 0.1706 FIELD_tail= 0.2780
+    R1 white_noise  seed2 cloud_tail= 0.8729 FIELD_tail= 0.0727
+
+=== R2: does the tail decay, or was it never there? ===
+    R2 seed0 output tail 0:0.2273 100:0.0079 200:0.0078 300:0.0068 400:0.0055 500:0.0080 600:0.0040
+       teacher tail at end 0.0041
+    R2 seed1 output tail 0:0.2210 100:0.0046 200:0.0050 300:0.0051 400:0.0051 500:0.0041 600:0.0029
+       teacher tail at end 0.0029
+    R2 seed2 output tail 0:0.1975 100:0.0073 200:0.0063 300:0.0057 400:0.0046 500:0.0049 600:0.0047
+       teacher tail at end 0.0047
+
+=== R3: particles from a low-tail start ===
+    R3 isotropic_noise  seed0 tail 0.8229 -> 0.4052  2nd= 0.977 ed2=  0.0674
+    R3 low_tail_noise   seed0 tail 0.0000 -> 0.0001  2nd= 0.559 ed2=  0.4564
+    R3 low_tail_data    seed0 tail 0.0000 -> 0.0003  2nd= 0.710 ed2=  0.1977
+    R3 isotropic_noise  seed1 tail 0.8224 -> 0.4036  2nd= 0.995 ed2=  0.0681
+    R3 low_tail_noise   seed1 tail 0.0000 -> 0.0001  2nd= 0.557 ed2=  0.4560
+    R3 low_tail_data    seed1 tail 0.0000 -> 0.0003  2nd= 0.699 ed2=  0.2180
+    R3 isotropic_noise  seed2 tail 0.8216 -> 0.4156  2nd= 1.037 ed2=  0.0784
+    R3 low_tail_noise   seed2 tail 0.0000 -> 0.0001  2nd= 0.562 ed2=  0.4648
+    R3 low_tail_data    seed2 tail 0.0000 -> 0.0003  2nd= 0.715 ed2=  0.1951
+
+=== PHASE-10 FOLLOW-UP PROBE ===
+
+R1  cloud            cloud tail   FIELD tail    ratio
+    generator            0.0182       0.2893   15.870
+    particles            0.2627       0.1948    0.742
+    real_data            0.1637       0.1649    1.008
+    white_noise          0.8945       0.0815    0.091
+
+R2  output tail at init 0.2210 -> at end 0.0040
+
+R3  start               tail start   tail end   2nd moment       ed2
+    isotropic_noise         0.8224     0.4052        0.995    0.0681
+    low_tail_noise          0.0000     0.0001        0.559    0.4564
+    low_tail_data           0.0000     0.0003        0.710    0.1977
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase11_probe.json sha256=4e8fd08f53d965ea...

@@ -1,0 +1,2110 @@
+{
+  "elapsed_seconds": 2480.2190046310425,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\diagnose_phase1.py"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "7f4e338fa89a2fe067153bd7ef4987ec82bbb9784b9da6afd799c9b1ff192356",
+      "numerics/encoder_independent_drifting/datasets.py": "abca3ca1de07507532f18b54e60817e6e5a21932e339b8e2477e8a7c047dc74a",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "9a4b8d924be6cb3268fe3fcd21b8ff86cf5e1b7d4a9b2b09bc1ff5f2fcb9358e",
+      "numerics/encoder_independent_drifting/diagnostics.py": "42d982e901ec3e882f4c861d639b79c7d789987d4af018c3735f4abe63be57fa",
+      "numerics/encoder_independent_drifting/evaluate.py": "2acba60528096dd1dfec9b0b5700a3dc4a87d835b25d21f42e50d876b9ae00c9",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "eeaaadab5cb56bd1455268c70047c000a7b420aa9243f4706e9bf9c037923460",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a90b1d6a3e5157580d44a25f92ad54d3e7f70b6684ae5cc96967ecc1798c7f80",
+      "numerics/encoder_independent_drifting/models.py": "58dc33dab1dc0d23bd1b008a2aba5e66882f65981776eb1050df93af7c33840a",
+      "numerics/encoder_independent_drifting/objectives.py": "79e0777171cced2f85ffc0198da891c1348625367bf9fd4cee9bac50dc17c9cd",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "1db478de4e143f6b783f055dfcc6c34578f30f30571a324cd1d74424799bf477",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "5c7c7dae6a0d3844b58a2d2affcbf2678d9363426a1e797531deefdd1404f9c0",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "c903b19cf0c0196840c13679db54bcbbecc4744b73ef64244be3077284a3cabb",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "8859f20370ff90bda1ad3658298bc3e3fc2d4c067de3eeec4f42636405eaef8d",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "9d80a8f2aafc67667707f57ba28ce5c795380d7ed3b3e1607dc70cee017b07ee",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "4b48d5daa97b7e4077de3368979fdd08fde2b1375d411ad03835a5acd8aced01",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "efd50041e397c2aa9043293ba9f488b0e6c1e936b1214729a044d835f5b50fd2",
+      "numerics/encoder_independent_drifting/train.py": "b276e0d216fec5c90c3d857b095d398264a167442bf313772e74b0c0732b2187"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "results": {
+    "D1_loss_constancy": {
+      "loss_is_pinned_to_eta_squared": true,
+      "rows": [
+        {
+          "eta": 0.25,
+          "eta_squared": 0.0625,
+          "loss_rms_normalized": 0.0625,
+          "loss_unnormalized": 48.360008239746094,
+          "trial": 0
+        },
+        {
+          "eta": 0.25,
+          "eta_squared": 0.0625,
+          "loss_rms_normalized": 0.0624999962747097,
+          "loss_unnormalized": 48.33121871948242,
+          "trial": 1
+        },
+        {
+          "eta": 0.25,
+          "eta_squared": 0.0625,
+          "loss_rms_normalized": 0.0624999925494194,
+          "loss_unnormalized": 47.826377868652344,
+          "trial": 2
+        },
+        {
+          "eta": 0.5,
+          "eta_squared": 0.25,
+          "loss_rms_normalized": 0.2499999850988388,
+          "loss_unnormalized": 191.55934143066406,
+          "trial": 0
+        },
+        {
+          "eta": 0.5,
+          "eta_squared": 0.25,
+          "loss_rms_normalized": 0.2499999701976776,
+          "loss_unnormalized": 192.4962158203125,
+          "trial": 1
+        },
+        {
+          "eta": 0.5,
+          "eta_squared": 0.25,
+          "loss_rms_normalized": 0.25,
+          "loss_unnormalized": 191.55862426757812,
+          "trial": 2
+        },
+        {
+          "eta": 1.0,
+          "eta_squared": 1.0,
+          "loss_rms_normalized": 1.0,
+          "loss_unnormalized": 774.2484130859375,
+          "trial": 0
+        },
+        {
+          "eta": 1.0,
+          "eta_squared": 1.0,
+          "loss_rms_normalized": 1.0,
+          "loss_unnormalized": 778.1611328125,
+          "trial": 1
+        },
+        {
+          "eta": 1.0,
+          "eta_squared": 1.0,
+          "loss_rms_normalized": 1.0000001192092896,
+          "loss_unnormalized": 762.0365600585938,
+          "trial": 2
+        }
+      ]
+    },
+    "D2_field_floor": {
+      "rows": [
+        {
+          "affinity_median": 0.21442341804504395,
+          "bandwidth_median": 2.7007064819335938,
+          "branch": "raw",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 4.158555030822754,
+          "ess_fraction": 0.5034432411193848,
+          "family": "raw",
+          "raw_drift_rms": 0.06873315572738647,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 9.95425580185838e-06,
+          "bandwidth_median": 2.7007064819335938,
+          "branch": "raw",
+          "cloud": "init_noise",
+          "distance_median": 31.10541534423828,
+          "ess_fraction": 0.9719463586807251,
+          "family": "raw",
+          "raw_drift_rms": 0.1661321073770523,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 1.2148420580615493e-07,
+          "bandwidth_median": 2.7007064819335938,
+          "branch": "raw",
+          "cloud": "trained_A1",
+          "distance_median": 43.004661560058594,
+          "ess_fraction": 0.49661073088645935,
+          "family": "raw",
+          "raw_drift_rms": 0.11402616649866104,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 3.371300408616662e-05,
+          "bandwidth_median": 2.7007064819335938,
+          "branch": "raw",
+          "cloud": "trained_A3",
+          "distance_median": 27.810867309570312,
+          "ess_fraction": 0.7203112840652466,
+          "family": "raw",
+          "raw_drift_rms": 0.3771166205406189,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 4.388992238091305e-05,
+          "bandwidth_median": 2.7007064819335938,
+          "branch": "raw",
+          "cloud": "trained_A4",
+          "distance_median": 34.085933685302734,
+          "ess_fraction": 0.4993114471435547,
+          "family": "raw",
+          "raw_drift_rms": 0.393066942691803,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07276716828346252,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.18095943331718445,
+          "ess_fraction": 0.9732705950737,
+          "family": "wavelet",
+          "raw_drift_rms": 0.3551985025405884,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 2.383968239882961e-05,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "init_noise",
+          "distance_median": 1.4675508737564087,
+          "ess_fraction": 0.8119696974754333,
+          "family": "wavelet",
+          "raw_drift_rms": 5.882181644439697,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.06779223680496216,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A1",
+          "distance_median": 0.19632549583911896,
+          "ess_fraction": 0.9585656523704529,
+          "family": "wavelet",
+          "raw_drift_rms": 1.4682577848434448,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 1.3269069697852522e-15,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A3",
+          "distance_median": 3.0206449031829834,
+          "ess_fraction": null,
+          "family": "wavelet",
+          "raw_drift_rms": 5.412487506866455,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.09829969704151154,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A4",
+          "distance_median": 0.16573390364646912,
+          "ess_fraction": 0.9732563495635986,
+          "family": "wavelet",
+          "raw_drift_rms": 1.147829294204712,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07224366068840027,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.12008145451545715,
+          "ess_fraction": 0.959832489490509,
+          "family": "wavelet",
+          "raw_drift_rms": 0.42333340644836426,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 8.210567800091056e-23,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "init_noise",
+          "distance_median": 2.7062337398529053,
+          "ess_fraction": null,
+          "family": "wavelet",
+          "raw_drift_rms": 7.069819450378418,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.03707924485206604,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A1",
+          "distance_median": 0.17068904638290405,
+          "ess_fraction": 0.9225594401359558,
+          "family": "wavelet",
+          "raw_drift_rms": 1.9253331422805786,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 1.8959017075109652e-25,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A3",
+          "distance_median": 2.926335334777832,
+          "ess_fraction": null,
+          "family": "wavelet",
+          "raw_drift_rms": 9.179755210876465,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.06855769455432892,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A4",
+          "distance_median": 0.1296844184398651,
+          "ess_fraction": 0.9455147981643677,
+          "family": "wavelet",
+          "raw_drift_rms": 1.6807496547698975,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07086488604545593,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.060343898832798004,
+          "ess_fraction": 0.910139799118042,
+          "family": "wavelet",
+          "raw_drift_rms": 0.7204765677452087,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.0008269837126135826,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "init_noise",
+          "distance_median": 0.22988596558570862,
+          "ess_fraction": 0.8275554180145264,
+          "family": "wavelet",
+          "raw_drift_rms": 4.9651899337768555,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.02723081037402153,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A1",
+          "distance_median": 0.09394966065883636,
+          "ess_fraction": 0.8953949213027954,
+          "family": "wavelet",
+          "raw_drift_rms": 2.5842132568359375,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.016300298273563385,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A3",
+          "distance_median": 0.16477182507514954,
+          "ess_fraction": 0.7845569849014282,
+          "family": "wavelet",
+          "raw_drift_rms": 6.0752668380737305,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.08495031297206879,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A4",
+          "distance_median": 0.057313159108161926,
+          "ess_fraction": 0.9112657308578491,
+          "family": "wavelet",
+          "raw_drift_rms": 1.4346072673797607,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.16861850023269653,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.20551273226737976,
+          "ess_fraction": 0.4911130964756012,
+          "family": "wavelet",
+          "raw_drift_rms": 0.40251070261001587,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 2.9811064450768754e-05,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "init_noise",
+          "distance_median": 1.2030653953552246,
+          "ess_fraction": 0.7740077972412109,
+          "family": "wavelet",
+          "raw_drift_rms": 1.0004163980484009,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 3.6407473658073286e-07,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "trained_A1",
+          "distance_median": 1.7116563320159912,
+          "ess_fraction": 0.47838911414146423,
+          "family": "wavelet",
+          "raw_drift_rms": 1.1283859014511108,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 8.072154014371336e-05,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "trained_A3",
+          "distance_median": 1.0880622863769531,
+          "ess_fraction": 0.7346923351287842,
+          "family": "wavelet",
+          "raw_drift_rms": 1.709059476852417,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 3.2607964385533705e-05,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "trained_A4",
+          "distance_median": 1.2026571035385132,
+          "ess_fraction": 0.48556652665138245,
+          "family": "wavelet",
+          "raw_drift_rms": 1.3100467920303345,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.124982088804245,
+          "bandwidth_median": 11.878519058227539,
+          "branch": "raw",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 24.702388763427734,
+          "ess_fraction": 0.49618101119995117,
+          "family": "raw",
+          "raw_drift_rms": 0.018308056518435478,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.15959304571151733,
+          "bandwidth_median": 11.878519058227539,
+          "branch": "raw",
+          "cloud": "init_noise",
+          "distance_median": 21.798603057861328,
+          "ess_fraction": 0.9991457462310791,
+          "family": "raw",
+          "raw_drift_rms": 0.030657362192869186,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.1314171701669693,
+          "bandwidth_median": 11.878519058227539,
+          "branch": "raw",
+          "cloud": "trained_A1",
+          "distance_median": 24.10601043701172,
+          "ess_fraction": 0.6150718927383423,
+          "family": "raw",
+          "raw_drift_rms": 0.02636796049773693,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.16083075106143951,
+          "bandwidth_median": 11.878519058227539,
+          "branch": "raw",
+          "cloud": "trained_A3",
+          "distance_median": 21.706836700439453,
+          "ess_fraction": 0.7195454835891724,
+          "family": "raw",
+          "raw_drift_rms": 0.03123677894473076,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.1703701913356781,
+          "bandwidth_median": 11.878519058227539,
+          "branch": "raw",
+          "cloud": "trained_A4",
+          "distance_median": 21.022384643554688,
+          "ess_fraction": 0.9956896305084229,
+          "family": "raw",
+          "raw_drift_rms": 0.043534427881240845,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.17375971376895905,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 2.697303533554077,
+          "ess_fraction": 0.48765289783477783,
+          "family": "wavelet",
+          "raw_drift_rms": 0.028280144557356834,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.17861130833625793,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "init_noise",
+          "distance_median": 1.9581722021102905,
+          "ess_fraction": 0.9977843761444092,
+          "family": "wavelet",
+          "raw_drift_rms": 0.11920299381017685,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.16950243711471558,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A1",
+          "distance_median": 2.5534420013427734,
+          "ess_fraction": 0.6040220260620117,
+          "family": "wavelet",
+          "raw_drift_rms": 0.08052007853984833,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.16967596113681793,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A3",
+          "distance_median": 2.2773890495300293,
+          "ess_fraction": 0.6930878162384033,
+          "family": "wavelet",
+          "raw_drift_rms": 0.09671644866466522,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.14588749408721924,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A4",
+          "distance_median": 2.494075298309326,
+          "ess_fraction": 0.638006329536438,
+          "family": "wavelet",
+          "raw_drift_rms": 0.08240677416324615,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0785493403673172,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.12355519831180573,
+          "ess_fraction": 0.5744001865386963,
+          "family": "wavelet",
+          "raw_drift_rms": 0.39314454793930054,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.002960002515465021,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "init_noise",
+          "distance_median": 0.507311224937439,
+          "ess_fraction": 0.8503848314285278,
+          "family": "wavelet",
+          "raw_drift_rms": 1.7054065465927124,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07635369896888733,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A1",
+          "distance_median": 0.130120187997818,
+          "ess_fraction": 0.6604080200195312,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5843208432197571,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.080876424908638,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A3",
+          "distance_median": 0.13166049122810364,
+          "ess_fraction": 0.7486661076545715,
+          "family": "wavelet",
+          "raw_drift_rms": 0.7849262952804565,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07641341537237167,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A4",
+          "distance_median": 0.13071326911449432,
+          "ess_fraction": 0.6675164699554443,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5560506582260132,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06981280446052551,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.046210870146751404,
+          "ess_fraction": 0.7382570505142212,
+          "family": "wavelet",
+          "raw_drift_rms": 0.8742334842681885,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.00013172034232411534,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "init_noise",
+          "distance_median": 0.2429257184267044,
+          "ess_fraction": 0.6030467748641968,
+          "family": "wavelet",
+          "raw_drift_rms": 6.7614264488220215,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0628289207816124,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A1",
+          "distance_median": 0.05125924572348595,
+          "ess_fraction": 0.7880746722221375,
+          "family": "wavelet",
+          "raw_drift_rms": 1.4371390342712402,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0763106495141983,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A3",
+          "distance_median": 0.04946998506784439,
+          "ess_fraction": 0.8575963973999023,
+          "family": "wavelet",
+          "raw_drift_rms": 1.5125235319137573,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.08100160956382751,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A4",
+          "distance_median": 0.04636415094137192,
+          "ess_fraction": 0.8300447463989258,
+          "family": "wavelet",
+          "raw_drift_rms": 1.2497526407241821,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07452571392059326,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.17554479837417603,
+          "ess_fraction": 0.5947251915931702,
+          "family": "wavelet",
+          "raw_drift_rms": 0.6653503179550171,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0003890650987159461,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "init_noise",
+          "distance_median": 0.5308288335800171,
+          "ess_fraction": 0.8806530237197876,
+          "family": "wavelet",
+          "raw_drift_rms": 3.1569135189056396,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06864097714424133,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "trained_A1",
+          "distance_median": 0.18110579252243042,
+          "ess_fraction": 0.6959291696548462,
+          "family": "wavelet",
+          "raw_drift_rms": 1.227885365486145,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07205995172262192,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "trained_A3",
+          "distance_median": 0.17781949043273926,
+          "ess_fraction": 0.7359350323677063,
+          "family": "wavelet",
+          "raw_drift_rms": 1.3261044025421143,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.08022978901863098,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "trained_A4",
+          "distance_median": 0.17055866122245789,
+          "ess_fraction": 0.7294267416000366,
+          "family": "wavelet",
+          "raw_drift_rms": 1.5293956995010376,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07814279943704605,
+          "bandwidth_median": 3.544275999069214,
+          "branch": "raw",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 9.03512954711914,
+          "ess_fraction": 0.5241232514381409,
+          "family": "raw",
+          "raw_drift_rms": 0.06351710855960846,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.001160970889031887,
+          "bandwidth_median": 3.544275999069214,
+          "branch": "raw",
+          "cloud": "init_noise",
+          "distance_median": 23.953983306884766,
+          "ess_fraction": 0.998568058013916,
+          "family": "raw",
+          "raw_drift_rms": 0.2526959478855133,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.09633978456258774,
+          "bandwidth_median": 3.544275999069214,
+          "branch": "raw",
+          "cloud": "trained_A1",
+          "distance_median": 8.293159484863281,
+          "ess_fraction": 0.6850329637527466,
+          "family": "raw",
+          "raw_drift_rms": 0.08010002970695496,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.10943987965583801,
+          "bandwidth_median": 3.544275999069214,
+          "branch": "raw",
+          "cloud": "trained_A3",
+          "distance_median": 7.84128475189209,
+          "ess_fraction": 0.734867513179779,
+          "family": "raw",
+          "raw_drift_rms": 0.08196108043193817,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.09463410079479218,
+          "bandwidth_median": 3.544275999069214,
+          "branch": "raw",
+          "cloud": "trained_A4",
+          "distance_median": 8.35647201538086,
+          "ess_fraction": 0.7606989145278931,
+          "family": "raw",
+          "raw_drift_rms": 0.1208857074379921,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.06713485717773438,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.1420269012451172,
+          "ess_fraction": 0.9040699601173401,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5345654487609863,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 4.075524639990391e-10,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "init_noise",
+          "distance_median": 1.4692106246948242,
+          "ess_fraction": 0.33289673924446106,
+          "family": "wavelet",
+          "raw_drift_rms": 8.897923469543457,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.02526257000863552,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A1",
+          "distance_median": 0.2717090845108032,
+          "ess_fraction": 0.8696883916854858,
+          "family": "wavelet",
+          "raw_drift_rms": 2.1603810787200928,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.02396354451775551,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A3",
+          "distance_median": 0.2775018811225891,
+          "ess_fraction": 0.8824252486228943,
+          "family": "wavelet",
+          "raw_drift_rms": 2.2013626098632812,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.03560898080468178,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "trained_A4",
+          "distance_median": 0.24142038822174072,
+          "ess_fraction": 0.895785927772522,
+          "family": "wavelet",
+          "raw_drift_rms": 1.564547061920166,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.06389562785625458,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.10895019769668579,
+          "ess_fraction": 0.8116263747215271,
+          "family": "wavelet",
+          "raw_drift_rms": 0.6388771533966064,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 3.182457630757085e-10,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "init_noise",
+          "distance_median": 1.4073331356048584,
+          "ess_fraction": 0.47211766242980957,
+          "family": "wavelet",
+          "raw_drift_rms": 7.847199440002441,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.012869470752775669,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A1",
+          "distance_median": 0.27158623933792114,
+          "ess_fraction": 0.7835314273834229,
+          "family": "wavelet",
+          "raw_drift_rms": 2.6005661487579346,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.011591034941375256,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A3",
+          "distance_median": 0.28207847476005554,
+          "ess_fraction": 0.7980471849441528,
+          "family": "wavelet",
+          "raw_drift_rms": 2.7399935722351074,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.02320926822721958,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "trained_A4",
+          "distance_median": 0.23141543567180634,
+          "ess_fraction": 0.8307795524597168,
+          "family": "wavelet",
+          "raw_drift_rms": 2.0896975994110107,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.08174747228622437,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.20391860604286194,
+          "ess_fraction": 0.5052177906036377,
+          "family": "wavelet",
+          "raw_drift_rms": 0.3135673701763153,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.010409281589090824,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "init_noise",
+          "distance_median": 0.4462239146232605,
+          "ess_fraction": 0.967557430267334,
+          "family": "wavelet",
+          "raw_drift_rms": 1.0008612871170044,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.06738545000553131,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A1",
+          "distance_median": 0.2249813824892044,
+          "ess_fraction": 0.7206816673278809,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5747718811035156,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.06204705312848091,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A3",
+          "distance_median": 0.2292163223028183,
+          "ess_fraction": 0.7561259269714355,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5765678882598877,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.07170278578996658,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "trained_A4",
+          "distance_median": 0.21934160590171814,
+          "ess_fraction": 0.665105938911438,
+          "family": "wavelet",
+          "raw_drift_rms": 0.5965200662612915,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.13039562106132507,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "matched_q_eq_p",
+          "distance_median": 0.9325581789016724,
+          "ess_fraction": 0.5047860145568848,
+          "family": "wavelet",
+          "raw_drift_rms": 0.12660284340381622,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.0033777737990021706,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "init_noise",
+          "distance_median": 2.6049513816833496,
+          "ess_fraction": 0.9887112975120544,
+          "family": "wavelet",
+          "raw_drift_rms": 0.6103678941726685,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.15633946657180786,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "trained_A1",
+          "distance_median": 0.8494929075241089,
+          "ess_fraction": 0.7007017135620117,
+          "family": "wavelet",
+          "raw_drift_rms": 0.1939050704240799,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.16543278098106384,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "trained_A3",
+          "distance_median": 0.8236128091812134,
+          "ess_fraction": 0.7414729595184326,
+          "family": "wavelet",
+          "raw_drift_rms": 0.21367846429347992,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.14301827549934387,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "trained_A4",
+          "distance_median": 0.8902605772018433,
+          "ess_fraction": 0.6530802249908447,
+          "family": "wavelet",
+          "raw_drift_rms": 0.17803876101970673,
+          "target": "rings_islands"
+        }
+      ]
+    },
+    "D3_probe_representativeness": {
+      "rows": [
+        {
+          "affinity_median": 0.07177061587572098,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "target_vs_target",
+          "distance_median": 0.18208111822605133,
+          "distance_over_bandwidth": 2.8083570480028426,
+          "ess_fraction": 0.9738567471504211,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 3.697851934703067e-05,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "phase0_probe",
+          "distance_median": 1.3039265871047974,
+          "distance_over_bandwidth": 20.11131882674325,
+          "ess_fraction": 0.798607587814331,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 1.625364426383058e-11,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "A4_at_init",
+          "distance_median": 2.4431874752044678,
+          "distance_over_bandwidth": 37.68289009003377,
+          "ess_fraction": 0.7291561365127563,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.0917193591594696,
+          "bandwidth_median": 0.06483545899391174,
+          "branch": "wavelet_s0",
+          "cloud": "A4_trained",
+          "distance_median": 0.1764310896396637,
+          "distance_over_bandwidth": 2.7212129346725398,
+          "ess_fraction": 0.9680648446083069,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07140293717384338,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "target_vs_target",
+          "distance_median": 0.12111737579107285,
+          "distance_over_bandwidth": 2.9053334598689857,
+          "ess_fraction": 0.9594860076904297,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 7.676311523363962e-17,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "phase0_probe",
+          "distance_median": 1.8916095495224,
+          "distance_over_bandwidth": 45.37545898216366,
+          "ess_fraction": 0.4934071898460388,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 2.502719408194029e-22,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "A4_at_init",
+          "distance_median": 2.497828722000122,
+          "distance_over_bandwidth": 59.9172935811216,
+          "ess_fraction": null,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.06022767722606659,
+          "bandwidth_median": 0.041687943041324615,
+          "branch": "wavelet_s1",
+          "cloud": "A4_trained",
+          "distance_median": 0.14104484021663666,
+          "distance_over_bandwidth": 3.3833485158243737,
+          "ess_fraction": 0.9222991466522217,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.0702967643737793,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "target_vs_target",
+          "distance_median": 0.060370489954948425,
+          "distance_over_bandwidth": 2.7163529996062645,
+          "ess_fraction": 0.9065294861793518,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.0015241068322211504,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "phase0_probe",
+          "distance_median": 0.192671000957489,
+          "distance_over_bandwidth": 8.669176807718088,
+          "ess_fraction": 0.8455207347869873,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 3.5288876460981555e-06,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "A4_at_init",
+          "distance_median": 0.5532513856887817,
+          "distance_over_bandwidth": 24.89338851106776,
+          "ess_fraction": 0.7354649305343628,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07316135615110397,
+          "bandwidth_median": 0.022224832326173782,
+          "branch": "wavelet_s2",
+          "cloud": "A4_trained",
+          "distance_median": 0.061687614768743515,
+          "distance_over_bandwidth": 2.775616655433442,
+          "ess_fraction": 0.9013996720314026,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.07111766189336777,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "target_vs_target",
+          "distance_median": 1.1606402397155762,
+          "distance_over_bandwidth": 10.053151988501426,
+          "ess_fraction": 0.48798495531082153,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.0002517453394830227,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "phase0_probe",
+          "distance_median": 0.9567478895187378,
+          "distance_over_bandwidth": 8.287091571430341,
+          "ess_fraction": 0.5009490847587585,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 1.4222401280568975e-21,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "A4_at_init",
+          "distance_median": 5.541855335235596,
+          "distance_over_bandwidth": 48.00205272657434,
+          "ess_fraction": null,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 4.569829616229981e-05,
+          "bandwidth_median": 0.11545038223266602,
+          "branch": "pyramid_global",
+          "cloud": "A4_trained",
+          "distance_median": 1.153747320175171,
+          "distance_over_bandwidth": 9.993447382876873,
+          "ess_fraction": 0.4986324906349182,
+          "target": "checkerboard"
+        },
+        {
+          "affinity_median": 0.17425432801246643,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "target_vs_target",
+          "distance_median": 2.685879707336426,
+          "distance_over_bandwidth": 2.670669012853254,
+          "ess_fraction": 0.4937034249305725,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.19176268577575684,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "phase0_probe",
+          "distance_median": 1.781940221786499,
+          "distance_over_bandwidth": 1.7718487243054934,
+          "ess_fraction": 0.9618927240371704,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.2711464762687683,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "A4_at_init",
+          "distance_median": 1.724696397781372,
+          "distance_over_bandwidth": 1.7149290839619102,
+          "ess_fraction": 0.9992344975471497,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.14824950695037842,
+          "bandwidth_median": 1.0056954622268677,
+          "branch": "wavelet_s0",
+          "cloud": "A4_trained",
+          "distance_median": 2.513540267944336,
+          "distance_over_bandwidth": 2.499305567491289,
+          "ess_fraction": 0.6370208859443665,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07601328939199448,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "target_vs_target",
+          "distance_median": 0.12334123998880386,
+          "distance_over_bandwidth": 2.4635187244438805,
+          "ess_fraction": 0.5673917531967163,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.005611883942037821,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "phase0_probe",
+          "distance_median": 0.39711976051330566,
+          "distance_over_bandwidth": 7.931750693928511,
+          "ess_fraction": 0.8888809680938721,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.004659423604607582,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "A4_at_init",
+          "distance_median": 0.5605995059013367,
+          "distance_over_bandwidth": 11.196963641903498,
+          "ess_fraction": 0.8634769916534424,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07737115025520325,
+          "bandwidth_median": 0.050067100673913956,
+          "branch": "wavelet_s1",
+          "cloud": "A4_trained",
+          "distance_median": 0.131580650806427,
+          "distance_over_bandwidth": 2.6280860891747895,
+          "ess_fraction": 0.6580866575241089,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06523510813713074,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "target_vs_target",
+          "distance_median": 0.04691050946712494,
+          "distance_over_bandwidth": 2.7588893101519143,
+          "ess_fraction": 0.7140135169029236,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0005622886819764972,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "phase0_probe",
+          "distance_median": 0.1933402121067047,
+          "distance_over_bandwidth": 11.370676858188954,
+          "ess_fraction": 0.7123466730117798,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 4.068824921432679e-07,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "A4_at_init",
+          "distance_median": 0.49048832058906555,
+          "distance_over_bandwidth": 28.846478109044366,
+          "ess_fraction": 0.5705239772796631,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06538815796375275,
+          "bandwidth_median": 0.01700340397655964,
+          "branch": "wavelet_s2",
+          "cloud": "A4_trained",
+          "distance_median": 0.04971004277467728,
+          "distance_over_bandwidth": 2.923534772402396,
+          "ess_fraction": 0.7752322554588318,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06949231773614883,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "target_vs_target",
+          "distance_median": 0.1802724301815033,
+          "distance_over_bandwidth": 2.6664981261809864,
+          "ess_fraction": 0.5854784250259399,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.0012790284818038344,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "phase0_probe",
+          "distance_median": 0.45036959648132324,
+          "distance_over_bandwidth": 6.661638076866364,
+          "ess_fraction": 0.8611016869544983,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 2.513930800883242e-28,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "A4_at_init",
+          "distance_median": 4.296425819396973,
+          "distance_over_bandwidth": 63.550546165950074,
+          "ess_fraction": null,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.07654528319835663,
+          "bandwidth_median": 0.06760643422603607,
+          "branch": "pyramid_global",
+          "cloud": "A4_trained",
+          "distance_median": 0.1737370491027832,
+          "distance_over_bandwidth": 2.56983009223514,
+          "ess_fraction": 0.7122512459754944,
+          "target": "texture_blocks"
+        },
+        {
+          "affinity_median": 0.06794289499521255,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "target_vs_target",
+          "distance_median": 0.14175081253051758,
+          "distance_over_bandwidth": 2.747383191457316,
+          "ess_fraction": 0.9010156393051147,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 3.3254892173317785e-08,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "phase0_probe",
+          "distance_median": 1.1806867122650146,
+          "distance_over_bandwidth": 22.883811173608215,
+          "ess_fraction": 0.42929041385650635,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 9.935013804351911e-05,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "A4_at_init",
+          "distance_median": 1.4868755340576172,
+          "distance_over_bandwidth": 28.81829583290433,
+          "ess_fraction": 0.7973514199256897,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.03596547245979309,
+          "bandwidth_median": 0.051594845950603485,
+          "branch": "wavelet_s0",
+          "cloud": "A4_trained",
+          "distance_median": 0.2384897768497467,
+          "distance_over_bandwidth": 4.62235660279081,
+          "ess_fraction": 0.8925188183784485,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.0651102215051651,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "target_vs_target",
+          "distance_median": 0.10808345675468445,
+          "distance_over_bandwidth": 2.641677887082494,
+          "ess_fraction": 0.7980949878692627,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 1.771169522157834e-08,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "phase0_probe",
+          "distance_median": 1.0608203411102295,
+          "distance_over_bandwidth": 25.92760928842836,
+          "ess_fraction": 0.5659434199333191,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 1.0057442878519396e-08,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "A4_at_init",
+          "distance_median": 1.2323782444000244,
+          "distance_over_bandwidth": 30.12067206679149,
+          "ess_fraction": 0.5582835078239441,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.02265249937772751,
+          "bandwidth_median": 0.04091469943523407,
+          "branch": "wavelet_s1",
+          "cloud": "A4_trained",
+          "distance_median": 0.23303654789924622,
+          "distance_over_bandwidth": 5.695668087899104,
+          "ess_fraction": 0.8277414441108704,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.0811627209186554,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "target_vs_target",
+          "distance_median": 0.2061697542667389,
+          "distance_over_bandwidth": 2.968211550712495,
+          "ess_fraction": 0.5027894377708435,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.017171580344438553,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "phase0_probe",
+          "distance_median": 0.39176875352859497,
+          "distance_over_bandwidth": 5.640267378537656,
+          "ess_fraction": 0.9556262493133545,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.004957809112966061,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "A4_at_init",
+          "distance_median": 0.5377062559127808,
+          "distance_over_bandwidth": 7.741319406268359,
+          "ess_fraction": 0.9235615134239197,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.07298433780670166,
+          "bandwidth_median": 0.06945925205945969,
+          "branch": "wavelet_s2",
+          "cloud": "A4_trained",
+          "distance_median": 0.21184659004211426,
+          "distance_over_bandwidth": 3.0499405588295962,
+          "ess_fraction": 0.6685306429862976,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.14263850450515747,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "target_vs_target",
+          "distance_median": 0.8914777040481567,
+          "distance_over_bandwidth": 1.9474404459948897,
+          "ess_fraction": 0.5046876072883606,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.025018688291311264,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "phase0_probe",
+          "distance_median": 1.68831205368042,
+          "distance_over_bandwidth": 3.6881316984909547,
+          "ess_fraction": 0.9743136763572693,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.0001551528985146433,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "A4_at_init",
+          "distance_median": 4.015136241912842,
+          "distance_over_bandwidth": 8.771098456163523,
+          "ess_fraction": 0.9865216016769409,
+          "target": "rings_islands"
+        },
+        {
+          "affinity_median": 0.14635604619979858,
+          "bandwidth_median": 0.45776891708374023,
+          "branch": "pyramid_global",
+          "cloud": "A4_trained",
+          "distance_median": 0.8796999454498291,
+          "distance_over_bandwidth": 1.9217118345518958,
+          "ess_fraction": 0.6623815298080444,
+          "target": "rings_islands"
+        }
+      ]
+    },
+    "D4_output_locality": {
+      "rows": [
+        {
+          "arm": "A0",
+          "median_nearest_real": 2.852407932281494,
+          "nearest_in_target_nn_units": 0.7756050825119019,
+          "output_rms": 0.9727885127067566,
+          "target": "checkerboard",
+          "target_nn_scale": 3.677654981613159,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A1",
+          "median_nearest_real": 3.4856183528900146,
+          "nearest_in_target_nn_units": 0.9477828741073608,
+          "output_rms": 0.9781265258789062,
+          "target": "checkerboard",
+          "target_nn_scale": 3.677654981613159,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A3",
+          "median_nearest_real": 25.399829864501953,
+          "nearest_in_target_nn_units": 6.906528949737549,
+          "output_rms": 0.08263950794935226,
+          "target": "checkerboard",
+          "target_nn_scale": 3.677654981613159,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A4",
+          "median_nearest_real": 12.562655448913574,
+          "nearest_in_target_nn_units": 3.4159417152404785,
+          "output_rms": 0.9507043361663818,
+          "target": "checkerboard",
+          "target_nn_scale": 3.677654981613159,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A5",
+          "median_nearest_real": 10.69851016998291,
+          "nearest_in_target_nn_units": 2.9090576171875,
+          "output_rms": 0.9694085121154785,
+          "target": "checkerboard",
+          "target_nn_scale": 3.677654981613159,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A0",
+          "median_nearest_real": 7.172308921813965,
+          "nearest_in_target_nn_units": 3.236062526702881,
+          "output_rms": 0.6319591999053955,
+          "target": "texture_blocks",
+          "target_nn_scale": 2.216369152069092,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A1",
+          "median_nearest_real": 4.406395435333252,
+          "nearest_in_target_nn_units": 1.988114356994629,
+          "output_rms": 0.6042804718017578,
+          "target": "texture_blocks",
+          "target_nn_scale": 2.216369152069092,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A3",
+          "median_nearest_real": 7.129617691040039,
+          "nearest_in_target_nn_units": 3.2168006896972656,
+          "output_rms": 0.5639437437057495,
+          "target": "texture_blocks",
+          "target_nn_scale": 2.216369152069092,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A4",
+          "median_nearest_real": 20.074527740478516,
+          "nearest_in_target_nn_units": 9.057394027709961,
+          "output_rms": 0.4540289342403412,
+          "target": "texture_blocks",
+          "target_nn_scale": 2.216369152069092,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A5",
+          "median_nearest_real": 19.73851776123047,
+          "nearest_in_target_nn_units": 8.905789375305176,
+          "output_rms": 0.44383999705314636,
+          "target": "texture_blocks",
+          "target_nn_scale": 2.216369152069092,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A0",
+          "median_nearest_real": 4.3244428634643555,
+          "nearest_in_target_nn_units": 1.6723989248275757,
+          "output_rms": 0.7141509652137756,
+          "target": "rings_islands",
+          "target_nn_scale": 2.5857722759246826,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A1",
+          "median_nearest_real": 3.814812660217285,
+          "nearest_in_target_nn_units": 1.4753087759017944,
+          "output_rms": 0.7119905948638916,
+          "target": "rings_islands",
+          "target_nn_scale": 2.5857722759246826,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A3",
+          "median_nearest_real": 4.358597755432129,
+          "nearest_in_target_nn_units": 1.6856077909469604,
+          "output_rms": 0.7205358147621155,
+          "target": "rings_islands",
+          "target_nn_scale": 2.5857722759246826,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A4",
+          "median_nearest_real": 4.614866733551025,
+          "nearest_in_target_nn_units": 1.7847150564193726,
+          "output_rms": 0.7057079672813416,
+          "target": "rings_islands",
+          "target_nn_scale": 2.5857722759246826,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A5",
+          "median_nearest_real": 4.435973167419434,
+          "nearest_in_target_nn_units": 1.7155312299728394,
+          "output_rms": 0.7055831551551819,
+          "target": "rings_islands",
+          "target_nn_scale": 2.5857722759246826,
+          "target_rms": 0.7092726826667786
+        }
+      ]
+    },
+    "D5_bandwidth_repair": {
+      "rows": [
+        {
+          "coverage": 0.0,
+          "ed2": 7.29284833074691,
+          "geometry_score": 36.884378688502046,
+          "median_ess": 0.97774738073349,
+          "median_raw_drift": 1.4671006798744202,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "declared_ess0.5"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 8.216185922083287,
+          "geometry_score": 40.05516665938277,
+          "median_ess": 0.9845669269561768,
+          "median_raw_drift": 1.140567272901535,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "ess0.8"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.9467030896230675,
+          "geometry_score": 39.78296052779983,
+          "median_ess": 0.9928464591503143,
+          "median_raw_drift": 0.8038666695356369,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "ess0.95"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 6.971884791755368,
+          "geometry_score": 36.23191647678559,
+          "median_ess": 0.995388001203537,
+          "median_raw_drift": 0.6148732304573059,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "median_heuristic"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.438389131672498,
+          "geometry_score": 39.174549974354136,
+          "median_ess": 0.9996899366378784,
+          "median_raw_drift": 0.16377052292227745,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "median_x4"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.856856514830842,
+          "geometry_score": 39.78510597044871,
+          "median_ess": 0.999981164932251,
+          "median_raw_drift": 0.038223976735025644,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "median_x16"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.850430258128728,
+          "geometry_score": 40.1212619847385,
+          "median_ess": 0.9999988079071045,
+          "median_raw_drift": 0.010229370789602399,
+          "precision": 0.0,
+          "target": "checkerboard",
+          "variant": "median_x64"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 8.250569520011123,
+          "geometry_score": 50.06297215726505,
+          "median_ess": 0.8281681537628174,
+          "median_raw_drift": 0.06677081249654293,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "declared_ess0.5"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 8.061382177276041,
+          "geometry_score": 49.30947151595622,
+          "median_ess": 0.9525730311870575,
+          "median_raw_drift": 0.03071480803191662,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "ess0.8"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.981706605351505,
+          "geometry_score": 50.936502693903925,
+          "median_ess": 0.9923354089260101,
+          "median_raw_drift": 0.015136292204260826,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "ess0.95"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 8.51923050823627,
+          "geometry_score": 51.3333889150193,
+          "median_ess": 0.952432781457901,
+          "median_raw_drift": 0.030846092849969864,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "median_heuristic"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.364967955578841,
+          "geometry_score": 49.035123170416995,
+          "median_ess": 0.9985361099243164,
+          "median_raw_drift": 0.007082085823640227,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "median_x4"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.29034634479952,
+          "geometry_score": 48.351721103774125,
+          "median_ess": 0.9999476075172424,
+          "median_raw_drift": 0.0016661937988828868,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "median_x16"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 7.257408621359783,
+          "geometry_score": 48.540347464597104,
+          "median_ess": 0.999997079372406,
+          "median_raw_drift": 0.00041647312900749967,
+          "precision": 0.0,
+          "target": "texture_blocks",
+          "variant": "median_x64"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 0.9319164114757612,
+          "geometry_score": 17.92938192980431,
+          "median_ess": 0.8409229815006256,
+          "median_raw_drift": 0.4927862882614136,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "declared_ess0.5"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.1065227653981502,
+          "geometry_score": 18.753632635225447,
+          "median_ess": 0.9655272960662842,
+          "median_raw_drift": 0.24342463165521622,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "ess0.8"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.156841622768816,
+          "geometry_score": 19.759852959365997,
+          "median_ess": 0.9924440681934357,
+          "median_raw_drift": 0.1176630686968565,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "ess0.95"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.0150011037603015,
+          "geometry_score": 21.38290138044381,
+          "median_ess": 0.8134750723838806,
+          "median_raw_drift": 0.6278102248907089,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "median_heuristic"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.092678039868856,
+          "geometry_score": 17.106932131297114,
+          "median_ess": 0.9886739253997803,
+          "median_raw_drift": 0.14309371449053288,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "median_x4"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.1375383881689647,
+          "geometry_score": 20.456361829790445,
+          "median_ess": 0.9994707405567169,
+          "median_raw_drift": 0.03685256466269493,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "median_x16"
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 1.1514839828579433,
+          "geometry_score": 21.299796542529144,
+          "median_ess": 0.9999665319919586,
+          "median_raw_drift": 0.009202197194099426,
+          "precision": 0.0,
+          "target": "rings_islands",
+          "variant": "median_x64"
+        }
+      ]
+    },
+    "D6_normalization_repair": {
+      "rows": [
+        {
+          "arm": "A1",
+          "coverage": 1.0,
+          "ed2": 0.26725845008591165,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 5.042134295717288,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.6953125,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A1",
+          "coverage": 1.0,
+          "ed2": 0.7034662451548286,
+          "eta": 0.5,
+          "final_loss": 0.002073482610285282,
+          "geometry_score": 7.486359336631235,
+          "median_loss": 0.002042338950559497,
+          "normalization": "none",
+          "precision": 0.638671875,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A1",
+          "coverage": 1.0,
+          "ed2": 0.4191036985537657,
+          "eta": 2.0,
+          "final_loss": 0.04723716527223587,
+          "geometry_score": 6.5966112333893525,
+          "median_loss": 0.03970814496278763,
+          "normalization": "none",
+          "precision": 0.671875,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 23.440694635526956,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 108.49645722478107,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 13.54970437872986,
+          "eta": 0.5,
+          "final_loss": 22.343246459960938,
+          "geometry_score": 63.242727322447365,
+          "median_loss": 31.928682327270508,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 13.54882646393337,
+          "eta": 2.0,
+          "final_loss": 357.0626525878906,
+          "geometry_score": 63.22848245293045,
+          "median_loss": 510.64427185058594,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 7.29284833074691,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 36.884378688502046,
+          "median_loss": 0.2499999925494194,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 8.063111867498296,
+          "eta": 0.5,
+          "final_loss": 0.332292377948761,
+          "geometry_score": 37.818884452117054,
+          "median_loss": 1.2492437660694122,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 8.044165952298602,
+          "eta": 2.0,
+          "final_loss": 4.512001037597656,
+          "geometry_score": 37.696068360138554,
+          "median_loss": 19.585561752319336,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "checkerboard"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.43123180585833865,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 6.617267174087251,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.5961154440953642,
+          "eta": 0.5,
+          "final_loss": 0.00019286855240352452,
+          "geometry_score": 7.992689878223361,
+          "median_loss": 0.0003231484297430143,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.5961467452768829,
+          "eta": 2.0,
+          "final_loss": 0.0030869566835463047,
+          "geometry_score": 7.993575434457108,
+          "median_loss": 0.005170905264094472,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 1.1302499957403604,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 13.823655072433832,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 3.852760601351747,
+          "eta": 0.5,
+          "final_loss": 1.691778540611267,
+          "geometry_score": 35.218470968999554,
+          "median_loss": 17.715117633342743,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 3.8527631895135954,
+          "eta": 2.0,
+          "final_loss": 27.068498611450195,
+          "geometry_score": 35.21849580110403,
+          "median_loss": 283.44190311431885,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 8.250569520011123,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 50.06297215726505,
+          "median_loss": 0.2499999925494194,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 9.28773114499322,
+          "eta": 0.5,
+          "final_loss": 0.13008618354797363,
+          "geometry_score": 69.92148359676308,
+          "median_loss": 1.879263162612915,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 9.287717918534419,
+          "eta": 2.0,
+          "final_loss": 2.0816030502319336,
+          "geometry_score": 69.92142114229053,
+          "median_loss": 30.06832265853882,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "texture_blocks"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.20594220903107985,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 10.440274446889653,
+          "median_loss": 0.2500000149011612,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.20348220567610475,
+          "eta": 0.5,
+          "final_loss": 0.0012970328098163009,
+          "geometry_score": 10.086287269940335,
+          "median_loss": 0.008828376594465226,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A1",
+          "coverage": 0.0,
+          "ed2": 0.20341416148463498,
+          "eta": 2.0,
+          "final_loss": 0.020757364109158516,
+          "geometry_score": 10.069355009109744,
+          "median_loss": 0.14125644508749247,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 0.2721604886939275,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 12.351050435511231,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 0.41053343499816286,
+          "eta": 0.5,
+          "final_loss": 0.509304940700531,
+          "geometry_score": 13.05271576205108,
+          "median_loss": 57.49444434046745,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A3",
+          "coverage": 0.0,
+          "ed2": 0.41053415081709765,
+          "eta": 2.0,
+          "final_loss": 8.14901065826416,
+          "geometry_score": 13.052458892399294,
+          "median_loss": 919.9111752510071,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 0.9319164114757612,
+          "eta": 0.5,
+          "final_loss": 0.25,
+          "geometry_score": 17.92938192980431,
+          "median_loss": 0.25,
+          "normalization": "rms",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 0.9669205173642261,
+          "eta": 0.5,
+          "final_loss": 0.014981241896748543,
+          "geometry_score": 18.21264312600027,
+          "median_loss": 0.06319059897214174,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        },
+        {
+          "arm": "A4",
+          "coverage": 0.0,
+          "ed2": 0.9673367558218615,
+          "eta": 2.0,
+          "final_loss": 0.23102755844593048,
+          "geometry_score": 18.14490232782007,
+          "median_loss": 1.0067134872078896,
+          "normalization": "none",
+          "precision": 0.0,
+          "target": "rings_islands"
+        }
+      ]
+    }
+  },
+  "status": "phase1-post-hoc-diagnosis-feeds-no-gate"
+}

@@ -1,0 +1,19 @@
+{
+  "program": "transport-aligned-generator-development-v1",
+  "profile": "smoke",
+  "arms": [
+    "pqt-B128",
+    "gated-pqt-M1024"
+  ],
+  "inits": [
+    "missing",
+    "concentrated"
+  ],
+  "seeds": 1,
+  "knots": 128,
+  "initialization_samples": 512,
+  "prior_batches": 1.0,
+  "diagnostic_samples": 4096,
+  "baseline_rows": null,
+  "tasks": 28
+}

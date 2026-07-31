@@ -79,8 +79,13 @@ def separated_modes(name="sep_modes", K=9, L=1.0, sigma=0.03,
     ang = 2 * np.pi * np.arange(K) / K
     modes = np.stack([np.cos(ang), np.sin(ang)], 1) * (L * K / (2 * np.pi))
     if rare:
-        w = np.ones(K); w[0] = 0.02 * K  # will renormalise; make mode 0 common
-        w = np.full(K, 1.0); w[1] = 0.02; w[2] = 0.05  # rare modes 1,2
+        if K < 3:
+            raise ValueError("rare separated-modes target requires K >= 3")
+        # Exact requested mixture probabilities, rather than assigning raw
+        # weights .02/.05 and renormalising them down to .25%/.62%.
+        w = np.full(K, (1.0 - 0.02 - 0.05) / (K - 2))
+        w[1] = 0.02
+        w[2] = 0.05
     else:
         w = np.full(K, 1.0)
     w = w / w.sum()
@@ -94,5 +99,33 @@ def separated_modes(name="sep_modes", K=9, L=1.0, sigma=0.03,
 
 
 def suite() -> list[GeoTarget]:
-    return [checkerboard(), two_moons(), rings(), pinwheel(),
+    return [checkerboard(), swiss_roll(), two_moons(), rings(), pinwheel(),
             separated_modes(), separated_modes("sep_modes_rare", rare=True)]
+
+
+def _tests(log=print) -> None:
+    failures = []
+
+    def check(name, ok):
+        log(f"  [{'PASS' if ok else 'FAIL'}] {name}")
+        if not ok:
+            failures.append(name)
+
+    names = [target.name for target in suite()]
+    check("1. structured suite includes Swiss roll", "swiss_roll" in names)
+    rare = separated_modes("rare-test", rare=True)
+    check("2. rare target has exact 2% and 5% probabilities",
+          rare.weights is not None
+          and abs(float(rare.weights[1]) - 0.02) < 1e-15
+          and abs(float(rare.weights[2]) - 0.05) < 1e-15
+          and abs(float(rare.weights.sum()) - 1.0) < 1e-15)
+    samples = rare.sampler(100, np.random.default_rng(1))
+    check("3. target samplers return finite (n,2) arrays",
+          samples.shape == (100, 2) and np.all(np.isfinite(samples)))
+    if failures:
+        raise SystemExit(f"target tests FAILED: {failures}")
+    log("all target tests passed")
+
+
+if __name__ == "__main__":
+    _tests()

@@ -1,0 +1,19 @@
+Neural pooled-rank Phase-1 development
+  registry 7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6
+  2 targets x 3 reps x 2 inits x 7 rows
+  shard 2/8
+  [PASS] complete Phase-0 regression suite
+  [PASS] Torch paper field agrees with repository NumPy port
+  [PASS] all registered training/held-out frames are tight
+  [PASS] paired initial generator states are bitwise equal
+  completed NPR-d2-correlated-t in 41.89s
+  completed NPR-d8-correlated-t in 65.44s
+  paper-neural                 ED2=0.029343 heldoutSW1=0.124514 div=0
+  minibatch-sw                 ED2=0.020380 heldoutSW1=0.107709 div=0
+  exact-atlas-rsr              ED2=0.029621 heldoutSW1=0.117926 div=0
+  kll-atlas-rsr                ED2=0.030327 heldoutSW1=0.119785 div=0
+  kll-small-rsr                ED2=0.024928 heldoutSW1=0.097393 div=0
+  kll-paper-hybrid             ED2=0.031949 heldoutSW1=0.115207 div=0
+  exact-free-particle-ceiling  ED2=0.003168 heldoutSW1=0.037361 div=0
+artifact C:\Users\Dronm\Documents\drifting_identifiability\numerics\neural_pooled_rank_runs\20260722-155846-standard-shard02of08
+ARTIFACT=C:\Users\Dronm\Documents\drifting_identifiability\numerics\neural_pooled_rank_runs\20260722-155846-standard-shard02of08

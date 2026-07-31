@@ -1,0 +1,41 @@
+    references: primary (2048, 3, 32, 32) pilot (2048, 3, 32, 32) (disjoint)
+
+=== blend_near_gate pilot: select lambda ON THE PILOT REFERENCE ===
+    lambda=0.1 median recall=0.4792 
+    lambda=0.2 median recall=0.2271 
+    lambda=0.3 median recall=0.0566 IN BAND
+    lambda=0.4 median recall=0.0049 
+    lambda=0.5 median recall=0.0000 
+    lambda=0.6 median recall=0.0000 
+    lambda=0.7 median recall=0.0000 
+    lambda=0.8 median recall=0.0000 
+    lambda=0.9 median recall=0.0000 
+    chosen lambda: 0.3
+
+=== null calibration: 200 independent 512-sample sets per state ===
+      identical_images   50/200 running max=0.0000
+      identical_images   100/200 running max=0.0000
+      identical_images   150/200 running max=0.0000
+    identical_images   mean=0.00000 sd=0.00000 max=0.0000 q99=0.0000 E=0/200 p_upper=0.01487
+      gaussian_mm        50/200 running max=0.0020
+      gaussian_mm        100/200 running max=0.0059
+      gaussian_mm        150/200 running max=0.0059
+    gaussian_mm        mean=0.00029 sd=0.00076 max=0.0059 q99=0.0034 E=0/200 p_upper=0.01487
+      blend_near_gate    50/200 running max=0.0942
+      blend_near_gate    100/200 running max=0.1396
+      blend_near_gate    150/200 running max=0.1396
+    blend_near_gate    mean=0.05168 sd=0.02279 max=0.1680 q99=0.1387 E=92/200 p_upper=0.52062
+
+=== F1 §2.1 NULL CALIBRATION ===
+state                    mean       sd      max      q99  E>gate   p_upper
+identical_images      0.00000  0.00000   0.0000   0.0000       0   0.01487
+gaussian_mm           0.00029  0.00076   0.0059   0.0034       0   0.01487
+blend_near_gate       0.05168  0.02279   0.1680   0.1387      92   0.52062
+
+    RECALL_GATE 0.05 held fixed; p_null_upper = 0.01487 against tolerance 0.025
+    2-of-3 false-pass bound 0.00066
+    blend_near_gate lambda: 0.3
+
+  GO -- the null probability of exceeding recall 0.05 is bounded above by 0.01487 < 0.025; the gate is usable and the 2-of-3 rule has false-pass bound 0.00066
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\f1_calibration.json sha256=bbe77285efeaeed0...

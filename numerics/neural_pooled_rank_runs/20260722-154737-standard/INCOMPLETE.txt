@@ -1,0 +1,4 @@
+INCOMPLETE DEVELOPMENT ARTIFACT
+
+The initial sequential standard launcher was deliberately timed out before
+training began. It is not a result and must not be merged or analyzed.

@@ -1,0 +1,6 @@
+INCOMPLETE DEVELOPMENT ARTIFACT
+
+This sequential standard run was deliberately stopped after runtime profiling
+showed that target-sharded execution was needed. It is not a result and must
+not be merged or analyzed. The complete audited result is
+../20260722-160125-standard-merged/.

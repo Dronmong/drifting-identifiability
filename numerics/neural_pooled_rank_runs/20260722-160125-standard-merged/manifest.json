@@ -1,0 +1,132 @@
+{
+  "actual_rows": 672,
+  "command": [
+    "numerics/merge_neural_pooled_rank_shards.py",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard00of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard01of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard02of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard03of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard04of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard05of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard06of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard07of08"
+  ],
+  "expected_rows": 672,
+  "experiment": "neural-pooled-rank-standard-merged-v1",
+  "git_commit_at_merge": "3669673e40bef4a7c4cb368609ce957e34f90864",
+  "git_dirty_at_merge": true,
+  "kll_state_count": 3072,
+  "output_count": 672,
+  "profile": {
+    "atlas_knots": 128,
+    "evaluation_samples": 2048,
+    "free_particle_sweeps": 100,
+    "generator_budget": 20480,
+    "initializations": [
+      "concentrated",
+      "broad"
+    ],
+    "large_population": 512,
+    "microbatch": 64,
+    "name": "standard",
+    "ordinary_batch": 64,
+    "replications": 3,
+    "smoke_only": false,
+    "target_pool": 20480
+  },
+  "reference_count": 48,
+  "registry_sha256": "7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6",
+  "shard_count": 8,
+  "shard_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "source_sha256": {
+    "numerics\\NeuralPooledRankPhase1Protocol.md": "fca68c590a456946beaa3ef2c35ecd4231af04a6e312447ec44636f1b48d70ed",
+    "numerics\\merge_neural_pooled_rank_shards.py": "7b5ba3a04d956246fc0b5d86cfad4b4f36250f7c8b00c5ee4f47efacf738575e",
+    "numerics\\neural_pooled_rank.py": "8765208ca4b7b2ed9f29b71de240c9c8c0800071741a61b408a61f1be7f1dcbb",
+    "numerics\\run_neural_pooled_rank_development.py": "d112997c2c2b8149ddc36c27abefb24aabb7ec29feecaae97662924f5ced9f0e"
+  },
+  "source_shard_hashes": {
+    "20260722-155845-standard-shard01of08": {
+      "kll_state_index.json": "0a762d71dae0b26384f3e6cf1120d5f77cefee012b2d04cf9d7e192a08a1c5d3",
+      "kll_states.bin": "b71397b6b296bda3171aea3ad09d021294dbd08a5a8ca02c34927e8de8818b38",
+      "manifest.json": "e91b5942895f400d1dc42347f1a95a397afff9cd44a45306eb081617de3d6f98",
+      "outputs.npz": "bda12d72e95c7bcb5de2c2ef2564046298769caa712f453ae2e684dc6a8117da",
+      "references.npz": "f428ef810d765d98aa9ae2b9555f61012ef94b780eb68c5a59d8d02e8fae81cc",
+      "rows.csv": "bb8de8d39dc578f0f4d03623720f485cf77747605da4fe90d8ff644198fb0eeb"
+    },
+    "20260722-155845-standard-shard03of08": {
+      "kll_state_index.json": "b614b80daa017de9a7211e58c2516ad31f1bd22215f734bdca7b05f153ab3281",
+      "kll_states.bin": "d6a851744aca78f4c216d993a1d616f738812773d49e1fdb1aaea5af8fcc46dc",
+      "manifest.json": "2d5dfaf066d4139c0b10c7e81635a7bded6256ca2a880f34a59ca005100285bc",
+      "outputs.npz": "8287221e5172331eb013f10078e72cafcc0538715b7dc9aad5ace1549c5aa0da",
+      "references.npz": "6bc0ccf99cca334a761c8359cca5637aa0ce356803af2317bce49968c7dcbcab",
+      "rows.csv": "395ef4751d2d8758bb1994e8107a05b78c5baddb1331409f84c34ca51ce9066e"
+    },
+    "20260722-155845-standard-shard05of08": {
+      "kll_state_index.json": "518c5b76acfe54f8ca00d4dcb6858997258ce817bec56882522b08c7796b1f3e",
+      "kll_states.bin": "db95abe109a7d1668389feb48f2b48245e0107282657d9f07b631fe149ea9ae0",
+      "manifest.json": "0ae121a80d3fd789c1fa67d6a9a0de255e344cbdebb2c1037bb4d5f8f77c3a58",
+      "outputs.npz": "4c1e8c87f0c1586d79a8b56736ad2b0c59f00da37b4438c6a72d5683418659c9",
+      "references.npz": "54c4c4d00448f01bf2e21ce2cf08355f8a3bff80d06eea86f1f0d452f2dc359e",
+      "rows.csv": "94492256ba32e27a10c61f73686c99b08664ebcab4cf391ffddb3fa340546851"
+    },
+    "20260722-155846-standard-shard00of08": {
+      "kll_state_index.json": "dc6421212365defd29be60d454acef4093db2ccb9abc3f4c14836e8be7cb7112",
+      "kll_states.bin": "b84620e3946639431855a5df5124bd09c8a2058813b870e0332e5ee22254a13b",
+      "manifest.json": "1289dd50367febfd4fe362433a0f4b85f4593bfe4bb4de1b9ff4f5a21322cc68",
+      "outputs.npz": "55d4470f3c8623765dd86fc1e2b54e8cd0d02997051b2afe97d24ba55a2a2f85",
+      "references.npz": "998ee66b4d2bfbe24d0b55c45567e8f3c6aaed868af691ff2bb03714e66fa1d9",
+      "rows.csv": "c88909f0f75564e7fb686715d9babf4ab8cd60875b1b2e3dbeabe21e1db06250"
+    },
+    "20260722-155846-standard-shard02of08": {
+      "kll_state_index.json": "452efd3cc36dac53b40b09194e1e007b25e50624ff9901f5865619b7fb9a3a8b",
+      "kll_states.bin": "c0079affc3c3b22f79a886f63a12eab317c85e448d06b35ea17de5fd1ee1bbf1",
+      "manifest.json": "76dd49995c19e03e6b33957c596c7ee9270e4b5e3ddca6f1be56ac4d8b2aff8f",
+      "outputs.npz": "66fcac07fd451f20e04f24b360136840e9797306793a11ff33eeb978fef677dd",
+      "references.npz": "2c8f2955ca60139c2a5a755bf2d9f4366e840e314b56c08062cb9546f1e77e1c",
+      "rows.csv": "7d0cb827f78b985cdd4407bebe081d20513b5efbe9a35c8897bf738e0cc3eba0"
+    },
+    "20260722-155846-standard-shard04of08": {
+      "kll_state_index.json": "693bd17ccdb5c978e17ab4374ddd5e23c4928bbf449c379576a0d381907df816",
+      "kll_states.bin": "1fe518eae93f11d247f1aa7661dcb79ff7574d04006c4eee8b83710277315158",
+      "manifest.json": "2e9255633b30bd905d9fa5a9302dadd4d65d54091062f8ae4c4a67b236291ae0",
+      "outputs.npz": "2722b36e02536678b1ff5228a2e6cb4a8b5b94bd39c9a16b47f4217bc8e8c388",
+      "references.npz": "dbc89882dfe5c4584949e1f1d322074e4820d1d66fdbdeb91df99d59f0c4d073",
+      "rows.csv": "5d28dd576351502a788e00286a5000dd201de5ad294a2d623f7b819bca9952da"
+    },
+    "20260722-155846-standard-shard06of08": {
+      "kll_state_index.json": "ee9ae7993c89ade63acdd1a75db5ca1811da4bc1f7f0a0c5984ad1ff539af9db",
+      "kll_states.bin": "ed177e338be25c989f663b5cc37d88cc5e98ea4f00f34d07fd47e78d5eb4a09d",
+      "manifest.json": "6d9f06d10e373f4112241fc250114b8b749d1d296209cc6063f819c793ede611",
+      "outputs.npz": "c565e102d6b5dec42950a78eaa8c5f359fa73991bc14f3e427a8540544965b40",
+      "references.npz": "6a50610219f1e65659c9bdcd472d82b1753c134cafd44eea940c88110e9997e5",
+      "rows.csv": "6e688cd3988c5e2c42a77cf68b3d09551df994fd841ed6e7cd6cc2da87b0ae17"
+    },
+    "20260722-155846-standard-shard07of08": {
+      "kll_state_index.json": "d59471a1e8ca41e80008cb45e04b09998977d37cb6c7c550cd65ddbdb18e047f",
+      "kll_states.bin": "919a162d4998b61941c3fd7cd254fe5921ee60cf5c969c0f5945a2dc97988bdc",
+      "manifest.json": "eaa7f706d0e2be214f7c6c6a765c155669d6757f97492864740ad3306f4a7ed0",
+      "outputs.npz": "544bd1dd5b2afafff468f3d8f3cecb8528a5f1ef097a32ea8b3af74dc81c73a7",
+      "references.npz": "aca368a47b81cf9cc4ba513289ddfc68556307397f2b10feb7dd90497f16da97",
+      "rows.csv": "56f2d3b1c2b3c467a3b32bea3ba54ed943d7bb0bf7b152ce87094b05f4115ca3"
+    }
+  },
+  "source_shards": [
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard00of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard01of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard02of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard03of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard04of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155845-standard-shard05of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard06of08",
+    "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\neural_pooled_rank_runs\\20260722-155846-standard-shard07of08"
+  ]
+}

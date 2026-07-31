@@ -1,0 +1,44 @@
+    real reference: precision/recall anchors from Phase 28 -- memorization KID +0.06110 R 0.224; drifting KID +0.14959 R 0.000
+
+=== nearest_fresh ===
+      nearest_fresh     step     0 KID=+0.30435 P=0.826 R=0.000 alpha=3.160 distinct=nan
+      nearest_fresh     step  1500 KID=+0.45775 P=0.000 R=0.000 alpha=4.251 distinct=1
+      nearest_fresh     step  3000 KID=+0.47341 P=0.000 R=0.000 alpha=4.005 distinct=1
+      nearest_fresh     step  4500 KID=+0.46195 P=0.000 R=0.000 alpha=4.386 distinct=1
+      nearest_fresh     step  6000 KID=+0.46969 P=0.000 R=0.000 alpha=4.136 distinct=1
+=== hungarian_fresh ===
+      hungarian_fresh   step     0 KID=+0.30435 P=0.826 R=0.000 alpha=3.160 distinct=nan
+      hungarian_fresh   step  1500 KID=+0.29597 P=0.568 R=0.000 alpha=4.847 distinct=256
+      hungarian_fresh   step  3000 KID=+0.30005 P=0.551 R=0.000 alpha=4.913 distinct=256
+      hungarian_fresh   step  4500 KID=+0.29951 P=0.541 R=0.000 alpha=4.930 distinct=256
+      hungarian_fresh   step  6000 KID=+0.29633 P=0.553 R=0.000 alpha=4.961 distinct=256
+=== imle_k8 ===
+      imle_k8           step     0 KID=+0.30435 P=0.826 R=0.000 alpha=3.160 distinct=nan
+      imle_k8           step  1500 KID=+0.29243 P=0.697 R=0.000 alpha=4.654 distinct=59
+      imle_k8           step  3000 KID=+0.29171 P=0.604 R=0.000 alpha=4.622 distinct=59
+      imle_k8           step  4500 KID=+0.28528 P=0.676 R=0.000 alpha=4.698 distinct=59
+      imle_k8           step  6000 KID=+0.28453 P=0.668 R=0.000 alpha=4.747 distinct=59
+=== hungarian_fixed ===
+      hungarian_fixed   step     0 KID=+0.30435 P=0.826 R=0.000 alpha=3.160 distinct=nan
+      hungarian_fixed   step  1500 KID=+0.27462 P=0.615 R=0.000 alpha=4.482 distinct=256
+      hungarian_fixed   step  3000 KID=+0.27323 P=0.637 R=0.000 alpha=4.547 distinct=256
+      hungarian_fixed   step  4500 KID=+0.24314 P=0.717 R=0.000 alpha=4.554 distinct=256
+      hungarian_fixed   step  6000 KID=+0.23705 P=0.748 R=0.000 alpha=4.563 distinct=256
+
+=== PHASE 29: DOES THE ASSIGNMENT DIRECTION MATTER? ===
+arm                      KID    prec  recall   alpha    2nd  distinct  fwd/step
+nearest_fresh       +0.46969   0.000   0.000   4.136  0.000         1       256
+hungarian_fresh     +0.29633   0.553   0.000   4.961  0.466       256       256
+imle_k8             +0.28453   0.668   0.000   4.747  0.618        59       512
+hungarian_fixed     +0.23705   0.748   0.000   4.563  0.599       256       256
+(memorization_ran)  +0.06110   0.791   0.224   4.417
+(drifting_cold)     +0.14959   0.523   0.000   4.503
+hung_fixed(train)   +0.22716   0.668   0.006   4.672
+
+    hungarian_fixed amortization gap (fresh - train KID) = +0.00989
+
+    best recall: nearest_fresh   IMLE recall = 0.0
+
+  every fresh-latent objective collapses to recall ~ 0, so the obstruction lies outside the objective family and the memorization ceiling is the only meaningful number this harness has produced
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase29.json sha256=dc84219f6f9850e2...

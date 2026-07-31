@@ -1,0 +1,436 @@
+{
+  "by_dimension": {
+    "16": {
+      "ed2_geometric_ratio": 0.9491164963877445,
+      "ed2_win_fraction": 1.0,
+      "field_error_geometric_ratio": 0.49370246771873894,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9765739528887919,
+      "sw1_win_fraction": 0.875
+    },
+    "2": {
+      "ed2_geometric_ratio": 1.0645953315677754,
+      "ed2_win_fraction": 0.4375,
+      "field_error_geometric_ratio": 0.6524233518580768,
+      "rows": 16,
+      "sw1_geometric_ratio": 1.0238357211038254,
+      "sw1_win_fraction": 0.4375
+    },
+    "4": {
+      "ed2_geometric_ratio": 0.9989741374871084,
+      "ed2_win_fraction": 0.625,
+      "field_error_geometric_ratio": 0.7725236324638699,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9946548836724115,
+      "sw1_win_fraction": 0.625
+    },
+    "8": {
+      "ed2_geometric_ratio": 0.968660618757337,
+      "ed2_win_fraction": 0.625,
+      "field_error_geometric_ratio": 0.48843263055099795,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9892974206011136,
+      "sw1_win_fraction": 0.4375
+    }
+  },
+  "by_family": {
+    "balanced-gmm": {
+      "ed2_geometric_ratio": 0.9783809523303835,
+      "ed2_win_fraction": 0.875,
+      "field_error_geometric_ratio": 0.5197954865098172,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9887614057669363,
+      "sw1_win_fraction": 0.75
+    },
+    "correlated-t": {
+      "ed2_geometric_ratio": 0.9826209844222188,
+      "ed2_win_fraction": 0.625,
+      "field_error_geometric_ratio": 0.6637392442972921,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9964148346770014,
+      "sw1_win_fraction": 0.5625
+    },
+    "nonlinear": {
+      "ed2_geometric_ratio": 0.9799550693253143,
+      "ed2_win_fraction": 0.5625,
+      "field_error_geometric_ratio": 0.5624897307656166,
+      "rows": 16,
+      "sw1_geometric_ratio": 0.9840516485496094,
+      "sw1_win_fraction": 0.625
+    },
+    "rare-gmm": {
+      "ed2_geometric_ratio": 1.0378385072642333,
+      "ed2_win_fraction": 0.625,
+      "field_error_geometric_ratio": 0.6262772564041478,
+      "rows": 16,
+      "sw1_geometric_ratio": 1.0148109068671327,
+      "sw1_win_fraction": 0.4375
+    }
+  },
+  "figures": [
+    "numerics\\conditioned_transport_repair_failure_figures\\d2_rare_v00_scatter.png",
+    "numerics\\conditioned_transport_repair_failure_figures\\d16_rare_v00_mode_axis.png"
+  ],
+  "inputs": {
+    "broad": {
+      "directory": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\conditioned_transport_runs\\20260723-144337-consumed",
+      "outputs_sha256": "36a5366bdf9a4c6f46afae78c46e1547e9136da4bcb439cfcab2796d91507fea",
+      "references_sha256": "4141495ba9b922c311a61718245e4395f0e5e5bc65f59f981461b2e2f5853028",
+      "rows_sha256": "6c4dcb9057887d1182c7a8c62a5253503c130965cee28a0b2ce78f9e85ad33b1"
+    },
+    "concentrated": {
+      "directory": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\conditioned_transport_runs\\20260723-144129-consumed",
+      "outputs_sha256": "5b3d2fae0ad68f101c2f739a3ae3ee6616a228671107db1f604c8d5fa90da7db",
+      "references_sha256": "4141495ba9b922c311a61718245e4395f0e5e5bc65f59f981461b2e2f5853028",
+      "rows_sha256": "8d93183580cd813440de1da360a0dd78a23fc8ab4e03266cee3c6ff5a9501982"
+    }
+  },
+  "interpretation_guardrail": "No subgroup, switch rule, or diagnostic in this file is a fresh performance confirmation.",
+  "posthoc_dimension_switch": {
+    "ed2_geometric_ratio": 0.979203126322477,
+    "ed2_wins": 14,
+    "heldout_sw1_geometric_ratio": 0.9914207479144361,
+    "heldout_sw1_wins": 12,
+    "rule": "use repaired arm only at dimension >= 8; otherwise control",
+    "status": "post-hoc design evidence only",
+    "target_count": 32
+  },
+  "rare_mode_details": {
+    "NPR-d16-rare-gmm-v00": {
+      "cta-exact-fixed-control": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1932,
+            "core_mass": 0.943359375,
+            "count": 1967,
+            "mean_error": 0.33424150943756104,
+            "relative_covariance_error": 0.7042970427394101,
+            "target_calibrated_95pct_core_radius": 4.829801002757405
+          },
+          {
+            "component": 1,
+            "core_count": 1,
+            "core_mass": 0.00048828125,
+            "count": 81,
+            "mean_error": 3.1187727451324463,
+            "relative_covariance_error": 2.667566941321362,
+            "target_calibrated_95pct_core_radius": 2.49745765935252
+          }
+        ],
+        "counts": [
+          1967,
+          81
+        ],
+        "masses": [
+          0.96044921875,
+          0.03955078125
+        ]
+      },
+      "cta-exact-hybrid": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1972,
+            "core_mass": 0.962890625,
+            "count": 1999,
+            "mean_error": 0.3663867712020874,
+            "relative_covariance_error": 0.6449619011670891,
+            "target_calibrated_95pct_core_radius": 4.829801002757405
+          },
+          {
+            "component": 1,
+            "core_count": 0,
+            "core_mass": 0.0,
+            "count": 49,
+            "mean_error": 3.2167880535125732,
+            "relative_covariance_error": 2.7170497361909063,
+            "target_calibrated_95pct_core_radius": 2.49745765935252
+          }
+        ],
+        "counts": [
+          1999,
+          49
+        ],
+        "masses": [
+          0.97607421875,
+          0.02392578125
+        ]
+      },
+      "half_weight_coverage_threshold_count": 51.2,
+      "paper-neural-optimized": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 2048,
+            "core_mass": 1.0,
+            "count": 2048,
+            "mean_error": 0.1433146595954895,
+            "relative_covariance_error": 0.584125173031308,
+            "target_calibrated_95pct_core_radius": 4.829801002757405
+          },
+          {
+            "component": 1,
+            "core_count": 0,
+            "core_mass": 0.0,
+            "count": 0,
+            "mean_error": null,
+            "relative_covariance_error": null,
+            "target_calibrated_95pct_core_radius": 2.49745765935252
+          }
+        ],
+        "counts": [
+          2048,
+          0
+        ],
+        "masses": [
+          1.0,
+          0.0
+        ]
+      },
+      "reference": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1843,
+            "core_mass": 0.89990234375,
+            "count": 1940,
+            "mean_error": 0.0,
+            "relative_covariance_error": 0.0,
+            "target_calibrated_95pct_core_radius": 4.829801002757405
+          },
+          {
+            "component": 1,
+            "core_count": 102,
+            "core_mass": 0.0498046875,
+            "count": 108,
+            "mean_error": 0.0,
+            "relative_covariance_error": 0.0,
+            "target_calibrated_95pct_core_radius": 2.49745765935252
+          }
+        ],
+        "counts": [
+          1940,
+          108
+        ],
+        "masses": [
+          0.947265625,
+          0.052734375
+        ]
+      },
+      "target_weights": [
+        0.95,
+        0.05
+      ]
+    },
+    "NPR-d2-rare-gmm-v00": {
+      "cta-exact-fixed-control": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1795,
+            "core_mass": 0.87646484375,
+            "count": 1932,
+            "mean_error": 0.034068603068590164,
+            "relative_covariance_error": 0.18755317615823633,
+            "target_calibrated_95pct_core_radius": 1.64314178236988
+          },
+          {
+            "component": 1,
+            "core_count": 47,
+            "core_mass": 0.02294921875,
+            "count": 116,
+            "mean_error": 0.4764144718647003,
+            "relative_covariance_error": 5.82626508969642,
+            "target_calibrated_95pct_core_radius": 0.8352574279300479
+          }
+        ],
+        "counts": [
+          1932,
+          116
+        ],
+        "masses": [
+          0.943359375,
+          0.056640625
+        ]
+      },
+      "cta-exact-hybrid": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1795,
+            "core_mass": 0.87646484375,
+            "count": 1934,
+            "mean_error": 0.06938139349222183,
+            "relative_covariance_error": 0.21523185624886126,
+            "target_calibrated_95pct_core_radius": 1.64314178236988
+          },
+          {
+            "component": 1,
+            "core_count": 46,
+            "core_mass": 0.0224609375,
+            "count": 114,
+            "mean_error": 0.47422727942466736,
+            "relative_covariance_error": 5.73211394495816,
+            "target_calibrated_95pct_core_radius": 0.8352574279300479
+          }
+        ],
+        "counts": [
+          1934,
+          114
+        ],
+        "masses": [
+          0.9443359375,
+          0.0556640625
+        ]
+      },
+      "half_weight_coverage_threshold_count": 51.2,
+      "paper-neural-optimized": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 2048,
+            "core_mass": 1.0,
+            "count": 2048,
+            "mean_error": 0.05616268143057823,
+            "relative_covariance_error": 0.3974638936895636,
+            "target_calibrated_95pct_core_radius": 1.64314178236988
+          },
+          {
+            "component": 1,
+            "core_count": 0,
+            "core_mass": 0.0,
+            "count": 0,
+            "mean_error": null,
+            "relative_covariance_error": null,
+            "target_calibrated_95pct_core_radius": 0.8352574279300479
+          }
+        ],
+        "counts": [
+          2048,
+          0
+        ],
+        "masses": [
+          1.0,
+          0.0
+        ]
+      },
+      "reference": {
+        "components": [
+          {
+            "component": 0,
+            "core_count": 1845,
+            "core_mass": 0.90087890625,
+            "count": 1943,
+            "mean_error": 0.0,
+            "relative_covariance_error": 0.0,
+            "target_calibrated_95pct_core_radius": 1.64314178236988
+          },
+          {
+            "component": 1,
+            "core_count": 99,
+            "core_mass": 0.04833984375,
+            "count": 105,
+            "mean_error": 0.0,
+            "relative_covariance_error": 0.0,
+            "target_calibrated_95pct_core_radius": 0.8352574279300479
+          }
+        ],
+        "counts": [
+          1943,
+          105
+        ],
+        "masses": [
+          0.94873046875,
+          0.05126953125
+        ]
+      },
+      "target_weights": [
+        0.95,
+        0.05
+      ]
+    }
+  },
+  "row_count": 64,
+  "schema": "conditioned-transport-repair-failure-diagnosis-v1",
+  "spearman_correlations": {
+    "ed2_ratio": {
+      "column_mass_error_ratio": 0.4033882783882783,
+      "field_cosine_gain": -0.38438644688644685,
+      "field_error_ratio": 0.11666666666666664,
+      "local_scale_ratio": -0.11483516483516483,
+      "output_rms_ratio": 0.5351190476190476,
+      "row_mass_error_ratio": 0.29871794871794866,
+      "teacher_displacement_ratio": 0.24203296703296698
+    },
+    "heldout_sw1_ratio": {
+      "column_mass_error_ratio": 0.3299908424908425,
+      "field_cosine_gain": -0.2665750915750915,
+      "field_error_ratio": 0.17326007326007326,
+      "local_scale_ratio": -0.09945054945054943,
+      "output_rms_ratio": 0.4701923076923077,
+      "row_mass_error_ratio": 0.21987179487179484,
+      "teacher_displacement_ratio": 0.12765567765567765
+    }
+  },
+  "status": "post-hoc explanatory analysis of consumed artifacts",
+  "target_count": 32,
+  "worst_target_reduced_ed2": [
+    {
+      "dimension": 2,
+      "ed2_ratio": 1.4318871382381735,
+      "family": "rare-gmm",
+      "heldout_sw1_ratio": 1.1491870125522088,
+      "target": "NPR-d2-rare-gmm-v00"
+    },
+    {
+      "dimension": 2,
+      "ed2_ratio": 1.1551609884839589,
+      "family": "rare-gmm",
+      "heldout_sw1_ratio": 1.0868687224359723,
+      "target": "NPR-d2-rare-gmm-v01"
+    },
+    {
+      "dimension": 4,
+      "ed2_ratio": 1.0508432717870897,
+      "family": "rare-gmm",
+      "heldout_sw1_ratio": 1.0147594413343288,
+      "target": "NPR-d4-rare-gmm-v01"
+    },
+    {
+      "dimension": 8,
+      "ed2_ratio": 1.0502184856959873,
+      "family": "nonlinear",
+      "heldout_sw1_ratio": 1.0222670997617516,
+      "target": "NPR-d8-nonlinear-v00"
+    },
+    {
+      "dimension": 4,
+      "ed2_ratio": 1.024933922662205,
+      "family": "correlated-t",
+      "heldout_sw1_ratio": 1.0127259396644428,
+      "target": "NPR-d4-correlated-t-v00"
+    },
+    {
+      "dimension": 8,
+      "ed2_ratio": 1.0204080722421935,
+      "family": "correlated-t",
+      "heldout_sw1_ratio": 1.0099872273017476,
+      "target": "NPR-d8-correlated-t-v00"
+    },
+    {
+      "dimension": 2,
+      "ed2_ratio": 1.0191285190820725,
+      "family": "nonlinear",
+      "heldout_sw1_ratio": 0.9798948648303537,
+      "target": "NPR-d2-nonlinear-v00"
+    },
+    {
+      "dimension": 2,
+      "ed2_ratio": 1.0057336011831268,
+      "family": "correlated-t",
+      "heldout_sw1_ratio": 1.0050606812684542,
+      "target": "NPR-d2-correlated-t-v00"
+    }
+  ]
+}

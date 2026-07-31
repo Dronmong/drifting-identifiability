@@ -1,0 +1,263 @@
+{
+  "config": {
+    "batch": 64,
+    "knn_samples": 2048,
+    "out": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\phase2_entry.json",
+    "resolution": 16,
+    "root": null,
+    "seeds": 3,
+    "threads": 4,
+    "zero_set_step": 0.2,
+    "zero_set_steps": 300
+  },
+  "elapsed_seconds": 109.63724875450134,
+  "gate_pass": true,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\run_phase2_entry.py"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/audit_phase2.py": "13b5878ebd1f1380f4e7f1a2496ef7714c91c0689751ec07624308212c1d2ccd",
+      "numerics/encoder_independent_drifting/cifar.py": "304fc962b1c1e0a7744ada37f9f18f8831be136c420fd7e2908dce4dbe1034fa",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "53c92bc321a91861a9d7d8c1b029e778f0facff84ca13b5d27ea5d4ebca00ae0",
+      "numerics/encoder_independent_drifting/datasets.py": "089c16f097f426f851f97b6528827300909accae6438c0646efe39b4d4152214",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnostics.py": "42d982e901ec3e882f4c861d639b79c7d789987d4af018c3735f4abe63be57fa",
+      "numerics/encoder_independent_drifting/evaluate.py": "d83e23108176dca695491d63465b7b035f6cc7e38743b599ab8917b575bdbf92",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "585a7656b42ae0fd7182d50a0b27b1933d5d0a5357307028f2ccfbf861ce05ad",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a097349f7f2aae29a746e91b5c5ea55fc3976b6a2a18a05b5ed7d41776c5fec2",
+      "numerics/encoder_independent_drifting/models.py": "58dc33dab1dc0d23bd1b008a2aba5e66882f65981776eb1050df93af7c33840a",
+      "numerics/encoder_independent_drifting/objectives.py": "753b227f134d72012271c1b8feb062b80621b1edbd21485576428b09c62b2184",
+      "numerics/encoder_independent_drifting/oracle.py": "1e1d16bdf0efeba3fa697f6ab250e6be475b628e4719d2b54b665b7f93dc7a11",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "f1067a1cb1386e1d695e4124c280587e48882e1debb97914f09d4c09e87b330f",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/run_phase2_entry.py": "eabd3f5301071af3ce550429489003b9b6a7a1cf509e57791859f25d49dcf6b1",
+      "numerics/encoder_independent_drifting/run_phase2_screen.py": "0fe90c2b7be04ec2aa4d45658a0e4cba84ab74df19dd0ea1a97050c4aa22f8c2",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "4310106b3510d9fd9072d5637f920a913bc3576e25d14c518c6aaec876722555",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "1a0b86d69e10ba0c1a1d635ccb37670d913fe51c9cb5ef18bbe0e7c0b3783bc7",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "0764e26dd220bbee7f5361977aa7c207c617b5842b3e2b5e3149f040159f1f2a",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "12eeb57ebd1eb5ea299b8fd47a6daf97c71d4c658920322d4a42ccf865a2e8f3",
+      "numerics/encoder_independent_drifting/tests/test_reforms.py": "b486db6856ba9c24f417bd43eb32251dc4fc5dce491a991ad3e905e9e2aac9a6",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "4b48d5daa97b7e4077de3368979fdd08fde2b1375d411ad03835a5acd8aced01",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "374860e43573db29180b17b2c63c933e591396a9d79655a11586efbd6479a459",
+      "numerics/encoder_independent_drifting/train.py": "09e23b7890f458cc9738ad7a95feb44b120cf660a34a14ce923fc86fd20d99c2"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "recommended_budget": 600,
+  "results": {
+    "E1_solvable": {
+      "budget": 600,
+      "pass": true,
+      "smallest_admissible": 300,
+      "sweep": [
+        {
+          "admissible": true,
+          "null_precision": 0.9453125,
+          "required_precision": 0.47265625,
+          "skyline_coverage": 0.9453125,
+          "skyline_precision": 1.0,
+          "skyline_score": 2.1955315275270357,
+          "steps": 300
+        },
+        {
+          "admissible": true,
+          "null_precision": 0.9453125,
+          "required_precision": 0.47265625,
+          "skyline_coverage": 0.9453125,
+          "skyline_precision": 1.0,
+          "skyline_score": 1.837407788543553,
+          "steps": 600
+        },
+        {
+          "admissible": true,
+          "null_precision": 0.9453125,
+          "required_precision": 0.47265625,
+          "skyline_coverage": 0.953125,
+          "skyline_precision": 0.998046875,
+          "skyline_score": 1.3607066559305507,
+          "steps": 1200
+        }
+      ]
+    },
+    "E2_geometry_advantage": {
+      "best_structured": 0.38330078125,
+      "knn_accuracy": {
+        "pixel": 0.24462890625,
+        "randconv": 0.27197265625,
+        "scattering": 0.38330078125,
+        "wavelet": 0.3642578125
+      },
+      "pass": true,
+      "ratio_over_pixel": 1.56686626746507,
+      "samples": 2048,
+      "threshold": 1.25
+    },
+    "E3_zero_set": {
+      "pass": true,
+      "rows": [
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.6252232557965722,
+          "direction_mode": "standard",
+          "ess_fraction": 0.7683730125427246,
+          "family": "raw",
+          "floor": 4.349698543548584,
+          "residual": 1.625935673713684,
+          "residual_over_floor": 0.37380422055345663,
+          "seed": 0,
+          "start": 4.338411331176758
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.740854271542301,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8394792079925537,
+          "family": "wavelet",
+          "floor": 4.617930889129639,
+          "residual": 1.8074687719345093,
+          "residual_over_floor": 0.3914023001490113,
+          "seed": 0,
+          "start": 6.974719524383545
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.697324480289045,
+          "direction_mode": "standard",
+          "ess_fraction": 0.843064546585083,
+          "family": "scattering",
+          "floor": 4.617930889129639,
+          "residual": 1.948879361152649,
+          "residual_over_floor": 0.42202436717712827,
+          "seed": 0,
+          "start": 6.438840389251709
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.6297603761958854,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8051586151123047,
+          "family": "raw",
+          "floor": 2.9858012199401855,
+          "residual": 1.6480249166488647,
+          "residual_over_floor": 0.5519539966836371,
+          "seed": 1,
+          "start": 4.451238632202148
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.7170292771368139,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8372985124588013,
+          "family": "wavelet",
+          "floor": 3.730936050415039,
+          "residual": 2.046685218811035,
+          "residual_over_floor": 0.5485715089068215,
+          "seed": 1,
+          "start": 7.232851505279541
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.7109382902034702,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8368487358093262,
+          "family": "scattering",
+          "floor": 3.730936050415039,
+          "residual": 2.0849862098693848,
+          "residual_over_floor": 0.5588372949028289,
+          "seed": 1,
+          "start": 7.212944984436035
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.6339094410870687,
+          "direction_mode": "standard",
+          "ess_fraction": 0.7961457967758179,
+          "family": "raw",
+          "floor": 3.2672088146209717,
+          "residual": 1.5980267524719238,
+          "residual_over_floor": 0.48911068840187083,
+          "seed": 2,
+          "start": 4.365113258361816
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.7739365048064948,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8194972276687622,
+          "family": "wavelet",
+          "floor": 3.966550350189209,
+          "residual": 1.7033789157867432,
+          "residual_over_floor": 0.4294358486349455,
+          "seed": 2,
+          "start": 7.5349578857421875
+        },
+        {
+          "collapsed_row_fraction": 0.0,
+          "descent_fraction": 0.7509197021991133,
+          "direction_mode": "standard",
+          "ess_fraction": 0.8192545771598816,
+          "family": "scattering",
+          "floor": 3.966550350189209,
+          "residual": 1.6714000701904297,
+          "residual_over_floor": 0.4213737183774062,
+          "seed": 2,
+          "start": 6.7102861404418945
+        }
+      ],
+      "threshold": 2.0,
+      "verdicts": {
+        "raw::standard": {
+          "descent_fraction": 0.6297603761958854,
+          "max_collapsed_row_fraction": 0.0,
+          "reaches": true,
+          "residual_over_floor": 0.48911068840187083
+        },
+        "scattering::standard": {
+          "descent_fraction": 0.7109382902034702,
+          "max_collapsed_row_fraction": 0.0,
+          "reaches": true,
+          "residual_over_floor": 0.42202436717712827
+        },
+        "wavelet::standard": {
+          "descent_fraction": 0.740854271542301,
+          "max_collapsed_row_fraction": 0.0,
+          "reaches": true,
+          "residual_over_floor": 0.4294358486349455
+        }
+      }
+    },
+    "E4_kernel_health": {
+      "max_collapsed_row_fraction": {
+        "raw::standard": 0.0,
+        "scattering::standard": 0.0,
+        "wavelet::standard": 0.0
+      },
+      "pass": true
+    }
+  },
+  "scope": "CIFAR-10 at 16x16, disjoint train/eval splits, no pretrained encoder, no class labels in any objective",
+  "status": "phase2a-entry-gate",
+  "verdicts": {
+    "E1_solvable": true,
+    "E2_geometry_advantage": true,
+    "E3_zero_set": true,
+    "E4_kernel_health": true
+  }
+}

@@ -1,0 +1,154 @@
+=== 6A: sweep the real control variable ===
+    6A adam         lr=0.0005   seed0 F0 score=   7.363 ed2=  1.9758 2nd= 0.209  15.7s
+    6A adam         lr=0.0005   seed0 F1 score=   1.398 ed2=  0.1179 2nd= 0.853  16.7s
+    6A adam         lr=0.0005   seed1 F0 score=   6.062 ed2=  1.5973 2nd= 0.262  17.1s
+    6A adam         lr=0.0005   seed1 F1 score=   1.790 ed2=  0.1773 2nd= 0.990  17.8s
+    6A adam         lr=0.0005   seed2 F0 score=   6.386 ed2=  1.9631 2nd= 0.215  17.6s
+    6A adam         lr=0.0005   seed2 F1 score=   1.569 ed2=  0.1580 2nd= 1.107  18.0s
+    6A adam         lr=0.002    seed0 F0 score=   6.769 ed2=  1.7621 2nd= 0.256  17.8s
+    6A adam         lr=0.002    seed0 F1 score=   3.588 ed2=  0.5727 2nd= 1.080  18.2s
+    6A adam         lr=0.002    seed1 F0 score=   6.047 ed2=  1.5837 2nd= 0.270  17.7s
+    6A adam         lr=0.002    seed1 F1 score=   1.384 ed2=  0.1172 2nd= 0.912  18.1s
+    6A adam         lr=0.002    seed2 F0 score=   6.843 ed2=  2.2615 2nd= 0.185  18.1s
+    6A adam         lr=0.002    seed2 F1 score=   1.473 ed2=  0.1688 2nd= 1.130  18.1s
+    6A adam         lr=0.008    seed0 F0 score=   7.126 ed2=  1.9247 2nd= 0.214  18.0s
+    6A adam         lr=0.008    seed0 F1 score=   2.548 ed2=  0.3567 2nd= 0.920  18.1s
+    6A adam         lr=0.008    seed1 F0 score=   6.396 ed2=  1.7264 2nd= 0.247  18.0s
+    6A adam         lr=0.008    seed1 F1 score=   1.407 ed2=  0.1373 2nd= 1.033  18.7s
+    6A adam         lr=0.008    seed2 F0 score=   6.060 ed2=  1.8309 2nd= 0.223  18.5s
+    6A adam         lr=0.008    seed2 F1 score=   1.719 ed2=  0.2048 2nd= 1.181  18.4s
+    6A adam         lr=0.03     seed0 F0 score=   8.756 ed2=  2.7530 2nd= 0.165  18.4s
+    6A adam         lr=0.03     seed0 F1 score=   3.438 ed2=  0.3962 2nd= 0.874  18.4s
+    6A adam         lr=0.03     seed1 F0 score=   6.608 ed2=  1.9231 2nd= 0.213  18.1s
+    6A adam         lr=0.03     seed1 F1 score=   2.027 ed2=  0.2753 2nd= 0.912  18.5s
+    6A adam         lr=0.03     seed2 F0 score=   6.277 ed2=  1.8235 2nd= 0.265  18.2s
+    6A adam         lr=0.03     seed2 F1 score=   3.596 ed2=  0.6655 2nd= 1.175  18.6s
+    6A sgd          lr=0.0005   seed0 F0 score=   6.651 ed2=  1.6677 2nd= 0.290  17.3s
+    6A sgd          lr=0.0005   seed0 F1 score=   2.331 ed2=  0.2134 2nd= 0.911  18.0s
+    6A sgd          lr=0.0005   seed1 F0 score=   5.596 ed2=  1.3696 2nd= 0.285  17.4s
+    6A sgd          lr=0.0005   seed1 F1 score=   1.783 ed2=  0.2019 2nd= 0.968  17.9s
+    6A sgd          lr=0.0005   seed2 F0 score=   4.413 ed2=  0.9769 2nd= 0.361  17.5s
+    6A sgd          lr=0.0005   seed2 F1 score=   2.068 ed2=  0.2201 2nd= 1.195  17.7s
+    6A sgd          lr=0.002    seed0 F0 score=   7.540 ed2=  1.9488 2nd= 0.257  17.3s
+    6A sgd          lr=0.002    seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.002    seed1 F0 score=   7.056 ed2=  2.0694 2nd= 0.185  17.8s
+    6A sgd          lr=0.002    seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.002    seed2 F0 score=   4.838 ed2=  1.1494 2nd= 0.341  17.7s
+    6A sgd          lr=0.002    seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.008    seed0 F0 score=   8.185 ed2=  2.4306 2nd= 0.192  17.3s
+    6A sgd          lr=0.008    seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.008    seed1 F0 score=   7.025 ed2=  2.0933 2nd= 0.193  17.9s
+    6A sgd          lr=0.008    seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.008    seed2 F0 score=   5.065 ed2=  1.2801 2nd= 0.369  17.3s
+    6A sgd          lr=0.008    seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.03     seed0 F0 score=1319.530 ed2=708.4100 2nd=856.074  17.1s
+    6A sgd          lr=0.03     seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd          lr=0.03     seed1 F0 score=   9.804 ed2=  3.7518 2nd= 0.148  17.3s
+    6A sgd          lr=0.03     seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.1s
+    6A sgd          lr=0.03     seed2 F0 score=   7.685 ed2=  2.4726 2nd= 0.222  17.2s
+    6A sgd          lr=0.03     seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.1s
+    6A sgd_momentum lr=0.0005   seed0 F0 score=   7.943 ed2=  2.2838 2nd= 0.171  17.3s
+    6A sgd_momentum lr=0.0005   seed0 F1 score=   2.895 ed2=  0.4198 2nd= 0.984  17.9s
+    6A sgd_momentum lr=0.0005   seed1 F0 score=   5.873 ed2=  1.4716 2nd= 0.284  17.2s
+    6A sgd_momentum lr=0.0005   seed1 F1 score=   1.333 ed2=  0.1090 2nd= 1.042  17.8s
+    6A sgd_momentum lr=0.0005   seed2 F0 score=   6.108 ed2=  1.8163 2nd= 0.224  17.2s
+    6A sgd_momentum lr=0.0005   seed2 F1 score=   1.168 ed2=  0.1205 2nd= 1.038  17.9s
+    6A sgd_momentum lr=0.002    seed0 F0 score=   8.183 ed2=  2.3473 2nd= 0.162  17.3s
+    6A sgd_momentum lr=0.002    seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.002    seed1 F0 score=   5.187 ed2=  1.1840 2nd= 0.347  17.3s
+    6A sgd_momentum lr=0.002    seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.002    seed2 F0 score=   6.455 ed2=  2.0048 2nd= 0.224  17.8s
+    6A sgd_momentum lr=0.002    seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.008    seed0 F0 score=   8.535 ed2=  2.4072 2nd= 0.197  17.4s
+    6A sgd_momentum lr=0.008    seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.008    seed1 F0 score=   7.077 ed2=  2.0065 2nd= 0.342  17.9s
+    6A sgd_momentum lr=0.008    seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.008    seed2 F0 score=   7.634 ed2=  2.9932 2nd= 0.170  17.5s
+    6A sgd_momentum lr=0.008    seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.2s
+    6A sgd_momentum lr=0.03     seed0 F0 score=159075.233 ed2=87251.0200 2nd=10609694.000  17.0s
+    6A sgd_momentum lr=0.03     seed0 F1 score=     nan ed2=     nan 2nd=   nan   0.1s
+    6A sgd_momentum lr=0.03     seed1 F0 score=37600.214 ed2=25913.3528 2nd=68088.219  17.0s
+    6A sgd_momentum lr=0.03     seed1 F1 score=     nan ed2=     nan 2nd=   nan   0.1s
+    6A sgd_momentum lr=0.03     seed2 F0 score=17988.609 ed2=11321.1142 2nd=184075.672  17.3s
+    6A sgd_momentum lr=0.03     seed2 F1 score=     nan ed2=     nan 2nd=   nan   0.1s
+
+  6A gate: no learning rate reproduces R11 without it
+
+=== 6B: richer direction changes ===
+    6B seed0 E0 score=   6.769 ed2=  1.7621 2nd= 0.256  18.2s
+    6B seed0 E1 score=   3.588 ed2=  0.5727 2nd= 1.080  18.5s
+    6B seed0 E2 score=   2.340 ed2=  0.1888 2nd= 0.961  18.4s
+    6B seed0 E3 score=   2.111 ed2=  0.2385 2nd= 0.775  23.1s
+    6B seed0 E4 score=   3.766 ed2=  0.5172 2nd= 1.445  18.5s
+    6B seed1 E0 score=   6.047 ed2=  1.5837 2nd= 0.270  18.3s
+    6B seed1 E1 score=   1.384 ed2=  0.1172 2nd= 0.912  18.6s
+    6B seed1 E2 score=   1.962 ed2=  0.1714 2nd= 0.912  18.5s
+    6B seed1 E3 score=   2.048 ed2=  0.2403 2nd= 0.659  23.7s
+    6B seed1 E4 score=   4.013 ed2=  0.5359 2nd= 1.371  18.7s
+    6B seed2 E0 score=   6.843 ed2=  2.2615 2nd= 0.185  18.3s
+    6B seed2 E1 score=   1.473 ed2=  0.1688 2nd= 1.130  18.7s
+    6B seed2 E2 score=   2.092 ed2=  0.2512 2nd= 1.169  18.9s
+    6B seed2 E3 score=   2.443 ed2=  0.3137 2nd= 0.897  23.3s
+    6B seed2 E4 score=   3.729 ed2=  0.6748 2nd= 1.609  18.9s
+
+  6B gate: resolving more directions does not beat one scalar
+
+=== 6C: particle versus generator, matched ===
+    6C seed0 particles_constant     score=   3.019 ed2=  0.3734 2nd= 0.582
+    6C seed0 particles_linear_decay score=   2.717 ed2=  0.3023 2nd= 0.610
+    6C seed0 generator_none         score=   6.825 ed2=  1.6672 2nd= 0.269
+    6C seed0 generator_scalar       score=   3.660 ed2=  0.5198 2nd= 1.067
+    6C seed1 particles_constant     score=   2.579 ed2=  0.3264 2nd= 0.594
+    6C seed1 particles_linear_decay score=   2.008 ed2=  0.2379 2nd= 0.635
+    6C seed1 generator_none         score=   5.991 ed2=  1.5439 2nd= 0.284
+    6C seed1 generator_scalar       score=   1.322 ed2=  0.1251 2nd= 0.898
+    6C seed2 particles_constant     score=   2.532 ed2=  0.3446 2nd= 0.595
+    6C seed2 particles_linear_decay score=   2.174 ed2=  0.2751 2nd= 0.627
+    6C seed2 generator_none         score=   6.955 ed2=  2.3709 2nd= 0.171
+    6C seed2 generator_scalar       score=   1.472 ed2=  0.1601 2nd= 1.125
+
+=== PHASE 6 ===
+cell                                    ed2    score  2nd_mom  band
+adam_lr=0.0005_R11=False             1.9631    6.386    0.215  out
+adam_lr=0.0005_R11=True              0.1580    1.569    0.990  in
+adam_lr=0.002_R11=False              1.7621    6.769    0.256  out
+adam_lr=0.002_R11=True               0.1688    1.473    1.080  in
+adam_lr=0.008_R11=False              1.8309    6.396    0.223  out
+adam_lr=0.008_R11=True               0.2048    1.719    1.033  in
+adam_lr=0.03_R11=False               1.9231    6.608    0.213  out
+adam_lr=0.03_R11=True                0.3962    3.438    0.912  in
+sgd_lr=0.0005_R11=False              1.3696    5.596    0.290  out
+sgd_lr=0.0005_R11=True               0.2134    2.068    0.968  in
+sgd_lr=0.002_R11=False               1.9488    7.056    0.257  out
+sgd_lr=0.002_R11=True                   nan      nan      nan  out
+sgd_lr=0.008_R11=False               2.0933    7.025    0.193  out
+sgd_lr=0.008_R11=True                   nan      nan      nan  out
+sgd_lr=0.03_R11=False                3.7518    9.804    0.222  out
+sgd_lr=0.03_R11=True                    nan      nan      nan  out
+sgd_momentum_lr=0.0005_R11=False     1.8163    6.108    0.224  out
+sgd_momentum_lr=0.0005_R11=True      0.1205    1.333    1.038  in
+sgd_momentum_lr=0.002_R11=False      2.0048    6.455    0.224  out
+sgd_momentum_lr=0.002_R11=True          nan      nan      nan  out
+sgd_momentum_lr=0.008_R11=False      2.4072    7.634    0.197  out
+sgd_momentum_lr=0.008_R11=True          nan      nan      nan  out
+sgd_momentum_lr=0.03_R11=False    25913.352837600.214184075.672  out
+sgd_momentum_lr=0.03_R11=True           nan      nan      nan  out
+
+  6A gate passed=False  -- no learning rate reproduces R11 without it
+
+arm         ed2    score  2nd_mom    vs E1  boot_hi
+E0       1.7621    6.769    0.256    3.371    4.647
+E1       0.1688    1.473    1.080    1.000    1.000
+E2       0.1888    2.092    0.961    1.095    1.420
+E3       0.2403    2.111    0.775    1.130    1.659
+E4       0.5359    3.766    1.445    1.975    2.898
+
+  6B gate passed=False  -- resolving more directions does not beat one scalar
+
+regime                        ed2    score  2nd_mom  band
+generator_none             1.6672    6.825    0.269  out
+generator_scalar           0.1601    1.472    1.067  in
+particles_constant         0.3446    2.579    0.594  out
+particles_linear_decay     0.2751    2.174    0.627  out
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase6.json sha256=a45ad384d4be0831...

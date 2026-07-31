@@ -1,0 +1,75 @@
+{
+  "registry": "QGD-development-v1",
+  "master_seed": 20260801,
+  "description": "Development-only targets for Quantile-Guarded Drifting. Disjoint from all prior frozen QLD, LB-QCD, occupancy, conservative, and bridge registries.",
+  "minimum_reportable_component_mass": 0.005,
+  "targets": [
+    {
+      "name": "QGD-D01-rare007",
+      "family": "separated-unequal-rare",
+      "kind": "mixture",
+      "means": [-3.25, -1.55, -0.15, 1.42, 4.85],
+      "sigmas": [0.065, 0.085, 0.07, 0.105, 0.095],
+      "weights": [0.443, 0.281, 0.174, 0.095, 0.007]
+    },
+    {
+      "name": "QGD-D02-unequal-K9",
+      "family": "unequal",
+      "kind": "mixture",
+      "K": 9,
+      "spacing": 0.83,
+      "sigmas": 0.058,
+      "weights": [0.24, 0.18, 0.15, 0.12, 0.10, 0.08, 0.06, 0.045, 0.025]
+    },
+    {
+      "name": "QGD-D03-equal-K11",
+      "family": "equal-high-mode-count",
+      "kind": "mixture",
+      "K": 11,
+      "spacing": 0.67,
+      "sigmas": 0.051,
+      "weights": "equal"
+    },
+    {
+      "name": "QGD-D04-hetero-K8",
+      "family": "heteroscedastic",
+      "kind": "mixture",
+      "K": 8,
+      "spacing": 0.74,
+      "sigmas": [0.032, 0.11, 0.052, 0.087, 0.126, 0.045, 0.096, 0.061],
+      "weights": [1, 2, 1, 3, 2, 4, 2, 1]
+    },
+    {
+      "name": "QGD-D05-overlap-K6",
+      "family": "overlap",
+      "kind": "mixture",
+      "K": 6,
+      "spacing": 0.31,
+      "sigmas": 0.205,
+      "weights": [1, 2, 4, 4, 2, 1]
+    },
+    {
+      "name": "QGD-D06-contaminated",
+      "family": "contaminated",
+      "kind": "mixture",
+      "means": [-2.35, -1.55, -0.78, 0.05, 0.82, 1.62, 2.38, 6.15],
+      "sigmas": [0.065, 0.075, 0.055, 0.09, 0.06, 0.08, 0.07, 0.13],
+      "weights": [0.1375, 0.1375, 0.1375, 0.1375, 0.1375, 0.1375, 0.1375, 0.0375]
+    },
+    {
+      "name": "QGD-D07-student-t4.2",
+      "family": "connected-heavy-tail",
+      "kind": "student",
+      "df": 4.2,
+      "scale": 0.79
+    },
+    {
+      "name": "QGD-D08-connected-skew-mixture",
+      "family": "connected-skew",
+      "kind": "mixture",
+      "means": [-0.72, -0.05, 0.58, 1.18],
+      "sigmas": [0.58, 0.43, 0.52, 0.69],
+      "weights": [0.11, 0.47, 0.30, 0.12]
+    }
+  ]
+}

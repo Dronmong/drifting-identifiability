@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\run_neural_conditioned_confirmatory.py", line 581, in <module>
+    main()
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\run_neural_conditioned_confirmatory.py", line 569, in main
+    write_artifact(
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\run_neural_conditioned_confirmatory.py", line 382, in write_artifact
+    writer.writerows(rows)
+  File "C:\Users\Dronm\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\csv.py", line 167, in writerows
+    return self.writer.writerows(map(self._dict_to_list, rowdicts))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dronm\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\csv.py", line 159, in _dict_to_list
+    raise ValueError("dict contains fields not in fieldnames: "
+ValueError: dict contains fields not in fieldnames: 'mean_selected_local_weight', 'mean_local_scale', 'minimum_selected_local_weight', 'mean_teacher_displacement_rms'

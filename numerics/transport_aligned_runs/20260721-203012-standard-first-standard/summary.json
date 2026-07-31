@@ -1,0 +1,134 @@
+{
+  "comparisons": {
+    "gated-pqt-M1024": {
+      "ed2_vs_paper-0.5": 0.4325915608786236,
+      "sw1_vs_paper-0.5": 0.4950171266221037,
+      "ed2_ci_vs_paper-0.5": [
+        0.32622985580470204,
+        0.5842025738478307
+      ],
+      "sw1_ci_vs_paper-0.5": [
+        0.43596477124261085,
+        0.5921613391089918
+      ],
+      "ed2_vs_qld-v1": 0.5134970792260329,
+      "sw1_vs_qld-v1": 0.5796564381471859,
+      "ed2_ci_vs_qld-v1": [
+        0.37654286264012987,
+        0.7263219813920487
+      ],
+      "sw1_ci_vs_qld-v1": [
+        0.48527734680985835,
+        0.713666983242492
+      ],
+      "ed2_vs_gated-M1024-f0.70-u": 0.5442732219991594,
+      "sw1_vs_gated-M1024-f0.70-u": 0.5854040349845318,
+      "ed2_ci_vs_gated-M1024-f0.70-u": [
+        0.40027960915216504,
+        0.7442335592281937
+      ],
+      "sw1_ci_vs_gated-M1024-f0.70-u": [
+        0.4977733157511112,
+        0.7240667693667097
+      ],
+      "family_ed2_vs_lbqcd": {
+        "control-connected": 0.9856909059414992,
+        "control-contaminated": 0.20713822698320755,
+        "control-equal": 0.8533854319016454,
+        "control-heavy-tail": 0.7731672620013681,
+        "control-heteroscedastic": 0.7283067919549769,
+        "control-overlap": 0.494340016261807,
+        "unequal": 0.49053948029716454
+      },
+      "init_ed2_vs_lbqcd": {
+        "concentrated": 0.5575515408488165,
+        "missing": 0.5313111317643576
+      },
+      "cell_win_fraction_vs_lbqcd": 0.9166666666666666,
+      "median_work": {
+        "wall_seconds": 0.8206399499904364,
+        "target_samples": 1228800.0,
+        "generator_example_evals": 8192.0,
+        "sort_work": 12288000.0,
+        "stored_scalars": 2048.0,
+        "w2_quantile_rmse": 0.12726719465273703
+      },
+      "divergences": 0
+    },
+    "pqt-B128": {
+      "ed2_vs_paper-0.5": 0.6512615623198754,
+      "sw1_vs_paper-0.5": 0.7101353521804271,
+      "ed2_ci_vs_paper-0.5": [
+        0.562662556364107,
+        0.7748878523125502
+      ],
+      "sw1_ci_vs_paper-0.5": [
+        0.6279492511053113,
+        0.8085673345323288
+      ],
+      "ed2_vs_qld-v1": 0.7730638789721345,
+      "sw1_vs_qld-v1": 0.831556135554772,
+      "ed2_ci_vs_qld-v1": [
+        0.6649273556405872,
+        0.9289478140954992
+      ],
+      "sw1_ci_vs_qld-v1": [
+        0.7594349756655631,
+        0.9153255522744007
+      ],
+      "ed2_vs_gated-M1024-f0.70-u": 0.8193970038807583,
+      "sw1_vs_gated-M1024-f0.70-u": 0.8398014496757835,
+      "ed2_ci_vs_gated-M1024-f0.70-u": [
+        0.7031407386977673,
+        0.9757405954374888
+      ],
+      "sw1_ci_vs_gated-M1024-f0.70-u": [
+        0.7719275907860391,
+        0.9263222459508926
+      ],
+      "family_ed2_vs_lbqcd": {
+        "control-connected": 0.9856909059414992,
+        "control-contaminated": 0.5942369967210519,
+        "control-equal": 0.8533854319016454,
+        "control-heavy-tail": 0.7731672620013681,
+        "control-heteroscedastic": 1.040730570477754,
+        "control-overlap": 0.494340016261807,
+        "unequal": 0.8788367519790288
+      },
+      "init_ed2_vs_lbqcd": {
+        "concentrated": 0.8487055672948923,
+        "missing": 0.7911005604791491
+      },
+      "cell_win_fraction_vs_lbqcd": 0.7083333333333334,
+      "median_work": {
+        "wall_seconds": 0.20767410000553355,
+        "target_samples": 153600.0,
+        "generator_example_evals": 8192.0,
+        "sort_work": 1075200.0,
+        "stored_scalars": 2048.0,
+        "w2_quantile_rmse": 0.14634080277712308
+      },
+      "divergences": 0
+    }
+  },
+  "development_gate": {
+    "gated-pqt-M1024": {
+      "ed2_vs_lbqcd_at_most_0.90": true,
+      "ed2_vs_paper_at_most_0.75": true,
+      "sw1_improves_vs_lbqcd": true,
+      "all_families_at_most_1.05_vs_lbqcd": true,
+      "both_inits_improve_vs_lbqcd": true,
+      "no_divergences": true,
+      "passed": true
+    },
+    "pqt-B128": {
+      "ed2_vs_lbqcd_at_most_0.90": true,
+      "ed2_vs_paper_at_most_0.75": true,
+      "sw1_improves_vs_lbqcd": true,
+      "all_families_at_most_1.05_vs_lbqcd": true,
+      "both_inits_improve_vs_lbqcd": true,
+      "no_divergences": true,
+      "passed": true
+    }
+  }
+}

@@ -1,0 +1,63 @@
+=== E1: what does FID mean, in interpretable degradations ===
+    E1 real (floor)             FID=   71.73  ED2=   0.1118  2nd= 0.993
+    E1 gaussian_moment_match    FID=  240.59  ED2=   0.1079  2nd= 1.006
+    E1 blur_2x                  FID=  178.33  ED2=   0.1325  2nd= 0.925
+    E1 blur_4x                  FID=  310.11  ED2=   0.2623  2nd= 0.807
+    E1 blur_8x                  FID=  361.27  ED2=   0.7310  2nd= 0.647
+    E1 noise_sigma_0.1          FID=  132.00  ED2=   0.1186  2nd= 1.034
+    E1 noise_sigma_0.3          FID=  234.67  ED2=   0.4591  2nd= 1.357
+    E1 noise_sigma_0.6          FID=  313.96  ED2=   2.9745  2nd= 2.454
+    E1 shuffled_pixels          FID=  403.46  ED2=   0.9602  2nd= 0.993
+    E1 pure_noise (ceiling)     FID=  426.49  ED2=   1.2233  2nd= 1.012
+
+=== E2: do the program's reforms move FID? ===
+    E2 generator_ess0.5_noR11   seed0 FID=  276.56 ED2=  1.8985 2nd= 0.436
+    E2 generator_ess0.5_noR11   seed1 FID=  260.31 ED2=  1.9589 2nd= 0.417
+    E2 generator_ess0.5_noR11   seed2 FID=  247.79 ED2=  1.8976 2nd= 0.406
+    E2 generator_ess0.5_R11     seed0 FID=  257.13 ED2=  0.3054 2nd= 1.076
+    E2 generator_ess0.5_R11     seed1 FID=  230.30 ED2=  0.2480 2nd= 0.929
+    E2 generator_ess0.5_R11     seed2 FID=  244.04 ED2=  0.3169 2nd= 0.878
+    E2 generator_ess0.9_noR11   seed0 FID=  266.83 ED2=  2.2746 2nd= 0.359
+    E2 generator_ess0.9_noR11   seed1 FID=  278.53 ED2=  2.2093 2nd= 0.386
+    E2 generator_ess0.9_noR11   seed2 FID=  257.39 ED2=  2.4568 2nd= 0.339
+    E2 generator_ess0.9_R11     seed0 FID=  262.80 ED2=  0.4526 2nd= 1.014
+    E2 generator_ess0.9_R11     seed1 FID=  255.31 ED2=  0.4224 2nd= 1.078
+    E2 generator_ess0.9_R11     seed2 FID=  258.77 ED2=  0.2388 2nd= 0.975
+    E2 particles_ess0.9         seed0 FID=  388.00 ED2=  0.2242 2nd= 0.979
+    E2 particles_ess0.9         seed1 FID=  388.21 ED2=  0.2049 2nd= 0.993
+    E2 particles_ess0.9         seed2 FID=  388.13 ED2=  0.2284 2nd= 0.999
+
+=== E3: is FID at 512 samples stable? ===
+    E3 n=  512 real                   FID=   71.73
+    E3 n=  512 gaussian_moment_match  FID=  249.34
+    E3 n=  512 blur_4x                FID=  310.11
+    E3 n=  512 pure_noise             FID=  426.77
+    E3 n= 2048 real                   FID=   23.00
+    E3 n= 2048 gaussian_moment_match  FID=  229.22
+    E3 n= 2048 blur_4x                FID=  295.71
+    E3 n= 2048 pure_noise             FID=  416.57
+
+=== PHASE-14A FOLLOW-UP ===
+
+E1  degradation                     FID       ED2     2nd
+    real (floor)                  71.73    0.1118   0.993
+    gaussian_moment_match        240.59    0.1079   1.006
+    blur_2x                      178.33    0.1325   0.925
+    blur_4x                      310.11    0.2623   0.807
+    blur_8x                      361.27    0.7310   0.647
+    noise_sigma_0.1              132.00    0.1186   1.034
+    noise_sigma_0.3              234.67    0.4591   1.357
+    noise_sigma_0.6              313.96    2.9745   2.454
+    shuffled_pixels              403.46    0.9602   0.993
+    pure_noise (ceiling)         426.49    1.2233   1.012
+
+E2  arm                             FID       ED2    tail     2nd
+    generator_ess0.5_noR11       260.31    1.8985  0.0104   0.417
+    generator_ess0.5_R11         244.04    0.3054  0.0767   0.929
+    generator_ess0.9_noR11       266.83    2.2746  0.0129   0.359
+    generator_ess0.9_R11         258.77    0.4224  0.1046   1.014
+    particles_ess0.9             388.13    0.2242  0.6111   0.993
+
+E3  ordering stable between 512 and 2048 samples: True
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase15_probe.json sha256=cc1656fce189ab3f...

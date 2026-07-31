@@ -1,0 +1,306 @@
+{
+  "elapsed_seconds": 1012.8892633914948,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\diagnose_phase1.py",
+      "--only",
+      "D7_capacity_oracle,D8_output_character",
+      "--out",
+      "numerics/encoder_independent_drifting/phase1_capacity.json"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "7f4e338fa89a2fe067153bd7ef4987ec82bbb9784b9da6afd799c9b1ff192356",
+      "numerics/encoder_independent_drifting/datasets.py": "abca3ca1de07507532f18b54e60817e6e5a21932e339b8e2477e8a7c047dc74a",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnostics.py": "42d982e901ec3e882f4c861d639b79c7d789987d4af018c3735f4abe63be57fa",
+      "numerics/encoder_independent_drifting/evaluate.py": "2acba60528096dd1dfec9b0b5700a3dc4a87d835b25d21f42e50d876b9ae00c9",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "eeaaadab5cb56bd1455268c70047c000a7b420aa9243f4706e9bf9c037923460",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a90b1d6a3e5157580d44a25f92ad54d3e7f70b6684ae5cc96967ecc1798c7f80",
+      "numerics/encoder_independent_drifting/models.py": "58dc33dab1dc0d23bd1b008a2aba5e66882f65981776eb1050df93af7c33840a",
+      "numerics/encoder_independent_drifting/objectives.py": "79e0777171cced2f85ffc0198da891c1348625367bf9fd4cee9bac50dc17c9cd",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "1db478de4e143f6b783f055dfcc6c34578f30f30571a324cd1d74424799bf477",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "5c7c7dae6a0d3844b58a2d2affcbf2678d9363426a1e797531deefdd1404f9c0",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "c903b19cf0c0196840c13679db54bcbbecc4744b73ef64244be3077284a3cabb",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "8859f20370ff90bda1ad3658298bc3e3fc2d4c067de3eeec4f42636405eaef8d",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "9d80a8f2aafc67667707f57ba28ce5c795380d7ed3b3e1607dc70cee017b07ee",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "4b48d5daa97b7e4077de3368979fdd08fde2b1375d411ad03835a5acd8aced01",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "efd50041e397c2aa9043293ba9f488b0e6c1e936b1214729a044d835f5b50fd2",
+      "numerics/encoder_independent_drifting/train.py": "b276e0d216fec5c90c3d857b095d398264a167442bf313772e74b0c0732b2187"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "results": {
+    "D7_capacity_oracle": {
+      "rows": [
+        {
+          "coverage": 0.064453125,
+          "ed2": 1.5293985523752909,
+          "geometry_score": 20.12676729765802,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.8890659213066101,
+          "precision": 0.029296875,
+          "steps": 300,
+          "target": "checkerboard",
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "coverage": 1.0,
+          "ed2": 0.8777308656922393,
+          "geometry_score": 13.211184865253212,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.9145055413246155,
+          "precision": 0.392578125,
+          "steps": 1200,
+          "target": "checkerboard",
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 2.9090775204616683,
+          "geometry_score": 29.88682386693051,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.5037736296653748,
+          "precision": 0.0,
+          "steps": 300,
+          "target": "texture_blocks",
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 0.7950352583929856,
+          "geometry_score": 8.945239531666902,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.5663942694664001,
+          "precision": 0.0,
+          "steps": 1200,
+          "target": "texture_blocks",
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 0.7813019374071573,
+          "geometry_score": 14.023932111356489,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.6916250586509705,
+          "precision": 0.0,
+          "steps": 300,
+          "target": "rings_islands",
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "coverage": 0.0,
+          "ed2": 0.3849659118897133,
+          "geometry_score": 11.00322369773755,
+          "objective": "sliced_wasserstein",
+          "output_rms": 0.7038251161575317,
+          "precision": 0.0,
+          "steps": 1200,
+          "target": "rings_islands",
+          "target_rms": 0.7092726826667786
+        }
+      ]
+    },
+    "D8_output_character": {
+      "rows": [
+        {
+          "arm": "A0",
+          "diversity_ratio": 4.823021146463955,
+          "generated_pair_distance": 20.327503204345703,
+          "output_rms": 0.9708232879638672,
+          "rms_ratio": 0.9660299937214057,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A1",
+          "diversity_ratio": 7.365940062202803,
+          "generated_pair_distance": 31.04509925842285,
+          "output_rms": 0.9790399670600891,
+          "rms_ratio": 0.9742061041980937,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A3",
+          "diversity_ratio": 0.5675610346618274,
+          "generated_pair_distance": 2.392089605331421,
+          "output_rms": 0.08087490499019623,
+          "rms_ratio": 0.0804755972879035,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A4",
+          "diversity_ratio": 7.962345242526443,
+          "generated_pair_distance": 33.55875778198242,
+          "output_rms": 0.9496654868125916,
+          "rms_ratio": 0.9449766560370647,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A5",
+          "diversity_ratio": 8.260596481661034,
+          "generated_pair_distance": 34.815792083740234,
+          "output_rms": 0.9691762924194336,
+          "rms_ratio": 0.9643911299702227,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A7",
+          "diversity_ratio": 7.558536593644181,
+          "generated_pair_distance": 31.85683250427246,
+          "output_rms": 0.9959415793418884,
+          "rms_ratio": 0.9910242673065542,
+          "target": "checkerboard",
+          "target_pair_distance": 4.214682579040527,
+          "target_rms": 1.0049618482589722
+        },
+        {
+          "arm": "A0",
+          "diversity_ratio": 0.9549358775238518,
+          "generated_pair_distance": 23.600961685180664,
+          "output_rms": 0.6494776606559753,
+          "rms_ratio": 1.0754628301310056,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A1",
+          "diversity_ratio": 0.9374399243688561,
+          "generated_pair_distance": 23.168554306030273,
+          "output_rms": 0.6038237810134888,
+          "rms_ratio": 0.9998650789209353,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A3",
+          "diversity_ratio": 0.7374567484396253,
+          "generated_pair_distance": 18.226028442382812,
+          "output_rms": 0.5592933893203735,
+          "rms_ratio": 0.9261276989027373,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A4",
+          "diversity_ratio": 0.655050211747909,
+          "generated_pair_distance": 16.189374923706055,
+          "output_rms": 0.4580796957015991,
+          "rms_ratio": 0.7585290700641117,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A5",
+          "diversity_ratio": 0.6429263850435555,
+          "generated_pair_distance": 15.889738082885742,
+          "output_rms": 0.4467393755912781,
+          "rms_ratio": 0.7397507602018151,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A7",
+          "diversity_ratio": 0.6974274992523707,
+          "generated_pair_distance": 17.236717224121094,
+          "output_rms": 0.4782048761844635,
+          "rms_ratio": 0.7918541324490722,
+          "target": "texture_blocks",
+          "target_pair_distance": 24.71470832824707,
+          "target_rms": 0.6039052605628967
+        },
+        {
+          "arm": "A0",
+          "diversity_ratio": 0.8405465909805565,
+          "generated_pair_distance": 7.584014415740967,
+          "output_rms": 0.7174289226531982,
+          "rms_ratio": 1.0114994418729806,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A1",
+          "diversity_ratio": 0.8190209708165253,
+          "generated_pair_distance": 7.389794826507568,
+          "output_rms": 0.713593065738678,
+          "rms_ratio": 1.0060912864367697,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A3",
+          "diversity_ratio": 0.83563136263008,
+          "generated_pair_distance": 7.539665699005127,
+          "output_rms": 0.7232018113136292,
+          "rms_ratio": 1.0196386086582085,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A4",
+          "diversity_ratio": 0.7997376600054645,
+          "generated_pair_distance": 7.21580696105957,
+          "output_rms": 0.7055764198303223,
+          "rms_ratio": 0.9947886575547238,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A5",
+          "diversity_ratio": 0.780667857167394,
+          "generated_pair_distance": 7.043745517730713,
+          "output_rms": 0.7055110335350037,
+          "rms_ratio": 0.9946964697447087,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        },
+        {
+          "arm": "A7",
+          "diversity_ratio": 0.7823004532816545,
+          "generated_pair_distance": 7.058475971221924,
+          "output_rms": 0.7122909426689148,
+          "rms_ratio": 1.0042554296477173,
+          "target": "rings_islands",
+          "target_pair_distance": 9.022717475891113,
+          "target_rms": 0.7092726826667786
+        }
+      ]
+    }
+  },
+  "status": "phase1-post-hoc-diagnosis-feeds-no-gate"
+}

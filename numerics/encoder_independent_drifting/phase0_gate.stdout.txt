@@ -1,0 +1,145 @@
+
+=== spectral_anchor (18 tests) ===
+  [PASS] 9. the audit bank is not a function of the training seed
+  [PASS] 11. R6: the schedule starts coarse, ends uniform, never zeroes a band
+  [PASS] 5. a fine-scale perturbation is detected only by the matching band
+  [PASS] 8. a bank and its refresh are reproducible from the recorded seed
+  [PASS] 4. shifted and variance-changed Gaussians are detected
+  [PASS] 12. R6: schedule "fixed" and progress None are exactly uniform
+  [PASS] 6. averaging refreshed banks approaches a dense-bank reference
+  [PASS] 3b. the analytic gradient matches autograd exactly
+  [PASS] 3. the analytic gradient matches central finite differences
+  [PASS] 1. the biased loss is nonnegative on random inputs
+  [PASS] 7. structured direction blocks stay unit-norm and orthogonal
+  [PASS] 10. band calibration follows the target's projected spread
+  [PASS] 15. R6: early training weights coarse frequencies far above fine ones
+  [PASS] 13. R6: per-frequency weights are mean-one so lambda_A keeps meaning
+  [PASS] 14. R6: the analytic gradient tracks the scheduled loss
+  [PASS] 2b. the unbiased U-statistic can be negative, so it never trains
+  [PASS] 2c. the unbiased estimator averages to ~0 for p == q
+  [PASS] 2. the biased loss is exactly zero when the arrays are identical
+
+=== fixed_features (11 tests) ===
+  [PASS] 3. features are deterministic and seed-reproducible
+  [PASS] 10. oriented filters have zero mean and unit norm
+  [PASS] 4. every branch has a nonzero gradient w.r.t. the input
+  [PASS] 7. localized features distinguish permuted patch layouts
+  [PASS] 2. no family carries a trainable parameter
+  [PASS] 8. NEGATIVE CONTROL: the Haar basis changes no Euclidean distance
+  [PASS] 9. the pyramid halves resolution per level and stays complete
+  [PASS] 11. random convolutional features are a function of the seed alone
+  [PASS] 1. output shape follows the declared scale and location grid
+  [PASS] 5. the smooth modulus has a finite gradient at a zero response
+  [PASS] 6. modulus features are deformation-stable yet position-sensitive
+
+=== kernel_gradients (15 tests) ===
+  [PASS] 1. the kernel-gradient field matches central finite differences
+  [PASS] 4. permuting the positive/negative batches does not change the field
+  [PASS] 9. both declared combination rules give a PSD Gram matrix
+  [PASS] 3b. a fully collapsed kernel reports collapse, never a huge ESS
+  [PASS] 11. R3b: the data-span projection is idempotent and self-adjoint
+  [PASS] 3. denominators are floored explicitly and the field stays finite
+  [PASS] 2. a raw Gaussian kernel gives mean-shift / tau^2 exactly
+  [PASS] 7. identical empirical laws give a numerically zero field
+  [PASS] 10. negative weights and non-normalized weights are refused
+  [PASS] 8. a structured kernel makes the two modes genuinely diverge
+  [PASS] 5. permuting the probes permutes the field the same way
+  [PASS] 14. R3b: projection moves the field toward the displacement rule
+  [PASS] 12. R3b: vectors already in span{Y_j - x} are left unchanged
+  [PASS] 13. R3b: a direction orthogonal to the data span is removed
+  [PASS] 6. swapping the positive and negative inputs reverses the field
+
+=== positive_kernel_mixture (16 tests) ===
+  [PASS] 6. an adaptive controller moves weight toward the useful branch
+  [PASS] 5. adaptation off leaves the weights exactly unchanged
+  [PASS] 4. duplicate branch names cannot silently double a weight
+  [PASS] 2. the declared floor survives an extreme utility
+  [PASS] 8. its gradient is exactly -2 eta V / n w.r.t. the output
+  [PASS] 7. the stop-gradient regression is >= 0 and vanishes with the field
+  [PASS] 12. opposed branches are reported as a negative cosine
+  [PASS] 3. a floor that cannot fit on the simplex is refused
+  [PASS] 13. any simplex weighting leaves the block kernel PSD
+  [PASS] 1. the projection always returns a simplex point
+  [PASS] 11. the regularizer is zero inside the declared range
+  [PASS] 8c. R2: the reported loss moves with the field and vanishes with it
+  [PASS] 8d. R2: along an actual run the reported loss varies and decreases
+  [PASS] 9. zero total loss forces zero anchor loss when lambda_A > 0
+  [PASS] 8b. R2: the RMS-normalized loss is the constant eta^2 -- the defect
+  [PASS] 10. the objective refuses a possibly-negative anchor estimator
+
+=== crossfit_controller (7 tests) ===
+  [PASS] 6. the controller history replays exactly from the recorded seed
+  [PASS] 4. over a whole run, no controller index reaches the field batch
+  [PASS] 5. an adaptive arm with adaptation off equals the fixed-weight arm
+  [PASS] 3. asking for more disjoint examples than exist raises
+  [PASS] 7. the cost ledger counts controller and audit examples separately
+  [PASS] 2. an overlapping role assignment raises rather than proceeding
+  [PASS] 1. the three role sets never share an example
+
+=== reproducibility (10 tests) ===
+  [PASS] 10. the A0-A8 registry matches the plan's table
+  [PASS] 7. the audit bank replays and differs from every training bank
+  [PASS] 2. the configuration digest ignores ordering but not content
+  [PASS] 9. the seed actually drives the run
+  [PASS] 6. fixed families rebuild identically, including random-conv weights
+  [PASS] 5. generator init and sampling replay; inference is a single pass
+  [PASS] 1. derived seeds are stable, label-sensitive and non-colliding
+  [PASS] 4. the Phase-1 target list matches the plan's probe list
+  [PASS] 3. every target sampler replays from its generator seed
+  [PASS] 8. a full arm run is bit-identical from the same seed
+
+=== diagnosis_reforms (9 tests) ===
+  [PASS] 8. R1: a target is admissible only if the skyline nears the null
+  [PASS] 9. R1: inadmissible targets are dropped, not silently kept
+  [PASS] 5. R4: per-component verdicts are reported, not just the aggregate
+  [PASS] 4. R4: it keeps ranking clouds that are all fully off support
+  [PASS] 3. R4: the graded off-manifold statistic is calibrated at 1.0
+  [PASS] 6. R1: the skyline shares the arms' generator and has no kernel
+  [PASS] 7. R1: the skyline objective is a genuine discrepancy
+  [PASS] 1. R4: scored components are exactly the declared v2 set
+  [PASS] 2. R4: a near-zero null is excluded, not turned into a huge ratio
+
+--- G0.2 anchor collision detection ---
+--- G0.2b geometry blindness (context) ---
+--- G0.3 kernel health ---
+--- G0.4 direction modes ---
+--- G0.5 zero-set reachability (reform R5) ---
+
+=== PHASE 0 EXIT GATE ===
+  [PASS] G0.1_unit_tests
+  [PASS] G0.2_anchor_collisions
+  [SKIP] G0.2b_geometry_blindness
+  [PASS] G0.3_kernel_health
+  [PASS] G0.4_direction_modes
+  [PASS] G0.5_zero_set
+
+  raw pixel: ESS fraction 0.9325, drift SNR 4.777
+    healthier: pyramid::pyramid_global          ESS 0.8610 SNR 9.670
+    healthier: pyramid::pyramid_l0              ESS 0.6221 SNR 9.152
+    healthier: pyramid::pyramid_l1              ESS 0.5325 SNR 8.763
+    healthier: pyramid::pyramid_l2              ESS 0.5611 SNR 10.411
+    healthier: randconv::pyramid_global         ESS 0.8610 SNR 9.670
+    healthier: randconv::randconv               ESS 0.7343 SNR 36.028
+    healthier: wavelet::pyramid_global          ESS 0.8610 SNR 9.670
+    healthier: wavelet::wavelet_s0              ESS 0.4885 SNR 29.143
+
+  anchor collisions detected: 6/6  missed=[]
+  geometry raw        detected 6/6  blind to []
+  geometry wavelet    detected 5/6  blind to ['color_swap']
+  geometry randconv   detected 5/6  blind to ['rare_mode_drop']
+
+  direction cosine: gaussian control 1.0000 (must be 1), raw smooth-Laplace 0.8462, wavelet -0.0024, randconv 0.1972
+
+  zero-set residual / (q=p floor), threshold 2.00:
+    randconv::kernel_gradient                        1.14 (descended  76.7%) reaches
+    randconv::projected_kernel_gradient              1.16 (descended  80.0%) reaches
+    randconv::standard                               0.85 (descended  92.2%) reaches
+    raw::kernel_gradient                             0.84 (descended  45.4%) reaches
+    raw::projected_kernel_gradient                   0.86 (descended  48.0%) reaches
+    raw::standard                                    1.02 (descended  87.7%) reaches
+    wavelet::kernel_gradient                         2.39 (descended  77.5%) PLATEAUS
+    wavelet::projected_kernel_gradient               2.21 (descended  77.7%) PLATEAUS
+    wavelet::standard                                0.68 (descended  86.4%) reaches
+
+  overall: PASS
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase0_gate.json sha256=bb45a03a32693165...

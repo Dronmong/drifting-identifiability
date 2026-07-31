@@ -1,0 +1,15 @@
+--- G1_anchor_confound ---
+      plain        score=  8.163 ed2= 2.2915 cover=0.951 eff_dim=0.251  16.4s
+      anchor       score=  7.971 ed2= 2.2064 cover=0.953 eff_dim=0.262  18.6s
+      r11          score=  2.259 ed2= 0.2795 cover=0.957 eff_dim=1.001  17.0s
+      anchor_r11   score=  2.165 ed2= 0.2634 cover=0.947 eff_dim=0.998  20.1s
+      plain        score=  7.578 ed2= 2.7003 cover=0.941 eff_dim=0.254  18.0s
+      anchor       score=  7.270 ed2= 2.5291 cover=0.943 eff_dim=0.258  20.3s
+      r11          score=  1.999 ed2= 0.2234 cover=0.934 eff_dim=0.878  18.3s
+      anchor_r11   score=  1.880 ed2= 0.2119 cover=0.930 eff_dim=0.837  20.6s
+      plain        score=  6.973 ed2= 1.7167 cover=0.951 eff_dim=0.301  18.1s
+      anchor       score=  6.714 ed2= 1.5840 cover=0.953 eff_dim=0.319  20.7s
+      r11          score=  1.523 ed2= 0.1199 cover=0.926 eff_dim=1.117  18.8s
+      anchor_r11   score=  1.505 ed2= 0.1177 cover=0.932 eff_dim=1.121  20.6s
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase4_design.json sha256=dc8fbe7c9b3c6841...

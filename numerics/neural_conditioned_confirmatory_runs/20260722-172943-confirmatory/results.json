@@ -1,0 +1,166 @@
+{
+  "cell_exact_vs_paper_ed2": {
+    "d16-balanced-gmm": 0.889896564517698,
+    "d16-correlated-t": 0.3283523486074007,
+    "d16-nonlinear": 0.2736456462545966,
+    "d16-rare-gmm": 0.4034934849791274,
+    "d2-balanced-gmm": 0.24262253046989427,
+    "d2-correlated-t": 0.22294176463734666,
+    "d2-nonlinear": 0.12711918349634982,
+    "d2-rare-gmm": 0.28491036455340407,
+    "d4-balanced-gmm": 0.46656199054156067,
+    "d4-correlated-t": 0.1744456974295768,
+    "d4-nonlinear": 0.19612208853531396,
+    "d4-rare-gmm": 0.38293035486631183,
+    "d8-balanced-gmm": 0.6821530084987312,
+    "d8-correlated-t": 0.49275973623214253,
+    "d8-nonlinear": 0.2221913511233186,
+    "d8-rare-gmm": 0.3963954219020532
+  },
+  "cell_kll_vs_exact_ed2": {
+    "d16-balanced-gmm": 1.0003541373882767,
+    "d16-correlated-t": 1.005975078751364,
+    "d16-nonlinear": 1.014043009975323,
+    "d16-rare-gmm": 1.0048407591705615,
+    "d2-balanced-gmm": 0.986972815444654,
+    "d2-correlated-t": 1.1376754149984356,
+    "d2-nonlinear": 0.9195049026549763,
+    "d2-rare-gmm": 0.8198156898960484,
+    "d4-balanced-gmm": 1.0028337602936315,
+    "d4-correlated-t": 1.0072951462112167,
+    "d4-nonlinear": 0.7874166107110118,
+    "d4-rare-gmm": 0.961599606434753,
+    "d8-balanced-gmm": 1.0006333724337397,
+    "d8-correlated-t": 0.9930716232831299,
+    "d8-nonlinear": 0.9415815692783029,
+    "d8-rare-gmm": 0.9845555725396485
+  },
+  "comparisons": {
+    "cta-exact-hybrid_vs_envelope_ed2": {
+      "ci_high": 0.44594974202087223,
+      "ci_low": 0.3703047733768804,
+      "ratio": 0.406868839381384
+    },
+    "cta-exact-hybrid_vs_envelope_heldout_sw1": {
+      "ci_high": 0.671088267718708,
+      "ci_low": 0.6136842333721224,
+      "ratio": 0.6420692862131282
+    },
+    "cta-exact-hybrid_vs_kll-small-rsr_ed2": {
+      "ci_high": 0.3583675757757772,
+      "ci_low": 0.2929345970675668,
+      "ratio": 0.3246909831960084
+    },
+    "cta-exact-hybrid_vs_kll-small-rsr_heldout_sw1": {
+      "ci_high": 0.5998389191104659,
+      "ci_low": 0.5443066008337291,
+      "ratio": 0.5722486578680089
+    },
+    "cta-exact-hybrid_vs_minibatch-sw_ed2": {
+      "ci_high": 0.33379721698680587,
+      "ci_low": 0.2741661567310422,
+      "ratio": 0.30374187347538223
+    },
+    "cta-exact-hybrid_vs_minibatch-sw_heldout_sw1": {
+      "ci_high": 0.5818971960569139,
+      "ci_low": 0.5283333866653496,
+      "ratio": 0.5556843088610177
+    },
+    "cta-exact-hybrid_vs_paper-neural_ed2": {
+      "ci_high": 0.3492117229185695,
+      "ci_low": 0.2915734170044695,
+      "ratio": 0.3188937144265294
+    },
+    "cta-exact-hybrid_vs_paper-neural_heldout_sw1": {
+      "ci_high": 0.5772270897114526,
+      "ci_low": 0.5277466504230376,
+      "ratio": 0.5517328347852186
+    },
+    "cta-kll-hybrid_vs_exact_ed2": {
+      "ci_high": 0.9942885623026575,
+      "ci_low": 0.9443226116906461,
+      "ratio": 0.9697318736522984
+    },
+    "cta-kll-hybrid_vs_exact_heldout_sw1": {
+      "ci_high": 1.0033787003975811,
+      "ci_low": 0.9810137110035807,
+      "ratio": 0.9921657579393952
+    },
+    "cta-kll-hybrid_vs_kll-small-rsr_ed2": {
+      "ci_high": 0.3472506805448994,
+      "ci_low": 0.28431613162637176,
+      "ratio": 0.31486319549267217
+    },
+    "cta-kll-hybrid_vs_kll-small-rsr_heldout_sw1": {
+      "ci_high": 0.5964114652984364,
+      "ci_low": 0.539633509624624,
+      "ratio": 0.5677655233634148
+    },
+    "cta-kll-hybrid_vs_minibatch-sw_ed2": {
+      "ci_high": 0.3231380626773996,
+      "ci_low": 0.26527478170896307,
+      "ratio": 0.2945481760719417
+    },
+    "cta-kll-hybrid_vs_minibatch-sw_heldout_sw1": {
+      "ci_high": 0.5775499538803343,
+      "ci_low": 0.5240344935432454,
+      "ratio": 0.5513309434761207
+    },
+    "cta-kll-hybrid_vs_paper-neural_ed2": {
+      "ci_high": 0.33935441438844677,
+      "ci_low": 0.282296388740755,
+      "ratio": 0.3092413991867793
+    },
+    "cta-kll-hybrid_vs_paper-neural_heldout_sw1": {
+      "ci_high": 0.5729559333806175,
+      "ci_low": 0.5237256609384812,
+      "ratio": 0.5474104262047276
+    }
+  },
+  "divergence": {
+    "cta-exact-hybrid": 0,
+    "cta-kll-hybrid": 0,
+    "kll-small-rsr": 0,
+    "minibatch-sw": 0,
+    "paper-neural": 0
+  },
+  "exact_gates": {
+    "cell_robustness": true,
+    "envelope_both_wins": true,
+    "envelope_ed2": true,
+    "envelope_sw1": true,
+    "paper_both_wins": true,
+    "paper_ed2": true,
+    "paper_sw1": true,
+    "rare_modes": true,
+    "zero_divergence": true
+  },
+  "exact_pass": true,
+  "kll_gates": {
+    "cell_robustness": true,
+    "paper_both_wins": true,
+    "retain_ed2": true,
+    "retain_sw1": true,
+    "zero_divergence": true
+  },
+  "kll_pass": true,
+  "rare": {
+    "cta-exact-hybrid": {
+      "median_mode_coverage": 1.0,
+      "median_rare_mass_error": 0.01001953125
+    },
+    "cta-kll-hybrid": {
+      "median_mode_coverage": 1.0,
+      "median_rare_mass_error": 0.009985351562499994
+    },
+    "paper-neural": {
+      "median_mode_coverage": 0.5,
+      "median_rare_mass_error": 0.025185546875
+    }
+  },
+  "wins": {
+    "exact_both_vs_envelope": 61,
+    "exact_both_vs_paper": 62,
+    "kll_both_vs_paper": 62
+  }
+}

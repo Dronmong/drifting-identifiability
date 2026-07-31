@@ -1,0 +1,51 @@
+=== Investigating Phase 12 ===
+    B0_self_fresh          seed0 tail= 0.0030 2nd= 0.482 ed2=  0.9908 (train  0.8886) distinct=   nan
+    B1_self_FIXED          seed0 tail= 0.0061 2nd= 0.332 ed2=  1.1788 (train  1.3080) distinct=   nan
+    B2_index_FIXED         seed0 tail= 0.2210 2nd= 0.875 ed2=  0.1475 (train  0.1970) distinct= 256.0
+    B3_index_fresh         seed0 tail= 0.1699 2nd= 0.002 ed2=  6.6794 (train  6.6921) distinct= 256.0
+    B4_hungarian_fresh     seed0 tail= 0.0009 2nd= 0.550 ed2=  0.8238 (train  0.7591) distinct= 256.0
+    B5_hungarian_FIXED     seed0 tail= 0.3514 2nd= 0.785 ed2=  0.2263 (train  0.2287) distinct= 256.0
+    B6_nearest_fresh       seed0 tail= 0.4663 2nd= 0.000 ed2= 15.8699 (train 15.8718) distinct=   1.0
+    B7_sinkhorn_fresh      seed0 tail= 0.0007 2nd= 0.315 ed2=  1.4966 (train  1.4835) distinct=   nan
+    (seed0 particle cloud: tail=0.4059 ed2=0.0752)
+    B0_self_fresh          seed1 tail= 0.0051 2nd= 0.242 ed2=  1.7746 (train  1.7331) distinct=   nan
+    B1_self_FIXED          seed1 tail= 0.0059 2nd= 0.511 ed2=  0.7385 (train  0.7890) distinct=   nan
+    B2_index_FIXED         seed1 tail= 0.1973 2nd= 0.824 ed2=  0.1640 (train  0.2248) distinct= 256.0
+    B3_index_fresh         seed1 tail= 0.1573 2nd= 0.002 ed2=  6.6545 (train  6.6541) distinct= 256.0
+    B4_hungarian_fresh     seed1 tail= 0.0010 2nd= 0.548 ed2=  0.8719 (train  0.8379) distinct= 256.0
+    B5_hungarian_FIXED     seed1 tail= 0.2914 2nd= 0.827 ed2=  0.8225 (train  0.7448) distinct= 256.0
+    B6_nearest_fresh       seed1 tail= 0.4583 2nd= 0.000 ed2= 16.1551 (train 16.1592) distinct=   1.0
+    B7_sinkhorn_fresh      seed1 tail= 0.0008 2nd= 0.293 ed2=  1.6499 (train  1.5769) distinct=   nan
+    (seed1 particle cloud: tail=0.3983 ed2=0.0737)
+    B0_self_fresh          seed2 tail= 0.0025 2nd= 0.436 ed2=  0.9257 (train  0.9584) distinct=   nan
+    B1_self_FIXED          seed2 tail= 0.0096 2nd= 0.347 ed2=  1.0079 (train  1.0480) distinct=   nan
+    B2_index_FIXED         seed2 tail= 0.2288 2nd= 0.869 ed2=  0.1770 (train  0.1796) distinct= 256.0
+    B3_index_fresh         seed2 tail= 0.1547 2nd= 0.002 ed2=  6.7610 (train  6.7682) distinct= 256.0
+    B4_hungarian_fresh     seed2 tail= 0.0006 2nd= 0.626 ed2=  0.7801 (train  0.8134) distinct= 256.0
+    B5_hungarian_FIXED     seed2 tail= 0.3430 2nd= 0.946 ed2=  0.3014 (train  0.3438) distinct= 256.0
+    B6_nearest_fresh       seed2 tail= 0.4794 2nd= 0.000 ed2= 16.2369 (train 16.2419) distinct=   1.0
+    B7_sinkhorn_fresh      seed2 tail= 0.0007 2nd= 0.425 ed2=  1.0963 (train  1.0603) distinct=   nan
+    (seed2 particle cloud: tail=0.4061 ed2=0.0997)
+
+=== PHASE-12 INVESTIGATION ===
+arm                       latents     tail     2nd  ed2 fresh  ed2 train    gap  distinct
+B0_self_fresh               fresh   0.0030   0.436     0.9908     0.9584   1.02       nan
+B1_self_FIXED               fixed   0.0061   0.347     1.0079     1.0480   0.94       nan
+B2_index_FIXED              fixed   0.2210   0.869     0.1640     0.1970   0.75     256.0
+B3_index_fresh              fresh   0.1573   0.002     6.6794     6.6921   1.00     256.0
+B4_hungarian_fresh          fresh   0.0009   0.550     0.8238     0.8134   1.04     256.0
+B5_hungarian_FIXED          fixed   0.3430   0.827     0.3014     0.3438   0.99     256.0
+B6_nearest_fresh            fresh   0.4663   0.000    16.1551    16.1592   1.00       1.0
+B7_sinkhorn_fresh           fresh   0.0007   0.315     1.4966     1.4835   1.03       nan
+
+  the particle cloud itself: tail=0.4059  ed2=0.0752
+
+  assignment diagnostics (target's own shape):
+    B2_index_FIXED           target tail= 0.3687  target 2nd= 1.004
+    B3_index_fresh           target tail= 0.3687  target 2nd= 1.004
+    B4_hungarian_fresh       target tail= 0.3267  target 2nd= 1.105
+    B5_hungarian_FIXED       target tail= 0.3669  target 2nd= 0.976
+    B6_nearest_fresh         target tail= 0.0000  target 2nd= 0.000
+    B7_sinkhorn_fresh        target tail= 0.0037  target 2nd= 0.396
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase13_probe.json sha256=aef551923c7d3bc2...

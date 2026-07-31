@@ -1,0 +1,530 @@
+{
+  "config": {
+    "data_root": null,
+    "device": "cuda",
+    "out": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f1_checks.json",
+    "replay_steps": 20,
+    "resolution": 32,
+    "samples": 2048,
+    "smoke_steps": 4,
+    "threads": 4
+  },
+  "device": {
+    "allow_tf32": false,
+    "capability": "sm_89",
+    "cuda_version": "12.6",
+    "device": "cuda",
+    "gpu_memory_gib": 6.0,
+    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "torch_version": "2.7.1+cu126"
+  },
+  "elapsed_seconds": 111.65579557418823,
+  "protocol": "numerics/EncoderIndependentF1Protocol.md",
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f1_checks.py"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+      "numerics/encoder_independent_drifting/audit_phase2.py": "13b5878ebd1f1380f4e7f1a2496ef7714c91c0689751ec07624308212c1d2ccd",
+      "numerics/encoder_independent_drifting/autoencoder.py": "d6f50ad45f11cf27296a308c235ed74b736c2ca91ad475f2ff4de95ef8078740",
+      "numerics/encoder_independent_drifting/check_device.py": "b6636ec5252c32d0109d1b560a09681647ad230dc5fcec65818c747e75347c48",
+      "numerics/encoder_independent_drifting/cifar.py": "304fc962b1c1e0a7744ada37f9f18f8831be136c420fd7e2908dce4dbe1034fa",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "50b6f662d1a5dbd8733531cd5b0f4b887197ea2a47541869287036753266efc7",
+      "numerics/encoder_independent_drifting/datasets.py": "cdf90b6fbfc4470f9cdb2f04c01eec5da33f5ba44edb7a30f6691042c9410cc5",
+      "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnose_phase10.py": "05e36553735b28ba848e88f3e2b0e580ec9c8643a5eb3d39c9149c842d56e4bf",
+      "numerics/encoder_independent_drifting/diagnose_phase11.py": "0d78ce7a9bc72afdc4d0254f6cc2a9e7d9797e351d0619039059df3409446d4d",
+      "numerics/encoder_independent_drifting/diagnose_phase12.py": "b88efcd3419690bb591f8b3165cb1409219d6e15ca5de25cc03c6bc9806a8ae7",
+      "numerics/encoder_independent_drifting/diagnose_phase13.py": "dfea158326500782ea9c257d549e2c687d8f6562cde60454556b03e56ddf5b4e",
+      "numerics/encoder_independent_drifting/diagnose_phase15.py": "b087632c491d2ee269f349dacc8a58025b411d71705abc5365406741b3d8a510",
+      "numerics/encoder_independent_drifting/diagnose_phase18.py": "8fb7a1a65bb2fc6227cf2ac38a7aae028aa736861dce281b7b61a427143d758f",
+      "numerics/encoder_independent_drifting/diagnose_phase2.py": "e188bb20859d1bc74c4472fab57cce7dbac5f6d94dc30909a9c8b0e940045c4e",
+      "numerics/encoder_independent_drifting/diagnose_phase20.py": "9a2c004451b57e97e81621506b3063df10ff69316042f064673e7d73c02dcd52",
+      "numerics/encoder_independent_drifting/diagnose_phase21.py": "3cd731f2e1e931db3983bc963aea3a932214b9b7382bffa285748b886f861fec",
+      "numerics/encoder_independent_drifting/diagnose_phase23.py": "b350450fd4c8b15ed4a68b80ec1bdecbca1ce97ff985a24a914ab267fc98983a",
+      "numerics/encoder_independent_drifting/diagnose_phase24.py": "c5b3ddfec88da8024f6dade2b6c690074ab0ecaa365e0bd0b06d3254ff9319ca",
+      "numerics/encoder_independent_drifting/diagnose_phase25.py": "8e610b195c5314d704ad202ca135e4cba9665c4ebe224afe852545356f90820a",
+      "numerics/encoder_independent_drifting/diagnose_phase26.py": "eebeeb5cdd21e6bec5c5bb9ec110b67202172fd710134879d93d0d2ae5871a43",
+      "numerics/encoder_independent_drifting/diagnose_phase27.py": "2814df2ae1301646e95c17a590cb1db8bc3dd73207b9bb5f4a0bf5755152f638",
+      "numerics/encoder_independent_drifting/diagnose_phase28.py": "7b1e6cdeba34e5cbed98b30cc3059d982aa275adb0f7294227ec89d692833e33",
+      "numerics/encoder_independent_drifting/diagnose_phase4.py": "35d8986640a8dab8622cf56532671a6c4f30be6c124578a207ecff8370619729",
+      "numerics/encoder_independent_drifting/diagnose_phase5.py": "e2cd8696f5786680bc95c6f72db4eca679f5af3af5f3267a5baf77f77d530a8e",
+      "numerics/encoder_independent_drifting/diagnose_phase6.py": "ba8a829219f5fed6fda47f7cd7bdb0e8e4d7fe5b6dd9015460d52a1fae4edecd",
+      "numerics/encoder_independent_drifting/diagnose_phase7.py": "850a1f0017e86427a8f9e524c4272f8097d7c67273c2c20a3f4f770546c28363",
+      "numerics/encoder_independent_drifting/diagnose_phase8.py": "34bb406755809d2053df84841631ac1b6809c15c25e69179b4efbf48e7d0307e",
+      "numerics/encoder_independent_drifting/diagnose_phase9.py": "7c7cec44532a32304c10eeb1f41c94aa103ccbc07e8d31014d730c71a455b590",
+      "numerics/encoder_independent_drifting/diagnose_secondmoment.py": "a6867aa21f424d41fcc6f40f266067c5e882e8bb800f77823c231d271d386883",
+      "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+      "numerics/encoder_independent_drifting/encoders.py": "86dbbcc8cd35319bf282b84a206a20a26f8ecc05503942504cfc8b4c9ce178a6",
+      "numerics/encoder_independent_drifting/evaluate.py": "77dec7af829bc878c845f72e6fafa55d6992bacb224774a5a886df8a4b449343",
+      "numerics/encoder_independent_drifting/f1.py": "3d7f3f5ba3ebdb37f19be5b3a6760a7e21ad9af306bc9210f25b18f35d0324da",
+      "numerics/encoder_independent_drifting/f1_calibration.py": "c757f834a95077bf6a0ac28c7975f9c38342f8d4ccf78441e8300d6c554a0583",
+      "numerics/encoder_independent_drifting/f1_checks.py": "7eede1cbd65314c85f2e6aba23fbaf8c135f8cb2ac7c9070e9ffcb579269040c",
+      "numerics/encoder_independent_drifting/f1_vetoes.py": "1d355aaa8fdcdb2882ab03700ba16380638f98514761050621d046627de52631",
+      "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+      "numerics/encoder_independent_drifting/fixed_features.py": "7a0010799e18e79f926bb55e679b4e221dcab81e29a73574d6222947304780b3",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "305d214b3a9717a108638131b7c5ea709e7c85e205658c1cf0e6ab3d91f6c5e1",
+      "numerics/encoder_independent_drifting/kernels.py": "fbd8c4438e0b70cf2b207d83c895bc2630a588fd327ff7b6490b60bc6fcc8d7c",
+      "numerics/encoder_independent_drifting/latent_drifting.py": "71aa0be1b0c6b22af999128c008f6eeaa347d3bec124df326fd26c55079f20cd",
+      "numerics/encoder_independent_drifting/metrics.py": "a24ae90af52ef1d7856285010dcfae228e7804ec20d66f87611173a2d21d7003",
+      "numerics/encoder_independent_drifting/models.py": "8b4d2eae199d01372007931216d3da519858d3f29b513189f96c2e8a07d0ffb4",
+      "numerics/encoder_independent_drifting/objectives.py": "366fe4d5e8057c6b7dc20bdafa646f4a4585bd386cdfb8e17328f4a5075e88c2",
+      "numerics/encoder_independent_drifting/oracle.py": "d298b4c6e3ac275300ac3f218079be485831eb25efa871335f1f8c5d95959580",
+      "numerics/encoder_independent_drifting/preflight_phase30.py": "1dda4e386835962183c2a0c5f04914fba8911b80a9806fce6fe5efa247d71695",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "771c1076707c97634c2214ffa75b60817c42c55d6468952079ddfa71efb22933",
+      "numerics/encoder_independent_drifting/run_attractor_study.py": "bf8d85df7bf0a9df83c0ab4048c4484cda93f245e71b35706832cfbb7b06dd62",
+      "numerics/encoder_independent_drifting/run_f1.py": "a4a35bcb9a1465a7189ae91e959dcd0cc4cd17790e4b575a537bc79c85c6b54f",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "f1067a1cb1386e1d695e4124c280587e48882e1debb97914f09d4c09e87b330f",
+      "numerics/encoder_independent_drifting/run_phase10.py": "40e780976a649cf80dd0ff6259ffacdfcdb44968173d0e5fe3c5e664fcb42f8a",
+      "numerics/encoder_independent_drifting/run_phase11.py": "54bbcd1955a52e80ef6ce67e714c8664c81ebaefe06bc3af4bf3f362d27dccae",
+      "numerics/encoder_independent_drifting/run_phase12.py": "2268e66cce7f396149510f7084abadcbdc141912655ea820f8d25d2d94408288",
+      "numerics/encoder_independent_drifting/run_phase13.py": "4d15347411d5264acba90dce21341d51422e79b9afd11630a28a4dc0c0f3b4e3",
+      "numerics/encoder_independent_drifting/run_phase14a.py": "736062cb47fa4a04492a3ced9267ec67a0cf9a0abe7720bb2b6f2ae3b6c47fac",
+      "numerics/encoder_independent_drifting/run_phase16.py": "63dd2e6a0ad868317e8f47745121138d38e960efc46cc81d14f64efb81644051",
+      "numerics/encoder_independent_drifting/run_phase17.py": "b4375bf278048662ee6189f0283641f210aee283ddfc7938a5b629844c30a860",
+      "numerics/encoder_independent_drifting/run_phase18b.py": "64cc8939d63e50e37bf05e23fb2beb52917922cf6194a05901d56be1f69ff212",
+      "numerics/encoder_independent_drifting/run_phase19.py": "72b48b7e62588b0081e5797ea28d5cef7cd7dd0d14f606411bafd3cbdc1f8000",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/run_phase22.py": "da486e11ca8b55dc9f68be5051ba0aed68680f05fe0ef11953b358f43d5550c5",
+      "numerics/encoder_independent_drifting/run_phase29.py": "debf93079e576a88daf3e32d6ef03a45f825433b7898cc30bdb5a704a9fa3476",
+      "numerics/encoder_independent_drifting/run_phase2_entry.py": "eabd3f5301071af3ce550429489003b9b6a7a1cf509e57791859f25d49dcf6b1",
+      "numerics/encoder_independent_drifting/run_phase2_screen.py": "0fe90c2b7be04ec2aa4d45658a0e4cba84ab74df19dd0ea1a97050c4aa22f8c2",
+      "numerics/encoder_independent_drifting/run_phase30.py": "7a31ef060ab559cbab0a80ac6fe968895bfdabe4a1a49530758f2d42fcc6203e",
+      "numerics/encoder_independent_drifting/run_phase3_confirmation.py": "0b09022d93926fbb3296476e2ebe247590ac253d818b676d4fada7dace5bbfbd",
+      "numerics/encoder_independent_drifting/run_phase4.py": "a0d88766510091db09faaa533867d3a0df75cd0e1b2aa1d5731dae97381d9554",
+      "numerics/encoder_independent_drifting/run_phase5.py": "5b7a78ee145c90656affb3ce1f7520bc2dcd1cc1f58a9e3f9b150b36fe8c8902",
+      "numerics/encoder_independent_drifting/run_phase6.py": "eb253c5cbbecc452292f99f7e8ad6ab96a50230721f1b766bc677f7f17b1802c",
+      "numerics/encoder_independent_drifting/run_phase7.py": "65e50428b17e44eddcfc95fd92a87480e38f413126cb630b5048de75ed5d6661",
+      "numerics/encoder_independent_drifting/run_phase8.py": "9ebf8c7ef864cc2c7634298a8be4ee26c5136c5126c813875cdf31814e4c0f76",
+      "numerics/encoder_independent_drifting/run_phase9.py": "a6326b793870845675753df760c39eed7509961290b717cd58110fb4d633ae1a",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "4310106b3510d9fd9072d5637f920a913bc3576e25d14c518c6aaec876722555",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "72d7408a7e2f4860ea56f060caee9f6efdd91b5cd43995fca016a5777be892fe",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "dc1f2b9c2be17e56f48d9844973aaf437f56ce8ae658dfafc93f20f8453eebe0",
+      "numerics/encoder_independent_drifting/tests/test_phase2.py": "40a5127f91bb4473c2695c9a6058536c6ddec81754591b0298706a601428eb26",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "1cddc02bc5dc5e745f7ec24389843a6697c8fa356df6b0c7ffe702709ce69296",
+      "numerics/encoder_independent_drifting/tests/test_reforms.py": "5009e3cd49b3abb5b4c7c294ddb3205a947c5bbbcdee12d8b49c195bde34570a",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "202868c4593184d449ac9a929dffe099a56706781cd9494a6aab812038892d55",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "374860e43573db29180b17b2c63c933e591396a9d79655a11586efbd6479a459",
+      "numerics/encoder_independent_drifting/train.py": "cba9385b064120d3dcce649d438390dc409715779ab7743e781514116a6ad330"
+    },
+    "torch": "2.7.1+cu126"
+  },
+  "results": {
+    "c1": {
+      "passed": true,
+      "relative_l2": 0.0,
+      "tolerance": 1e-06
+    },
+    "c2": {
+      "checks": {
+        "real_data_kid": {
+          "expected": 0.00041,
+          "got": 0.0004096592583335834,
+          "passed": true,
+          "tolerance": 0.0015
+        },
+        "real_data_recall": {
+          "expected": 0.717,
+          "got": 0.716796875,
+          "passed": true,
+          "tolerance": 0.03
+        }
+      },
+      "measured": {
+        "alpha": 3.5789829071344523,
+        "kid": 0.0004096592583335834,
+        "precision": 0.681640625,
+        "recall": 0.716796875,
+        "second_moment": 0.9788221120834351
+      },
+      "passed": true
+    },
+    "c3": {
+      "digests_match": true,
+      "passed": true,
+      "relative_l2": 0.0,
+      "schedule_digest": "ef4762bbd2b2c849",
+      "tolerance": 0.0001
+    },
+    "c4": {
+      "banks_differ": true,
+      "cross_unit_bank_overlap": {
+        "0v1": 433,
+        "0v2": 425,
+        "1v2": 418
+      },
+      "passed": true,
+      "units": [
+        {
+          "bank": 4096,
+          "bank_unique": 4096,
+          "digests": {
+            "ae_inputs": "acf487eda3ad17b3",
+            "bank": "e5cada72cd6c130b",
+            "calibration": "be68fa1f0a842deb",
+            "real_data": "bbf9b49194a30d48"
+          },
+          "real_data": 512,
+          "unit": 0
+        },
+        {
+          "bank": 4096,
+          "bank_unique": 4096,
+          "digests": {
+            "ae_inputs": "34f3b3ad7a911960",
+            "bank": "c511917363e0322b",
+            "calibration": "d2dc7358f7251e07",
+            "real_data": "5f33f7d999d4b399"
+          },
+          "real_data": 512,
+          "unit": 1
+        },
+        {
+          "bank": 4096,
+          "bank_unique": 4096,
+          "digests": {
+            "ae_inputs": "b405226d1b5c034d",
+            "bank": "179d867346a3214b",
+            "calibration": "4b6108334f80ded7",
+            "real_data": "ce1568333781201e"
+          },
+          "real_data": 512,
+          "unit": 2
+        }
+      ]
+    },
+    "c5": {
+      "diagnostics_complete": true,
+      "passed": true,
+      "rows": [
+        {
+          "arm": "real_data",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0203344821929932,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.47910359501838684,
+            "ess_fraction": 0.5882399529218674,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 352,
+          "duplicate_rate": 0.0,
+          "effective_rank": 8.68128295548783,
+          "kid": -0.00013325907265615555,
+          "nearest_bank_normalized": 0.9378615401110701,
+          "nn_diversity": 0.32421875,
+          "precision": 0.705078125,
+          "recall": 0.74267578125,
+          "recall_ci": [
+            0.6199462890625,
+            0.65584716796875
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "real_data",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.011846125125885,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.4873618930578232,
+            "ess_fraction": 0.6008127629756927,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 340,
+          "duplicate_rate": 0.0,
+          "effective_rank": 8.770075244171641,
+          "kid": -7.310520144887533e-05,
+          "nearest_bank_normalized": 0.894791771035803,
+          "nn_diversity": 0.328125,
+          "precision": 0.705078125,
+          "recall": 0.732421875,
+          "recall_ci": [
+            0.617919921875,
+            0.6355712890625
+          ],
+          "regime": "stochastic"
+        },
+        {
+          "arm": "random_generator",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0460568070411682,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.6599181964993477,
+            "ess_fraction": 0.7307345271110535,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 101,
+          "duplicate_rate": 0.0,
+          "effective_rank": 55.48091242321442,
+          "kid": 0.3260294429960702,
+          "nearest_bank_normalized": 1.2962537811142563,
+          "nn_diversity": 0.576171875,
+          "precision": 0.185546875,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "random_generator",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0300762057304382,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.6451716497540474,
+            "ess_fraction": 0.737180307507515,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 85,
+          "duplicate_rate": 0.0,
+          "effective_rank": 55.62293237238744,
+          "kid": 0.32036268622181696,
+          "nearest_bank_normalized": 1.232040661876043,
+          "nn_diversity": 0.57421875,
+          "precision": 0.25,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "stochastic"
+        },
+        {
+          "arm": "trained_bad",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0247940421104431,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.8458184450864792,
+            "ess_fraction": 0.7286649346351624,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 146,
+          "duplicate_rate": 0.0,
+          "effective_rank": 16.74564989523968,
+          "kid": 0.2832509880478953,
+          "nearest_bank_normalized": 1.2486861721974494,
+          "nn_diversity": 0.603515625,
+          "precision": 0.451171875,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "trained_bad",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0057492852210999,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.843720555305481,
+            "ess_fraction": 0.7395756542682648,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 133,
+          "duplicate_rate": 0.0,
+          "effective_rank": 16.747908424367953,
+          "kid": 0.2826115931516564,
+          "nearest_bank_normalized": 1.1879142217547844,
+          "nn_diversity": 0.599609375,
+          "precision": 0.458984375,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "stochastic"
+        },
+        {
+          "arm": "ae_reconstruction",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0477622151374817,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.633058026432991,
+            "ess_fraction": 0.4810658469796181,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 179,
+          "duplicate_rate": 0.0,
+          "effective_rank": 3.0925276102368158,
+          "kid": 0.2883731369293159,
+          "nearest_bank_normalized": 0.6938965512662273,
+          "nn_diversity": 0.640625,
+          "precision": 0.10546875,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "ae_reconstruction",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0322663187980652,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.6686616539955139,
+            "ess_fraction": 0.501030221581459,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 171,
+          "duplicate_rate": 0.00390625,
+          "effective_rank": 3.0938287712952857,
+          "kid": 0.28930009683475166,
+          "nearest_bank_normalized": 0.6664164066198959,
+          "nn_diversity": 0.63671875,
+          "precision": 0.1484375,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "stochastic"
+        },
+        {
+          "arm": "basin_interpolation",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0451508164405823,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.6271698996424675,
+            "ess_fraction": 0.6839380264282227,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 251,
+          "duplicate_rate": 0.0,
+          "effective_rank": 20.412613887143205,
+          "kid": 0.14509652203032886,
+          "nearest_bank_normalized": 1.1711431012073406,
+          "nn_diversity": 0.51953125,
+          "precision": 0.458984375,
+          "recall": 0.1103515625,
+          "recall_ci": [
+            0.05406494140625,
+            0.10225830078124999
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "basin_interpolation",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0285863876342773,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.6228081062436104,
+            "ess_fraction": 0.6973001658916473,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 231,
+          "duplicate_rate": 0.0,
+          "effective_rank": 20.42402593822388,
+          "kid": 0.14505723631333955,
+          "nearest_bank_normalized": 1.1158576054401814,
+          "nn_diversity": 0.52734375,
+          "precision": 0.46484375,
+          "recall": 0.0927734375,
+          "recall_ci": [
+            0.050341796875,
+            0.08875732421875
+          ],
+          "regime": "stochastic"
+        },
+        {
+          "arm": "ambient_noise",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0320873260498047,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.8448571711778641,
+            "ess_fraction": 0.7841630727052689,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 2,
+          "duplicate_rate": 0.0,
+          "effective_rank": 438.0179136179784,
+          "kid": 0.4701108388406454,
+          "nearest_bank_normalized": 1.3336384704461561,
+          "nn_diversity": 0.333984375,
+          "precision": 0.0,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "replay"
+        },
+        {
+          "arm": "ambient_noise",
+          "diagnostics": {
+            "collapsed_row_fraction": 0.0,
+            "correction_ratio_median": 1.0292347073554993,
+            "denominator_floor_fraction": 0.0,
+            "drift_rms_raw": 0.800733357667923,
+            "ess_fraction": 0.7787851691246033,
+            "interval_steps": 4,
+            "step": 4
+          },
+          "distinct_bank": 2,
+          "duplicate_rate": 0.0,
+          "effective_rank": 438.03950115817037,
+          "kid": 0.46702713494210224,
+          "nearest_bank_normalized": 1.2646743365388111,
+          "nn_diversity": 0.337890625,
+          "precision": 0.001953125,
+          "recall": 0.0,
+          "recall_ci": [
+            0.0,
+            0.0
+          ],
+          "regime": "stochastic"
+        }
+      ]
+    }
+  },
+  "status": "f1-validation-checks-not-an-f1-result",
+  "verdict": {
+    "all_passed": true,
+    "checks": {
+      "c1": true,
+      "c2": true,
+      "c3": true,
+      "c4": true,
+      "c5": true
+    },
+    "reading": "all \u00a711 validation checks pass; the confirmatory F1 arms become run-ready once \u00a72.1 calibration returns GO"
+  }
+}

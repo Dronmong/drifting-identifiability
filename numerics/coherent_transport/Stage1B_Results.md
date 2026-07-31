@@ -1,5 +1,18 @@
 # Stage 1B results: partial-transport controller + coverage diagnosis
 
+> **Audit status (2026-07-24): invalid as a roadmap gate; do not use the
+> verdict below.**
+>
+> The documented balanced-bijection probe has no corresponding source,
+> registry, or raw artifact and cannot be reproduced. The implemented
+> `partial_controller.py` uses nearest-neighbor coverage on the same planning
+> target set; it does not construct the roadmap's persistent directional
+> quantile surplus/deficit signal, does not use a disjoint controller pool, and
+> makes the support guard nearly tautological by moving particles directly to
+> the same target points used to score precision. Consequently this experiment
+> does not validly accept or reject RQ2/H2. Stage 1B is open pending a corrected
+> Stage 1 route decision.
+
 Per `AnchoredCoherentTransportResearchPlan.md` §4.2-4.6, §9 (Stage 1B), §13.
 Development screen (3 seeds); local-learner base + interleaved repair.
 Reproduce: `run_partial_controller_development.py` (factorial) and the balanced

@@ -1,0 +1,21 @@
+--- G2_contraction_scope ---
+      raw batch=  32 R11=False score=  9.496 eff_dim=0.228
+      raw batch=  32 R11=True  score=  4.457 eff_dim=0.794
+      raw batch=  32 R11=False score=  7.229 eff_dim=0.227
+      raw batch=  32 R11=True  score=  2.076 eff_dim=0.722
+      raw batch=  32 R11=False score=  9.403 eff_dim=0.232
+      raw batch=  32 R11=True  score=  2.428 eff_dim=0.898
+      raw batch= 128 R11=False score=  6.338 eff_dim=0.301
+      raw batch= 128 R11=True  score=  1.453 eff_dim=1.022
+      raw batch= 128 R11=False score=  5.938 eff_dim=0.296
+      raw batch= 128 R11=True  score=  2.188 eff_dim=0.942
+      raw batch= 128 R11=False score=  6.040 eff_dim=0.308
+      raw batch= 128 R11=True  score=  1.345 eff_dim=1.034
+      wavelet batch=  64 R11=False score= 10.301 eff_dim=0.222
+      wavelet batch=  64 R11=True  score=  2.014 eff_dim=0.919
+      wavelet batch=  64 R11=False score=  9.253 eff_dim=0.232
+      wavelet batch=  64 R11=True  score=  2.423 eff_dim=0.958
+      wavelet batch=  64 R11=False score=  8.441 eff_dim=0.218
+      wavelet batch=  64 R11=True  score=  3.544 eff_dim=1.344
+
+wrote numerics\encoder_independent_drifting\phase4_g2.json sha256=325faa213805446c...

@@ -1,0 +1,2222 @@
+{
+  "config": {
+    "batch": 64,
+    "dims": "8,32",
+    "out": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\attractor_study.json",
+    "seeds": 2,
+    "steps": 600,
+    "threads": 4
+  },
+  "elapsed_seconds": 70.53746843338013,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\run_attractor_study.py",
+      "--seeds",
+      "2",
+      "--steps",
+      "600"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/audit_phase2.py": "13b5878ebd1f1380f4e7f1a2496ef7714c91c0689751ec07624308212c1d2ccd",
+      "numerics/encoder_independent_drifting/cifar.py": "304fc962b1c1e0a7744ada37f9f18f8831be136c420fd7e2908dce4dbe1034fa",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "1e5b21f69eeace84357dca3d204d4e300515c3c13128f9b54dd2848b0e64ccde",
+      "numerics/encoder_independent_drifting/datasets.py": "089c16f097f426f851f97b6528827300909accae6438c0646efe39b4d4152214",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnose_phase2.py": "e188bb20859d1bc74c4472fab57cce7dbac5f6d94dc30909a9c8b0e940045c4e",
+      "numerics/encoder_independent_drifting/diagnose_phase4.py": "35d8986640a8dab8622cf56532671a6c4f30be6c124578a207ecff8370619729",
+      "numerics/encoder_independent_drifting/diagnose_phase5.py": "e2cd8696f5786680bc95c6f72db4eca679f5af3af5f3267a5baf77f77d530a8e",
+      "numerics/encoder_independent_drifting/diagnose_phase6.py": "ba8a829219f5fed6fda47f7cd7bdb0e8e4d7fe5b6dd9015460d52a1fae4edecd",
+      "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+      "numerics/encoder_independent_drifting/evaluate.py": "d83e23108176dca695491d63465b7b035f6cc7e38743b599ab8917b575bdbf92",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "5a1374d3a380ac7c8c1c96a327d3065a415ef0b2f0c6b3b12be0c99f09ff3b34",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a24ae90af52ef1d7856285010dcfae228e7804ec20d66f87611173a2d21d7003",
+      "numerics/encoder_independent_drifting/models.py": "a50a36d9e11b4d51629ce6ceea179a8dfb225ab9448a0768c9e7279438af39a9",
+      "numerics/encoder_independent_drifting/objectives.py": "13050494e1cc3843a2d21f06bc7a27eaab6dd5815f0a45a84194fde973aea77d",
+      "numerics/encoder_independent_drifting/oracle.py": "d298b4c6e3ac275300ac3f218079be485831eb25efa871335f1f8c5d95959580",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_attractor_study.py": "bf8d85df7bf0a9df83c0ab4048c4484cda93f245e71b35706832cfbb7b06dd62",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "f1067a1cb1386e1d695e4124c280587e48882e1debb97914f09d4c09e87b330f",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/run_phase2_entry.py": "eabd3f5301071af3ce550429489003b9b6a7a1cf509e57791859f25d49dcf6b1",
+      "numerics/encoder_independent_drifting/run_phase2_screen.py": "0fe90c2b7be04ec2aa4d45658a0e4cba84ab74df19dd0ea1a97050c4aa22f8c2",
+      "numerics/encoder_independent_drifting/run_phase3_confirmation.py": "0b09022d93926fbb3296476e2ebe247590ac253d818b676d4fada7dace5bbfbd",
+      "numerics/encoder_independent_drifting/run_phase4.py": "a0d88766510091db09faaa533867d3a0df75cd0e1b2aa1d5731dae97381d9554",
+      "numerics/encoder_independent_drifting/run_phase5.py": "5b7a78ee145c90656affb3ce1f7520bc2dcd1cc1f58a9e3f9b150b36fe8c8902",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "4310106b3510d9fd9072d5637f920a913bc3576e25d14c518c6aaec876722555",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "72d7408a7e2f4860ea56f060caee9f6efdd91b5cd43995fca016a5777be892fe",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "dc1f2b9c2be17e56f48d9844973aaf437f56ce8ae658dfafc93f20f8453eebe0",
+      "numerics/encoder_independent_drifting/tests/test_phase2.py": "40a5127f91bb4473c2695c9a6058536c6ddec81754591b0298706a601428eb26",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "12eeb57ebd1eb5ea299b8fd47a6daf97c71d4c658920322d4a42ccf865a2e8f3",
+      "numerics/encoder_independent_drifting/tests/test_reforms.py": "c3786d93e6059c771df0c996a9d44649ead7f9d6d75ff8073105fb588478a6f9",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "202868c4593184d449ac9a929dffe099a56706781cd9494a6aab812038892d55",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "374860e43573db29180b17b2c63c933e591396a9d79655a11586efbd6479a459",
+      "numerics/encoder_independent_drifting/train.py": "9c352d2bf9ec3e272de97ccc19e03422c0e537342c9cb01ff77c2305d76f1d17"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "rows": [
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030005898576046075,
+      "effective_dimension_ratio": 0.6620014689348181,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.6212248206138611,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.8407543804923319,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6745531261863291,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6511198906067377,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6619203451977805,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6547661525855167,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6616959134272531,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.6511111018895434,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.655012954931938,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6542607029264985,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6728602558924933,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6437323653586529,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6432929313290898,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "matched",
+      "ed2": 0.01634835511799526,
+      "effective_dimension_ratio": 0.7095092412144501,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.7568914890289307,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.76090685534609,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.7318202110261792,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.694703053537446,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6901794151758986,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6906276575788544,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6967466207338935,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.6944503362236482,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.6920562490488306,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6892104377100513,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.714445652627791,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6864101389118633,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6855567618706975,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.044062516475532165,
+      "effective_dimension_ratio": 0.6436989607646866,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.5384615659713745,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.744507514735674,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6137167567835912,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6050933116967917,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.5000126266961952,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6320619961350012,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6048108192117012,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.6455984591199324,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.6444193576893239,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.5515862783284243,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.6533505906295145,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.5499887333544646,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.6197966440432416,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.6101213907334303,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "matched",
+      "ed2": 0.16979263696411806,
+      "effective_dimension_ratio": 0.750942464486137,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.5518428683280945,
+      "seed": 20268724,
+      "steps_per_teacher": 32,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.6137771937205393,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6643859488888844,
+          "outer_step": 1
+        },
+        {
+          "effective_dimension_ratio": 0.5557058878828063,
+          "outer_step": 2
+        },
+        {
+          "effective_dimension_ratio": 0.6079916862641954,
+          "outer_step": 3
+        },
+        {
+          "effective_dimension_ratio": 0.662903985453351,
+          "outer_step": 4
+        },
+        {
+          "effective_dimension_ratio": 0.657632485444896,
+          "outer_step": 5
+        },
+        {
+          "effective_dimension_ratio": 0.6370588583907183,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.7091688864940635,
+          "outer_step": 7
+        },
+        {
+          "effective_dimension_ratio": 0.7051455759479861,
+          "outer_step": 8
+        },
+        {
+          "effective_dimension_ratio": 0.704268671771234,
+          "outer_step": 9
+        },
+        {
+          "effective_dimension_ratio": 0.6479986489297803,
+          "outer_step": 10
+        },
+        {
+          "effective_dimension_ratio": 0.6555784281526048,
+          "outer_step": 11
+        },
+        {
+          "effective_dimension_ratio": 0.6970064555284279,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.6412386494006439,
+          "outer_step": 13
+        },
+        {
+          "effective_dimension_ratio": 0.6207094751800439,
+          "outer_step": 14
+        },
+        {
+          "effective_dimension_ratio": 0.7274247858109351,
+          "outer_step": 15
+        },
+        {
+          "effective_dimension_ratio": 0.7143930209980092,
+          "outer_step": 16
+        },
+        {
+          "effective_dimension_ratio": 0.7250547609661335,
+          "outer_step": 17
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030005898576046075,
+      "effective_dimension_ratio": 0.6620014689348181,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.6212248206138611,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.8407543804923319,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6745531261863291,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6511198906067377,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6619203451977805,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6547661525855167,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6616959134272531,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.6511111018895434,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.655012954931938,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6542607029264985,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6728602558924933,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6437323653586529,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6432929313290898,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030005898576046075,
+      "effective_dimension_ratio": 0.6620014689348181,
+      "output_step_cap": 0.25,
+      "second_moment_ratio": 0.6212248206138611,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.8407543804923319,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6745531261863291,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6511198906067377,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6619203451977805,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6547661525855167,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6616959134272531,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.6511111018895434,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.655012954931938,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6542607029264985,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6728602558924933,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6437323653586529,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6432929313290898,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.044062516475532165,
+      "effective_dimension_ratio": 0.6436989607646866,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.5384615659713745,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.744507514735674,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6137167567835912,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6050933116967917,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.5000126266961952,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6320619961350012,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6048108192117012,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.6455984591199324,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.6444193576893239,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.5515862783284243,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.6533505906295145,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.5499887333544646,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.6197966440432416,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.6101213907334303,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.01658860363961745,
+      "effective_dimension_ratio": 0.6852121751221536,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.90069180727005,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.5508863516059314,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.7083447663393696,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6669665553603026,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.6074584047714401,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6908786077638449,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6559878369862883,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.671022236245645,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.6745731887362237,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.5626667053571534,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.671607361615718,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.5160323430955613,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.6339793514674866,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.6045733101749582,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030344508764531986,
+      "effective_dimension_ratio": 0.661610923804582,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.6328986883163452,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.9212569015051282,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6517642156051328,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6407816255698733,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6540989025273575,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6488029327708714,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6428829401895495,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.665683366065647,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.659989273864503,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6501768594995894,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6668453348018105,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6658599404647737,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6510086990674896,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "matched",
+      "ed2": 0.017148094408788506,
+      "effective_dimension_ratio": 0.7108849474928892,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.7646988034248352,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.9079655944197742,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.7227237466030925,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6730321863768202,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6913284437857702,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.683678771118682,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6780556486293426,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.7057398124606514,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.696196675128909,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6896097861307634,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.710546528243537,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.7106456136653891,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.7002646020514408,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.03376852467844249,
+      "effective_dimension_ratio": 0.6381204607814143,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.6543816328048706,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.6356472756854182,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6565681555780767,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6723102232939074,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.6207058294348278,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6491281979713175,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6051236216783766,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.44362116714669164,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.5601933982110641,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.5872021068069089,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.47297664284322805,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.6063087447557349,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.513536498840011,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.511148270177138,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.03896000557716306,
+      "effective_dimension_ratio": 0.6551395894697486,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.7409792542457581,
+      "seed": 20268725,
+      "steps_per_teacher": 32,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.6619208387544181,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.649931988551216,
+          "outer_step": 1
+        },
+        {
+          "effective_dimension_ratio": 0.5936935669512681,
+          "outer_step": 2
+        },
+        {
+          "effective_dimension_ratio": 0.6300007137043302,
+          "outer_step": 3
+        },
+        {
+          "effective_dimension_ratio": 0.6455138470706778,
+          "outer_step": 4
+        },
+        {
+          "effective_dimension_ratio": 0.6557059557333652,
+          "outer_step": 5
+        },
+        {
+          "effective_dimension_ratio": 0.6598065220051427,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6492788285895439,
+          "outer_step": 7
+        },
+        {
+          "effective_dimension_ratio": 0.6335308669505739,
+          "outer_step": 8
+        },
+        {
+          "effective_dimension_ratio": 0.5952758997813382,
+          "outer_step": 9
+        },
+        {
+          "effective_dimension_ratio": 0.6056774488809199,
+          "outer_step": 10
+        },
+        {
+          "effective_dimension_ratio": 0.6768256947502782,
+          "outer_step": 11
+        },
+        {
+          "effective_dimension_ratio": 0.680398140063101,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.6870426366420131,
+          "outer_step": 13
+        },
+        {
+          "effective_dimension_ratio": 0.6821255287898444,
+          "outer_step": 14
+        },
+        {
+          "effective_dimension_ratio": 0.6849470165502004,
+          "outer_step": 15
+        },
+        {
+          "effective_dimension_ratio": 0.6257355027586976,
+          "outer_step": 16
+        },
+        {
+          "effective_dimension_ratio": 0.6506520258031987,
+          "outer_step": 17
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030344508764531986,
+      "effective_dimension_ratio": 0.661610923804582,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.6328986883163452,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.9212569015051282,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6517642156051328,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6407816255698733,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6540989025273575,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6488029327708714,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6428829401895495,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.665683366065647,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.659989273864503,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6501768594995894,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6668453348018105,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6658599404647737,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6510086990674896,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.030344508764531986,
+      "effective_dimension_ratio": 0.661610923804582,
+      "output_step_cap": 0.25,
+      "second_moment_ratio": 0.6328986883163452,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.9212569015051282,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6517642156051328,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.6407816255698733,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.6540989025273575,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.6488029327708714,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.6428829401895495,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.665683366065647,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.659989273864503,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.6501768594995894,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.6668453348018105,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.6658599404647737,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.6510086990674896,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.03376852467844249,
+      "effective_dimension_ratio": 0.6381204607814143,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.6543816328048706,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.6356472756854182,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.6565681555780767,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.6723102232939074,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.6207058294348278,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6491281979713175,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6051236216783766,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.44362116714669164,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.5601933982110641,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.5872021068069089,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.47297664284322805,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.6063087447557349,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.513536498840011,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.511148270177138,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.02311160530947265,
+      "effective_dimension_ratio": 0.6508872079588133,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.7525092363357544,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.5532137372977954,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.7796845400666393,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.737992959853055,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.7272409469232293,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.6818694918387443,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.6606130139732944,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.49110645552128174,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.6357088893317301,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.6306786290479236,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.5835182829409127,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.685769930790459,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.6448189735588983,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.5357653128044785,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.17788353257506184,
+      "effective_dimension_ratio": 0.2110341098469838,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.21212567389011383,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.47666497157930443,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.22639035205192706,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.2208165229416942,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.22507690916675283,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21310278384013306,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.21598198791676454,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.21398109070425733,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21088551843777686,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2089632330476067,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21187924497216484,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.2151080032565358,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.2082303030642745,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.015935047624621834,
+      "effective_dimension_ratio": 0.33888074857932443,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.953361988067627,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.43381849213564716,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.33897268918674717,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.33676685139080226,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.35773375248972966,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.3485085419753029,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.34476305387456296,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.3441609405595549,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.3417579045112837,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.342877966810727,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.3384973038640491,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.31910045618275934,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.35816740382447193,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18052973060137978,
+      "effective_dimension_ratio": 0.18958153685720622,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.23963825404644012,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.411218069180683,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.23341437907764537,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.2307393485670335,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.2231398604122595,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.20900366181492447,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.22756428255620306,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.20375573176276707,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.2105245539018938,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.19306473852376324,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.2240835498565869,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.2374289413713504,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.23332154591000917,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.2337981770594088,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.21096416779848748,
+      "effective_dimension_ratio": 0.21915324858305418,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.2480623722076416,
+      "seed": 20268724,
+      "steps_per_teacher": 32,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.4232246369769412,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.3977114911923094,
+          "outer_step": 1
+        },
+        {
+          "effective_dimension_ratio": 0.3624914878838854,
+          "outer_step": 2
+        },
+        {
+          "effective_dimension_ratio": 0.3205614965570183,
+          "outer_step": 3
+        },
+        {
+          "effective_dimension_ratio": 0.2861765909644281,
+          "outer_step": 4
+        },
+        {
+          "effective_dimension_ratio": 0.2645692882672238,
+          "outer_step": 5
+        },
+        {
+          "effective_dimension_ratio": 0.2430629257201667,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.17855650438856824,
+          "outer_step": 7
+        },
+        {
+          "effective_dimension_ratio": 0.2375740126517265,
+          "outer_step": 8
+        },
+        {
+          "effective_dimension_ratio": 0.2368158281853399,
+          "outer_step": 9
+        },
+        {
+          "effective_dimension_ratio": 0.23007061235077958,
+          "outer_step": 10
+        },
+        {
+          "effective_dimension_ratio": 0.23224703035245428,
+          "outer_step": 11
+        },
+        {
+          "effective_dimension_ratio": 0.24278619797097592,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.24016191254368438,
+          "outer_step": 13
+        },
+        {
+          "effective_dimension_ratio": 0.23102424526518747,
+          "outer_step": 14
+        },
+        {
+          "effective_dimension_ratio": 0.2075559948198166,
+          "outer_step": 15
+        },
+        {
+          "effective_dimension_ratio": 0.21624361344010534,
+          "outer_step": 16
+        },
+        {
+          "effective_dimension_ratio": 0.218846754708585,
+          "outer_step": 17
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.17788353257506184,
+      "effective_dimension_ratio": 0.2110341098469838,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.21212567389011383,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.47666497157930443,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.22639035205192706,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.2208165229416942,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.22507690916675283,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21310278384013306,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.21598198791676454,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.21398109070425733,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21088551843777686,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2089632330476067,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21187924497216484,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.2151080032565358,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.2082303030642745,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.17788353257506184,
+      "effective_dimension_ratio": 0.2110341098469838,
+      "output_step_cap": 0.25,
+      "second_moment_ratio": 0.21212567389011383,
+      "seed": 20268724,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.47666497157930443,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.22639035205192706,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.2208165229416942,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.22507690916675283,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21310278384013306,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.21598198791676454,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.21398109070425733,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21088551843777686,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2089632330476067,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21187924497216484,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.2151080032565358,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.2082303030642745,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18052973060137978,
+      "effective_dimension_ratio": 0.18958153685720622,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.23963825404644012,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.411218069180683,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.23341437907764537,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.2307393485670335,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.2231398604122595,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.20900366181492447,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.22756428255620306,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.20375573176276707,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.2105245539018938,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.19306473852376324,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.2240835498565869,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.2374289413713504,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.23332154591000917,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.2337981770594088,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.02782564183134717,
+      "effective_dimension_ratio": 0.3160371190436678,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 1.060085415840149,
+      "seed": 20268724,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.3472336052385645,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.3337467071746916,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.2997263949429244,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.3242999973082067,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.3666500420128476,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.3477716351214987,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.3284916439689915,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.3289663931903534,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.3104226716075489,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.3186989108370503,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.26370692812871144,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.32660661472013264,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.32996961288166293,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18057634875812623,
+      "effective_dimension_ratio": 0.20814344117152056,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.2111847996711731,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.4427416173213934,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.2380872228554473,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.22268776033207252,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.215058209857714,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21751428316955013,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.2062194598778892,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.20286139168284256,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21084426300753667,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2132889241850449,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21508822170962147,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.21297121416232065,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.21041661929281832,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.016481018946025605,
+      "effective_dimension_ratio": 0.3447599709998197,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.9159389734268188,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.4141724648870335,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.3815000863830828,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.3419363241164505,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.33845737427352934,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.3261815950286111,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.33469020321369514,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.32842405145378095,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.33033613354187547,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.3354736145320706,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.3472651400394724,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.3588007819710805,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.37368561897704106,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18485185954865968,
+      "effective_dimension_ratio": 0.21689566454390152,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.21535924077033997,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.3186449794897829,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.21150270797489945,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.2555341675221986,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.2331650859209673,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.23121143388539775,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.23824250779476522,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.21142921274346052,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.24201335729610024,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.20631169823133166,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.20338669278952684,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.18203219338751844,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.17776398994353615,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.22335439510324162,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.20009030559618046,
+      "effective_dimension_ratio": 0.22985428933203236,
+      "output_step_cap": null,
+      "second_moment_ratio": 0.2454584389925003,
+      "seed": 20268725,
+      "steps_per_teacher": 32,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.3356704801000919,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.25395202424013397,
+          "outer_step": 1
+        },
+        {
+          "effective_dimension_ratio": 0.2119789720154799,
+          "outer_step": 2
+        },
+        {
+          "effective_dimension_ratio": 0.21419810794724145,
+          "outer_step": 3
+        },
+        {
+          "effective_dimension_ratio": 0.26524063136994214,
+          "outer_step": 4
+        },
+        {
+          "effective_dimension_ratio": 0.2714958892451971,
+          "outer_step": 5
+        },
+        {
+          "effective_dimension_ratio": 0.24258614478451537,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.22812533172701432,
+          "outer_step": 7
+        },
+        {
+          "effective_dimension_ratio": 0.24583182156139705,
+          "outer_step": 8
+        },
+        {
+          "effective_dimension_ratio": 0.24100546488352637,
+          "outer_step": 9
+        },
+        {
+          "effective_dimension_ratio": 0.23459142337498495,
+          "outer_step": 10
+        },
+        {
+          "effective_dimension_ratio": 0.22356961597793204,
+          "outer_step": 11
+        },
+        {
+          "effective_dimension_ratio": 0.2184627564654127,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.22097920008104893,
+          "outer_step": 13
+        },
+        {
+          "effective_dimension_ratio": 0.22200636447981134,
+          "outer_step": 14
+        },
+        {
+          "effective_dimension_ratio": 0.2145214894695183,
+          "outer_step": 15
+        },
+        {
+          "effective_dimension_ratio": 0.23314195306311633,
+          "outer_step": 16
+        },
+        {
+          "effective_dimension_ratio": 0.22537262735371755,
+          "outer_step": 17
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18057634875812623,
+      "effective_dimension_ratio": 0.20814344117152056,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.2111847996711731,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.4427416173213934,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.2380872228554473,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.22268776033207252,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.215058209857714,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21751428316955013,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.2062194598778892,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.20286139168284256,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21084426300753667,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2132889241850449,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21508822170962147,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.21297121416232065,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.21041661929281832,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18057634875812623,
+      "effective_dimension_ratio": 0.20814344117152056,
+      "output_step_cap": 0.25,
+      "second_moment_ratio": 0.2111847996711731,
+      "seed": 20268725,
+      "steps_per_teacher": 1,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.4427416173213934,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.2380872228554473,
+          "outer_step": 50
+        },
+        {
+          "effective_dimension_ratio": 0.22268776033207252,
+          "outer_step": 100
+        },
+        {
+          "effective_dimension_ratio": 0.215058209857714,
+          "outer_step": 150
+        },
+        {
+          "effective_dimension_ratio": 0.21751428316955013,
+          "outer_step": 200
+        },
+        {
+          "effective_dimension_ratio": 0.2062194598778892,
+          "outer_step": 250
+        },
+        {
+          "effective_dimension_ratio": 0.20286139168284256,
+          "outer_step": 300
+        },
+        {
+          "effective_dimension_ratio": 0.21084426300753667,
+          "outer_step": 350
+        },
+        {
+          "effective_dimension_ratio": 0.2132889241850449,
+          "outer_step": 400
+        },
+        {
+          "effective_dimension_ratio": 0.21508822170962147,
+          "outer_step": 450
+        },
+        {
+          "effective_dimension_ratio": 0.21297121416232065,
+          "outer_step": 500
+        },
+        {
+          "effective_dimension_ratio": 0.21041661929281832,
+          "outer_step": 550
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.18485185954865968,
+      "effective_dimension_ratio": 0.21689566454390152,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.21535924077033997,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.3186449794897829,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.21150270797489945,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.2555341675221986,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.2331650859209673,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.23121143388539775,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.23824250779476522,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.21142921274346052,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.24201335729610024,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.20631169823133166,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.20338669278952684,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.18203219338751844,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.17776398994353615,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.22335439510324162,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "dimension_verdict": "collapsed",
+      "ed2": 0.02803386095854754,
+      "effective_dimension_ratio": 0.3555230293271722,
+      "output_step_cap": 1.0,
+      "second_moment_ratio": 0.8873449563980103,
+      "seed": 20268725,
+      "steps_per_teacher": 8,
+      "trace": [
+        {
+          "effective_dimension_ratio": 0.3543997860206523,
+          "outer_step": 0
+        },
+        {
+          "effective_dimension_ratio": 0.3506307608551826,
+          "outer_step": 6
+        },
+        {
+          "effective_dimension_ratio": 0.3771694399175973,
+          "outer_step": 12
+        },
+        {
+          "effective_dimension_ratio": 0.32302409962425793,
+          "outer_step": 18
+        },
+        {
+          "effective_dimension_ratio": 0.36233536509865055,
+          "outer_step": 24
+        },
+        {
+          "effective_dimension_ratio": 0.34101849929316996,
+          "outer_step": 30
+        },
+        {
+          "effective_dimension_ratio": 0.33515038688770954,
+          "outer_step": 36
+        },
+        {
+          "effective_dimension_ratio": 0.3615650319314027,
+          "outer_step": 42
+        },
+        {
+          "effective_dimension_ratio": 0.28270776510415785,
+          "outer_step": 48
+        },
+        {
+          "effective_dimension_ratio": 0.3163070524197731,
+          "outer_step": 54
+        },
+        {
+          "effective_dimension_ratio": 0.2913757812083748,
+          "outer_step": 60
+        },
+        {
+          "effective_dimension_ratio": 0.2861129108691099,
+          "outer_step": 66
+        },
+        {
+          "effective_dimension_ratio": 0.360167136219153,
+          "outer_step": 72
+        }
+      ],
+      "variance_match": true
+    }
+  ],
+  "scope": "low-dimensional Gaussian mixtures via lowdim_drift.py (imported unmodified); the identical recipe with R21 and R22 exposed",
+  "status": "r23-attractor-characterization-reported-not-gated",
+  "summary": {
+    "per_teacher=1_cap=0.25_R11=False": {
+      "median_dimension_ratio": 0.4363225168257829,
+      "median_ed2": 0.10411402066979691,
+      "median_second_moment_ratio": 0.41667524725198746,
+      "verdict": "collapsed"
+    },
+    "per_teacher=1_cap=1.0_R11=False": {
+      "median_dimension_ratio": 0.4363225168257829,
+      "median_ed2": 0.10411402066979691,
+      "median_second_moment_ratio": 0.41667524725198746,
+      "verdict": "collapsed"
+    },
+    "per_teacher=1_cap=None_R11=False": {
+      "median_dimension_ratio": 0.4363225168257829,
+      "median_ed2": 0.10411402066979691,
+      "median_second_moment_ratio": 0.41667524725198746,
+      "verdict": "collapsed"
+    },
+    "per_teacher=1_cap=None_R11=True": {
+      "median_dimension_ratio": 0.5271346061071349,
+      "median_ed2": 0.016414687032010433,
+      "median_second_moment_ratio": 0.840318888425827,
+      "verdict": "collapsed"
+    },
+    "per_teacher=32_cap=None_R11=False": {
+      "median_dimension_ratio": 0.44249693940089047,
+      "median_ed2": 0.18494147128014926,
+      "median_second_moment_ratio": 0.39995262026786804,
+      "verdict": "collapsed"
+    },
+    "per_teacher=8_cap=1.0_R11=False": {
+      "median_dimension_ratio": 0.4275080626626579,
+      "median_ed2": 0.11229612353845597,
+      "median_second_moment_ratio": 0.3890499100089073,
+      "verdict": "collapsed"
+    },
+    "per_teacher=8_cap=1.0_R11=True": {
+      "median_dimension_ratio": 0.5032051186429928,
+      "median_ed2": 0.02546862357040991,
+      "median_second_moment_ratio": 0.8940183818340302,
+      "verdict": "collapsed"
+    },
+    "per_teacher=8_cap=None_R11=False": {
+      "median_dimension_ratio": 0.4275080626626579,
+      "median_ed2": 0.11229612353845597,
+      "median_second_moment_ratio": 0.3890499100089073,
+      "verdict": "collapsed"
+    }
+  }
+}

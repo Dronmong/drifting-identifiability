@@ -1,0 +1,56 @@
+--- D1_loss_constancy ---
+--- D2_field_floor ---
+--- D3_probe_representativeness ---
+--- D4_output_locality ---
+--- D5_bandwidth_repair ---
+    D5 checkerboard    declared_ess0.5    score=  36.884 cover=0.000
+    D5 checkerboard    ess0.8             score=  40.055 cover=0.000
+    D5 checkerboard    ess0.95            score=  39.783 cover=0.000
+    D5 checkerboard    median_heuristic   score=  36.232 cover=0.000
+    D5 checkerboard    median_x4          score=  39.175 cover=0.000
+    D5 checkerboard    median_x16         score=  39.785 cover=0.000
+    D5 checkerboard    median_x64         score=  40.121 cover=0.000
+    D5 texture_blocks  declared_ess0.5    score=  50.063 cover=0.000
+    D5 texture_blocks  ess0.8             score=  49.309 cover=0.000
+    D5 texture_blocks  ess0.95            score=  50.937 cover=0.000
+    D5 texture_blocks  median_heuristic   score=  51.333 cover=0.000
+    D5 texture_blocks  median_x4          score=  49.035 cover=0.000
+    D5 texture_blocks  median_x16         score=  48.352 cover=0.000
+    D5 texture_blocks  median_x64         score=  48.540 cover=0.000
+    D5 rings_islands   declared_ess0.5    score=  17.929 cover=0.000
+    D5 rings_islands   ess0.8             score=  18.754 cover=0.000
+    D5 rings_islands   ess0.95            score=  19.760 cover=0.000
+    D5 rings_islands   median_heuristic   score=  21.383 cover=0.000
+    D5 rings_islands   median_x4          score=  17.107 cover=0.000
+    D5 rings_islands   median_x16         score=  20.456 cover=0.000
+    D5 rings_islands   median_x64         score=  21.300 cover=0.000
+--- D6_normalization_repair ---
+    D6 checkerboard    A1 rms   eta= 0.5 score=   5.042 cover=1.000
+    D6 checkerboard    A1 none  eta= 0.5 score=   7.486 cover=1.000
+    D6 checkerboard    A1 none  eta= 2.0 score=   6.597 cover=1.000
+    D6 checkerboard    A3 rms   eta= 0.5 score= 108.496 cover=0.000
+    D6 checkerboard    A3 none  eta= 0.5 score=  63.243 cover=0.000
+    D6 checkerboard    A3 none  eta= 2.0 score=  63.228 cover=0.000
+    D6 checkerboard    A4 rms   eta= 0.5 score=  36.884 cover=0.000
+    D6 checkerboard    A4 none  eta= 0.5 score=  37.819 cover=0.000
+    D6 checkerboard    A4 none  eta= 2.0 score=  37.696 cover=0.000
+    D6 texture_blocks  A1 rms   eta= 0.5 score=   6.617 cover=0.000
+    D6 texture_blocks  A1 none  eta= 0.5 score=   7.993 cover=0.000
+    D6 texture_blocks  A1 none  eta= 2.0 score=   7.994 cover=0.000
+    D6 texture_blocks  A3 rms   eta= 0.5 score=  13.824 cover=0.000
+    D6 texture_blocks  A3 none  eta= 0.5 score=  35.218 cover=0.000
+    D6 texture_blocks  A3 none  eta= 2.0 score=  35.218 cover=0.000
+    D6 texture_blocks  A4 rms   eta= 0.5 score=  50.063 cover=0.000
+    D6 texture_blocks  A4 none  eta= 0.5 score=  69.921 cover=0.000
+    D6 texture_blocks  A4 none  eta= 2.0 score=  69.921 cover=0.000
+    D6 rings_islands   A1 rms   eta= 0.5 score=  10.440 cover=0.000
+    D6 rings_islands   A1 none  eta= 0.5 score=  10.086 cover=0.000
+    D6 rings_islands   A1 none  eta= 2.0 score=  10.069 cover=0.000
+    D6 rings_islands   A3 rms   eta= 0.5 score=  12.351 cover=0.000
+    D6 rings_islands   A3 none  eta= 0.5 score=  13.053 cover=0.000
+    D6 rings_islands   A3 none  eta= 2.0 score=  13.052 cover=0.000
+    D6 rings_islands   A4 rms   eta= 0.5 score=  17.929 cover=0.000
+    D6 rings_islands   A4 none  eta= 0.5 score=  18.213 cover=0.000
+    D6 rings_islands   A4 none  eta= 2.0 score=  18.145 cover=0.000
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase1_diagnosis.json sha256=5f9301b4680dce43...

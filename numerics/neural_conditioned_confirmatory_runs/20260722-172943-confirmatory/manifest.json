@@ -1,0 +1,22 @@
+{
+  "command": [
+    "numerics/run_neural_conditioned_confirmatory.py"
+  ],
+  "freeze_sha256": "37cd199eeb8c9b1179c9a637cd20922a70e52c2dde3a22e0e6d6f2ed38589746",
+  "frozen_file_sha256": {
+    "neural_conditioned_confirmatory_atlases_v3.npz": "60b4ba37ae2e817adae70cb4beacef1871c49d093155ac5be968a27756309818",
+    "neural_conditioned_confirmatory_freeze_v3.json": "37cd199eeb8c9b1179c9a637cd20922a70e52c2dde3a22e0e6d6f2ed38589746",
+    "neural_conditioned_confirmatory_kll_index_v3.json": "972ccf557fc08f130f1331e8c08e80358f1ac544c28ae0da8eb9004970152dcc",
+    "neural_conditioned_confirmatory_kll_v3.bin": "24fdcb3e8e3f8eae7fd0fa56f865bb9a77e62c68cf575ad87b1aaebc3193d572",
+    "neural_conditioned_confirmatory_registry_v3.json": "452574697ed8f1ebac28db6c2dec94f239f13f4b5067e21d67f08d419d4806a4",
+    "neural_conditioned_confirmatory_registry_v3.json.sha256": "1a3b21aedf26160e5a4d37527134ed59520e5bb385bf15a1fcd21726f498ddfb"
+  },
+  "numpy": "2.5.1",
+  "outputs": 640,
+  "references": 64,
+  "registry_sha256": "452574697ed8f1ebac28db6c2dec94f239f13f4b5067e21d67f08d419d4806a4",
+  "rows": 640,
+  "schema": "neural-conditioned-confirmatory-run-v1",
+  "torch": "2.7.1+cpu",
+  "wall_seconds": 658.687018800003
+}

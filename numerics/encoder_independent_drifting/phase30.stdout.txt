@@ -1,0 +1,69 @@
+    success threshold recall > 0.05   anchors {'fresh_latent_objectives': 0.0, 'memorization_ceiling': 0.224, 'autoencoder_d512': 0.496}
+
+      w64_p64   step      0 KID=+0.28178 P=0.857 R=0.000 alpha=3.064 2nd=0.310
+      w64_p64   step   7500 KID=+0.15379 P=0.539 R=0.000 alpha=4.458 2nd=1.018
+      w64_p64   step  15000 KID=+0.14118 P=0.498 R=0.000 alpha=4.558 2nd=1.011
+      w64_p64   step  22500 KID=+0.13929 P=0.520 R=0.014 alpha=4.570 2nd=1.020
+      w64_p64   step  30000 KID=+0.13799 P=0.512 R=0.009 alpha=4.583 2nd=1.008
+    w64_p64     seed0 KID=+0.13799 P=0.512 R=0.009   1065s 1174MiB
+      w64_p64   step      0 KID=+0.29398 P=0.881 R=0.000 alpha=3.139 2nd=0.392
+      w64_p64   step   7500 KID=+0.14809 P=0.691 R=0.000 alpha=4.467 2nd=1.064
+      w64_p64   step  15000 KID=+0.13462 P=0.707 R=0.000 alpha=4.521 2nd=0.965
+      w64_p64   step  22500 KID=+0.13247 P=0.689 R=0.001 alpha=4.516 2nd=0.969
+      w64_p64   step  30000 KID=+0.13141 P=0.695 R=0.000 alpha=4.521 2nd=0.957
+    w64_p64     seed1 KID=+0.13141 P=0.695 R=0.000   1097s 1181MiB
+      w64_p256  step      0 KID=+0.28178 P=0.857 R=0.000 alpha=3.064 2nd=0.310
+      w64_p256  step   7500 KID=+0.15350 P=0.508 R=0.001 alpha=4.490 2nd=1.017
+      w64_p256  step  15000 KID=+0.13521 P=0.441 R=0.000 alpha=4.669 2nd=0.942
+      w64_p256  step  22500 KID=+0.13383 P=0.471 R=0.000 alpha=4.682 2nd=0.947
+      w64_p256  step  30000 KID=+0.13515 P=0.484 R=0.000 alpha=4.686 2nd=0.961
+    w64_p256    seed0 KID=+0.13515 P=0.484 R=0.000   1080s 1183MiB
+      w64_p256  step      0 KID=+0.29398 P=0.881 R=0.000 alpha=3.139 2nd=0.392
+      w64_p256  step   7500 KID=+0.14251 P=0.738 R=0.000 alpha=4.462 2nd=0.909
+      w64_p256  step  15000 KID=+0.13548 P=0.695 R=0.000 alpha=4.512 2nd=1.039
+      w64_p256  step  22500 KID=+0.13558 P=0.674 R=0.000 alpha=4.486 2nd=1.032
+      w64_p256  step  30000 KID=+0.13593 P=0.637 R=0.000 alpha=4.506 2nd=1.007
+    w64_p256    seed1 KID=+0.13593 P=0.637 R=0.000   1079s 1183MiB
+      w128_p256  step      0 KID=+0.30732 P=0.857 R=0.000 alpha=3.049 2nd=0.335
+      w128_p256  step   7500 KID=+0.17379 P=0.309 R=0.000 alpha=4.647 2nd=0.991
+      w128_p256  step  15000 KID=+0.16858 P=0.342 R=0.000 alpha=4.691 2nd=1.017
+      w128_p256  step  22500 KID=+0.16274 P=0.365 R=0.012 alpha=4.694 2nd=0.985
+      w128_p256  step  30000 KID=+0.15763 P=0.373 R=0.044 alpha=4.686 2nd=1.024
+    w128_p256   seed0 KID=+0.15763 P=0.373 R=0.044   3434s 3104MiB
+      w128_p256  step      0 KID=+0.29738 P=0.770 R=0.000 alpha=3.229 2nd=0.329
+      w128_p256  step   7500 KID=+0.18659 P=0.258 R=0.000 alpha=4.601 2nd=1.065
+      w128_p256  step  15000 KID=+0.18294 P=0.264 R=0.001 alpha=4.664 2nd=1.021
+      w128_p256  step  22500 KID=+0.14752 P=0.350 R=0.000 alpha=4.597 2nd=1.039
+      w128_p256  step  30000 KID=+0.14444 P=0.443 R=0.000 alpha=4.616 2nd=1.016
+    w128_p256   seed1 KID=+0.14444 P=0.443 R=0.000   3428s 3103MiB
+      w192_p256  step      0 KID=+0.30687 P=0.814 R=0.000 alpha=3.136 2nd=0.332
+      w192_p256  step   7500 KID=+0.12717 P=0.430 R=0.000 alpha=4.611 2nd=1.128
+      w192_p256  step  15000 KID=+0.11858 P=0.482 R=0.000 alpha=4.646 2nd=0.989
+      w192_p256  step  22500 KID=+0.11730 P=0.529 R=0.000 alpha=4.660 2nd=1.028
+      w192_p256  step  30000 KID=+0.11713 P=0.537 R=0.000 alpha=4.672 2nd=1.034
+    w192_p256   seed0 KID=+0.11713 P=0.537 R=0.000   5908s 1833MiB
+      w192_p256  step      0 KID=+0.31255 P=0.830 R=0.000 alpha=3.134 2nd=0.382
+      w192_p256  step   7500 KID=+0.16254 P=0.391 R=0.000 alpha=4.561 2nd=0.979
+      w192_p256  step  15000 KID=+0.17334 P=0.328 R=0.000 alpha=4.583 2nd=0.954
+      w192_p256  step  22500 KID=+0.16751 P=0.350 R=0.000 alpha=4.617 2nd=1.046
+      w192_p256  step  30000 KID=+0.16034 P=0.373 R=0.000 alpha=4.653 2nd=1.090
+    w192_p256   seed1 KID=+0.16034 P=0.373 R=0.000   5910s 1833MiB
+
+=== PHASE 30: DOES SCALE UNLOCK COVERAGE? ===
+arm            params   pos       KID    prec  recall   alpha    ESS  hours
+w64_p64       146,691    64  +0.13470   0.604   0.004   4.552  0.551   0.30
+w64_p256      146,691   256  +0.13554   0.561   0.000   4.596  0.577   0.30
+w128_p256     514,563   256  +0.15103   0.408   0.022   4.651  0.588   0.95
+w192_p256   1,103,619   256  +0.13873   0.455   0.000   4.662  0.575   1.64
+(fresh_lat)                                     0.000
+(memorizat)                                     0.224
+(autoencod)                                     0.496
+
+    capacity ladder recall: [0.0, 0.022, 0.0005]
+    capacity ladder KID:    [0.1355, 0.151, 0.1387]
+    batch effect on recall (p256 - p64): -0.0044
+    best single run: w128_p256 recall=0.0439 KID=+0.15763
+
+  capacity and batch are NOT the obstruction -- recall stays at 0.000 across a 7.5x capacity range, leaving Phase 29's correspondence-stability problem as the remaining candidate
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase30.json sha256=7c5f77de924b4873...

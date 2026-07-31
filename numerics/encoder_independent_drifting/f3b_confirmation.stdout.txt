@@ -1,0 +1,13 @@
+
+=== F3B CONFIRMATION unit 300 ===
+recall=0.2031 precision=0.8203 KID=+0.10188 FID=148.47 rank=13.49 veto=True
+
+=== F3B CONFIRMATION unit 301 ===
+recall=0.1558 precision=0.8379 KID=+0.10528 FID=151.96 rank=12.30 veto=True
+
+=== F3B CONFIRMATION unit 302 ===
+recall=0.1538 precision=0.8027 KID=+0.09340 FID=143.10 rank=14.44 veto=True
+
+=== F3B B0 CONFIRMATION ===
+PASS: the frozen bridge has detected fresh-sample coverage above the calibrated null in at least two units
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\f3b_confirmatory.json sha256=cd60e98a773fd4c575817cd03dffbaee605e3085402a2ae318c439c2c647f636

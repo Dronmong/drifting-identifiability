@@ -1,0 +1,2727 @@
+{
+  "assignment": "nearest target component center after target-pool normalization",
+  "by_arm": {
+    "cta-exact-adaptive-rollout": {
+      "component_covariance_relative_frobenius": {
+        "finite_rows": 32,
+        "mean_finite": 1.1355774408390877,
+        "median_finite": 0.85342904032102,
+        "missing_rows": 0,
+        "rows": 32
+      },
+      "component_mean_rmse": {
+        "finite_rows": 32,
+        "mean_finite": 0.09189963495660436,
+        "median_finite": 0.09065659937914461,
+        "missing_rows": 0,
+        "rows": 32
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "finite_rows": 32,
+        "mean_finite": 2.9875039308353757,
+        "median_finite": 2.687388243204084,
+        "missing_rows": 0,
+        "rows": 32
+      },
+      "rare_component_mean_error": {
+        "finite_rows": 32,
+        "mean_finite": 0.43639977113343775,
+        "median_finite": 0.2829956188797951,
+        "missing_rows": 0,
+        "rows": 32
+      }
+    },
+    "cta-exact-fixed-control": {
+      "component_covariance_relative_frobenius": {
+        "finite_rows": 31,
+        "mean_finite": 1.3466577887150561,
+        "median_finite": 1.0398916263493299,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "component_mean_rmse": {
+        "finite_rows": 31,
+        "mean_finite": 0.11088081923213805,
+        "median_finite": 0.09145361604169011,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "finite_rows": 31,
+        "mean_finite": 3.2064778552807764,
+        "median_finite": 3.101508997371068,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "rare_component_mean_error": {
+        "finite_rows": 31,
+        "mean_finite": 0.45372057994527204,
+        "median_finite": 0.26716503500938416,
+        "missing_rows": 1,
+        "rows": 32
+      }
+    },
+    "cta-exact-gated-hybrid": {
+      "component_covariance_relative_frobenius": {
+        "finite_rows": 31,
+        "mean_finite": 1.3339868958432848,
+        "median_finite": 1.0398916263493299,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "component_mean_rmse": {
+        "finite_rows": 31,
+        "mean_finite": 0.11024126929620956,
+        "median_finite": 0.0900977264791436,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "finite_rows": 31,
+        "mean_finite": 3.2401365645522793,
+        "median_finite": 3.101508997371068,
+        "missing_rows": 1,
+        "rows": 32
+      },
+      "rare_component_mean_error": {
+        "finite_rows": 31,
+        "mean_finite": 0.4536512489280393,
+        "median_finite": 0.27160879969596863,
+        "missing_rows": 1,
+        "rows": 32
+      }
+    },
+    "paper-neural-optimized": {
+      "component_covariance_relative_frobenius": {
+        "finite_rows": 16,
+        "mean_finite": 1.601813487040108,
+        "median_finite": 1.6645551322670973,
+        "missing_rows": 16,
+        "rows": 32
+      },
+      "component_mean_rmse": {
+        "finite_rows": 16,
+        "mean_finite": 0.13921512071897268,
+        "median_finite": 0.1346586944473529,
+        "missing_rows": 16,
+        "rows": 32
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "finite_rows": 16,
+        "mean_finite": 1.9583757149783694,
+        "median_finite": 1.0449545297982539,
+        "missing_rows": 16,
+        "rows": 32
+      },
+      "rare_component_mean_error": {
+        "finite_rows": 16,
+        "mean_finite": 0.12384696467779577,
+        "median_finite": 0.12095904722809792,
+        "missing_rows": 16,
+        "rows": 32
+      }
+    }
+  },
+  "candidate_paired": {
+    "cta-exact-fixed-control": {
+      "component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7089494747408738,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8028184595728604,
+            "rows": 8,
+            "wins": 8
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8742851264808676,
+        "jointly_finite_rows": 31,
+        "wins": 15
+      },
+      "component_mean_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7846717140573967,
+            "rows": 7,
+            "wins": 4
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.7758739113397546,
+            "rows": 8,
+            "wins": 7
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8867044266497691,
+        "jointly_finite_rows": 31,
+        "wins": 11
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7472265910698197,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8794620414186248,
+            "rows": 8,
+            "wins": 7
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.905793354024233,
+        "jointly_finite_rows": 31,
+        "wins": 14
+      },
+      "rare_component_mean_error": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7048727852152431,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8178859506129176,
+            "rows": 8,
+            "wins": 7
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8773472560004204,
+        "jointly_finite_rows": 31,
+        "wins": 14
+      }
+    },
+    "cta-exact-gated-hybrid": {
+      "component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7241148047924435,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.7996856739735544,
+            "rows": 8,
+            "wins": 8
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8775877102641244,
+        "jointly_finite_rows": 31,
+        "wins": 15
+      },
+      "component_mean_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7929961523896436,
+            "rows": 7,
+            "wins": 4
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.7909799115831057,
+            "rows": 8,
+            "wins": 7
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8932538097777177,
+        "jointly_finite_rows": 31,
+        "wins": 11
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7475546586493944,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8903924507872653,
+            "rows": 8,
+            "wins": 6
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.9087753314058816,
+        "jointly_finite_rows": 31,
+        "wins": 13
+      },
+      "rare_component_mean_error": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.7224248599309366,
+            "rows": 7,
+            "wins": 7
+          },
+          "2": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "4": {
+            "geometric_mean_ratio": 1.0,
+            "rows": 8,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 0.8120938290381362,
+            "rows": 8,
+            "wins": 7
+          }
+        },
+        "candidate_only_finite_rows": 1,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8806169634745044,
+        "jointly_finite_rows": 31,
+        "wins": 14
+      }
+    },
+    "paper-neural-optimized": {
+      "component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1702660884697331,
+            "rows": 4,
+            "wins": 0
+          },
+          "2": {
+            "geometric_mean_ratio": 0.8937586361433754,
+            "rows": 4,
+            "wins": 3
+          },
+          "4": {
+            "geometric_mean_ratio": 1.3004350263995978,
+            "rows": 4,
+            "wins": 0
+          },
+          "8": {
+            "geometric_mean_ratio": 1.4023099111225659,
+            "rows": 4,
+            "wins": 0
+          }
+        },
+        "candidate_only_finite_rows": 16,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 1.1751935073172537,
+        "jointly_finite_rows": 16,
+        "wins": 3
+      },
+      "component_mean_rmse": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.711112322171059,
+            "rows": 4,
+            "wins": 4
+          },
+          "2": {
+            "geometric_mean_ratio": 0.4468259691801152,
+            "rows": 4,
+            "wins": 4
+          },
+          "4": {
+            "geometric_mean_ratio": 0.8150013540107676,
+            "rows": 4,
+            "wins": 3
+          },
+          "8": {
+            "geometric_mean_ratio": 0.7988551444032531,
+            "rows": 4,
+            "wins": 4
+          }
+        },
+        "candidate_only_finite_rows": 16,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.6744127065306437,
+        "jointly_finite_rows": 16,
+        "wins": 15
+      },
+      "rare_component_covariance_relative_frobenius": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 1.1402642749718865,
+            "rows": 4,
+            "wins": 2
+          },
+          "2": {
+            "geometric_mean_ratio": 0.8074208707681423,
+            "rows": 4,
+            "wins": 4
+          },
+          "4": {
+            "geometric_mean_ratio": 1.037570063315046,
+            "rows": 4,
+            "wins": 2
+          },
+          "8": {
+            "geometric_mean_ratio": 1.2975161147063925,
+            "rows": 4,
+            "wins": 0
+          }
+        },
+        "candidate_only_finite_rows": 16,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 1.055137165239866,
+        "jointly_finite_rows": 16,
+        "wins": 8
+      },
+      "rare_component_mean_error": {
+        "by_dimension": {
+          "16": {
+            "geometric_mean_ratio": 0.8798035402707012,
+            "rows": 4,
+            "wins": 3
+          },
+          "2": {
+            "geometric_mean_ratio": 0.8839487447649842,
+            "rows": 4,
+            "wins": 3
+          },
+          "4": {
+            "geometric_mean_ratio": 0.8615080956792319,
+            "rows": 4,
+            "wins": 2
+          },
+          "8": {
+            "geometric_mean_ratio": 0.71932284249815,
+            "rows": 4,
+            "wins": 4
+          }
+        },
+        "candidate_only_finite_rows": 16,
+        "comparator_only_finite_rows": 0,
+        "geometric_mean_ratio_on_jointly_finite_rows": 0.8331995003466803,
+        "jointly_finite_rows": 16,
+        "wins": 12
+      }
+    }
+  },
+  "records": [
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.1707850339749766,
+      "component_mean_rmse": 0.025936204321624245,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        520,
+        535,
+        521,
+        472
+      ],
+      "rare_component_covariance_relative_frobenius": 0.23803430904440126,
+      "rare_component_mean_error": 0.03112155571579933,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.1707850339749766,
+      "component_mean_rmse": 0.025936204321624245,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        520,
+        535,
+        521,
+        472
+      ],
+      "rare_component_covariance_relative_frobenius": 0.23803430904440126,
+      "rare_component_mean_error": 0.03112155571579933,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.1707850339749766,
+      "component_mean_rmse": 0.025936204321624245,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        520,
+        535,
+        521,
+        472
+      ],
+      "rare_component_covariance_relative_frobenius": 0.23803430904440126,
+      "rare_component_mean_error": 0.03112155571579933,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.3526299854014068,
+      "component_mean_rmse": 0.08512133447220549,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        307,
+        546,
+        553,
+        642
+      ],
+      "rare_component_covariance_relative_frobenius": 0.37386105610584563,
+      "rare_component_mean_error": 0.03315939009189606,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.865305011808709,
+      "component_mean_rmse": 0.055025171960551233,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        430,
+        373,
+        428,
+        413,
+        404
+      ],
+      "rare_component_covariance_relative_frobenius": 3.6065062503003364,
+      "rare_component_mean_error": 0.06609063595533371,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.865305011808709,
+      "component_mean_rmse": 0.055025171960551233,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        430,
+        373,
+        428,
+        413,
+        404
+      ],
+      "rare_component_covariance_relative_frobenius": 3.6065062503003364,
+      "rare_component_mean_error": 0.06609063595533371,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.865305011808709,
+      "component_mean_rmse": 0.055025171960551233,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        430,
+        373,
+        428,
+        413,
+        404
+      ],
+      "rare_component_covariance_relative_frobenius": 3.6065062503003364,
+      "rare_component_mean_error": 0.06609063595533371,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.7694729629628867,
+      "component_mean_rmse": 0.0823294421115861,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        452,
+        362,
+        361,
+        429,
+        444
+      ],
+      "rare_component_covariance_relative_frobenius": 4.2491650463077475,
+      "rare_component_mean_error": 0.08770312368869781,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.1457641062307448,
+      "component_mean_rmse": 0.11958370759384707,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2007,
+        41
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3431709670073302,
+      "rare_component_mean_error": 1.4785231351852417,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.1457641062307448,
+      "component_mean_rmse": 0.11958370759384707,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2007,
+        41
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3431709670073302,
+      "rare_component_mean_error": 1.4785231351852417,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.1457641062307448,
+      "component_mean_rmse": 0.11958370759384707,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2007,
+        41
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3431709670073302,
+      "rare_component_mean_error": 1.4785231351852417,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.4943877870166068,
+      "component_mean_rmse": 0.08670093936962076,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1951,
+        97
+      ],
+      "rare_component_covariance_relative_frobenius": 7.678554314763782,
+      "rare_component_mean_error": 0.5207343697547913,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.4943877870166068,
+      "component_mean_rmse": 0.08670093936962076,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1951,
+        97
+      ],
+      "rare_component_covariance_relative_frobenius": 7.678554314763782,
+      "rare_component_mean_error": 0.5207343697547913,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.4943877870166068,
+      "component_mean_rmse": 0.08670093936962076,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1951,
+        97
+      ],
+      "rare_component_covariance_relative_frobenius": 7.678554314763782,
+      "rare_component_mean_error": 0.5207343697547913,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.4605791027816613,
+      "component_mean_rmse": 0.0900977264791436,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        415,
+        379,
+        328,
+        331,
+        284,
+        311
+      ],
+      "rare_component_covariance_relative_frobenius": 0.9776824859055394,
+      "rare_component_mean_error": 0.0749666839838028,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.4605791027816613,
+      "component_mean_rmse": 0.0900977264791436,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        415,
+        379,
+        328,
+        331,
+        284,
+        311
+      ],
+      "rare_component_covariance_relative_frobenius": 0.9776824859055394,
+      "rare_component_mean_error": 0.0749666839838028,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.4605791027816613,
+      "component_mean_rmse": 0.0900977264791436,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        415,
+        379,
+        328,
+        331,
+        284,
+        311
+      ],
+      "rare_component_covariance_relative_frobenius": 0.9776824859055394,
+      "rare_component_mean_error": 0.0749666839838028,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.033845737785736,
+      "component_mean_rmse": 0.18381051714823116,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        328,
+        264,
+        377,
+        381,
+        367,
+        331
+      ],
+      "rare_component_covariance_relative_frobenius": 0.7495746056067368,
+      "rare_component_mean_error": 0.1698809713125229,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.3600283701664115,
+      "component_mean_rmse": 0.1261577902660065,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        364,
+        383,
+        452,
+        418,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.150115480772668,
+      "rare_component_mean_error": 0.14536553621292114,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.3600283701664115,
+      "component_mean_rmse": 0.1261577902660065,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        364,
+        383,
+        452,
+        418,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.150115480772668,
+      "rare_component_mean_error": 0.14536553621292114,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 2.3600283701664115,
+      "component_mean_rmse": 0.1261577902660065,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        364,
+        383,
+        452,
+        418,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.150115480772668,
+      "rare_component_mean_error": 0.14536553621292114,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.8317868432389666,
+      "component_mean_rmse": 0.1344659198912268,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        391,
+        387,
+        436,
+        394,
+        440
+      ],
+      "rare_component_covariance_relative_frobenius": 3.5288098934555046,
+      "rare_component_mean_error": 0.1327349692583084,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.3980124547697309,
+      "component_mean_rmse": 0.05153491354758444,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1962,
+        86
+      ],
+      "rare_component_covariance_relative_frobenius": 5.1831735234718455,
+      "rare_component_mean_error": 0.5338693261146545,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.3980124547697309,
+      "component_mean_rmse": 0.05153491354758444,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1962,
+        86
+      ],
+      "rare_component_covariance_relative_frobenius": 5.1831735234718455,
+      "rare_component_mean_error": 0.5338693261146545,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.3980124547697309,
+      "component_mean_rmse": 0.05153491354758444,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1962,
+        86
+      ],
+      "rare_component_covariance_relative_frobenius": 5.1831735234718455,
+      "rare_component_mean_error": 0.5338693261146545,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.3627404212423254,
+      "component_mean_rmse": 0.07383229821061832,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1921,
+        127
+      ],
+      "rare_component_covariance_relative_frobenius": 5.7026968570514045,
+      "rare_component_mean_error": 0.5233018398284912,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.3627404212423254,
+      "component_mean_rmse": 0.07383229821061832,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1921,
+        127
+      ],
+      "rare_component_covariance_relative_frobenius": 5.7026968570514045,
+      "rare_component_mean_error": 0.5233018398284912,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.3627404212423254,
+      "component_mean_rmse": 0.07383229821061832,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1921,
+        127
+      ],
+      "rare_component_covariance_relative_frobenius": 5.7026968570514045,
+      "rare_component_mean_error": 0.5233018398284912,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.4040819546295302,
+      "component_mean_rmse": 0.1434555098749115,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        343,
+        323,
+        395,
+        299,
+        363,
+        325
+      ],
+      "rare_component_covariance_relative_frobenius": 1.1240445423144048,
+      "rare_component_mean_error": 0.1422663927078247,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 3.0249386694121125,
+      "component_mean_rmse": 0.22960873553529382,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        393,
+        282,
+        367,
+        293,
+        349,
+        364
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3782513921477415,
+      "rare_component_mean_error": 0.2599830627441406,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 3.019106297835363,
+      "component_mean_rmse": 0.2287337196394219,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        392,
+        286,
+        365,
+        292,
+        350,
+        363
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3674867910068915,
+      "rare_component_mean_error": 0.2625770568847656,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 2.0170030198554585,
+      "component_mean_rmse": 0.14566409030157956,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        352,
+        264,
+        443,
+        310,
+        371,
+        308
+      ],
+      "rare_component_covariance_relative_frobenius": 0.749574548836252,
+      "rare_component_mean_error": 0.1934114247560501,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.525139637523321,
+      "component_mean_rmse": 0.07988083094460308,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        509,
+        507,
+        534,
+        498
+      ],
+      "rare_component_covariance_relative_frobenius": 1.551418016660172,
+      "rare_component_mean_error": 0.06636784970760345,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 3.1985637522078694,
+      "component_mean_rmse": 0.12256270708166994,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        534,
+        498,
+        526,
+        490
+      ],
+      "rare_component_covariance_relative_frobenius": 1.8879793932120275,
+      "rare_component_mean_error": 0.09033667296171188,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 3.119004312399097,
+      "component_mean_rmse": 0.1248464823802351,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        550,
+        510,
+        514,
+        474
+      ],
+      "rare_component_covariance_relative_frobenius": 1.8429229618152332,
+      "rare_component_mean_error": 0.09361034631729126,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.6572953474789605,
+      "component_mean_rmse": 0.134851469003479,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        536,
+        550,
+        467,
+        495
+      ],
+      "rare_component_covariance_relative_frobenius": 1.251484142670583,
+      "rare_component_mean_error": 0.1340845823287964,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.6040218233478988,
+      "component_mean_rmse": 0.09937347931554541,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1932,
+        116
+      ],
+      "rare_component_covariance_relative_frobenius": 4.993199568980722,
+      "rare_component_mean_error": 0.5625925660133362,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.6118986938843288,
+      "component_mean_rmse": 0.09145361604169011,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1933,
+        115
+      ],
+      "rare_component_covariance_relative_frobenius": 6.392342913796912,
+      "rare_component_mean_error": 0.5460208058357239,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.6240385031899576,
+      "component_mean_rmse": 0.08597097671008669,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        1941,
+        107
+      ],
+      "rare_component_covariance_relative_frobenius": 6.427332971448174,
+      "rare_component_mean_error": 0.557724118232727,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.25343116992979964,
+      "component_mean_rmse": 0.0703403095521935,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2028,
+        20
+      ],
+      "rare_component_covariance_relative_frobenius": 1.703015334515146,
+      "rare_component_mean_error": 0.8870710730552673,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.33489876727696183,
+      "component_mean_rmse": 0.07248151871135633,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2029,
+        19
+      ],
+      "rare_component_covariance_relative_frobenius": 1.43242281336895,
+      "rare_component_mean_error": 0.9099283814430237,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.33383597145431765,
+      "component_mean_rmse": 0.07159373350623355,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2032,
+        16
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3854922249545079,
+      "rare_component_mean_error": 0.9130653142929077,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.508098987274055,
+      "component_mean_rmse": 0.09490906684004585,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        466,
+        545,
+        574,
+        463
+      ],
+      "rare_component_covariance_relative_frobenius": 1.0512623521620004,
+      "rare_component_mean_error": 0.08791489154100418,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.034411048353748,
+      "component_mean_rmse": 0.16379357137702755,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        449,
+        584,
+        548,
+        467
+      ],
+      "rare_component_covariance_relative_frobenius": 1.411051927632077,
+      "rare_component_mean_error": 0.119594044983387,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.9865058863897171,
+      "component_mean_rmse": 0.15898733164431178,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        434,
+        602,
+        538,
+        474
+      ],
+      "rare_component_covariance_relative_frobenius": 1.359286297506495,
+      "rare_component_mean_error": 0.10321465879678726,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.0447905082750089,
+      "component_mean_rmse": 0.1572049828719173,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        493,
+        538,
+        573,
+        444
+      ],
+      "rare_component_covariance_relative_frobenius": 0.81311041413763,
+      "rare_component_mean_error": 0.1606747806072235,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.76752360363675,
+      "component_mean_rmse": 0.15342378764762543,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        368,
+        307,
+        334,
+        364,
+        363,
+        312
+      ],
+      "rare_component_covariance_relative_frobenius": 2.888721908089084,
+      "rare_component_mean_error": 0.16251228749752045,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.5124654279392806,
+      "component_mean_rmse": 0.26901363384968136,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        354,
+        307,
+        363,
+        333,
+        356,
+        335
+      ],
+      "rare_component_covariance_relative_frobenius": 4.1466841092477775,
+      "rare_component_mean_error": 0.26716503500938416,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 2.450978547673633,
+      "component_mean_rmse": 0.27434053136676084,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        359,
+        299,
+        358,
+        325,
+        364,
+        343
+      ],
+      "rare_component_covariance_relative_frobenius": 4.14472344760913,
+      "rare_component_mean_error": 0.27160879969596863,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.7239220768596857,
+      "component_mean_rmse": 0.2048813250294188,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        345,
+        371,
+        304,
+        263,
+        300,
+        465
+      ],
+      "rare_component_covariance_relative_frobenius": 3.087662837445942,
+      "rare_component_mean_error": 0.10390691459178925,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.48264357439127714,
+      "component_mean_rmse": 0.09306548955282778,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2026,
+        22
+      ],
+      "rare_component_covariance_relative_frobenius": 2.5518441427328464,
+      "rare_component_mean_error": 0.649095892906189,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.7119080517444325,
+      "component_mean_rmse": 0.0732080198085896,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2043,
+        5
+      ],
+      "rare_component_covariance_relative_frobenius": 3.5880346677222223,
+      "rare_component_mean_error": 0.7680966258049011,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.7000261412886762,
+      "component_mean_rmse": 0.07343496582143416,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2042,
+        6
+      ],
+      "rare_component_covariance_relative_frobenius": 3.538745233576842,
+      "rare_component_mean_error": 0.7706279158592224,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.6669664542927101,
+      "component_mean_rmse": 0.08045941810996737,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2035,
+        13
+      ],
+      "rare_component_covariance_relative_frobenius": 5.519366374530411,
+      "rare_component_mean_error": 0.8616331219673157,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2047,
+        1
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2047,
+        1
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "concentrated",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.0398916263493299,
+      "component_mean_rmse": 0.04587059374534874,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        499,
+        546,
+        521,
+        482
+      ],
+      "rare_component_covariance_relative_frobenius": 0.3096068390074044,
+      "rare_component_mean_error": 0.04836003854870796,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.0398916263493299,
+      "component_mean_rmse": 0.04587059374534874,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        499,
+        546,
+        521,
+        482
+      ],
+      "rare_component_covariance_relative_frobenius": 0.3096068390074044,
+      "rare_component_mean_error": 0.04836003854870796,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.0398916263493299,
+      "component_mean_rmse": 0.04587059374534874,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        499,
+        546,
+        521,
+        482
+      ],
+      "rare_component_covariance_relative_frobenius": 0.3096068390074044,
+      "rare_component_mean_error": 0.04836003854870796,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.1149730980921615,
+      "component_mean_rmse": 0.12633552205807064,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        468,
+        559,
+        524,
+        497
+      ],
+      "rare_component_covariance_relative_frobenius": 0.3163572457416847,
+      "rare_component_mean_error": 0.09788653254508972,
+      "target": "NCT-d2-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.9651960866739935,
+      "component_mean_rmse": 0.0555994654114329,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        432,
+        361,
+        426,
+        421,
+        408
+      ],
+      "rare_component_covariance_relative_frobenius": 4.305536788181043,
+      "rare_component_mean_error": 0.10896182805299759,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.9651960866739935,
+      "component_mean_rmse": 0.0555994654114329,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        432,
+        361,
+        426,
+        421,
+        408
+      ],
+      "rare_component_covariance_relative_frobenius": 4.305536788181043,
+      "rare_component_mean_error": 0.10896182805299759,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.9651960866739935,
+      "component_mean_rmse": 0.0555994654114329,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        432,
+        361,
+        426,
+        421,
+        408
+      ],
+      "rare_component_covariance_relative_frobenius": 4.305536788181043,
+      "rare_component_mean_error": 0.10896182805299759,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 2.6209133027493374,
+      "component_mean_rmse": 0.10313358281746332,
+      "dimension": 2,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        473,
+        374,
+        334,
+        404,
+        463
+      ],
+      "rare_component_covariance_relative_frobenius": 5.35762852537504,
+      "rare_component_mean_error": 0.06236046925187111,
+      "target": "NCT-d2-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.14601215312368504,
+      "component_mean_rmse": 0.04891911960839934,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2022,
+        26
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3445155946213478,
+      "rare_component_mean_error": 1.7135344743728638,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.14601215312368504,
+      "component_mean_rmse": 0.04891911960839934,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2022,
+        26
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3445155946213478,
+      "rare_component_mean_error": 1.7135344743728638,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.14601215312368504,
+      "component_mean_rmse": 0.04891911960839934,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2022,
+        26
+      ],
+      "rare_component_covariance_relative_frobenius": 1.3445155946213478,
+      "rare_component_mean_error": 1.7135344743728638,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d2-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.23972561651801394,
+      "component_mean_rmse": 0.08551407566119451,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1971,
+        77
+      ],
+      "rare_component_covariance_relative_frobenius": 4.71961063713349,
+      "rare_component_mean_error": 0.4034789502620697,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.23972561651801394,
+      "component_mean_rmse": 0.08551407566119451,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1971,
+        77
+      ],
+      "rare_component_covariance_relative_frobenius": 4.71961063713349,
+      "rare_component_mean_error": 0.4034789502620697,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.23972561651801394,
+      "component_mean_rmse": 0.08551407566119451,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1971,
+        77
+      ],
+      "rare_component_covariance_relative_frobenius": 4.71961063713349,
+      "rare_component_mean_error": 0.4034789502620697,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 2,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d2-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.522529568459266,
+      "component_mean_rmse": 0.12166574223010684,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        423,
+        367,
+        356,
+        302,
+        307,
+        293
+      ],
+      "rare_component_covariance_relative_frobenius": 1.089263230580004,
+      "rare_component_mean_error": 0.15717974305152893,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 1.522529568459266,
+      "component_mean_rmse": 0.12166574223010684,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        423,
+        367,
+        356,
+        302,
+        307,
+        293
+      ],
+      "rare_component_covariance_relative_frobenius": 1.089263230580004,
+      "rare_component_mean_error": 0.15717974305152893,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.522529568459266,
+      "component_mean_rmse": 0.12166574223010684,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        423,
+        367,
+        356,
+        302,
+        307,
+        293
+      ],
+      "rare_component_covariance_relative_frobenius": 1.089263230580004,
+      "rare_component_mean_error": 0.15717974305152893,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.0147084079391517,
+      "component_mean_rmse": 0.1326129308399686,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        352,
+        324,
+        398,
+        353,
+        310,
+        311
+      ],
+      "rare_component_covariance_relative_frobenius": 0.8384249169259249,
+      "rare_component_mean_error": 0.1172604039311409,
+      "target": "NCT-d4-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.2367125562411228,
+      "component_mean_rmse": 0.13791198365652235,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        380,
+        401,
+        411,
+        425,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.101508997371068,
+      "rare_component_mean_error": 0.15492582321166992,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.2367125562411228,
+      "component_mean_rmse": 0.13791198365652235,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        380,
+        401,
+        411,
+        425,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.101508997371068,
+      "rare_component_mean_error": 0.15492582321166992,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 2.2367125562411228,
+      "component_mean_rmse": 0.13791198365652235,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        380,
+        401,
+        411,
+        425,
+        431
+      ],
+      "rare_component_covariance_relative_frobenius": 3.101508997371068,
+      "rare_component_mean_error": 0.15492582321166992,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 2.135952783259602,
+      "component_mean_rmse": 0.13188531534251524,
+      "dimension": 4,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        408,
+        393,
+        444,
+        327,
+        476
+      ],
+      "rare_component_covariance_relative_frobenius": 4.0481180134404395,
+      "rare_component_mean_error": 0.18219280242919922,
+      "target": "NCT-d4-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.4469069476582799,
+      "component_mean_rmse": 0.09386651495151455,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1944,
+        104
+      ],
+      "rare_component_covariance_relative_frobenius": 4.602977940017486,
+      "rare_component_mean_error": 0.6168192625045776,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.4469069476582799,
+      "component_mean_rmse": 0.09386651495151455,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1944,
+        104
+      ],
+      "rare_component_covariance_relative_frobenius": 4.602977940017486,
+      "rare_component_mean_error": 0.6168192625045776,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.4469069476582799,
+      "component_mean_rmse": 0.09386651495151455,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1944,
+        104
+      ],
+      "rare_component_covariance_relative_frobenius": 4.602977940017486,
+      "rare_component_mean_error": 0.6168192625045776,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d4-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.3748428567924035,
+      "component_mean_rmse": 0.10568005944151082,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1931,
+        117
+      ],
+      "rare_component_covariance_relative_frobenius": 5.283740627010574,
+      "rare_component_mean_error": 0.6283280253410339,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.3748428567924035,
+      "component_mean_rmse": 0.10568005944151082,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1931,
+        117
+      ],
+      "rare_component_covariance_relative_frobenius": 5.283740627010574,
+      "rare_component_mean_error": 0.6283280253410339,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.3748428567924035,
+      "component_mean_rmse": 0.10568005944151082,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1931,
+        117
+      ],
+      "rare_component_covariance_relative_frobenius": 5.283740627010574,
+      "rare_component_mean_error": 0.6283280253410339,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 4,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d4-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.2664515222669994,
+      "component_mean_rmse": 0.14302535582828568,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        367,
+        345,
+        405,
+        250,
+        344,
+        337
+      ],
+      "rare_component_covariance_relative_frobenius": 1.1211163980349352,
+      "rare_component_mean_error": 0.11450878530740738,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.961216386775151,
+      "component_mean_rmse": 0.20331548342073802,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        376,
+        283,
+        381,
+        311,
+        364,
+        333
+      ],
+      "rare_component_covariance_relative_frobenius": 1.2440305029822685,
+      "rare_component_mean_error": 0.20509962737560272,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 2.9215384219919716,
+      "component_mean_rmse": 0.20394529987243004,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        374,
+        283,
+        381,
+        314,
+        359,
+        337
+      ],
+      "rare_component_covariance_relative_frobenius": 1.233529101950232,
+      "rare_component_mean_error": 0.19976705312728882,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.623659704403432,
+      "component_mean_rmse": 0.15173441721708514,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        408,
+        297,
+        392,
+        292,
+        339,
+        320
+      ],
+      "rare_component_covariance_relative_frobenius": 0.7508513961545942,
+      "rare_component_mean_error": 0.11894151568412781,
+      "target": "NCT-d8-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 2.6449346738679362,
+      "component_mean_rmse": 0.0940549093465961,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        548,
+        486,
+        542,
+        472
+      ],
+      "rare_component_covariance_relative_frobenius": 1.4861632545723937,
+      "rare_component_mean_error": 0.09393195807933807,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 3.391764766265185,
+      "component_mean_rmse": 0.12352847580768866,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        540,
+        507,
+        497,
+        504
+      ],
+      "rare_component_covariance_relative_frobenius": 2.122590099734226,
+      "rare_component_mean_error": 0.09675142168998718,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 3.3516294032169807,
+      "component_mean_rmse": 0.12368101762695005,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        544,
+        513,
+        491,
+        500
+      ],
+      "rare_component_covariance_relative_frobenius": 2.103703778559055,
+      "rare_component_mean_error": 0.09468820691108704,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.733878118176022,
+      "component_mean_rmse": 0.1269959539094998,
+      "dimension": 8,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        528,
+        479,
+        547,
+        494
+      ],
+      "rare_component_covariance_relative_frobenius": 1.4554066626555284,
+      "rare_component_mean_error": 0.12297657877206802,
+      "target": "NCT-d8-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.5282092590250494,
+      "component_mean_rmse": 0.08385218292823993,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1922,
+        126
+      ],
+      "rare_component_covariance_relative_frobenius": 5.508362771898138,
+      "rare_component_mean_error": 0.5309299826622009,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.5928436844521539,
+      "component_mean_rmse": 0.10487515816930681,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1905,
+        143
+      ],
+      "rare_component_covariance_relative_frobenius": 5.94245607466566,
+      "rare_component_mean_error": 0.5802719593048096,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.644733312444896,
+      "component_mean_rmse": 0.09860843856586143,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        1898,
+        150
+      ],
+      "rare_component_covariance_relative_frobenius": 6.084769300691084,
+      "rare_component_mean_error": 0.5984871983528137,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d8-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.2768374281105635,
+      "component_mean_rmse": 0.05469008939326159,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2024,
+        24
+      ],
+      "rare_component_covariance_relative_frobenius": 1.6848953031782758,
+      "rare_component_mean_error": 0.9069958925247192,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.3998526704779066,
+      "component_mean_rmse": 0.07658395933322026,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2034,
+        14
+      ],
+      "rare_component_covariance_relative_frobenius": 1.7138215112748771,
+      "rare_component_mean_error": 0.9071641564369202,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.3932768639837835,
+      "component_mean_rmse": 0.07376736187688948,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2035,
+        13
+      ],
+      "rare_component_covariance_relative_frobenius": 1.6380510862577033,
+      "rare_component_mean_error": 0.9105022549629211,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 8,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d8-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.53076028681803,
+      "component_mean_rmse": 0.09121547227914562,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        476,
+        531,
+        579,
+        462
+      ],
+      "rare_component_covariance_relative_frobenius": 1.1848009392348302,
+      "rare_component_mean_error": 0.0744304209947586,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.037208372786389,
+      "component_mean_rmse": 0.16949990011926275,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        420,
+        606,
+        570,
+        452
+      ],
+      "rare_component_covariance_relative_frobenius": 1.4726465437105383,
+      "rare_component_mean_error": 0.14849324524402618,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 1.9705423880734123,
+      "component_mean_rmse": 0.16699003799294587,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        421,
+        604,
+        573,
+        450
+      ],
+      "rare_component_covariance_relative_frobenius": 1.418091970585139,
+      "rare_component_mean_error": 0.14551769196987152,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.282368979108679,
+      "component_mean_rmse": 0.13687135716463672,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        407,
+        636,
+        452,
+        553
+      ],
+      "rare_component_covariance_relative_frobenius": 0.8101756879896881,
+      "rare_component_mean_error": 0.09940101951360703,
+      "target": "NCT-d16-balanced-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 1.7749424412765809,
+      "component_mean_rmse": 0.16086985667061526,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        408,
+        286,
+        325,
+        349,
+        378,
+        302
+      ],
+      "rare_component_covariance_relative_frobenius": 2.822932343675321,
+      "rare_component_mean_error": 0.1542578786611557,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 2.4565674651364002,
+      "component_mean_rmse": 0.2621809485426638,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        383,
+        306,
+        322,
+        319,
+        367,
+        351
+      ],
+      "rare_component_covariance_relative_frobenius": 4.402281836981666,
+      "rare_component_mean_error": 0.24613423645496368,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 2.3600671035174763,
+      "component_mean_rmse": 0.2608139672956895,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        379,
+        307,
+        328,
+        321,
+        365,
+        348
+      ],
+      "rare_component_covariance_relative_frobenius": 4.134864713246122,
+      "rare_component_mean_error": 0.2466679960489273,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": 1.6718149170552339,
+      "component_mean_rmse": 0.18954377132467926,
+      "dimension": 16,
+      "family": "balanced-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        334,
+        213,
+        352,
+        350,
+        335,
+        464
+      ],
+      "rare_component_covariance_relative_frobenius": 2.953806446804768,
+      "rare_component_mean_error": 0.16497595608234406,
+      "target": "NCT-d16-balanced-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.3363188633865586,
+      "component_mean_rmse": 0.09403380782168824,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2023,
+        25
+      ],
+      "rare_component_covariance_relative_frobenius": 2.4564896461250463,
+      "rare_component_mean_error": 0.5944162011146545,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.5667511553136612,
+      "component_mean_rmse": 0.07276432266189659,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2036,
+        12
+      ],
+      "rare_component_covariance_relative_frobenius": 2.799001234594419,
+      "rare_component_mean_error": 0.7000383734703064,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.5396339613092869,
+      "component_mean_rmse": 0.07047990690989536,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2036,
+        12
+      ],
+      "rare_component_covariance_relative_frobenius": 2.6028455512576882,
+      "rare_component_mean_error": 0.6965550780296326,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i0"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-adaptive-rollout",
+      "component_covariance_relative_frobenius": 0.5386967272664869,
+      "component_mean_rmse": 0.08024244605076092,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2043,
+        5
+      ],
+      "rare_component_covariance_relative_frobenius": 5.315798047788568,
+      "rare_component_mean_error": 0.8703062534332275,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-fixed-control",
+      "component_covariance_relative_frobenius": 0.6816828383339001,
+      "component_mean_rmse": 0.07853903928116779,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2045,
+        3
+      ],
+      "rare_component_covariance_relative_frobenius": 6.830523650392998,
+      "rare_component_mean_error": 1.014699101448059,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": true,
+      "arm": "cta-exact-gated-hybrid",
+      "component_covariance_relative_frobenius": 0.7092569565659981,
+      "component_mean_rmse": 0.07738927051832434,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2046,
+        2
+      ],
+      "rare_component_covariance_relative_frobenius": 8.52569322841666,
+      "rare_component_mean_error": 0.9930137991905212,
+      "target": "NCT-d16-rare-gmm-i1"
+    },
+    {
+      "all_components_represented": false,
+      "arm": "paper-neural-optimized",
+      "component_covariance_relative_frobenius": null,
+      "component_mean_rmse": null,
+      "dimension": 16,
+      "family": "rare-gmm",
+      "initialization": "broad",
+      "output_component_counts": [
+        2048,
+        0
+      ],
+      "rare_component_covariance_relative_frobenius": null,
+      "rare_component_mean_error": null,
+      "target": "NCT-d16-rare-gmm-i1"
+    }
+  ],
+  "rows": 128,
+  "schema": "adaptive-rollout-component-moments-v1",
+  "status": "post-hoc mechanism diagnostic; not a confirmation gate",
+  "target_count": 16
+}

@@ -1,0 +1,17 @@
+{
+  "artifact_payload_hashes": 7,
+  "deep_metrics": true,
+  "generator_budget_per_row": 20480,
+  "kll_bytes": 0,
+  "kll_states": 0,
+  "maximum_recomputed_ed2_error": 8.790987875428868e-07,
+  "maximum_recomputed_heldout_sw1_error": 4.692400218386794e-10,
+  "outputs": 48,
+  "references": 16,
+  "rows": 48,
+  "schema": "conditioned-transport-development-v2",
+  "source_snapshots": 14,
+  "status": "pass",
+  "targets": 16,
+  "unique_cells": 48
+}

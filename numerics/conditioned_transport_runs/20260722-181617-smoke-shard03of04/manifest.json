@@ -1,0 +1,39 @@
+{
+  "actual_rows": 5,
+  "audit_sha256": "ee214a7819b2b274da70dbbffb724816289d453dfe813845e88288f0051f2f0a",
+  "command": [
+    "numerics/run_conditioned_transport_development.py",
+    "--profile",
+    "smoke",
+    "--active-directions",
+    "16",
+    "--shard-count",
+    "4",
+    "--shard-index",
+    "3"
+  ],
+  "expected_rows": 5,
+  "kll_state_count": 192,
+  "numpy": "2.5.1",
+  "profile": {
+    "atlas_knots": 64,
+    "evaluation_samples": 512,
+    "generator_budget": 2048,
+    "name": "smoke",
+    "smoke_only": true,
+    "target_pool": 2048
+  },
+  "registry_sha256": "7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6",
+  "schema": "conditioned-transport-development-v1",
+  "shard_count": 4,
+  "shard_index": 3,
+  "source_sha256": {
+    "numerics\\ConditionedTransportAmortizationResearch.md": "7bb56c87fd5dd9224256ff6ec25103fa758bbd631c3fadc7218f0950318ff9f1",
+    "numerics\\ProjectionKernelCostOptimizationPlan.md": "ba679e6719ca06fbbb137140e8c9d3cbbd5d49754420d7ad93f3a8d0e272dc26",
+    "numerics\\neural_pooled_rank.py": "37120e5f8de21327efe702b6fc0423bc57802663bf1b6df13804f578e2908786",
+    "numerics\\neural_pooled_rank_tests.py": "eb73774121866b35a447d60e5d1c110b8b9f5a0a9c9574fae58790b4b4931dfc",
+    "numerics\\run_conditioned_transport_development.py": "1e46e47cf72e34df4743954184d888453f2369cea475e1804cf5111d3cc239ec"
+  },
+  "torch": "2.7.1+cpu",
+  "wall_seconds": 0.6769581999978982
+}

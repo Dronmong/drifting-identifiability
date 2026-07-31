@@ -1,0 +1,33 @@
+
+=== F3B DEVELOPMENT compact unit 200 ===
+step=   1000 nfe=  8 recall=0.0000 precision=0.0078 KID=+0.48598 rank=431.65
+step=   1000 nfe= 32 recall=0.0000 precision=0.0098 KID=+0.48551 rank=431.67
+step=   5000 nfe=  8 recall=0.0000 precision=0.6250 KID=+0.40150 rank=290.69
+step=   5000 nfe= 32 recall=0.0000 precision=0.5645 KID=+0.40669 rank=287.59
+step=  10000 nfe=  8 recall=0.0000 precision=0.7539 KID=+0.32830 rank=114.93
+step=  10000 nfe= 32 recall=0.0000 precision=0.7168 KID=+0.34622 rank=121.64
+step=  30000 nfe=  8 recall=0.0439 precision=0.8262 KID=+0.12026 rank=18.46
+step=  30000 nfe= 32 recall=0.1055 precision=0.7969 KID=+0.09824 rank=15.96
+
+=== F3B DEVELOPMENT compact unit 201 ===
+step=   1000 nfe=  8 recall=0.0000 precision=0.0020 KID=+0.51691 rank=431.45
+step=   1000 nfe= 32 recall=0.0000 precision=0.0020 KID=+0.51626 rank=431.44
+step=   5000 nfe=  8 recall=0.0000 precision=0.9668 KID=+0.33329 rank=257.86
+step=   5000 nfe= 32 recall=0.0000 precision=0.9668 KID=+0.33578 rank=246.69
+step=  10000 nfe=  8 recall=0.0000 precision=0.9336 KID=+0.30463 rank=59.58
+step=  10000 nfe= 32 recall=0.0000 precision=0.9395 KID=+0.30397 rank=56.05
+step=  30000 nfe=  8 recall=0.0713 precision=0.8555 KID=+0.13057 rank=14.38
+step=  30000 nfe= 32 recall=0.2007 precision=0.8516 KID=+0.09605 rank=12.03
+
+=== F3B DEVELOPMENT compact unit 202 ===
+step=   1000 nfe=  8 recall=0.0000 precision=0.0078 KID=+0.48960 rank=428.80
+step=   1000 nfe= 32 recall=0.0000 precision=0.0078 KID=+0.48947 rank=428.77
+step=   5000 nfe=  8 recall=0.0000 precision=0.5176 KID=+0.40241 rank=287.19
+step=   5000 nfe= 32 recall=0.0000 precision=0.4961 KID=+0.40561 rank=278.79
+step=  10000 nfe=  8 recall=0.0000 precision=0.7969 KID=+0.31299 rank=83.65
+step=  10000 nfe= 32 recall=0.0000 precision=0.7520 KID=+0.32337 rank=85.73
+step=  30000 nfe=  8 recall=0.1606 precision=0.8379 KID=+0.13114 rank=16.54
+step=  30000 nfe= 32 recall=0.2314 precision=0.7852 KID=+0.09819 rank=14.39
+
+=== F3B DEVELOPMENT COMPLETE ===
+wrote numerics\encoder_independent_drifting\f3b_development.json sha256=3135e6c050cb777a444434c5a02cc71de4ca41341864d92541d414f0bc9a2eeb

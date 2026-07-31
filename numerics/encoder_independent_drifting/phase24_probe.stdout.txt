@@ -1,0 +1,40 @@
+=== reference points, on the validated measures ===
+    real           KID=-0.00004 FID=  22.50 P=0.731 R=0.751 alpha=3.603
+    gaussian_mm    KID=+0.21677 FID= 226.69 P=0.829 R=0.000 alpha=3.623
+
+=== autoencoder ceiling at 15000 steps ===
+      ae step      0 mse=0.37060
+      ae step   3750 mse=0.02423
+      ae step   7500 mse=0.02081
+      ae step  11250 mse=0.02072
+      ae step  14999 mse=0.01938
+    d= 128 KID=+0.11600 FID= 118.30 P=0.638 R=0.069 alpha=4.910 mse=0.01938
+      ae step      0 mse=0.46473
+      ae step   3750 mse=0.01723
+      ae step   7500 mse=0.01264
+      ae step  11250 mse=0.01222
+      ae step  14999 mse=0.01116
+    d= 256 KID=+0.06808 FID=  78.69 P=0.716 R=0.268 alpha=4.856 mse=0.01116
+      ae step      0 mse=0.32473
+      ae step   3750 mse=0.01367
+      ae step   7500 mse=0.00807
+      ae step  11250 mse=0.00742
+      ae step  14999 mse=0.00650
+    d= 512 KID=+0.03064 FID=  49.44 P=0.736 R=0.496 alpha=4.699 mse=0.00650
+
+=== PHASE 24: THE CEILING ===
+  latent d       KID   FID2048    prec  recall   alpha    tail   ae mse
+       128  +0.11600    118.30   0.638   0.069   4.910  0.1240  0.01938
+       256  +0.06808     78.69   0.716   0.268   4.856  0.1519  0.01116
+       512  +0.03064     49.44   0.736   0.496   4.699  0.1671  0.00650
+      real  -0.00004     22.50   0.731   0.751   3.603  0.1874
+
+    pixel-space best (Phase 22 F_mix) KID = +0.13116
+    KID headroom, ceiling below that best:
+      d= 128  +0.01516
+      d= 256  +0.06308
+      d= 512  +0.10052
+
+  every autoencoder ceiling is below the best pixel-space arm, so latent drifting has room to be an improvement and Phase 25 is worth running
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase24_probe.json sha256=08e5514b3a7d29d3...

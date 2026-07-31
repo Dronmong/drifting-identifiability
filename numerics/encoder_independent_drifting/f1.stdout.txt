@@ -1,0 +1,60 @@
+=== §11 pre-conditions ===
+    OK  calibration_present
+    OK  calibration_go
+    OK  checks_present
+    OK  checks_passed
+    p_null_upper = 0.014867039231272056
+
+=== unit 0 ===
+    u0 real_data           replay       recall=0.0137 CI=0.0000-0.0255 KID=+0.26317 rank=  1.70 distinct_bank=194
+    u0 real_data           stochastic   recall=0.0093 CI=0.0000-0.0132 KID=+0.26920 rank=  1.69 distinct_bank=188
+    u0 random_generator    replay       recall=0.0054 CI=0.0000-0.0078 KID=+0.26223 rank=  1.68 distinct_bank=213
+    u0 random_generator    stochastic   recall=0.0034 CI=0.0000-0.0039 KID=+0.27224 rank=  1.67 distinct_bank=182
+    u0 trained_bad         replay       recall=0.0000 CI=0.0000-0.0122 KID=+0.26336 rank=  1.73 distinct_bank=212
+    u0 trained_bad         stochastic   recall=0.0005 CI=0.0000-0.0020 KID=+0.26998 rank=  1.73 distinct_bank=189
+    u0 ae_reconstruction   replay       recall=0.0059 CI=0.0000-0.0113 KID=+0.26756 rank=  1.75 distinct_bank=206
+    u0 ae_reconstruction   stochastic   recall=0.0122 CI=0.0000-0.0484 KID=+0.26852 rank=  1.75 distinct_bank=187
+    u0 basin_interpolation replay       recall=0.0020 CI=0.0000-0.0103 KID=+0.26249 rank=  1.80 distinct_bank=197
+    u0 basin_interpolation stochastic   recall=0.0015 CI=0.0000-0.0054 KID=+0.27263 rank=  1.80 distinct_bank=189
+    u0 ambient_noise       replay       recall=0.0244 CI=0.0000-0.0870 KID=+0.26507 rank=  1.72 distinct_bank=198
+    u0 ambient_noise       stochastic   recall=0.0049 CI=0.0000-0.0064 KID=+0.26845 rank=  1.71 distinct_bank=178
+=== unit 1 ===
+    u1 real_data           replay       recall=0.0039 CI=0.0000-0.0093 KID=+0.26999 rank=  1.69 distinct_bank=191
+    u1 real_data           stochastic   recall=0.0020 CI=0.0000-0.0029 KID=+0.26893 rank=  1.72 distinct_bank=212
+    u1 random_generator    replay       recall=0.0156 CI=0.0000-0.0415 KID=+0.26694 rank=  1.68 distinct_bank=194
+    u1 random_generator    stochastic   recall=0.0122 CI=0.0000-0.0171 KID=+0.26523 rank=  1.71 distinct_bank=222
+    u1 trained_bad         replay       recall=0.0000 CI=0.0000-0.0073 KID=+0.27120 rank=  1.69 distinct_bank=190
+    u1 trained_bad         stochastic   recall=0.0010 CI=0.0000-0.0024 KID=+0.26821 rank=  1.73 distinct_bank=220
+    u1 ae_reconstruction   replay       recall=0.0171 CI=0.0000-0.0532 KID=+0.27170 rank=  1.70 distinct_bank=192
+    u1 ae_reconstruction   stochastic   recall=0.0024 CI=0.0000-0.0049 KID=+0.26921 rank=  1.72 distinct_bank=204
+    u1 basin_interpolation replay       recall=0.0601 CI=0.0000-0.0703 KID=+0.26683 rank=  1.73 distinct_bank=198
+    u1 basin_interpolation stochastic   recall=0.0073 CI=0.0000-0.0342 KID=+0.26815 rank=  1.77 distinct_bank=223
+    u1 ambient_noise       replay       recall=0.0093 CI=0.0000-0.0132 KID=+0.26966 rank=  1.65 distinct_bank=195
+    u1 ambient_noise       stochastic   recall=0.0029 CI=0.0000-0.0034 KID=+0.26871 rank=  1.67 distinct_bank=214
+=== unit 2 ===
+    u2 real_data           replay       recall=0.0098 CI=0.0000-0.0357 KID=+0.26220 rank=  1.78 distinct_bank=196
+    u2 real_data           stochastic   recall=0.0776 CI=0.0005-0.1148 KID=+0.27310 rank=  1.72 distinct_bank=163
+    u2 random_generator    replay       recall=0.0171 CI=0.0000-0.0665 KID=+0.25806 rank=  1.74 distinct_bank=207
+    u2 random_generator    stochastic   recall=0.0029 CI=0.0000-0.0049 KID=+0.27590 rank=  1.68 distinct_bank=161
+    u2 trained_bad         replay       recall=0.0015 CI=0.0000-0.0132 KID=+0.26268 rank=  1.76 distinct_bank=207
+    u2 trained_bad         stochastic   recall=0.0020 CI=0.0000-0.0073 KID=+0.27177 rank=  1.73 distinct_bank=166
+    u2 ae_reconstruction   replay       recall=0.0024 CI=0.0000-0.0044 KID=+0.26517 rank=  1.71 distinct_bank=193
+    u2 ae_reconstruction   stochastic   recall=0.0015 CI=0.0000-0.0015 KID=+0.27312 rank=  1.67 distinct_bank=163
+    u2 basin_interpolation replay       recall=0.0190 CI=0.0000-0.0558 KID=+0.26088 rank=  1.69 distinct_bank=205
+    u2 basin_interpolation stochastic   recall=0.0103 CI=0.0000-0.0137 KID=+0.27806 rank=  1.66 distinct_bank=158
+    u2 ambient_noise       replay       recall=0.0034 CI=0.0000-0.0059 KID=+0.25920 rank=  1.70 distinct_bank=199
+    u2 ambient_noise       stochastic   recall=0.0034 CI=0.0000-0.0034 KID=+0.27737 rank=  1.67 distinct_bank=167
+
+=== STAGE F1 ===
+unit  regime         recall   CI low  CI high  passes
+0     replay         0.0000   0.0000   0.0078   False
+0     stochastic     0.0005   0.0000   0.0039   False
+1     replay         0.0005   0.0000   0.0415   False
+1     stochastic     0.0000   0.0000   0.0171   False
+2     replay         0.0029   0.0000   0.0665   False
+2     stochastic     0.0000   0.0000   0.0049   False
+
+    confirmatory: True
+  F1 FAIL: units passing = {'replay': 0, 'stochastic': 0} against the 2-of-3 rule
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\f1.json sha256=f234a13c0d011b37...

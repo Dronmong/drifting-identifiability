@@ -1,0 +1,68 @@
+--- R19 batch x temperature (with R15 admission) ---
+    R19 tau=0.05   batch=   64 ESS= 0.11877 neighbours=    7.60 collapsed=0.000 admissible=True
+    R19 tau=0.05   batch=  256 ESS= 0.08577 neighbours=   21.96 collapsed=0.000 admissible=True
+    R19 tau=0.05   batch= 1024 ESS= 0.07372 neighbours=   75.49 collapsed=0.000 admissible=True
+    R19 tau=0.2    batch=   64 ESS= 0.69085 neighbours=   44.21 collapsed=0.000 admissible=True
+    R19 tau=0.2    batch=  256 ESS= 0.65145 neighbours=  166.77 collapsed=0.000 admissible=True
+    R19 tau=0.2    batch= 1024 ESS= 0.62440 neighbours=  639.39 collapsed=0.000 admissible=True
+    R19 tau=None   batch=   64 ESS= 0.90187 neighbours=   57.72 collapsed=0.000 admissible=True
+    R19 tau=None   batch=  256 ESS= 0.85852 neighbours=  219.78 collapsed=0.000 admissible=True
+    R19 tau=None   batch= 1024 ESS= 0.86381 neighbours=  884.54 collapsed=0.000 admissible=True
+--- D0-D3 comparison (R16 vs R11) + R17 latent sweep ---
+    latent=  32 seed0 D0 score=  6.635 eff_dim=0.254 teacher_ratio=0.9970  16.5s
+    latent=  32 seed0 D1 score=  1.271 eff_dim=0.944 teacher_ratio=0.9986  16.8s
+    latent=  32 seed0 D2 score=  6.819 eff_dim=0.265 teacher_ratio=0.9997  16.7s
+    latent=  32 seed0 D3 score=  1.868 eff_dim=1.734 teacher_ratio=0.9988  17.5s
+    latent=  32 seed1 D0 score=  6.208 eff_dim=0.254 teacher_ratio=0.9961  17.9s
+    latent=  32 seed1 D1 score=  1.487 eff_dim=0.746 teacher_ratio=0.9996  18.4s
+    latent=  32 seed1 D2 score=  6.591 eff_dim=0.264 teacher_ratio=0.9999  17.8s
+    latent=  32 seed1 D3 score=  1.906 eff_dim=1.048 teacher_ratio=0.9998  18.0s
+    latent=  32 seed2 D0 score=  6.031 eff_dim=0.271 teacher_ratio=0.9953  18.5s
+    latent=  32 seed2 D1 score=  3.350 eff_dim=0.773 teacher_ratio=0.9976  17.9s
+    latent=  32 seed2 D2 score=  7.196 eff_dim=0.282 teacher_ratio=0.9979  18.3s
+    latent=  32 seed2 D3 score=  2.593 eff_dim=1.993 teacher_ratio=0.9989  18.3s
+    latent=  64 seed0 D0 score=  5.644 eff_dim=0.304 teacher_ratio=0.9995  18.1s
+    latent=  64 seed0 D1 score=  1.645 eff_dim=1.074 teacher_ratio=0.9968  18.1s
+    latent=  64 seed0 D2 score=  5.909 eff_dim=0.288 teacher_ratio=1.0001  18.0s
+    latent=  64 seed0 D3 score=  2.024 eff_dim=1.610 teacher_ratio=0.9991  18.4s
+    latent=  64 seed1 D0 score=  6.066 eff_dim=0.233 teacher_ratio=0.9995  18.4s
+    latent=  64 seed1 D1 score=  1.717 eff_dim=0.900 teacher_ratio=0.9973  18.8s
+    latent=  64 seed1 D2 score=  6.506 eff_dim=0.255 teacher_ratio=0.9996  18.1s
+    latent=  64 seed1 D3 score=  2.421 eff_dim=1.886 teacher_ratio=0.9986  18.7s
+    latent=  64 seed2 D0 score=  6.517 eff_dim=0.280 teacher_ratio=0.9978  18.6s
+    latent=  64 seed2 D1 score=  2.539 eff_dim=0.953 teacher_ratio=0.9994  19.6s
+    latent=  64 seed2 D2 score=  7.438 eff_dim=0.271 teacher_ratio=0.9991  18.5s
+    latent=  64 seed2 D3 score=  2.102 eff_dim=1.722 teacher_ratio=0.9990  18.8s
+    latent= 128 seed0 D0 score=  6.335 eff_dim=0.291 teacher_ratio=0.9983  18.7s
+    latent= 128 seed0 D1 score=  1.409 eff_dim=0.829 teacher_ratio=0.9977  19.6s
+    latent= 128 seed0 D2 score=  6.081 eff_dim=0.279 teacher_ratio=0.9996  18.4s
+    latent= 128 seed0 D3 score=  1.961 eff_dim=2.105 teacher_ratio=0.9980  19.1s
+    latent= 128 seed1 D0 score=  5.992 eff_dim=0.252 teacher_ratio=0.9901  18.3s
+    latent= 128 seed1 D1 score=  1.612 eff_dim=0.833 teacher_ratio=0.9985  19.1s
+    latent= 128 seed1 D2 score=  6.226 eff_dim=0.253 teacher_ratio=0.9993  18.6s
+    latent= 128 seed1 D3 score=  1.794 eff_dim=1.201 teacher_ratio=0.9991  18.9s
+    latent= 128 seed2 D0 score=  5.338 eff_dim=0.281 teacher_ratio=0.9959  18.6s
+    latent= 128 seed2 D1 score=  2.288 eff_dim=0.918 teacher_ratio=0.9990  18.9s
+    latent= 128 seed2 D2 score=  7.345 eff_dim=0.282 teacher_ratio=0.9986  18.4s
+    latent= 128 seed2 D3 score=  2.495 eff_dim=1.823 teacher_ratio=0.9989  19.3s
+
+=== PHASE 5 ===
+  D0 median score   6.066  eff_dim 0.271
+  D1 median score   1.645  eff_dim 0.900
+  D2 median score   6.591  eff_dim 0.271
+  D3 median score   2.024  eff_dim 1.734
+
+  D2/D0 (R16 alone)            1.0965 [1.0350,1.1743] wins=1/9
+  D1/D0 (R11 alone)            0.3022 [0.2470,0.3763] wins=9/9
+  D3/D0 (both)                 0.3477 [0.3139,0.3902] wins=9/9
+  D2/D1 (R16 vs R11)           3.6285 [3.0533,4.2278] wins=0/9
+  D3/D1 (adding R16 to R11)    1.1508 [0.9905,1.3116] wins=2/9
+
+  [FAIL] G5.1_R16_beats_baseline
+  [FAIL] G5.2_R16_repairs_collapse
+  [FAIL] G5.3_mechanism_on_real_trajectory
+  [FAIL] G5.4_R15_excludes_dead_kernels
+  [PASS] G5.5_batch_temperature_interaction
+
+  Phase-5 gate: FAIL
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase5.json sha256=0aabb0a3277b5a0d...

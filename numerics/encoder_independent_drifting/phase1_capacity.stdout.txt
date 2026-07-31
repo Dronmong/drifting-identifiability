@@ -1,0 +1,28 @@
+--- D7_capacity_oracle ---
+    D7 checkerboard    SW steps=  300 score=  20.127 cover=0.064 prec=0.029
+    D7 checkerboard    SW steps= 1200 score=  13.211 cover=1.000 prec=0.393
+    D7 texture_blocks  SW steps=  300 score=  29.887 cover=0.000 prec=0.000
+    D7 texture_blocks  SW steps= 1200 score=   8.945 cover=0.000 prec=0.000
+    D7 rings_islands   SW steps=  300 score=  14.024 cover=0.000 prec=0.000
+    D7 rings_islands   SW steps= 1200 score=  11.003 cover=0.000 prec=0.000
+--- D8_output_character ---
+    D8 checkerboard    A0 rms_ratio=0.966 diversity_ratio=4.823
+    D8 checkerboard    A1 rms_ratio=0.974 diversity_ratio=7.366
+    D8 checkerboard    A3 rms_ratio=0.080 diversity_ratio=0.568
+    D8 checkerboard    A4 rms_ratio=0.945 diversity_ratio=7.962
+    D8 checkerboard    A5 rms_ratio=0.964 diversity_ratio=8.261
+    D8 checkerboard    A7 rms_ratio=0.991 diversity_ratio=7.559
+    D8 texture_blocks  A0 rms_ratio=1.075 diversity_ratio=0.955
+    D8 texture_blocks  A1 rms_ratio=1.000 diversity_ratio=0.937
+    D8 texture_blocks  A3 rms_ratio=0.926 diversity_ratio=0.737
+    D8 texture_blocks  A4 rms_ratio=0.759 diversity_ratio=0.655
+    D8 texture_blocks  A5 rms_ratio=0.740 diversity_ratio=0.643
+    D8 texture_blocks  A7 rms_ratio=0.792 diversity_ratio=0.697
+    D8 rings_islands   A0 rms_ratio=1.011 diversity_ratio=0.841
+    D8 rings_islands   A1 rms_ratio=1.006 diversity_ratio=0.819
+    D8 rings_islands   A3 rms_ratio=1.020 diversity_ratio=0.836
+    D8 rings_islands   A4 rms_ratio=0.995 diversity_ratio=0.800
+    D8 rings_islands   A5 rms_ratio=0.995 diversity_ratio=0.781
+    D8 rings_islands   A7 rms_ratio=1.004 diversity_ratio=0.782
+
+wrote numerics\encoder_independent_drifting\phase1_capacity.json sha256=01e200d478c5d5bc...

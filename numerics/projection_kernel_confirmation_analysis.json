@@ -1,0 +1,132 @@
+{
+  "aggressive_m64_vs_dense_m512": {
+    "ed2": {
+      "geometric_mean_ratio": 0.9983695771702714,
+      "paired_median_ratio": 1.0299440938214455,
+      "targets": 16,
+      "wins": 5
+    },
+    "heldout_sw1": {
+      "geometric_mean_ratio": 1.0019775716397514,
+      "paired_median_ratio": 1.0218982258230764,
+      "targets": 16,
+      "wins": 5
+    },
+    "online_training_wall_seconds": {
+      "geometric_mean_ratio": 1.0124153531363838,
+      "paired_median_ratio": 1.0071954659346452,
+      "targets": 16,
+      "wins": 8
+    },
+    "paper_kernel_pairs": {
+      "geometric_mean_ratio": 0.12500000000000003,
+      "paired_median_ratio": 0.125,
+      "targets": 16,
+      "wins": 16
+    },
+    "setup_plus_training_wall_seconds": {
+      "geometric_mean_ratio": 1.0193977330858188,
+      "paired_median_ratio": 1.0176608182378817,
+      "targets": 16,
+      "wins": 6
+    }
+  },
+  "artifacts": {
+    "aggressive_m64": "numerics\\conditioned_transport_runs\\20260722-201628-consumed",
+    "dense_m512": "numerics\\conditioned_transport_runs\\20260722-201428-consumed",
+    "primary_m128": "numerics\\conditioned_transport_runs\\20260722-202659-consumed"
+  },
+  "bootstrap_resamples": 20000,
+  "bootstrap_seed": 2026081709,
+  "limitations": [
+    "synthetic dimensions 2, 4, 8, and 16 only",
+    "CPU wall time is implementation- and hardware-specific",
+    "peak memory was not measured",
+    "the balanced tree has no semantic rare-mode oracle"
+  ],
+  "predeclared_primary_success": true,
+  "primary_m128_vs_dense_m512": {
+    "ed2": {
+      "geometric_mean_ratio": 0.9486453554904438,
+      "paired_median_ratio": 0.9978992488378104,
+      "targets": 16,
+      "wins": 9
+    },
+    "heldout_sw1": {
+      "geometric_mean_ratio": 0.9769033576583442,
+      "paired_median_ratio": 0.9989866479620969,
+      "targets": 16,
+      "wins": 10
+    },
+    "online_training_wall_seconds": {
+      "geometric_mean_ratio": 0.9823167668110887,
+      "paired_median_ratio": 0.9937143973762226,
+      "targets": 16,
+      "wins": 10
+    },
+    "paper_kernel_pairs": {
+      "geometric_mean_ratio": 0.25,
+      "paired_median_ratio": 0.25,
+      "targets": 16,
+      "wins": 16
+    },
+    "setup_plus_training_wall_seconds": {
+      "geometric_mean_ratio": 0.9877496045182819,
+      "paired_median_ratio": 0.9927905692861244,
+      "targets": 16,
+      "wins": 11
+    }
+  },
+  "primary_vs_matched_paper": {
+    "cost": {
+      "median_generator_example_evals_training_ratio": 1.0,
+      "median_online_training_wall_seconds_ratio": 0.6150045718894306,
+      "median_paper_kernel_pairs_ratio": 1.0,
+      "median_setup_plus_training_wall_seconds_ratio": 0.7635897046648479,
+      "median_target_example_accesses_ratio": 1.5
+    },
+    "field_audit": {
+      "maximum_mean_column_mass_relative_l2_error": 0.3115825466811657,
+      "maximum_mean_row_mass_relative_l2_error": 0.3294583782553673,
+      "median_column_mass_relative_l2_error": 0.10872223414480686,
+      "median_field_relative_l2_error": 0.0803680457174778,
+      "median_row_mass_relative_l2_error": 0.038878818741068244,
+      "minimum_field_cosine": 0.8914771676063538
+    },
+    "quality": {
+      "ed2": {
+        "bootstrap_95_interval": [
+          0.2519569671316125,
+          0.4312890615678337
+        ],
+        "geometric_mean_ratio": 0.3304655274140697,
+        "paired_median_ratio": 0.3863448488570528,
+        "targets": 16,
+        "ties": 0,
+        "wins": 15
+      },
+      "heldout_sw1": {
+        "bootstrap_95_interval": [
+          0.4969219730547381,
+          0.654528251264984
+        ],
+        "geometric_mean_ratio": 0.5710559247746013,
+        "paired_median_ratio": 0.6479166118014852,
+        "targets": 16,
+        "ties": 0,
+        "wins": 16
+      }
+    },
+    "support": {
+      "paper_minimum_mode_coverage": 0.5,
+      "paper_rare_median_mass_error": 0.05,
+      "paper_rare_minimum_mode_coverage": 0.5,
+      "primary_minimum_mode_coverage": 0.5,
+      "primary_rare_median_mass_error": 0.023974609374999997,
+      "primary_rare_minimum_mode_coverage": 0.5
+    }
+  },
+  "registry_sha256": "3a148bfa4c427fc26e44c95c43b213efda13f79b87d329f37c5f7f0ccff44c05",
+  "schema": "projection-kernel-confirmation-analysis-v1",
+  "status": "pass"
+}

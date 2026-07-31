@@ -1,0 +1,94 @@
+=== 10A: the shape law, spectrum against packing ===
+    10A S beta= 0.0 seed0 tail= 0.8745 nn=  18.611 nn_cv= 0.000 zero=  0.1797
+    10A S beta= 0.5 seed0 tail= 0.5060 nn=  14.152 nn_cv= 0.152 zero=  1.0749
+    10A S beta= 1.0 seed0 tail= 0.1264 nn=  10.374 nn_cv= 0.215 zero=  0.7999
+    10A S beta= 1.5 seed0 tail= 0.0162 nn=   6.734 nn_cv= 0.256 zero=  0.3589
+    10A S beta= 2.0 seed0 tail= 0.0016 nn=   4.355 nn_cv= 0.307 zero=   0.237
+    10A S beta= 3.0 seed0 tail= 0.0000 nn=   2.089 nn_cv= 0.489 zero=   0.179
+    10A P steps=   0 seed0 tail= 0.1264 nn=  10.374 nn_cv= 0.215 zero=  0.8288
+    10A P steps=   5 seed0 tail= 0.1264 nn=  10.452 nn_cv= 0.203 zero=  0.8414
+    10A P steps=  20 seed0 tail= 0.1262 nn=  10.662 nn_cv= 0.174 zero=  0.7524
+    10A P steps=  80 seed0 tail= 0.1248 nn=  11.209 nn_cv= 0.124 zero=  0.7432
+    10A S beta= 0.0 seed1 tail= 0.8745 nn=  19.397 nn_cv= 0.000 zero=  0.1599
+    10A S beta= 0.5 seed1 tail= 0.5022 nn=  14.742 nn_cv= 0.149 zero=  1.0241
+    10A S beta= 1.0 seed1 tail= 0.1180 nn=  10.595 nn_cv= 0.203 zero=  0.7797
+    10A S beta= 1.5 seed1 tail= 0.0138 nn=   6.672 nn_cv= 0.246 zero=  0.3886
+    10A S beta= 2.0 seed1 tail= 0.0013 nn=   4.256 nn_cv= 0.279 zero=  0.2329
+    10A S beta= 3.0 seed1 tail= 0.0000 nn=   2.018 nn_cv= 0.353 zero=  0.1709
+    10A P steps=   0 seed1 tail= 0.1180 nn=  10.595 nn_cv= 0.203 zero=  0.7643
+    10A P steps=   5 seed1 tail= 0.1180 nn=  10.666 nn_cv= 0.193 zero=  0.7407
+    10A P steps=  20 seed1 tail= 0.1178 nn=  10.863 nn_cv= 0.168 zero=  0.7643
+    10A P steps=  80 seed1 tail= 0.1165 nn=  11.382 nn_cv= 0.127 zero=  0.6787
+    10A S beta= 0.0 seed2 tail= 0.8745 nn=  18.333 nn_cv= 0.000 zero=  0.1892
+    10A S beta= 0.5 seed2 tail= 0.5045 nn=  14.123 nn_cv= 0.128 zero=  1.1853
+    10A S beta= 1.0 seed2 tail= 0.1235 nn=  10.304 nn_cv= 0.216 zero=  0.9362
+    10A S beta= 1.5 seed2 tail= 0.0157 nn=   6.763 nn_cv= 0.262 zero=  0.5016
+    10A S beta= 2.0 seed2 tail= 0.0016 nn=   4.517 nn_cv= 0.300 zero=  0.3514
+    10A S beta= 3.0 seed2 tail= 0.0000 nn=   2.260 nn_cv= 0.391 zero=  0.2633
+    10A P steps=   0 seed2 tail= 0.1235 nn=  10.304 nn_cv= 0.216 zero=  0.9081
+    10A P steps=   5 seed2 tail= 0.1235 nn=  10.378 nn_cv= 0.202 zero=  0.9242
+    10A P steps=  20 seed2 tail= 0.1233 nn=  10.580 nn_cv= 0.167 zero=  0.9146
+    10A P steps=  80 seed2 tail= 0.1216 nn=  11.094 nn_cv= 0.097 zero=  0.8602
+
+  10A: the spectrum is the variable; packing at fixed spectrum does little
+
+=== 10B: intervene on shape ===
+    10B E0_none              seed0 2nd= 0.321 ed2=  1.3517 tail= 0.0059 nn=   3.013
+    10B E1_r11               seed0 2nd= 1.031 ed2=  0.1964 tail= 0.0484 nn=  10.532
+    10B E2_repulsion_0.1     seed0 2nd= 0.332 ed2=  1.2792 tail= 0.0061 nn=   3.145
+    10B E3_tail_0.1          seed0 2nd= 0.320 ed2=  1.3495 tail= 0.0062 nn=   3.040
+    10B E2_repulsion_1.0     seed0 2nd= 0.410 ed2=  0.8759 tail= 0.0089 nn=   4.173
+    10B E3_tail_1.0          seed0 2nd= 0.335 ed2=  1.2817 tail= 0.0176 nn=   3.452
+    10B E23_both_1.0         seed0 2nd= 0.431 ed2=  0.7664 tail= 0.0301 nn=   4.952
+    10B E0_none              seed1 2nd= 0.467 ed2=  0.7910 tail= 0.0039 nn=   3.902
+    10B E1_r11               seed1 2nd= 1.029 ed2=  0.2569 tail= 0.0496 nn=  10.077
+    10B E2_repulsion_0.1     seed1 2nd= 0.477 ed2=  0.7523 tail= 0.0041 nn=   4.007
+    10B E3_tail_0.1          seed1 2nd= 0.479 ed2=  0.7601 tail= 0.0042 nn=   3.949
+    10B E2_repulsion_1.0     seed1 2nd= 0.587 ed2=  0.4992 tail= 0.0064 nn=   5.044
+    10B E3_tail_1.0          seed1 2nd= 0.474 ed2=  0.7543 tail= 0.0075 nn=   4.036
+    10B E23_both_1.0         seed1 2nd= 0.592 ed2=  0.4562 tail= 0.0193 nn=   5.433
+    10B E0_none              seed2 2nd= 0.303 ed2=  1.3470 tail= 0.0050 nn=   3.119
+    10B E1_r11               seed2 2nd= 0.984 ed2=  0.1565 tail= 0.0536 nn=  10.132
+    10B E2_repulsion_0.1     seed2 2nd= 0.310 ed2=  1.2873 tail= 0.0052 nn=   3.242
+    10B E3_tail_0.1          seed2 2nd= 0.304 ed2=  1.3408 tail= 0.0053 nn=   3.134
+    10B E2_repulsion_1.0     seed2 2nd= 0.400 ed2=  0.8367 tail= 0.0075 nn=   4.306
+    10B E3_tail_1.0          seed2 2nd= 0.313 ed2=  1.2850 tail= 0.0113 nn=   3.299
+    10B E23_both_1.0         seed2 2nd= 0.417 ed2=  0.7818 tail= 0.0199 nn=   4.694
+
+  10B gate: no shape intervention reproduces R11
+
+=== PHASE 10 ===
+cloud                  tail   nn_mean    nn_cv  radial zero
+spectrum_0.0         0.8745    18.611    0.000       0.1797
+spectrum_0.5         0.5045    14.152    0.149       1.0749
+spectrum_1.0         0.1235    10.374    0.215       0.7999
+spectrum_1.5         0.0157     6.734    0.256       0.3886
+spectrum_2.0         0.0016     4.355    0.300       0.2370
+spectrum_3.0         0.0000     2.089    0.391       0.1790
+packing_0            0.1235    10.374    0.215       0.8288
+packing_5            0.1235    10.452    0.202       0.8414
+packing_20           0.1233    10.662    0.168       0.7643
+packing_80           0.1216    11.209    0.124       0.7432
+
+  spectrum family: tail vs zero spearman +0.429, zero span 0.8960
+  packing family:  nn_cv vs zero spearman +0.800, zero span 0.0982
+  -> the spectrum is the variable; packing at fixed spectrum does little
+
+arm                     2nd_mom       ed2    score     tail   nn_mean  band
+E0_none                   0.321    1.3470    5.787   0.0050     3.119  out
+E1_r11                    1.029    0.1964    1.944   0.0496    10.132  in 
+E2_repulsion_0.1          0.332    1.2792    5.642   0.0052     3.242  out
+E3_tail_0.1               0.320    1.3408    5.771   0.0053     3.134  out
+E2_repulsion_1.0          0.410    0.8367    4.424   0.0075     4.306  out
+E3_tail_1.0               0.335    1.2817    5.615   0.0113     3.452  out
+E23_both_1.0              0.431    0.7664    4.242   0.0199     4.952  out
+    (real data: tail=0.1376 nn_mean=9.347)
+
+  gate passed=False  -- no shape intervention reproduces R11
+    E2_repulsion_0.1       tail x  1.04  nn x  1.04
+    E3_tail_0.1            tail x  1.06  nn x  1.00
+    E2_repulsion_1.0       tail x  1.50  nn x  1.38
+    E3_tail_1.0            tail x  2.24  nn x  1.11
+    E23_both_1.0           tail x  3.95  nn x  1.59
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase10.json sha256=7c22a34a2c1c93cb...

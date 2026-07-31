@@ -1,0 +1,200 @@
+{
+  "elapsed_seconds": 72.81663370132446,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\audit_phase2.py",
+      "--only",
+      "A5_real_image_regime",
+      "--out",
+      "numerics/encoder_independent_drifting/phase2_cifar.json"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/audit_phase2.py": "13b5878ebd1f1380f4e7f1a2496ef7714c91c0689751ec07624308212c1d2ccd",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "95f7db400e37867fb08ad0bd3c1375c4e2f3bcaf0dde1f2a6e72ca69158e2bab",
+      "numerics/encoder_independent_drifting/datasets.py": "abca3ca1de07507532f18b54e60817e6e5a21932e339b8e2477e8a7c047dc74a",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnostics.py": "42d982e901ec3e882f4c861d639b79c7d789987d4af018c3735f4abe63be57fa",
+      "numerics/encoder_independent_drifting/evaluate.py": "d83e23108176dca695491d63465b7b035f6cc7e38743b599ab8917b575bdbf92",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "585a7656b42ae0fd7182d50a0b27b1933d5d0a5357307028f2ccfbf861ce05ad",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a097349f7f2aae29a746e91b5c5ea55fc3976b6a2a18a05b5ed7d41776c5fec2",
+      "numerics/encoder_independent_drifting/models.py": "58dc33dab1dc0d23bd1b008a2aba5e66882f65981776eb1050df93af7c33840a",
+      "numerics/encoder_independent_drifting/objectives.py": "753b227f134d72012271c1b8feb062b80621b1edbd21485576428b09c62b2184",
+      "numerics/encoder_independent_drifting/oracle.py": "1e1d16bdf0efeba3fa697f6ab250e6be475b628e4719d2b54b665b7f93dc7a11",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "f1067a1cb1386e1d695e4124c280587e48882e1debb97914f09d4c09e87b330f",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "4310106b3510d9fd9072d5637f920a913bc3576e25d14c518c6aaec876722555",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "1a0b86d69e10ba0c1a1d635ccb37670d913fe51c9cb5ef18bbe0e7c0b3783bc7",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "0764e26dd220bbee7f5361977aa7c207c617b5842b3e2b5e3149f040159f1f2a",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "12eeb57ebd1eb5ea299b8fd47a6daf97c71d4c658920322d4a42ccf865a2e8f3",
+      "numerics/encoder_independent_drifting/tests/test_reforms.py": "b486db6856ba9c24f417bd43eb32251dc4fc5dce491a991ad3e905e9e2aac9a6",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "4b48d5daa97b7e4077de3368979fdd08fde2b1375d411ad03835a5acd8aced01",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "374860e43573db29180b17b2c63c933e591396a9d79655a11586efbd6479a459",
+      "numerics/encoder_independent_drifting/train.py": "373c2decd5881d924e0562d756159c17e42456d2f8af81ca2cf2aeb078dbb330"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "results": {
+    "A5_real_image_regime": {
+      "available": true,
+      "rows": [
+        {
+          "control_learned_supervised": {
+            "between": 29.97187508467996,
+            "knn": 0.40625,
+            "ncr": 0.9180319336619078,
+            "train_accuracy": 0.71875,
+            "within": 27.515138439461904
+          },
+          "control_learned_unsupervised": {
+            "between": 10.218205989939063,
+            "knn": 0.28173828125,
+            "ncr": 0.9562394518631293,
+            "within": 9.771051694843875
+          },
+          "count": 2048,
+          "dimension": 768,
+          "health_randconv": {
+            "affinity_median": 0.060688987374305725,
+            "bandwidth_median": 0.1402227133512497,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.5439132452011108,
+            "ess_fraction": 0.7240014672279358
+          },
+          "health_raw": {
+            "affinity_median": 0.07157190144062042,
+            "bandwidth_median": 6.699551105499268,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 17.667072296142578,
+            "ess_fraction": 0.7986522912979126
+          },
+          "health_scattering": {
+            "affinity_median": 0.06421775370836258,
+            "bandwidth_median": 0.18350081145763397,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.6383692026138306,
+            "ess_fraction": 0.7996718883514404
+          },
+          "health_wavelet": {
+            "affinity_median": 0.06421775370836258,
+            "bandwidth_median": 0.18350081145763397,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.6383692026138306,
+            "ess_fraction": 0.7996718883514404
+          },
+          "pixel": {
+            "between": 17.85327459322456,
+            "knn": 0.2666015625,
+            "ncr": 0.9560059218615397,
+            "within": 17.06783623574285
+          },
+          "randconv": {
+            "between": 5.345625540078647,
+            "knn": 0.287109375,
+            "ncr": 0.922834760478389,
+            "within": 4.9331290648856365
+          },
+          "resolution": 16,
+          "scattering": {
+            "between": 8.178549016171297,
+            "knn": 0.3857421875,
+            "ncr": 0.9523380942665659,
+            "within": 7.788743783926271
+          },
+          "wavelet": {
+            "between": 6.462020880898379,
+            "knn": 0.3896484375,
+            "ncr": 0.9414877234449135,
+            "within": 6.083913328010509
+          }
+        },
+        {
+          "control_learned_supervised": {
+            "between": 26.469489571934364,
+            "knn": 0.388671875,
+            "ncr": 0.9229192606972116,
+            "train_accuracy": 0.64208984375,
+            "within": 24.429201746762217
+          },
+          "control_learned_unsupervised": {
+            "between": 16.15253000234164,
+            "knn": 0.27197265625,
+            "ncr": 0.957607761482715,
+            "within": 15.46778809782477
+          },
+          "count": 2048,
+          "dimension": 1728,
+          "health_randconv": {
+            "affinity_median": 0.06665828824043274,
+            "bandwidth_median": 0.14694643020629883,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.5432019233703613,
+            "ess_fraction": 0.7363604307174683
+          },
+          "health_raw": {
+            "affinity_median": 0.07044675946235657,
+            "bandwidth_median": 10.229825019836426,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 27.138683319091797,
+            "ess_fraction": 0.7838104963302612
+          },
+          "health_scattering": {
+            "affinity_median": 0.07357873022556305,
+            "bandwidth_median": 0.13294370472431183,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.44483840465545654,
+            "ess_fraction": 0.8332801461219788
+          },
+          "health_wavelet": {
+            "affinity_median": 0.07357873022556305,
+            "bandwidth_median": 0.13294370472431183,
+            "collapsed_row_fraction": 0.0,
+            "distance_median": 0.44483840465545654,
+            "ess_fraction": 0.8332801461219788
+          },
+          "pixel": {
+            "between": 26.65522318200849,
+            "knn": 0.259765625,
+            "ncr": 0.9585036409028415,
+            "within": 25.54912846903296
+          },
+          "randconv": {
+            "between": 6.807757619757283,
+            "knn": 0.29443359375,
+            "ncr": 0.9344720854988743,
+            "within": 6.361659460505441
+          },
+          "resolution": 24,
+          "scattering": {
+            "between": 8.234469499925313,
+            "knn": 0.38916015625,
+            "ncr": 0.9427297876239922,
+            "within": 7.762879682860831
+          },
+          "wavelet": {
+            "between": 7.108067448838944,
+            "knn": 0.3544921875,
+            "ncr": 0.9384454385475577,
+            "within": 6.6705334742512825
+          }
+        }
+      ]
+    }
+  },
+  "status": "phase2-audit-and-regime-finding-feeds-no-gate"
+}

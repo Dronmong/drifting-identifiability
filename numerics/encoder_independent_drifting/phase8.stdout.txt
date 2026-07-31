@@ -1,0 +1,71 @@
+=== 8A: width x R11 at the good bandwidth ===
+    8A width=  32 seed0 R11=False params=   36387 ed2=  1.1687 2nd= 0.354 tail=0.0064 OK    25.6s
+    8A width=  32 seed0 R11=True  params=   36387 ed2=  0.1264 2nd= 0.913 tail=0.0479 OK    27.1s
+    8A width=  32 seed1 R11=False params=   36387 ed2=  1.5762 2nd= 0.267 tail=0.0084 OK    27.3s
+    8A width=  32 seed1 R11=True  params=   36387 ed2=  0.1972 2nd= 0.966 tail=0.0880 OK    27.7s
+    8A width=  32 seed2 R11=False params=   36387 ed2=  0.5904 2nd= 0.522 tail=0.0043 OK    27.2s
+    8A width=  32 seed2 R11=True  params=   36387 ed2=  0.1958 2nd= 0.941 tail=0.0503 OK    27.8s
+    8A width=  64 seed0 R11=False params=  109635 ed2=  1.2461 2nd= 0.315 tail=0.0047 OK    67.2s
+    8A width=  64 seed0 R11=True  params=  109635 ed2=  0.1386 2nd= 0.911 tail=0.0486 OK    68.2s
+    8A width=  64 seed1 R11=False params=  109635 ed2=  1.1657 2nd= 0.401 tail=0.0054 OK    68.3s
+    8A width=  64 seed1 R11=True  params=  109635 ed2=  0.1244 2nd= 1.017 tail=0.0501 OK    68.5s
+    8A width=  64 seed2 R11=False params=  109635 ed2=  0.6249 2nd= 0.515 tail=0.0046 OK    68.9s
+    8A width=  64 seed2 R11=True  params=  109635 ed2=  0.3113 2nd= 0.949 tail=0.0560 OK    69.9s
+    8A width= 128 seed0 R11=False params=  366723 ed2=  1.0821 2nd= 0.349 tail=0.0044 OK   206.9s
+    8A width= 128 seed0 R11=True  params=  366723 ed2=  0.1830 2nd= 1.017 tail=0.0588 OK   209.2s
+    8A width= 128 seed1 R11=False params=  366723 ed2=  1.4135 2nd= 0.291 tail=0.0103 OK   209.1s
+    8A width= 128 seed1 R11=True  params=  366723 ed2=  0.2431 2nd= 1.145 tail=0.0575 OK   212.6s
+    8A width= 128 seed2 R11=False params=  366723 ed2=  1.0084 2nd= 0.411 tail=0.0048 OK   212.4s
+    8A width= 128 seed2 R11=True  params=  366723 ed2=  0.1766 2nd= 0.809 tail=0.0364 OK   211.2s
+    8A width= 256 seed0 R11=False params= 1323267 ed2=  1.1978 2nd= 0.331 tail=0.0080 OK   719.3s
+    8A width= 256 seed0 R11=True  params= 1323267 ed2=  0.2955 2nd= 0.932 tail=0.0584 OK   723.1s
+    8A width= 256 seed1 R11=False params= 1323267 ed2=  1.4974 2nd= 0.291 tail=0.0077 OK   703.5s
+    8A width= 256 seed1 R11=True  params= 1323267 ed2=  0.2889 2nd= 1.151 tail=0.0614 OK   650.6s
+    8A width= 256 seed2 R11=False params= 1323267 ed2=  0.5980 2nd= 0.533 tail=0.0060 OK   663.7s
+    8A width= 256 seed2 R11=True  params= 1323267 ed2=  0.7333 2nd= 1.112 tail=0.0651 OK   669.9s
+
+  8A gate: no width reproduces R11 without it
+  8A trend: capacity and R11 behave as substitutes
+
+=== 8B: realized fraction of the teacher ===
+    8B width=  32 seed0 realized_median= 0.20038 final= 0.19038
+    8B width=  32 seed1 realized_median= 0.25752 final= 0.35964
+    8B width=  32 seed2 realized_median= 0.21244 final=-0.02235
+    8B width=  64 seed0 realized_median= 0.31314 final= 0.35333
+    8B width=  64 seed1 realized_median= 0.39525 final= 0.82099
+    8B width=  64 seed2 realized_median= 0.24026 final= 0.12988
+    8B width= 128 seed0 realized_median= 0.37127 final= 0.45607
+    8B width= 128 seed1 realized_median= 0.35185 final= 0.46324
+    8B width= 128 seed2 realized_median= 0.35841 final=-0.23105
+    8B width= 256 seed0 realized_median= 0.56529 final= 0.39835
+    8B width= 256 seed1 realized_median= 0.42105 final= 0.13783
+    8B width= 256 seed2 realized_median= 0.49319 final= 0.23358
+
+=== PHASE 8 ===
+cell                        params      ed2    score  2nd_mom    tail  band
+width=32_R11=False           36387   1.1687    5.519    0.354  0.0064  out
+width=32_R11=True            36387   0.1958    1.861    0.941  0.0503  in 
+width=64_R11=False          109635   1.1657    5.444    0.401  0.0047  out
+width=64_R11=True           109635   0.1386    1.842    0.949  0.0501  in 
+width=128_R11=False         366723   1.0821    5.355    0.349  0.0048  out
+width=128_R11=True          366723   0.1830    2.183    1.017  0.0575  in 
+width=256_R11=False        1323267   1.1978    5.639    0.331  0.0077  out
+width=256_R11=True         1323267   0.2955    2.774    1.112  0.0614  in 
+
+width        R11/plain ed2            95% interval   plain 2nd
+width=32             0.165          [0.108, 0.332]       0.354
+width=64             0.181          [0.107, 0.498]       0.401
+width=128            0.172          [0.169, 0.175]       0.349
+width=256            0.388          [0.193, 1.226]       0.331
+
+  gate passed=False  -- no width reproduces R11 without it
+  trend: capacity and R11 behave as substitutes
+
+width           params    realized       final
+width=32         36387     0.21244     0.19038
+width=64        109635     0.31314     0.35333
+width=128       366723     0.35841     0.45607
+width=256      1323267     0.49319     0.23358
+  realized rises with width: True
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase8.json sha256=fbab66f4ba16eb19...

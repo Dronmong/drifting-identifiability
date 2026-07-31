@@ -1,0 +1,22 @@
+    BAR 254.00
+
+    ess=0.9   FID= 221.49 realized_ess=0.950 ( 60.8 of 64 images) teacher_spread=1.002 tail=0.1021   161s
+    ess=0.5   FID= 216.68 realized_ess=0.849 ( 54.3 of 64 images) teacher_spread=1.008 tail=0.1107   164s
+    ess=0.2   FID= 211.37 realized_ess=0.757 ( 48.4 of 64 images) teacher_spread=1.005 tail=0.0973   164s
+    ess=0.05  FID= 204.16 realized_ess=0.609 ( 39.0 of 64 images) teacher_spread=0.991 tail=0.0439   165s
+    ess=0.02  FID= 236.38 realized_ess=0.455 ( 29.1 of 64 images) teacher_spread=0.933 tail=0.0088   167s
+
+=== PHASE 21: the mode-averaging ladder ===
+ target ESS      FID  realized ESS  images averaged  teacher spread    tail
+       0.90   221.49         0.950             60.8           1.002  0.1021
+       0.50   216.68         0.849             54.3           1.008  0.1107
+       0.20   211.37         0.757             48.4           1.005  0.0973
+       0.05   204.16         0.609             39.0           0.991  0.0439
+       0.02   236.38         0.455             29.1           0.933  0.0088
+
+    BAR 254.00   (real data tail ~= 0.13)
+    best target ESS: 0.05 at FID 204.16
+
+  sharper kernels beat the operating point every phase has used -- mode averaging was limiting the recipe
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase21_probe.json sha256=f8633c93acd0dad6...

@@ -1,0 +1,30 @@
+=== baselines, recomputed in this run ===
+    real                       FID=   70.89
+    moment_matched_gaussian    FID=  248.08
+    pure_noise                 FID=  418.09
+
+    floor 70.89   BAR 248.08
+
+=== the ladder at 30000 steps (encoder input 128px) ===
+    raw                  seed0 FID=  219.62 (BEATS bar)  ED2=  0.2187 tail= 0.1389 2nd= 0.980   1434s
+    raw                  seed1 FID=  249.82 (above bar)  ED2=  0.3180 tail= 0.1706 2nd= 0.914   1442s
+    random_resnet        seed0 FID=  213.00 (BEATS bar)  ED2=  0.2358 tail= 0.1222 2nd= 1.018   5531s
+    random_resnet        seed1 FID=  239.35 (BEATS bar)  ED2=  0.2584 tail= 0.1324 2nd= 1.017   4987s
+    pretrained_resnet    seed0 FID=  341.59 (above bar)  ED2=  0.5081 tail= 0.4707 2nd= 0.948   4993s
+    pretrained_resnet    seed1 FID=  404.78 (above bar)  ED2=  0.6111 tail= 0.4999 2nd= 1.008   4978s
+
+=== PHASE 17 ===
+geometry                    FID      ED2    tail    2nd  minutes  vs bar
+random_resnet            226.17   0.2471  0.1273  1.018     87.7  BEATS
+raw                      234.72   0.2683  0.1547  0.947     24.0  above
+pretrained_resnet        373.19   0.5596  0.4853  0.978     83.1  above
+
+    floor 70.89   BAR 248.08
+    ranking by FID: random_resnet < raw < pretrained_resnet
+    ranking by ED2: random_resnet < raw < pretrained_resnet
+    pretrained beats raw:    False  (gap -138.47 FID)
+    pretrained beats random: False
+
+  a real pretrained encoder does NOT beat raw pixels at this scale -- encoder-free drifting is not paying a penalty in this harness
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase17.json sha256=202d81d1f60b1f7c...

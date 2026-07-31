@@ -1,0 +1,33 @@
+=== 9A/9B: the ladder ===
+    gaussian_iso linear  seed0 tau=  2.7203 2nd= 0.215 ed2=   1.0805 osc=0.0028 growth=+0.0017
+    gaussian_iso linear  seed1 tau=  2.6220 2nd= 0.208 ed2=   1.1239 osc=0.0029 growth=-0.0013
+    gaussian_iso linear  seed2 tau=  2.5995 2nd= 0.211 ed2=   1.1032 osc=0.0011 growth=+0.0006
+    gaussian_iso mlp     seed0 tau=  2.5821 2nd= 0.055 ed2=   2.4845 osc=0.0011 growth=+0.0073
+    gaussian_iso mlp     seed1 tau=  2.5909 2nd= 0.062 ed2=   2.3909 osc=0.0033 growth=+0.0083
+    gaussian_iso mlp     seed2 tau=  2.6238 2nd= 0.060 ed2=   2.4227 osc=0.0030 growth=+0.0109
+    gaussian_decay linear  seed0 tau=  3.9056 2nd= 0.665 ed2=   0.0836 osc=0.0201 growth=+0.0004
+    gaussian_decay linear  seed1 tau=  3.9053 2nd= 0.648 ed2=   0.0903 osc=0.0261 growth=-0.0026
+    gaussian_decay linear  seed2 tau=  3.4734 2nd= 0.633 ed2=   0.1003 osc=0.0402 growth=-0.0102
+    gaussian_decay mlp     seed0 tau=  4.3185 2nd= 0.546 ed2=   0.2345 osc=0.0289 growth=+0.0024
+    gaussian_decay mlp     seed1 tau=  3.8783 2nd= 0.480 ed2=   0.2688 osc=0.0318 growth=-0.0371
+    gaussian_decay mlp     seed2 tau=  3.8136 2nd= 0.473 ed2=   0.2716 osc=0.0312 growth=-0.0046
+    cifar        linear  seed0 tau=  9.3208 2nd= 0.502 ed2=   0.5529 osc=0.0150 growth=-0.0006
+    cifar        linear  seed1 tau=  9.5842 2nd= 0.509 ed2=   0.5532 osc=0.0186 growth=+0.0100
+    cifar        linear  seed2 tau=  9.4873 2nd= 0.490 ed2=   0.5672 osc=0.0220 growth=-0.0046
+    cifar        mlp     seed0 tau=  9.9875 2nd= 0.357 ed2=   1.2512 osc=0.0240 growth=+0.0162
+    cifar        mlp     seed1 tau=  9.5870 2nd= 0.365 ed2=   1.2282 osc=0.0376 growth=+0.0035
+    cifar        mlp     seed2 tau=  9.8462 2nd= 0.351 ed2=   1.3496 osc=0.0195 growth=+0.0193
+
+=== PHASE 9 ===
+cell                      2nd_mom       ed2      tau     osc   c(sigma)  band
+gaussian_iso_linear         0.211    1.1032   2.6220  0.0028   9.77e-02  out
+gaussian_iso_mlp            0.060    2.4227   2.5909  0.0030   1.20e-01  out
+gaussian_decay_linear       0.648    0.0903   3.9053  0.0261   6.88e-03  out
+gaussian_decay_mlp          0.480    0.2688   3.8783  0.0312   1.00e-02  out
+cifar_linear                0.502    0.5532   9.4873  0.0186   1.31e-03  out
+cifar_mlp                   0.357    1.2512   9.8462  0.0240   1.53e-03  out
+
+  P-lin (linear+Gaussian has no deficit): False
+  localization: first appears with: present already in the solvable case
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase9.json sha256=3a6f7e73467b405b...

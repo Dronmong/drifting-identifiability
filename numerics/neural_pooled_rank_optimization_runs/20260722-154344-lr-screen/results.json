@@ -1,0 +1,68 @@
+{
+  "by_setting": {
+    "exact-atlas-rsr@16x": {
+      "divergences": 0,
+      "median_ed2": 0.20300419605932007,
+      "median_heldout_sw1": 0.29619141139055416,
+      "median_training_quantile_rmse": 0.41119800746701873,
+      "median_wall_seconds": 0.02586504999999306,
+      "rows": 4
+    },
+    "exact-atlas-rsr@1x": {
+      "divergences": 0,
+      "median_ed2": 0.9148018547950953,
+      "median_heldout_sw1": 0.6692877846984643,
+      "median_training_quantile_rmse": 0.8875999122819753,
+      "median_wall_seconds": 0.026927099999738857,
+      "rows": 4
+    },
+    "exact-atlas-rsr@2x": {
+      "divergences": 0,
+      "median_ed2": 0.6824102845228566,
+      "median_heldout_sw1": 0.5920877403916565,
+      "median_training_quantile_rmse": 0.7982124690411737,
+      "median_wall_seconds": 0.025780049996683374,
+      "rows": 4
+    },
+    "exact-atlas-rsr@4x": {
+      "divergences": 0,
+      "median_ed2": 0.28966105993334845,
+      "median_heldout_sw1": 0.396787927461662,
+      "median_training_quantile_rmse": 0.5794540879870248,
+      "median_wall_seconds": 0.02519735000169021,
+      "rows": 4
+    },
+    "exact-atlas-rsr@8x": {
+      "divergences": 0,
+      "median_ed2": 0.2520308002193956,
+      "median_heldout_sw1": 0.31917094416157377,
+      "median_training_quantile_rmse": 0.4474978794421942,
+      "median_wall_seconds": 0.025707549997605383,
+      "rows": 4
+    },
+    "kll-small-rsr@1x": {
+      "divergences": 0,
+      "median_ed2": 0.27559603627310447,
+      "median_heldout_sw1": 0.3882649760307342,
+      "median_training_quantile_rmse": 0.5721039141393294,
+      "median_wall_seconds": 0.0446007999998983,
+      "rows": 4
+    },
+    "kll-small-rsr@2x": {
+      "divergences": 0,
+      "median_ed2": 0.20070326052689413,
+      "median_heldout_sw1": 0.2822809129641285,
+      "median_training_quantile_rmse": 0.39785541095172955,
+      "median_wall_seconds": 0.04416750000382308,
+      "rows": 4
+    },
+    "kll-small-rsr@4x": {
+      "divergences": 0,
+      "median_ed2": 0.1359463673917949,
+      "median_heldout_sw1": 0.2251065295724528,
+      "median_training_quantile_rmse": 0.3690954896740729,
+      "median_wall_seconds": 0.044332049998047296,
+      "rows": 4
+    }
+  }
+}

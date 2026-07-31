@@ -1,0 +1,291 @@
+  checkerboard seed 0
+    A0  score=   6.849 ed2=  0.5864 cover=1.000   12.0s
+    A1  score=   4.169 ed2=  0.1386 cover=1.000   13.0s
+    A2  score= 100.828 ed2= 10.7560 cover=0.000   12.8s
+    A3  score= 106.491 ed2= 21.8221 cover=0.000   33.2s
+    A4  score=  58.534 ed2=  9.6612 cover=0.000   60.9s
+    A5  score=  49.556 ed2=  7.4758 cover=0.000   60.1s
+    A6  score=  43.165 ed2=  8.1342 cover=0.000   44.5s
+    A7  score=   8.788 ed2=  0.6776 cover=1.000  246.7s
+    A8  score=   5.720 ed2=  0.3493 cover=1.000   20.5s
+  checkerboard seed 1
+    A0  score=   5.982 ed2=  0.4087 cover=1.000   18.0s
+    A1  score=   6.312 ed2=  0.1857 cover=1.000   18.3s
+    A2  score= 128.890 ed2= 11.1250 cover=0.000   17.2s
+    A3  score= 118.139 ed2= 20.4817 cover=0.000   44.8s
+    A4  score=  72.815 ed2=  9.2852 cover=0.000  103.2s
+    A5  score=  43.873 ed2=  4.7788 cover=0.000   90.3s
+    A6  score=  51.338 ed2=  7.9196 cover=0.000   63.2s
+    A7  score=  10.635 ed2=  0.6292 cover=1.000  338.2s
+    A8  score=   8.696 ed2=  1.0736 cover=1.000   25.4s
+  checkerboard seed 2
+    A0  score=   7.846 ed2=  0.4263 cover=1.000   17.4s
+    A1  score=   6.370 ed2=  0.1391 cover=1.000   18.6s
+    A2  score= 126.310 ed2= 11.0263 cover=0.000   18.4s
+    A3  score=  79.688 ed2= 16.9669 cover=0.000   47.2s
+    A4  score=  68.563 ed2=  8.7678 cover=0.000   82.6s
+    A5  score=  63.512 ed2=  7.7259 cover=0.000   93.1s
+    A6  score=  50.663 ed2=  8.0517 cover=0.000   48.1s
+    A7  score=  14.176 ed2=  1.0633 cover=1.000  265.3s
+    A8  score=   9.092 ed2=  1.1612 cover=1.000   21.5s
+  pinwheel seed 0
+    A0  score=  88.009 ed2=  6.9229 cover=0.000   13.5s
+    A1  score=  19.901 ed2=  1.0690 cover=0.000   14.0s
+    A2  score=  37.842 ed2=  1.7237 cover=0.000   13.3s
+    A3  score=  90.183 ed2=  7.0764 cover=0.000   34.9s
+    A4  score=  43.818 ed2=  2.6353 cover=0.000   66.5s
+    A5  score=  37.103 ed2=  2.1503 cover=0.000   68.4s
+    A6  score=  30.675 ed2=  2.0575 cover=0.000   44.6s
+    A7  score=  25.802 ed2=  2.3081 cover=0.000  257.3s
+    A8  score=  87.692 ed2=  6.7261 cover=0.000   19.7s
+  pinwheel seed 1
+    A0  score= 118.340 ed2=  6.9802 cover=0.000   13.9s
+    A1  score=  39.860 ed2=  1.4724 cover=0.000   15.4s
+    A2  score=  49.111 ed2=  1.7364 cover=0.000   14.8s
+    A3  score= 118.063 ed2=  7.1957 cover=0.000   33.3s
+    A4  score=  53.953 ed2=  2.4374 cover=0.000   64.5s
+    A5  score=  45.212 ed2=  1.9192 cover=0.000   65.0s
+    A6  score=  34.484 ed2=  2.0043 cover=0.000   45.5s
+    A7  score=  32.545 ed2=  1.8863 cover=0.000  256.1s
+    A8  score= 112.478 ed2=  6.6334 cover=0.000   19.9s
+  pinwheel seed 2
+    A0  score=  84.326 ed2=  6.9749 cover=0.000   13.7s
+    A1  score=  25.610 ed2=  1.3909 cover=0.000   15.0s
+    A2  score=  36.215 ed2=  1.8084 cover=0.000   14.4s
+    A3  score=  83.678 ed2=  7.1073 cover=0.000   33.6s
+    A4  score=  43.277 ed2=  2.7071 cover=0.000   66.4s
+    A5  score=  34.448 ed2=  2.0884 cover=0.000   65.7s
+    A6  score=  27.503 ed2=  2.0039 cover=0.000   48.3s
+    A7  score=  23.630 ed2=  2.1334 cover=0.000  253.1s
+    A8  score=  14.507 ed2=  0.7394 cover=0.000   20.1s
+  rings_islands seed 0
+    A0  score=  10.439 ed2=  0.2459 cover=0.000   14.1s
+    A1  score=  10.104 ed2=  0.2069 cover=0.000   14.5s
+    A2  score=  47.097 ed2=  6.7788 cover=0.000   14.1s
+    A3  score=  20.541 ed2=  1.0790 cover=0.000   33.6s
+    A4  score=  84.099 ed2= 11.0846 cover=0.000   63.8s
+    A5  score=  42.225 ed2=  4.5588 cover=0.000   66.4s
+    A6  score=  58.925 ed2=  8.4992 cover=0.000   44.7s
+    A7  score=  19.244 ed2=  1.4449 cover=0.000  252.7s
+    A8  score=  22.201 ed2=  1.8383 cover=0.000   20.4s
+  rings_islands seed 1
+    A0  score=   9.742 ed2=  0.2258 cover=0.000   13.8s
+    A1  score=   9.560 ed2=  0.1745 cover=0.020   14.7s
+    A2  score=  65.516 ed2=  7.8157 cover=0.000   14.1s
+    A3  score=  16.829 ed2=  0.9080 cover=0.000   35.1s
+    A4  score=  84.511 ed2=  9.7911 cover=0.000   65.1s
+    A5  score=  37.292 ed2=  3.6832 cover=0.000   66.1s
+    A6  score=  56.979 ed2=  7.7154 cover=0.000   47.3s
+    A7  score=  19.288 ed2=  1.0913 cover=0.000  263.3s
+    A8  score=  27.430 ed2=  2.7163 cover=0.000   20.3s
+  rings_islands seed 2
+    A0  score=  11.797 ed2=  0.2522 cover=0.000   15.0s
+    A1  score=   8.436 ed2=  0.1538 cover=0.000   14.7s
+    A2  score=  99.692 ed2=  9.3230 cover=0.000   13.2s
+    A3  score=  20.930 ed2=  0.9113 cover=0.000   35.9s
+    A4  score=  99.858 ed2=  9.8448 cover=0.000   65.5s
+    A5  score=  38.170 ed2=  3.1675 cover=0.000   67.4s
+    A6  score=  78.503 ed2=  8.4105 cover=0.000   46.7s
+    A7  score=  19.851 ed2=  1.3967 cover=0.000  260.4s
+    A8  score=  22.774 ed2=  1.5488 cover=0.000   19.9s
+  texture_blocks seed 0
+    A0  score=   8.447 ed2=  0.7252 cover=0.000   12.7s
+    A1  score=   8.371 ed2=  0.5419 cover=0.000   14.8s
+    A2  score=  47.325 ed2=  5.4611 cover=0.000   14.6s
+    A3  score=  19.987 ed2=  1.7436 cover=0.000   35.5s
+    A4  score=  57.416 ed2=  8.7991 cover=0.000   66.0s
+    A5  score=  60.667 ed2=  8.1373 cover=0.000   66.4s
+    A6  score=  37.013 ed2=  6.4940 cover=0.000   46.7s
+    A7  score=  42.449 ed2=  6.7597 cover=0.000  252.2s
+    A8  score=  10.600 ed2=  0.9470 cover=0.000   19.6s
+  texture_blocks seed 1
+    A0  score=   8.077 ed2=  0.6601 cover=0.000   14.3s
+    A1  score=   7.887 ed2=  0.4034 cover=0.012   14.0s
+    A2  score=  61.057 ed2=  5.2076 cover=0.000   13.4s
+    A3  score=  14.723 ed2=  1.2207 cover=0.000   34.9s
+    A4  score=  71.832 ed2=  9.1148 cover=0.000   64.5s
+    A5  score=  71.655 ed2=  8.9032 cover=0.000   65.1s
+    A6  score=  44.827 ed2=  4.7499 cover=0.000   47.4s
+    A7  score=  45.936 ed2=  5.1671 cover=0.000  254.4s
+    A8  score=  11.861 ed2=  0.8998 cover=0.000   21.2s
+  texture_blocks seed 2
+    A0  score=   5.150 ed2=  0.9243 cover=0.000   15.1s
+    A1  score=   4.631 ed2=  0.5332 cover=0.000   15.7s
+    A2  score=  30.614 ed2=  4.7954 cover=0.000   15.3s
+    A3  score=   9.555 ed2=  1.2762 cover=0.000   36.2s
+    A4  score=  38.738 ed2=  7.6496 cover=0.000   65.3s
+    A5  score=  39.056 ed2=  7.5678 cover=0.000   64.3s
+    A6  score=  26.322 ed2=  5.4070 cover=0.000   47.5s
+    A7  score=  30.910 ed2=  5.8901 cover=0.000  260.8s
+    A8  score=   7.036 ed2=  0.8638 cover=0.000   20.0s
+  patch_layout seed 0
+    A0  score=   6.808 ed2=  0.1495 cover=1.000   14.1s
+    A1  score=   7.456 ed2=  0.2267 cover=1.000   14.3s
+    A2  score= 133.578 ed2= 10.5915 cover=0.000   14.8s
+    A3  score=  33.626 ed2= 10.3743 cover=0.449   35.2s
+    A4  score= 118.479 ed2= 13.6892 cover=0.000   66.1s
+    A5  score=  98.277 ed2=  9.4911 cover=0.000   66.1s
+    A6  score= 115.881 ed2= 10.7751 cover=0.000   47.4s
+    A7  score=  72.930 ed2=  9.0680 cover=0.000  261.9s
+    A8  score=   7.649 ed2= 11.6898 cover=0.477   20.8s
+  patch_layout seed 1
+    A0  score=   6.981 ed2=  0.1677 cover=1.000   13.9s
+    A1  score=   6.120 ed2=  0.0996 cover=1.000   15.9s
+    A2  score= 134.433 ed2= 10.6803 cover=0.000   15.8s
+    A3  score=   5.820 ed2=  0.1601 cover=1.000   37.7s
+    A4  score= 110.041 ed2= 11.8740 cover=0.000   68.5s
+    A5  score= 104.059 ed2= 10.7437 cover=0.000   68.6s
+    A6  score=  89.752 ed2=  9.2701 cover=0.000   48.6s
+    A7  score=  81.934 ed2= 10.1688 cover=0.000  269.4s
+    A8  score=  18.279 ed2= 11.6368 cover=0.477   19.7s
+  patch_layout seed 2
+    A0  score=   6.473 ed2=  0.1452 cover=1.000   14.0s
+    A1  score=   5.729 ed2=  0.1465 cover=1.000   15.4s
+    A2  score= 131.130 ed2= 10.9923 cover=0.000   15.0s
+    A3  score=   7.144 ed2=  0.1703 cover=1.000   34.5s
+    A4  score= 108.011 ed2= 12.1994 cover=0.000   67.6s
+    A5  score= 108.295 ed2= 11.3609 cover=0.000   66.0s
+    A6  score=  89.976 ed2=  9.1392 cover=0.000   48.1s
+    A7  score=  77.509 ed2=  9.9468 cover=0.000  270.0s
+    A8  score=   7.449 ed2=  0.3424 cover=1.000   20.8s
+  color_layout seed 0
+    A0  score=   7.092 ed2=  0.1993 cover=1.000   14.7s
+    A1  score=   5.550 ed2=  0.0509 cover=1.000   14.6s
+    A2  score=  13.249 ed2=  0.4425 cover=1.000   14.0s
+    A3  score= 109.955 ed2=  6.9707 cover=0.000   37.9s
+    A4  score=  21.930 ed2=  0.8579 cover=0.000   69.2s
+    A5  score=   7.801 ed2=  0.1568 cover=1.000   68.7s
+    A6  score=   9.420 ed2=  0.2962 cover=1.000   48.2s
+    A7  score=   6.955 ed2=  0.1552 cover=1.000  268.9s
+    A8  score=   8.690 ed2=  0.3009 cover=1.000   20.6s
+  color_layout seed 1
+    A0  score=  10.557 ed2=  0.3526 cover=1.000   13.8s
+    A1  score=   6.227 ed2=  0.0764 cover=1.000   15.7s
+    A2  score=  38.828 ed2=  2.0380 cover=0.000   15.7s
+    A3  score= 117.993 ed2=  7.3009 cover=0.000   38.7s
+    A4  score=  20.037 ed2=  0.8137 cover=0.002   67.5s
+    A5  score=   7.073 ed2=  0.1365 cover=1.000   67.6s
+    A6  score=   7.682 ed2=  0.1615 cover=1.000   47.8s
+    A7  score=   9.992 ed2=  0.2503 cover=1.000  272.4s
+    A8  score=   8.090 ed2=  0.2407 cover=1.000   20.0s
+  color_layout seed 2
+    A0  score=  12.735 ed2=  0.3866 cover=1.000   13.7s
+    A1  score=   8.451 ed2=  0.1318 cover=1.000   15.4s
+    A2  score=  19.550 ed2=  0.4082 cover=1.000   14.9s
+    A3  score= 132.184 ed2=  6.6746 cover=0.000   37.8s
+    A4  score=  27.132 ed2=  1.0984 cover=0.000   70.7s
+    A5  score=  15.365 ed2=  0.3519 cover=1.000   66.7s
+    A6  score=   9.518 ed2=  0.2218 cover=1.000   46.2s
+    A7  score=  10.286 ed2=  0.3222 cover=1.000  265.4s
+    A8  score=   9.816 ed2=  0.2690 cover=1.000   20.0s
+  phase_structured seed 0
+    A0  score=  19.084 ed2=  0.2676 cover=0.000   13.3s
+    A1  score=  15.810 ed2=  0.1916 cover=1.000   13.9s
+    A2  score=  69.133 ed2=  1.2108 cover=0.000   14.2s
+    A3  score=  19.318 ed2=  0.2898 cover=0.465   34.4s
+    A4  score=  37.972 ed2=  0.8291 cover=0.000   66.0s
+    A5  score=  24.235 ed2=  0.4081 cover=0.002   66.7s
+    A6  score=  18.632 ed2=  0.2912 cover=0.365   48.3s
+    A7  score=  69.985 ed2=  4.2562 cover=0.000  257.9s
+    A8  score=  40.276 ed2=  0.6192 cover=0.992   21.6s
+  phase_structured seed 1
+    A0  score=  19.026 ed2=  0.2931 cover=0.727   14.0s
+    A1  score=  11.757 ed2=  0.1315 cover=1.000   15.1s
+    A2  score=  47.469 ed2=  0.9493 cover=0.000   14.9s
+    A3  score=  21.567 ed2=  0.3797 cover=0.830   37.8s
+    A4  score=  20.181 ed2=  0.4423 cover=0.197   68.6s
+    A5  score=  15.580 ed2=  0.2230 cover=0.480   69.1s
+    A6  score=  21.328 ed2=  0.4083 cover=0.094   48.8s
+    A7  score=  56.701 ed2=  4.4254 cover=0.000  236.4s
+    A8  score=  30.942 ed2=  0.5820 cover=0.998   17.1s
+  phase_structured seed 2
+    A0  score=  16.737 ed2=  0.2877 cover=0.186   10.5s
+    A1  score=  13.158 ed2=  0.1887 cover=0.793   11.0s
+    A2  score=  26.917 ed2=  0.9246 cover=0.000   10.5s
+    A3  score=  15.151 ed2=  0.2817 cover=0.838   26.8s
+    A4  score=  16.864 ed2=  0.3096 cover=0.527   51.8s
+    A5  score=  14.643 ed2=  0.4199 cover=0.049   51.7s
+    A6  score=  15.676 ed2=  0.3365 cover=0.006   36.5s
+    A7  score=  46.441 ed2=  4.2695 cover=0.000  194.1s
+    A8  score=  22.500 ed2=  0.5801 cover=1.000   15.9s
+  rare_object seed 0
+    A0  score=   0.502 ed2=  0.3316 cover=0.945   10.1s
+    A1  score=   6.847 ed2=  0.1144 cover=0.945   11.2s
+    A2  score=  34.414 ed2=  1.1682 cover=0.000   10.6s
+    A3  score=   0.578 ed2=  0.4695 cover=0.945   25.4s
+    A4  score=  15.487 ed2=  0.4501 cover=0.945   48.3s
+    A5  score=   8.739 ed2=  0.1617 cover=0.945   49.3s
+    A6  score=   8.236 ed2=  0.2199 cover=0.945   35.8s
+    A7  score=   7.164 ed2=  0.1729 cover=0.945  186.8s
+    A8  score=   0.587 ed2=  0.5319 cover=0.945   15.7s
+  rare_object seed 1
+    A0  score=   0.355 ed2=  0.2965 cover=0.945   10.0s
+    A1  score=   4.969 ed2=  0.1434 cover=0.945   11.1s
+    A2  score= 676.241 ed2=150.7726 cover=0.000   10.2s
+    A3  score=   0.395 ed2=  0.5014 cover=0.945   25.9s
+    A4  score=   9.762 ed2=  0.4061 cover=0.945   48.0s
+    A5  score=   6.550 ed2=  0.1720 cover=0.945   48.8s
+    A6  score=   5.601 ed2=  0.1761 cover=0.945   34.6s
+    A7  score=   5.953 ed2=  0.1715 cover=0.945  191.5s
+    A8  score=   0.397 ed2=  0.5242 cover=0.945   15.4s
+  rare_object seed 2
+    A0  score=   0.567 ed2=  0.3165 cover=0.949   10.1s
+    A1  score=   6.398 ed2=  0.0962 cover=0.949   10.9s
+    A2  score=  24.978 ed2=  0.5507 cover=0.002   10.4s
+    A3  score=   0.667 ed2=  0.5000 cover=0.949   26.1s
+    A4  score=  15.801 ed2=  0.4495 cover=0.947   47.8s
+    A5  score=   6.943 ed2=  0.1166 cover=0.949   49.6s
+    A6  score=   5.116 ed2=  0.1744 cover=0.949   35.6s
+    A7  score=   7.544 ed2=  0.1889 cover=0.949  191.4s
+    A8  score=   0.670 ed2=  0.5197 cover=0.949   16.3s
+  deformed seed 0
+    A0  score=  31.187 ed2=  4.3080 cover=0.000   11.1s
+    A1  score=  24.838 ed2=  1.1676 cover=0.000   12.1s
+    A2  score=  47.013 ed2=  2.3841 cover=0.000   11.1s
+    A3  score=  62.484 ed2= 13.0924 cover=0.000   26.1s
+    A4  score=  51.965 ed2=  6.1711 cover=0.000   50.1s
+    A5  score=  45.697 ed2=  4.6649 cover=0.000   52.6s
+    A6  score=  41.216 ed2=  3.6353 cover=0.000   36.8s
+    A7  score=  43.650 ed2=  3.5888 cover=0.000  191.3s
+    A8  score=  68.116 ed2= 11.7664 cover=0.000   17.3s
+  deformed seed 1
+    A0  score=  42.683 ed2=  6.1022 cover=0.000   11.5s
+    A1  score=  29.516 ed2=  1.3735 cover=0.000   11.7s
+    A2  score=  46.497 ed2=  2.0128 cover=0.000   11.1s
+    A3  score=  73.386 ed2= 13.5625 cover=0.000   26.7s
+    A4  score=  50.858 ed2=  5.2193 cover=0.000   50.2s
+    A5  score=  47.115 ed2=  4.0624 cover=0.000   50.8s
+    A6  score=  44.912 ed2=  4.0972 cover=0.000   36.9s
+    A7  score=  43.721 ed2=  3.9759 cover=0.000  194.5s
+    A8  score=  71.444 ed2= 11.5773 cover=0.000   17.2s
+  deformed seed 2
+    A0  score=  28.259 ed2=  4.4081 cover=0.000   11.3s
+    A1  score=  19.209 ed2=  1.0624 cover=0.000   11.9s
+    A2  score=  41.725 ed2=  2.1198 cover=0.000   11.4s
+    A3  score=  58.579 ed2= 12.9969 cover=0.000   26.9s
+    A4  score=  47.128 ed2=  5.3329 cover=0.000   51.1s
+    A5  score=  41.180 ed2=  4.1350 cover=0.000   51.2s
+    A6  score=  41.476 ed2=  4.1323 cover=0.000   37.3s
+    A7  score=  46.803 ed2=  5.1634 cover=0.000  196.4s
+    A8  score=  74.533 ed2= 12.4221 cover=0.000   16.9s
+
+=== PHASE 1 MECHANISM SCREEN ===
+arm   median geometry score   note
+A0                   9.7423   
+A1                   8.3710   gate arm
+A2                  47.3246   
+A3                  21.5673   
+A4                  50.8580   gate arm
+A5                  39.0555   gate arm
+A6                  37.0126   
+A7                  25.8018   
+A8                  11.8615   CONTEXT (local encoder stand-in)
+
+  [FAIL] G1.1_A4_beats_A1 ratio=4.5065 [3.2852,6.3482] wins=0/27
+  [PASS] G1.2_A5_within_10pc_of_A4 ratio=0.7009 [0.6160,0.7917] wins=24/27
+  [PASS] G1.3_A5_passes_A4_collisions
+  [PASS] G1.4_anchor_present
+  [FAIL] G1.5_robust_across_seeds_and_targets
+
+  Phase-1 gate: FAIL
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase1_screen.json sha256=37e72025e6726f52...

@@ -1,0 +1,20 @@
+=== baselines, recomputed in this run ===
+    real                       FID=   71.31 ED2=  0.2043
+    moment_matched_gaussian    FID=  254.77 ED2=  0.1178
+    pure_noise                 FID=  430.35 ED2=  1.4627
+
+    THE BAR = 254.77 (moment-matched Gaussian)
+
+=== Stage 1: the scaling curve (raw + R11, w64, cloud 256) ===
+    steps=   600 seed0 FID=  286.63 (above bar)  ED2=  0.3363 tail= 0.1040 2nd= 0.853     30s
+    steps=   600 seed1 FID=  298.04 (above bar)  ED2=  0.3415 tail= 0.1110 2nd= 0.966     32s
+    steps=  3000 seed0 FID=  283.98 (above bar)  ED2=  0.2887 tail= 0.1651 2nd= 0.869    176s
+    steps=  3000 seed1 FID=  291.99 (above bar)  ED2=  0.4180 tail= 0.1199 2nd= 0.930    184s
+    steps= 10000 seed0 FID=  248.98 (BEATS bar)  ED2=  0.3577 tail= 0.1542 2nd= 0.893    677s
+    steps= 10000 seed1 FID=  269.02 (above bar)  ED2=  0.3736 tail= 0.1180 2nd= 0.959    716s
+    steps= 30000 seed0 FID=  235.86 (BEATS bar)  ED2=  0.5051 tail= 0.1484 2nd= 0.999   2093s
+    steps= 30000 seed1 FID=  228.42 (BEATS bar)  ED2=  0.1900 tail= 0.1338 2nd= 0.937   2443s
+
+=== Stage 2: other axes at 10000 steps ===
+    S2_base      seed0 FID=  248.89 (BEATS bar)  ED2=  0.3641 tail= 0.1566    820s
+    S2_base      seed1 FID=  265.63 (above bar)  ED2=  0.2830 tail= 0.1224    832s

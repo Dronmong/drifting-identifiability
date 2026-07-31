@@ -1,0 +1,301 @@
+{
+  "artifacts": {
+    "broad": {
+      "directory": "numerics\\conditioned_transport_runs\\20260723-144337-consumed",
+      "outputs_sha256": "36a5366bdf9a4c6f46afae78c46e1547e9136da4bcb439cfcab2796d91507fea",
+      "rows_sha256": "6c4dcb9057887d1182c7a8c62a5253503c130965cee28a0b2ce78f9e85ad33b1"
+    },
+    "concentrated": {
+      "directory": "numerics\\conditioned_transport_runs\\20260723-144129-consumed",
+      "outputs_sha256": "5b3d2fae0ad68f101c2f739a3ae3ee6616a228671107db1f604c8d5fa90da7db",
+      "rows_sha256": "8d93183580cd813440de1da360a0dd78a23fc8ab4e03266cee3c6ff5a9501982"
+    }
+  },
+  "bootstrap_resamples": 20000,
+  "bootstrap_seed": 2026092307,
+  "candidate_vs_current": {
+    "ed2": {
+      "bootstrap_95_interval": [
+        0.9804427986692167,
+        1.008499234073579
+      ],
+      "geometric_mean_ratio": 0.9943917029291881,
+      "median_ratio": 0.9901729777208589,
+      "per_target": {
+        "NPR-d16-balanced-gmm-v00": 0.9442959176034854,
+        "NPR-d16-balanced-gmm-v01": 0.946207085740208,
+        "NPR-d16-correlated-t-v00": 0.9263977110988113,
+        "NPR-d16-correlated-t-v01": 0.9580366228974955,
+        "NPR-d16-nonlinear-v00": 0.9556344964375663,
+        "NPR-d16-nonlinear-v01": 0.9642176430519431,
+        "NPR-d16-rare-gmm-v00": 0.9445178552426808,
+        "NPR-d16-rare-gmm-v01": 0.9541248727284083,
+        "NPR-d2-balanced-gmm-v00": 0.9974458101661837,
+        "NPR-d2-balanced-gmm-v01": 1.0040837303325965,
+        "NPR-d2-correlated-t-v00": 1.0057336011831268,
+        "NPR-d2-correlated-t-v01": 1.0012383671141656,
+        "NPR-d2-nonlinear-v00": 1.0191285190820725,
+        "NPR-d2-nonlinear-v01": 0.9705468818126888,
+        "NPR-d2-rare-gmm-v00": 1.4318871382381735,
+        "NPR-d2-rare-gmm-v01": 1.1551609884839589,
+        "NPR-d4-balanced-gmm-v00": 0.997907987680298,
+        "NPR-d4-balanced-gmm-v01": 0.9720695639581237,
+        "NPR-d4-correlated-t-v00": 1.024933922662205,
+        "NPR-d4-correlated-t-v01": 0.954112879727959,
+        "NPR-d4-nonlinear-v00": 1.0020912309391448,
+        "NPR-d4-nonlinear-v01": 0.989536012222048,
+        "NPR-d4-rare-gmm-v00": 1.0033990261290808,
+        "NPR-d4-rare-gmm-v01": 1.0508432717870897,
+        "NPR-d8-balanced-gmm-v00": 0.9761850743282193,
+        "NPR-d8-balanced-gmm-v01": 0.9908099432196698,
+        "NPR-d8-correlated-t-v00": 1.0204080722421935,
+        "NPR-d8-correlated-t-v01": 0.9745827872335673,
+        "NPR-d8-nonlinear-v00": 1.0502184856959873,
+        "NPR-d8-nonlinear-v01": 0.8960214795367943,
+        "NPR-d8-rare-gmm-v00": 0.9986852418146676,
+        "NPR-d8-rare-gmm-v01": 0.8574944083117769
+      },
+      "targets": 32,
+      "wins": 20
+    },
+    "heldout_sw1": {
+      "bootstrap_95_interval": [
+        0.9902221494881365,
+        1.0016115976522666
+      ],
+      "geometric_mean_ratio": 0.9959411519022916,
+      "median_ratio": 0.9896811298517754,
+      "per_target": {
+        "NPR-d16-balanced-gmm-v00": 0.9635220968265369,
+        "NPR-d16-balanced-gmm-v01": 0.9814433833559395,
+        "NPR-d16-correlated-t-v00": 0.984398141465879,
+        "NPR-d16-correlated-t-v01": 0.9833958464676283,
+        "NPR-d16-nonlinear-v00": 0.9735446689422685,
+        "NPR-d16-nonlinear-v01": 0.9799281167013719,
+        "NPR-d16-rare-gmm-v00": 0.9824163693287462,
+        "NPR-d16-rare-gmm-v01": 0.9642048592712934,
+        "NPR-d2-balanced-gmm-v00": 0.9990097069527122,
+        "NPR-d2-balanced-gmm-v01": 1.0022309797122073,
+        "NPR-d2-correlated-t-v00": 1.0050606812684542,
+        "NPR-d2-correlated-t-v01": 1.0009444944545602,
+        "NPR-d2-nonlinear-v00": 0.9798948648303537,
+        "NPR-d2-nonlinear-v01": 0.9793887945238955,
+        "NPR-d2-rare-gmm-v00": 1.1491870125522088,
+        "NPR-d2-rare-gmm-v01": 1.0868687224359723,
+        "NPR-d4-balanced-gmm-v00": 0.9977963622917204,
+        "NPR-d4-balanced-gmm-v01": 0.9825200063820961,
+        "NPR-d4-correlated-t-v00": 1.0127259396644428,
+        "NPR-d4-correlated-t-v01": 0.9724262156166363,
+        "NPR-d4-nonlinear-v00": 1.0003112524439055,
+        "NPR-d4-nonlinear-v01": 0.9906424424268813,
+        "NPR-d4-rare-gmm-v00": 0.9868070826293667,
+        "NPR-d4-rare-gmm-v01": 1.0147594413343288,
+        "NPR-d8-balanced-gmm-v00": 0.9887198172766696,
+        "NPR-d8-balanced-gmm-v01": 0.9954307014086886,
+        "NPR-d8-correlated-t-v00": 1.0099872273017476,
+        "NPR-d8-correlated-t-v01": 1.0031261925617123,
+        "NPR-d8-nonlinear-v00": 1.0222670997617516,
+        "NPR-d8-nonlinear-v01": 0.9480734022000781,
+        "NPR-d8-rare-gmm-v00": 1.0098189138665359,
+        "NPR-d8-rare-gmm-v01": 0.9401766140108283
+      },
+      "targets": 32,
+      "wins": 20
+    }
+  },
+  "candidate_vs_paper": {
+    "ed2": {
+      "bootstrap_95_interval": [
+        0.2500258982298612,
+        0.2935589490880061
+      ],
+      "geometric_mean_ratio": 0.2708943917201809,
+      "median_ratio": 0.2751495687316502,
+      "per_target": {
+        "NPR-d16-balanced-gmm-v00": 0.76748605568531,
+        "NPR-d16-balanced-gmm-v01": 0.7072474780513265,
+        "NPR-d16-correlated-t-v00": 0.31088735409689233,
+        "NPR-d16-correlated-t-v01": 0.29535358223158104,
+        "NPR-d16-nonlinear-v00": 0.2649874885389487,
+        "NPR-d16-nonlinear-v01": 0.2853116489243517,
+        "NPR-d16-rare-gmm-v00": 0.3557790092230199,
+        "NPR-d16-rare-gmm-v01": 0.26353175456208666,
+        "NPR-d2-balanced-gmm-v00": 0.4282543579438673,
+        "NPR-d2-balanced-gmm-v01": 0.5981658534575417,
+        "NPR-d2-correlated-t-v00": 0.16454243632471868,
+        "NPR-d2-correlated-t-v01": 0.3514616657566401,
+        "NPR-d2-nonlinear-v00": 0.07096703705846397,
+        "NPR-d2-nonlinear-v01": 0.10035730010516142,
+        "NPR-d2-rare-gmm-v00": 0.18382561764686337,
+        "NPR-d2-rare-gmm-v01": 0.11305570583829645,
+        "NPR-d4-balanced-gmm-v00": 0.3441150063386354,
+        "NPR-d4-balanced-gmm-v01": 0.8762299320195082,
+        "NPR-d4-correlated-t-v00": 0.19063375634727617,
+        "NPR-d4-correlated-t-v01": 0.15079864989187236,
+        "NPR-d4-nonlinear-v00": 0.14882222123658212,
+        "NPR-d4-nonlinear-v01": 0.0918823602386122,
+        "NPR-d4-rare-gmm-v00": 0.21568384216878847,
+        "NPR-d4-rare-gmm-v01": 0.20501160804780083,
+        "NPR-d8-balanced-gmm-v00": 0.5092108319505513,
+        "NPR-d8-balanced-gmm-v01": 0.9000874643212708,
+        "NPR-d8-correlated-t-v00": 0.3986966135683582,
+        "NPR-d8-correlated-t-v01": 0.49282280229541936,
+        "NPR-d8-nonlinear-v00": 0.2611426529449628,
+        "NPR-d8-nonlinear-v01": 0.186448027910596,
+        "NPR-d8-rare-gmm-v00": 0.13099274343329706,
+        "NPR-d8-rare-gmm-v01": 0.30329005356696415
+      },
+      "targets": 32,
+      "wins": 32
+    },
+    "heldout_sw1": {
+      "bootstrap_95_interval": [
+        0.48100018044600074,
+        0.5265920838596153
+      ],
+      "geometric_mean_ratio": 0.5032580509058956,
+      "median_ratio": 0.5055175082402799,
+      "per_target": {
+        "NPR-d16-balanced-gmm-v00": 0.8506749891045968,
+        "NPR-d16-balanced-gmm-v01": 0.8140769435224992,
+        "NPR-d16-correlated-t-v00": 0.5101380982339184,
+        "NPR-d16-correlated-t-v01": 0.49000514055971106,
+        "NPR-d16-nonlinear-v00": 0.5231205738044648,
+        "NPR-d16-nonlinear-v01": 0.5176138633799037,
+        "NPR-d16-rare-gmm-v00": 0.5540378957486193,
+        "NPR-d16-rare-gmm-v01": 0.5008969182466414,
+        "NPR-d2-balanced-gmm-v00": 0.6735816017795695,
+        "NPR-d2-balanced-gmm-v01": 0.6883327913258217,
+        "NPR-d2-correlated-t-v00": 0.3966453549446551,
+        "NPR-d2-correlated-t-v01": 0.6239641485686065,
+        "NPR-d2-nonlinear-v00": 0.23278363202526453,
+        "NPR-d2-nonlinear-v01": 0.3072628873885807,
+        "NPR-d2-rare-gmm-v00": 0.40736993047789505,
+        "NPR-d2-rare-gmm-v01": 0.33878087024584697,
+        "NPR-d4-balanced-gmm-v00": 0.5543873903415663,
+        "NPR-d4-balanced-gmm-v01": 0.9037437696813628,
+        "NPR-d4-correlated-t-v00": 0.457674086920287,
+        "NPR-d4-correlated-t-v01": 0.36874091419912436,
+        "NPR-d4-nonlinear-v00": 0.3738960127589685,
+        "NPR-d4-nonlinear-v01": 0.28277942327040745,
+        "NPR-d4-rare-gmm-v00": 0.4333112686015529,
+        "NPR-d4-rare-gmm-v01": 0.43268412984662286,
+        "NPR-d8-balanced-gmm-v00": 0.7117135482831333,
+        "NPR-d8-balanced-gmm-v01": 0.976356254387834,
+        "NPR-d8-correlated-t-v00": 0.6159940704862314,
+        "NPR-d8-correlated-t-v01": 0.6760884829088787,
+        "NPR-d8-nonlinear-v00": 0.489503491984965,
+        "NPR-d8-nonlinear-v01": 0.38748697406449667,
+        "NPR-d8-rare-gmm-v00": 0.3585877227086877,
+        "NPR-d8-rare-gmm-v01": 0.5896053854329949
+      },
+      "targets": 32,
+      "wins": 32
+    }
+  },
+  "cost": {
+    "candidate_vs_cta-exact-fixed-control": {
+      "median_candidate_generator_example_evals_training": 20480.0,
+      "median_candidate_online_training_wall_seconds": 0.4250924500011024,
+      "median_candidate_paper_kernel_pairs": 3932160.0,
+      "median_candidate_projection_scalar_products": 2293760.0,
+      "median_candidate_setup_plus_training_wall_seconds": 0.4772994999984803,
+      "median_candidate_sort_work": 22601797.592530765,
+      "median_candidate_target_example_accesses": 30720.0,
+      "median_comparator_generator_example_evals_training": 20480.0,
+      "median_comparator_online_training_wall_seconds": 0.26716729999679956,
+      "median_comparator_paper_kernel_pairs": 2621440.0,
+      "median_comparator_projection_scalar_products": 1781760.0,
+      "median_comparator_setup_plus_training_wall_seconds": 0.32008624999798485,
+      "median_comparator_sort_work": 22581317.592530765,
+      "median_comparator_target_example_accesses": 30720.0,
+      "median_generator_example_evals_training_ratio": 1.0,
+      "median_online_training_wall_seconds_ratio": 1.5274304847121,
+      "median_paper_kernel_pairs_ratio": 1.5,
+      "median_projection_scalar_products_ratio": 1.2873563218390804,
+      "median_setup_plus_training_wall_seconds_ratio": 1.3714057074696437,
+      "median_sort_work_ratio": 1.0003406214754516,
+      "median_target_example_accesses_ratio": 1.0
+    },
+    "candidate_vs_paper-neural-optimized": {
+      "median_candidate_generator_example_evals_training": 20480.0,
+      "median_candidate_online_training_wall_seconds": 0.4250924500011024,
+      "median_candidate_paper_kernel_pairs": 3932160.0,
+      "median_candidate_projection_scalar_products": 2293760.0,
+      "median_candidate_setup_plus_training_wall_seconds": 0.4772994999984803,
+      "median_candidate_sort_work": 22601797.592530765,
+      "median_candidate_target_example_accesses": 30720.0,
+      "median_comparator_generator_example_evals_training": 20480.0,
+      "median_comparator_online_training_wall_seconds": 0.2938016999978572,
+      "median_comparator_paper_kernel_pairs": 2621440.0,
+      "median_comparator_projection_scalar_products": 0.0,
+      "median_comparator_setup_plus_training_wall_seconds": 0.2938016999978572,
+      "median_comparator_sort_work": 0.0,
+      "median_comparator_target_example_accesses": 20480.0,
+      "median_generator_example_evals_training_ratio": 1.0,
+      "median_online_training_wall_seconds_ratio": 1.285860354446493,
+      "median_paper_kernel_pairs_ratio": 1.5,
+      "median_projection_scalar_products_ratio": null,
+      "median_setup_plus_training_wall_seconds_ratio": 1.4536830973265422,
+      "median_sort_work_ratio": null,
+      "median_target_example_accesses_ratio": 1.5
+    }
+  },
+  "decision": "do not promote; retain current confirmed representative system",
+  "gates": {
+    "A_quality_vs_current": false,
+    "B_mechanism": true,
+    "C_retain_paper_advantage": true,
+    "D_support_noninferiority": false
+  },
+  "mechanism": {
+    "candidate_median_column_mass_error": 0.13108858838677406,
+    "candidate_median_row_mass_error": 0.06117062573321164,
+    "candidate_minimum_field_cosine": 0.9484907388687134,
+    "checks": {
+      "column_mass_error_noninferior": true,
+      "field_error_ratio_le_0_75": true,
+      "minimum_cosine_noninferior": true,
+      "row_mass_error_noninferior": true
+    },
+    "control_median_column_mass_error": 0.22133087739348412,
+    "control_median_row_mass_error": 0.1617572233080864,
+    "control_minimum_field_cosine": 0.7753297686576843,
+    "high_dimension_geometric_field_error_ratio": 0.4910604799995443,
+    "passed": true
+  },
+  "registry_sha256": "f675c82a1f17aa991ba3c9f5b5f5555a4b57880269a5f504c64a7e96a91a1da4",
+  "schema": "conditioned-transport-repair-confirmation-analysis-v1",
+  "scope": "32 fresh synthetic targets, two initializations, dimensions 2--16; not an image-scale claim",
+  "status": "fail",
+  "support": {
+    "candidate_median_rare_mass_error": 0.007275390625000003,
+    "candidate_minimum_mode_coverage": 0.5,
+    "checks": {
+      "mode_coverage_noninferior": false,
+      "precision_noninferior": true,
+      "rare_mass_error_noninferior": true,
+      "recall_noninferior": true
+    },
+    "control_median_rare_mass_error": 0.006103515625,
+    "control_minimum_mode_coverage": 1.0,
+    "medians": {
+      "cta-exact-fixed-control": {
+        "normalized_mean_error": 0.04974993504575123,
+        "off_support_occupancy": 0.037109375,
+        "relative_covariance_frobenius_error": 0.17198029811067017,
+        "support_precision": 0.962890625,
+        "support_recall": 0.9814453125
+      },
+      "cta-exact-hybrid": {
+        "normalized_mean_error": 0.048159235413848374,
+        "off_support_occupancy": 0.036865234375,
+        "relative_covariance_frobenius_error": 0.18221091096671088,
+        "support_precision": 0.963134765625,
+        "support_recall": 0.9814453125
+      }
+    },
+    "passed": false,
+    "status": "frozen_secondary_endpoint"
+  }
+}

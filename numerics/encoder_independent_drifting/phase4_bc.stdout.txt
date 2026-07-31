@@ -1,0 +1,49 @@
+--- P4B_cross_harness ---
+    P4B gauss_8d_K4    seed0 eff_dim off=0.657 on=0.843  ed2 off= 0.0317 on= 0.0071
+    P4B gauss_8d_K4    seed1 eff_dim off=0.656 on=0.849  ed2 off= 0.0257 on= 0.0068
+    P4B gauss_8d_K4    seed2 eff_dim off=0.658 on=0.870  ed2 off= 0.0313 on= 0.0082
+    P4B gauss_16d_K6   seed0 eff_dim off=0.498 on=0.639  ed2 off= 0.0743 on= 0.0057
+    P4B gauss_16d_K6   seed1 eff_dim off=0.504 on=0.653  ed2 off= 0.0712 on= 0.0076
+    P4B gauss_16d_K6   seed2 eff_dim off=0.504 on=0.643  ed2 off= 0.0633 on= 0.0065
+    P4B ring_2d        seed0 eff_dim off=0.985 on=1.000  ed2 off= 0.0123 on= 0.0318
+    P4B ring_2d        seed1 eff_dim off=0.995 on=0.999  ed2 off= 0.0139 on= 0.0276
+    P4B ring_2d        seed2 eff_dim off=0.994 on=0.999  ed2 off= 0.0091 on= 0.0204
+    P4B moons_2d       seed0 eff_dim off=1.060 on=1.030  ed2 off= 0.0084 on= 0.0146
+    P4B moons_2d       seed1 eff_dim off=1.016 on=1.035  ed2 off= 0.0077 on= 0.0119
+    P4B moons_2d       seed2 eff_dim off=0.985 on=1.000  ed2 off= 0.0117 on= 0.0084
+    P4B dim=  2 seed0 eff_dim off=0.994 on=0.989  ed2 off= 0.0077 on= 0.0240
+    P4B dim=  2 seed1 eff_dim off=0.998 on=0.997  ed2 off= 0.0088 on= 0.0208
+    P4B dim=  2 seed2 eff_dim off=0.999 on=0.998  ed2 off= 0.0112 on= 0.0238
+    P4B dim=  4 seed0 eff_dim off=0.919 on=0.950  ed2 off= 0.0149 on= 0.0123
+    P4B dim=  4 seed1 eff_dim off=0.917 on=0.954  ed2 off= 0.0140 on= 0.0145
+    P4B dim=  4 seed2 eff_dim off=0.903 on=0.959  ed2 off= 0.0165 on= 0.0117
+    P4B dim=  8 seed0 eff_dim off=0.659 on=0.874  ed2 off= 0.0387 on= 0.0057
+    P4B dim=  8 seed1 eff_dim off=0.655 on=0.846  ed2 off= 0.0395 on= 0.0104
+    P4B dim=  8 seed2 eff_dim off=0.661 on=0.842  ed2 off= 0.0314 on= 0.0056
+    P4B dim= 16 seed0 eff_dim off=0.391 on=0.637  ed2 off= 0.0961 on= 0.0096
+    P4B dim= 16 seed1 eff_dim off=0.397 on=0.615  ed2 off= 0.0730 on= 0.0070
+    P4B dim= 16 seed2 eff_dim off=0.382 on=0.639  ed2 off= 0.0805 on= 0.0088
+    P4B dim= 32 seed0 eff_dim off=0.212 on=0.384  ed2 off= 0.1890 on= 0.0125
+    P4B dim= 32 seed1 eff_dim off=0.213 on=0.370  ed2 off= 0.1859 on= 0.0145
+    P4B dim= 32 seed2 eff_dim off=0.206 on=0.373  ed2 off= 0.1979 on= 0.0157
+    P4B dim= 64 seed0 eff_dim off=0.091 on=0.168  ed2 off= 0.3796 on= 0.0282
+    P4B dim= 64 seed1 eff_dim off=0.099 on=0.165  ed2 off= 0.3795 on= 0.0268
+    P4B dim= 64 seed2 eff_dim off=0.096 on=0.168  ed2 off= 0.3725 on= 0.0280
+--- P4C_mechanism ---
+    P4C batch=  32 seed0 noise_frac=0.0009 retention=0.9991 measured_eff_dim=0.257
+    P4C batch=  32 seed1 noise_frac=0.0003 retention=0.9997 measured_eff_dim=0.215
+    P4C batch=  32 seed2 noise_frac=0.0017 retention=0.9983 measured_eff_dim=0.235
+    P4C batch=  64 seed0 noise_frac=0.0005 retention=0.9995 measured_eff_dim=0.303
+    P4C batch=  64 seed1 noise_frac=0.0002 retention=0.9998 measured_eff_dim=0.257
+    P4C batch=  64 seed2 noise_frac=0.0014 retention=0.9986 measured_eff_dim=0.307
+    P4C batch= 128 seed0 noise_frac=0.0004 retention=0.9996 measured_eff_dim=0.338
+    P4C batch= 128 seed1 noise_frac=0.0001 retention=0.9999 measured_eff_dim=0.279
+    P4C batch= 128 seed2 noise_frac=0.0007 retention=0.9993 measured_eff_dim=0.298
+    P4C batch= 256 seed0 noise_frac=0.0002 retention=0.9998 measured_eff_dim=0.396
+    P4C batch= 256 seed1 noise_frac=0.0000 retention=1.0000 measured_eff_dim=0.346
+    P4C batch= 256 seed2 noise_frac=0.0004 retention=0.9996 measured_eff_dim=0.381
+
+=== PHASE 4 ===
+  [FAIL] P4B_cross_harness
+  [FAIL] P4C_mechanism
+  wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase4.json sha256=371555fb640cf229...

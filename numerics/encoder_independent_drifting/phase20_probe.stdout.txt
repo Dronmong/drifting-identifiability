@@ -1,0 +1,28 @@
+=== training one generator (arm D config), 15000 steps ===
+    728s
+
+=== M3: rendering samples ===
+    wrote phase20_samples_generated.png / _real.png
+
+=== Inception features ===
+    real (8192, 2048) gen (8192, 2048)  87s
+
+    gpu/numpy FID agreement: 69.9198 vs 69.9198 (rel 3.77e-07)
+
+=== M1: the floor, real vs real (disjoint) ===
+    floor  n=  512  FID   70.65 +-  0.80   KID +0.00001 +- 0.00036
+    floor  n= 1024  FID   43.02 +-  0.68   KID +0.00002 +- 0.00015
+    floor  n= 2048  FID   23.08 +-  0.30   KID -0.00000 +- 0.00005
+
+=== M2: measurement noise, ONE fixed generator ===
+    gen    n=  512  FID  206.47 +-  4.12   KID +0.14200 +- 0.00450
+    gen    n= 1024  FID  189.87 +-  2.78   KID +0.14282 +- 0.00305
+    gen    n= 2048  FID  177.41 +-  1.24   KID +0.14210 +- 0.00113
+
+=== READING ===
+    measurement sd at n=512 is 4.12 FID, against Phase 19's within-arm seed sd of 26.68
+      n=  512  gen FID  206.47 +-  4.12   floor  70.65   KID +0.14200 +- 0.00450
+      n= 1024  gen FID  189.87 +-  2.78   floor  43.02   KID +0.14282 +- 0.00305
+      n= 2048  gen FID  177.41 +-  1.24   floor  23.08   KID +0.14210 +- 0.00113
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase20_probe.json sha256=bd5a2e48246abb1b...

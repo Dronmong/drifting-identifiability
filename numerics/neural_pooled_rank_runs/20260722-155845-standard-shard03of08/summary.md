@@ -1,0 +1,19 @@
+```text
+Neural pooled-rank Phase-1 development
+  registry 7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6
+  2 targets x 3 reps x 2 inits x 7 rows
+  shard 3/8
+  [PASS] complete Phase-0 regression suite
+  [PASS] Torch paper field agrees with repository NumPy port
+  [PASS] all registered training/held-out frames are tight
+  [PASS] paired initial generator states are bitwise equal
+  completed NPR-d2-nonlinear in 42.13s
+  completed NPR-d8-nonlinear in 65.43s
+  paper-neural                 ED2=0.055306 heldoutSW1=0.185076 div=0
+  minibatch-sw                 ED2=0.043026 heldoutSW1=0.152660 div=0
+  exact-atlas-rsr              ED2=0.044516 heldoutSW1=0.143031 div=0
+  kll-atlas-rsr                ED2=0.043502 heldoutSW1=0.151328 div=0
+  kll-small-rsr                ED2=0.049081 heldoutSW1=0.156522 div=0
+  kll-paper-hybrid             ED2=0.055912 heldoutSW1=0.169429 div=0
+  exact-free-particle-ceiling  ED2=0.004761 heldoutSW1=0.048631 div=0
+```

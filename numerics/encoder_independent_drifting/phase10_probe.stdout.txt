@@ -1,0 +1,119 @@
+=== Q1/Q2: the field's radial zero ===
+    Q1 alpha= 0.15 batch=64    mask=False seed0 radial=  +0.04427 |V|=  0.30884
+    Q1 alpha= 0.15 batch=64    mask=True  seed0 radial=  +0.05319 |V|=  0.34153
+    Q1 alpha= 0.15 batch=2048  mask=False seed0 radial=  +0.29161 |V|=  0.91394
+    Q1 alpha= 0.15 batch=2048  mask=True  seed0 radial=  +0.32192 |V|=  0.95707
+    Q1 alpha= 0.25 batch=64    mask=False seed0 radial=  +0.04730 |V|=  0.29999
+    Q1 alpha= 0.25 batch=64    mask=True  seed0 radial=  +0.06036 |V|=  0.34832
+    Q1 alpha= 0.25 batch=2048  mask=False seed0 radial=  +0.28047 |V|=  0.88915
+    Q1 alpha= 0.25 batch=2048  mask=True  seed0 radial=  +0.34815 |V|=  1.03175
+    Q1 alpha= 0.40 batch=64    mask=False seed0 radial=  +0.05269 |V|=  0.34593
+    Q1 alpha= 0.40 batch=64    mask=True  seed0 radial=  +0.06531 |V|=  0.34527
+    Q1 alpha= 0.40 batch=2048  mask=False seed0 radial=  +0.23978 |V|=  1.04525
+    Q1 alpha= 0.40 batch=2048  mask=True  seed0 radial=  +0.30650 |V|=  0.90518
+    Q1 alpha= 0.55 batch=64    mask=False seed0 radial=  +0.03180 |V|=  0.40187
+    Q1 alpha= 0.55 batch=64    mask=True  seed0 radial=  +0.05513 |V|=  0.34895
+    Q1 alpha= 0.55 batch=2048  mask=False seed0 radial=  +0.16031 |V|=  0.74778
+    Q1 alpha= 0.55 batch=2048  mask=True  seed0 radial=  +0.23371 |V|=  0.81903
+    Q1 alpha= 0.70 batch=64    mask=False seed0 radial=  +0.01693 |V|=  0.32197
+    Q1 alpha= 0.70 batch=64    mask=True  seed0 radial=  +0.04386 |V|=  0.31140
+    Q1 alpha= 0.70 batch=2048  mask=False seed0 radial=  +0.07435 |V|=  0.71924
+    Q1 alpha= 0.70 batch=2048  mask=True  seed0 radial=  +0.18229 |V|=  0.77865
+    Q1 alpha= 1.00 batch=64    mask=False seed0 radial=  -0.01150 |V|=  0.34133
+    Q1 alpha= 1.00 batch=64    mask=True  seed0 radial=  +0.00525 |V|=  0.32269
+    Q1 alpha= 1.00 batch=2048  mask=False seed0 radial=  -0.11893 |V|=  0.79891
+    Q1 alpha= 1.00 batch=2048  mask=True  seed0 radial=  +0.04667 |V|=  0.74836
+    Q1 alpha= 1.40 batch=64    mask=False seed0 radial=  -0.06961 |V|=  0.36801
+    Q1 alpha= 1.40 batch=64    mask=True  seed0 radial=  -0.02854 |V|=  0.35512
+    Q1 alpha= 1.40 batch=2048  mask=False seed0 radial=  -0.35103 |V|=  0.75292
+    Q1 alpha= 1.40 batch=2048  mask=True  seed0 radial=  -0.14267 |V|=  0.70952
+    Q1 alpha= 0.15 batch=64    mask=False seed1 radial=  +0.04590 |V|=  0.27548
+    Q1 alpha= 0.15 batch=64    mask=True  seed1 radial=  +0.04897 |V|=  0.28720
+    Q1 alpha= 0.15 batch=2048  mask=False seed1 radial=  +0.28794 |V|=  0.92113
+    Q1 alpha= 0.15 batch=2048  mask=True  seed1 radial=  +0.31186 |V|=  0.90174
+    Q1 alpha= 0.25 batch=64    mask=False seed1 radial=  +0.05566 |V|=  0.30743
+    Q1 alpha= 0.25 batch=64    mask=True  seed1 radial=  +0.05674 |V|=  0.31764
+    Q1 alpha= 0.25 batch=2048  mask=False seed1 radial=  +0.29659 |V|=  0.98630
+    Q1 alpha= 0.25 batch=2048  mask=True  seed1 radial=  +0.32170 |V|=  0.86104
+    Q1 alpha= 0.40 batch=64    mask=False seed1 radial=  +0.04965 |V|=  0.31704
+    Q1 alpha= 0.40 batch=64    mask=True  seed1 radial=  +0.05995 |V|=  0.32868
+    Q1 alpha= 0.40 batch=2048  mask=False seed1 radial=  +0.22958 |V|=  0.88883
+    Q1 alpha= 0.40 batch=2048  mask=True  seed1 radial=  +0.30156 |V|=  0.94472
+    Q1 alpha= 0.55 batch=64    mask=False seed1 radial=  +0.03575 |V|=  0.33965
+    Q1 alpha= 0.55 batch=64    mask=True  seed1 radial=  +0.05143 |V|=  0.35111
+    Q1 alpha= 0.55 batch=2048  mask=False seed1 radial=  +0.15940 |V|=  0.70506
+    Q1 alpha= 0.55 batch=2048  mask=True  seed1 radial=  +0.25567 |V|=  0.85735
+    Q1 alpha= 0.70 batch=64    mask=False seed1 radial=  +0.01051 |V|=  0.34084
+    Q1 alpha= 0.70 batch=64    mask=True  seed1 radial=  +0.03266 |V|=  0.33428
+    Q1 alpha= 0.70 batch=2048  mask=False seed1 radial=  +0.09202 |V|=  0.90468
+    Q1 alpha= 0.70 batch=2048  mask=True  seed1 radial=  +0.16305 |V|=  0.85847
+    Q1 alpha= 1.00 batch=64    mask=False seed1 radial=  -0.02674 |V|=  0.35135
+    Q1 alpha= 1.00 batch=64    mask=True  seed1 radial=  +0.01890 |V|=  0.31657
+    Q1 alpha= 1.00 batch=2048  mask=False seed1 radial=  -0.10512 |V|=  0.68500
+    Q1 alpha= 1.00 batch=2048  mask=True  seed1 radial=  +0.03035 |V|=  0.87100
+    Q1 alpha= 1.40 batch=64    mask=False seed1 radial=  -0.08125 |V|=  0.36058
+    Q1 alpha= 1.40 batch=64    mask=True  seed1 radial=  -0.03695 |V|=  0.41033
+    Q1 alpha= 1.40 batch=2048  mask=False seed1 radial=  -0.41310 |V|=  0.88752
+    Q1 alpha= 1.40 batch=2048  mask=True  seed1 radial=  -0.12590 |V|=  0.89213
+    Q1 alpha= 0.15 batch=64    mask=False seed2 radial=  +0.05302 |V|=  0.31009
+    Q1 alpha= 0.15 batch=64    mask=True  seed2 radial=  +0.05479 |V|=  0.33441
+    Q1 alpha= 0.15 batch=2048  mask=False seed2 radial=  +0.30804 |V|=  0.94331
+    Q1 alpha= 0.15 batch=2048  mask=True  seed2 radial=  +0.32859 |V|=  0.99740
+    Q1 alpha= 0.25 batch=64    mask=False seed2 radial=  +0.05160 |V|=  0.33343
+    Q1 alpha= 0.25 batch=64    mask=True  seed2 radial=  +0.06297 |V|=  0.35376
+    Q1 alpha= 0.25 batch=2048  mask=False seed2 radial=  +0.30470 |V|=  0.94646
+    Q1 alpha= 0.25 batch=2048  mask=True  seed2 radial=  +0.34254 |V|=  0.89860
+    Q1 alpha= 0.40 batch=64    mask=False seed2 radial=  +0.04434 |V|=  0.32296
+    Q1 alpha= 0.40 batch=64    mask=True  seed2 radial=  +0.05609 |V|=  0.31886
+    Q1 alpha= 0.40 batch=2048  mask=False seed2 radial=  +0.24581 |V|=  0.88968
+    Q1 alpha= 0.40 batch=2048  mask=True  seed2 radial=  +0.33317 |V|=  0.99858
+    Q1 alpha= 0.55 batch=64    mask=False seed2 radial=  +0.03203 |V|=  0.33433
+    Q1 alpha= 0.55 batch=64    mask=True  seed2 radial=  +0.04958 |V|=  0.34977
+    Q1 alpha= 0.55 batch=2048  mask=False seed2 radial=  +0.17175 |V|=  0.77500
+    Q1 alpha= 0.55 batch=2048  mask=True  seed2 radial=  +0.24677 |V|=  0.83281
+    Q1 alpha= 0.70 batch=64    mask=False seed2 radial=  +0.01864 |V|=  0.33704
+    Q1 alpha= 0.70 batch=64    mask=True  seed2 radial=  +0.02962 |V|=  0.34651
+    Q1 alpha= 0.70 batch=2048  mask=False seed2 radial=  +0.08091 |V|=  0.94483
+    Q1 alpha= 0.70 batch=2048  mask=True  seed2 radial=  +0.18877 |V|=  0.74910
+    Q1 alpha= 1.00 batch=64    mask=False seed2 radial=  -0.01825 |V|=  0.42148
+    Q1 alpha= 1.00 batch=64    mask=True  seed2 radial=  +0.00225 |V|=  0.36909
+    Q1 alpha= 1.00 batch=2048  mask=False seed2 radial=  -0.10359 |V|=  0.69691
+    Q1 alpha= 1.00 batch=2048  mask=True  seed2 radial=  +0.04357 |V|=  0.82477
+    Q1 alpha= 1.40 batch=64    mask=False seed2 radial=  -0.08692 |V|=  0.35189
+    Q1 alpha= 1.40 batch=64    mask=True  seed2 radial=  -0.03196 |V|=  0.36301
+    Q1 alpha= 1.40 batch=2048  mask=False seed2 radial=  -0.35991 |V|=  0.79026
+    Q1 alpha= 1.40 batch=2048  mask=True  seed2 radial=  -0.14099 |V|=  0.77685
+
+=== Q3: is the particle cloud data-shaped? ===
+    Q3 seed0 particles 2nd=1.019 radial= -0.00509 | generator 2nd=0.417 radial= +0.00061 | data-shaped at that scale radial= +0.03345
+    Q3 seed1 particles 2nd=0.995 radial= -0.00202 | generator 2nd=0.338 radial= +0.01314 | data-shaped at that scale radial= +0.02640
+    Q3 seed2 particles 2nd=0.990 radial= -0.00025 | generator 2nd=0.466 radial= -0.00836 | data-shaped at that scale radial= +0.02081
+
+=== PHASE-9 FOLLOW-UP PROBE ===
+
+Q1/Q2  raw radial component vs cloud scale alpha
+  alpha   pos=64 unmask   pos=64 mask   pos=2048 unmask   pos=2048 mask
+   0.15         0.04590       0.05319           0.29161         0.32192
+   0.25         0.05160       0.06036           0.29659         0.34254
+   0.40         0.04965       0.05995           0.23978         0.30650
+   0.55         0.03203       0.05143           0.16031         0.24677
+   0.70         0.01693       0.03266           0.08091         0.18229
+   1.00        -0.01825       0.00525          -0.10512         0.04357
+   1.40        -0.08125      -0.03196          -0.35991        -0.14099
+
+  radial zero crossings (alpha):
+    pos=64_mask=False      0.844
+    pos=64_mask=True       1.056
+    pos=2048_mask=False    0.830
+    pos=2048_mask=True     1.094
+
+Q3  clouds compared at MATCHED second moment (so differences are shape, not scale)
+    particles 2nd moment 0.9949   generator 2nd moment 0.4172
+
+cloud                                   radial        |V|   nn_mean    nn_cv     tail
+particles                             -0.00202    0.18139   13.4542   0.0228   0.4152
+data_shaped                           -0.00189    0.17488    9.9313   0.2450   0.1417
+generator                             +0.00061    0.16746    3.4721   0.3365   0.0034
+data_shaped_at_generator_scale        +0.02640    0.16294    6.3556   0.2450   0.1417
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase10_probe.json sha256=0aff001b2c9ceea0...

@@ -1,0 +1,13 @@
+
+=== B1 PAIRED B0 BASELINE unit 300 ===
+recall=0.1475; median anchor excess=0.0102691; veto=True
+
+=== B1 PAIRED B0 BASELINE unit 301 ===
+recall=0.2061; median anchor excess=0.00924967; veto=True
+
+=== B1 PAIRED B0 BASELINE unit 302 ===
+recall=0.1528; median anchor excess=0.0142429; veto=True
+
+=== B1 PAIRED B0 BASELINE ===
+GO: controls=True; B0 vetoes=True; positive finite-sample audit denominator=True
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\b1_baseline.json sha256=bd296179dbe9bd8c0fa194211cd2d6220925fc459dbe841b5d8057f83a0e8c02

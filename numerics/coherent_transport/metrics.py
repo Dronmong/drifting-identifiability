@@ -56,13 +56,66 @@ def precision_recall(gen: np.ndarray, target: np.ndarray, k: int = 5) -> dict:
             "density": density, "coverage": coverage}
 
 
-def checkerboard_leakage(gen: np.ndarray, cell: float = 1.0) -> float:
+def checkerboard_leakage(
+    gen: np.ndarray,
+    cell: float = 1.0,
+    cells: int = 4,
+    origin: float = 0.0,
+) -> float:
     """Fraction of generated points that fall in an OFF (empty) checkerboard
-    cell. Cells are unit squares; a cell (i,j) is ON iff (i+j) is even. This is
-    a label-free geometric leakage measure specific to the checkerboard."""
-    idx = np.floor(gen / cell).astype(int)
+    cell or outside the declared checkerboard domain.
+
+    A cell ``(i,j)`` is ON iff ``(i+j)`` is even. Earlier code checked parity
+    without checking the domain, causing out-of-range points in even-parity
+    cells to be counted as valid support.
+    """
+    if cell <= 0 or cells <= 0:
+        raise ValueError("cell and cells must be positive")
+    shifted = gen - origin
+    idx = np.floor(shifted / cell).astype(int)
+    in_domain = ((idx >= 0) & (idx < cells)).all(axis=1)
     on = ((idx[:, 0] + idx[:, 1]) % 2 == 0)
-    return float((~on).mean())
+    return float((~(in_domain & on)).mean())
+
+
+def calibrated_support_radius(
+    target_calibration_a: np.ndarray,
+    target_calibration_b: np.ndarray,
+    quantile: float = 0.95,
+) -> float:
+    """Target-only global support radius from two independent target pools.
+
+    For every point in pool A, compute its distance to the nearest point in
+    pool B and take a frozen quantile. This avoids choosing the support
+    threshold from candidate outputs or from the final evaluation cloud.
+    """
+    if not 0 < quantile <= 1:
+        raise ValueError("quantile must lie in (0, 1]")
+    if len(target_calibration_a) == 0 or len(target_calibration_b) == 0:
+        raise ValueError("calibration pools must be nonempty")
+    nearest = _pairwise(target_calibration_a, target_calibration_b).min(axis=1)
+    return float(np.quantile(nearest, quantile))
+
+
+def calibrated_precision_coverage(
+    gen: np.ndarray,
+    target_eval: np.ndarray,
+    target_calibration_a: np.ndarray,
+    target_calibration_b: np.ndarray,
+    quantile: float = 0.95,
+) -> dict:
+    """Precision/coverage using a target-only independently calibrated radius."""
+    radius = calibrated_support_radius(
+        target_calibration_a, target_calibration_b, quantile)
+    D = _pairwise(gen, target_eval)
+    precision = float((D.min(axis=1) <= radius).mean())
+    coverage = float((D.min(axis=0) <= radius).mean())
+    return {
+        "radius": radius,
+        "precision": precision,
+        "coverage": coverage,
+        "off_support": 1.0 - precision,
+    }
 
 
 def rare_mass_error(gen: np.ndarray, modes: np.ndarray, sigmas: np.ndarray,
@@ -112,9 +165,21 @@ def _tests(log=print) -> None:
     # Checkerboard leakage: points on ON cells -> low; on OFF cells -> high.
     on_pts = np.array([[0.5, 0.5], [1.5, 1.5], [2.5, 0.5]])   # (i+j) even
     off_pts = np.array([[1.5, 0.5], [0.5, 1.5]])              # (i+j) odd
-    check("4. checkerboard leakage on/off",
+    outside = np.array([[-0.5, -0.5], [4.5, 4.5]])
+    check("4. checkerboard leakage on/off/outside",
           checkerboard_leakage(on_pts) == 0.0 and
-          checkerboard_leakage(off_pts) == 1.0)
+          checkerboard_leakage(off_pts) == 1.0 and
+          checkerboard_leakage(outside) == 1.0)
+
+    # Independently calibrated support: matched cloud is substantially better
+    # than a far-away cloud under the same target-only threshold.
+    C1 = rng.normal(size=(300, 2))
+    C2 = rng.normal(size=(300, 2))
+    E = rng.normal(size=(300, 2))
+    matched = calibrated_precision_coverage(A, E, C1, C2)
+    shifted = calibrated_precision_coverage(far, E, C1, C2)
+    check("5. calibrated support separates matched and far clouds",
+          matched["precision"] > shifted["precision"] + 0.7)
 
     if fails:
         raise SystemExit(f"metrics tests FAILED: {fails}")

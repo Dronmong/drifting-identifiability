@@ -1,0 +1,43 @@
+=== Phase 13: the pair-bank sweep ===
+    [seed0] particle cloud (2048): ed2=0.2089 tail=0.4705 (1,179,648,000 kernel pairs)
+    C0_self                seed0 ed2=  0.7493 (x 3.59 particles) 2nd= 0.474 tail= 0.0048
+    C1_self+R11            seed0 ed2=  0.0711 (x 0.34 particles) 2nd= 0.972 tail= 0.0800
+    C2_bank256             seed0 ed2=  0.3841 (x 1.84 particles) 2nd= 1.381 tail= 0.4345
+    C3_bank512             seed0 ed2=  0.1571 (x 0.75 particles) 2nd= 0.947 tail= 0.1870
+    C4_bank1024            seed0 ed2=  0.1449 (x 0.69 particles) 2nd= 0.771 tail= 0.0496
+    C5_bank2048            seed0 ed2=  0.3835 (x 1.84 particles) 2nd= 0.573 tail= 0.0281
+    C6_bank2048_jitter     seed0 ed2=  0.5497 (x 2.63 particles) 2nd= 0.471 tail= 0.0285
+    [seed1] particle cloud (2048): ed2=0.1904 tail=0.4688 (1,179,648,000 kernel pairs)
+    C0_self                seed1 ed2=  0.9624 (x 5.05 particles) 2nd= 0.380 tail= 0.0080
+    C1_self+R11            seed1 ed2=  0.0958 (x 0.50 particles) 2nd= 0.901 tail= 0.0503
+    C2_bank256             seed1 ed2=  0.6184 (x 3.25 particles) 2nd= 1.325 tail= 0.3715
+    C3_bank512             seed1 ed2=  0.1391 (x 0.73 particles) 2nd= 0.989 tail= 0.1305
+    C4_bank1024            seed1 ed2=  0.1332 (x 0.70 particles) 2nd= 0.767 tail= 0.0360
+    C5_bank2048            seed1 ed2=  0.4651 (x 2.44 particles) 2nd= 0.554 tail= 0.0226
+    C6_bank2048_jitter     seed1 ed2=  0.6718 (x 3.53 particles) 2nd= 0.442 tail= 0.0241
+    [seed2] particle cloud (2048): ed2=0.2146 tail=0.4707 (1,179,648,000 kernel pairs)
+    C0_self                seed2 ed2=  1.1761 (x 5.48 particles) 2nd= 0.335 tail= 0.0059
+    C1_self+R11            seed2 ed2=  0.0955 (x 0.44 particles) 2nd= 1.008 tail= 0.0589
+    C2_bank256             seed2 ed2=  0.6449 (x 3.00 particles) 2nd= 1.353 tail= 0.4200
+    C3_bank512             seed2 ed2=  0.1272 (x 0.59 particles) 2nd= 1.009 tail= 0.1607
+    C4_bank1024            seed2 ed2=  0.1948 (x 0.91 particles) 2nd= 0.771 tail= 0.0442
+    C5_bank2048            seed2 ed2=  0.2972 (x 1.38 particles) 2nd= 0.602 tail= 0.0248
+    C6_bank2048_jitter     seed2 ed2=  0.5868 (x 2.73 particles) 2nd= 0.476 tail= 0.0261
+
+=== PHASE 13 ===
+arm                        bank  visits       ed2   x part  2nd_mom     tail   score  band
+C0_self                       -       -    0.9624     5.05    0.380   0.0059   9.285  out
+C1_self+R11                   -       -    0.0955     0.44    0.972   0.0589   2.333  in 
+C2_bank256                  256    1000    0.6184     3.00    1.353   0.4200   8.037  out
+C3_bank512                  512     500    0.1391     0.73    0.989   0.1607   2.888  in 
+C4_bank1024                1024     250    0.1449     0.70    0.771   0.0442   3.552  in 
+C5_bank2048                2048     125    0.3835     1.84    0.573   0.0248   5.289  out
+C6_bank2048_jitter         2048     125    0.5868     2.73    0.471   0.0261   7.057  out
+    (particle cloud: ed2=0.2089 tail=0.4705)
+
+  bank series (size, ed2): [(256, 0.6184197299357663), (512, 0.13905480917339474), (1024, 0.14489259223827133), (2048, 0.3834722317253352)]
+  monotone in bank size: False
+  gate passed=False  -- no bank reproduces R11
+  trend: the amortizer approaches the particle cloud
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase13.json sha256=885a967add54a621...

@@ -1,0 +1,5 @@
+
+=== B1 PREFLIGHT + CALIBRATION ===
+GO: controls=True; thresholds=True; gradients=True; resource=True; instrument=True
+lambda_event=0.931013; average-event ratio=0.0250
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\b1_calibration.json sha256=8a38877c2da1fddac090799678a84820e0bb754a5fb9518e258ba3f960d4c432

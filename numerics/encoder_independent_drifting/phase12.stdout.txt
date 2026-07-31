@@ -1,0 +1,44 @@
+=== Phase 12: external targets by transport ===
+    A0_self_reference        seed0 tail 0.2179 -> 0.0035  2nd= 0.327 ed2=  1.2996 score=  5.393
+    A1_self+R11              seed0 tail 0.2179 -> 0.0443  2nd= 0.866 ed2=  0.1047 score=  1.274
+    A2_particles_index       seed0 tail 0.2164 -> 0.3510  2nd= 0.946 ed2=  0.1924 score=  1.873
+    A3_particles_nearest     seed0 tail 0.2179 -> 0.3616  2nd= 0.000 ed2= 19.5072 score= 26.668
+    A4_particles_sinkhorn    seed0 tail 0.2179 -> 0.0005  2nd= 0.343 ed2=  1.3635 score=  5.480
+    A4R_sinkhorn+R11         seed0 tail 0.2179 -> 0.0003  2nd= 0.876 ed2=  0.5356 score=  3.003
+    A3P_pre_nearest          seed0 tail 0.2179 -> 0.4717  2nd= 0.000 ed2= 15.2637 score= 16.144
+    A4P_pre_sinkhorn         seed0 tail 0.2179 -> 0.0006  2nd= 0.410 ed2=  1.1502 score=  4.855
+    (seed0 wall 555s for all arms; particle cloud cost 176,947,200 kernel pairs)
+    A0_self_reference        seed1 tail 0.1982 -> 0.0063  2nd= 0.478 ed2=  0.8802 score=  4.187
+    A1_self+R11              seed1 tail 0.1982 -> 0.0523  2nd= 0.873 ed2=  0.1112 score=  1.337
+    A2_particles_index       seed1 tail 0.1953 -> 0.3180  2nd= 0.910 ed2=  0.2091 score=  1.666
+    A3_particles_nearest     seed1 tail 0.1982 -> 0.3711  2nd= 0.000 ed2= 13.9335 score= 12.167
+    A4_particles_sinkhorn    seed1 tail 0.1982 -> 0.0007  2nd= 0.343 ed2=  1.3710 score=  4.939
+    A4R_sinkhorn+R11         seed1 tail 0.1982 -> 0.0003  2nd= 0.895 ed2=  0.5140 score=  2.714
+    A3P_pre_nearest          seed1 tail 0.1982 -> 0.4706  2nd= 0.000 ed2= 16.4134 score= 19.297
+    A4P_pre_sinkhorn         seed1 tail 0.1982 -> 0.0008  2nd= 0.384 ed2=  1.1967 score=  4.664
+    (seed1 wall 568s for all arms; particle cloud cost 176,947,200 kernel pairs)
+    A0_self_reference        seed2 tail 0.2128 -> 0.0041  2nd= 0.331 ed2=  1.3452 score=  6.022
+    A1_self+R11              seed2 tail 0.2128 -> 0.0554  2nd= 0.953 ed2=  0.1128 score=  1.529
+    A2_particles_index       seed2 tail 0.2107 -> 0.3243  2nd= 0.922 ed2=  0.3176 score=  2.200
+    A3_particles_nearest     seed2 tail 0.2128 -> 0.3551  2nd= 0.000 ed2= 23.6982 score= 25.480
+    A4_particles_sinkhorn    seed2 tail 0.2128 -> 0.0009  2nd= 0.291 ed2=  1.7432 score=  6.721
+    A4R_sinkhorn+R11         seed2 tail 0.2128 -> 0.0003  2nd= 0.995 ed2=  0.5570 score=  3.237
+    A3P_pre_nearest          seed2 tail 0.2128 -> 0.4680  2nd= 0.000 ed2= 15.7030 score= 18.842
+    A4P_pre_sinkhorn         seed2 tail 0.2128 -> 0.0009  2nd= 0.383 ed2=  1.2195 score=  5.517
+    (seed2 wall 566s for all arms; particle cloud cost 176,947,200 kernel pairs)
+
+=== PHASE 12 ===
+arm                         latents     tail  2nd_mom      ed2   score   cost x  band
+A0_self_reference             fresh   0.0041    0.331   1.2996   5.393     1.00  out
+A1_self+R11                   fresh   0.0523    0.873   0.1112   1.337     1.00  in 
+A2_particles_index            fixed   0.3243    0.922   0.2091   1.873     3.60  in 
+A3_particles_nearest          fresh   0.3616    0.000  19.5072  25.480     3.60  out
+A4_particles_sinkhorn         fresh   0.0007    0.343   1.3710   5.480     3.60  out
+A4R_sinkhorn+R11              fresh   0.0003    0.895   0.5356   3.003     1.00  in 
+A3P_pre_nearest               fresh   0.4706    0.000  15.7030  18.842     3.60  out
+A4P_pre_sinkhorn              fresh   0.0008    0.384   1.1967   4.855     3.60  out
+    (real data tail = 0.1320)
+
+  gate passed=False  -- no external target reproduces R11
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase12.json sha256=c1db6378e2438569...

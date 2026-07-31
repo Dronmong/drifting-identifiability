@@ -1,0 +1,317 @@
+{
+  "artifact": "numerics\\conditioned_transport_runs\\20260723-143427-consumed",
+  "artifact_rows_sha256": "19ffccdd6930b4582f1313ea54c7d9b94d71854bc59836b68bace4f7843c38eb",
+  "development_gate": {
+    "passed": false,
+    "requires_both_aggregate_ratios_below_one": true
+  },
+  "evidence_scope": "consumed_registry_development_only",
+  "groups": {
+    "all": {
+      "all": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 1.0456771972974972,
+            "median_ratio": 1.0,
+            "targets": 16,
+            "wins": 6
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.0243697863021564,
+            "median_ratio": 0.9975291227959818,
+            "targets": 16,
+            "wins": 8
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.8411992318850092,
+            "median_ratio": 0.7641944070885196,
+            "targets": 16,
+            "wins": 13
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9005415320551056,
+            "median_ratio": 0.8576317166018204,
+            "targets": 16,
+            "wins": 13
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.0754163101203739,
+        "mean_positive_weight_rate": 0.9625,
+        "mean_selected_weight": 0.23406249999999998
+      }
+    },
+    "by_dimension": {
+      "16": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 0.9999195696222861,
+            "median_ratio": 1.0068772014568141,
+            "targets": 4,
+            "wins": 1
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9913325568583425,
+            "median_ratio": 0.994769604453584,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.6587794069426892,
+            "median_ratio": 0.7234809695426785,
+            "targets": 4,
+            "wins": 4
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.8052997122155433,
+            "median_ratio": 0.8475753784866357,
+            "targets": 4,
+            "wins": 4
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.041253988068882516,
+        "mean_positive_weight_rate": 0.95,
+        "mean_selected_weight": 0.226875
+      },
+      "2": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 0.9834711253395902,
+            "median_ratio": 0.8492440783970105,
+            "targets": 4,
+            "wins": 2
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9863196547946995,
+            "median_ratio": 0.9137971859152243,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 1.1144643072880074,
+            "median_ratio": 0.8962013886573315,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.0233371031784506,
+            "median_ratio": 0.9232534985438368,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.12377221201413181,
+        "mean_positive_weight_rate": 0.9624999999999999,
+        "mean_selected_weight": 0.229375
+      },
+      "4": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 1.1361895608007089,
+            "median_ratio": 1.0090857060121046,
+            "targets": 4,
+            "wins": 1
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.083479771130262,
+            "median_ratio": 1.002003472856194,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 1.1664421314976936,
+            "median_ratio": 1.1194385877489093,
+            "targets": 4,
+            "wins": 2
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.0512641225109538,
+            "median_ratio": 1.0497502408856278,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.08327386774839649,
+        "mean_positive_weight_rate": 0.9624999999999999,
+        "mean_selected_weight": 0.23812499999999998
+      },
+      "8": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 1.0700721818766132,
+            "median_ratio": 0.9926632391339091,
+            "targets": 4,
+            "wins": 2
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.0393676079025942,
+            "median_ratio": 0.9939529796567557,
+            "targets": 4,
+            "wins": 2
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.5846905748039984,
+            "median_ratio": 0.5971987251680482,
+            "targets": 4,
+            "wins": 4
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.7591487472934151,
+            "median_ratio": 0.7526424676723755,
+            "targets": 4,
+            "wins": 4
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.0533651726500848,
+        "mean_positive_weight_rate": 0.9750000000000001,
+        "mean_selected_weight": 0.241875
+      }
+    },
+    "by_family": {
+      "balanced-gmm": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 0.9074929030282987,
+            "median_ratio": 0.9765935830006491,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9426645161660718,
+            "median_ratio": 0.9749349442633517,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.6435831678224166,
+            "median_ratio": 0.6786831880935579,
+            "targets": 4,
+            "wins": 4
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.7873954820567937,
+            "median_ratio": 0.803940674893437,
+            "targets": 4,
+            "wins": 4
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.06763544279755998,
+        "mean_positive_weight_rate": 0.9750000000000001,
+        "mean_selected_weight": 0.22999999999999998
+      },
+      "correlated-t": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 1.0006333913824204,
+            "median_ratio": 1.0,
+            "targets": 4,
+            "wins": 0
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9987622653128642,
+            "median_ratio": 1.0,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.8120956079503636,
+            "median_ratio": 0.8211438055694475,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9017659517718899,
+            "median_ratio": 0.8866227832141915,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.09068752380613937,
+        "mean_positive_weight_rate": 1.0,
+        "mean_selected_weight": 0.2475
+      },
+      "nonlinear": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 1.8345320756371553,
+            "median_ratio": 1.8211387180460288,
+            "targets": 4,
+            "wins": 0
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.3561453050698242,
+            "median_ratio": 1.3759654749789483,
+            "targets": 4,
+            "wins": 1
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 1.1453009083749697,
+            "median_ratio": 0.8080817715588273,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 1.0141017206757157,
+            "median_ratio": 0.8576317166018204,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.07977704092110068,
+        "mean_positive_weight_rate": 0.95,
+        "mean_selected_weight": 0.2375
+      },
+      "rare-gmm": {
+        "crossfit_vs_fixed": {
+          "ed2": {
+            "geometric_mean_ratio": 0.7177067194679478,
+            "median_ratio": 0.8392950313571232,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.8623856710186937,
+            "median_ratio": 0.9344083066923834,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "crossfit_vs_global": {
+          "ed2": {
+            "geometric_mean_ratio": 0.8364963028914054,
+            "median_ratio": 0.7254199603916955,
+            "targets": 4,
+            "wins": 3
+          },
+          "heldout_sw1": {
+            "geometric_mean_ratio": 0.9133699426890545,
+            "median_ratio": 0.8388863610544572,
+            "targets": 4,
+            "wins": 3
+          }
+        },
+        "mean_controller_reported_relative_improvement": 0.0635652329566956,
+        "mean_positive_weight_rate": 0.9249999999999999,
+        "mean_selected_weight": 0.22124999999999997
+      }
+    }
+  },
+  "interpretation": "The one-step controller criterion did not predict the later amortized neural endpoint reliably; retain as an ablation.",
+  "schema": "crossfit-controller-development-analysis-v1",
+  "status": "fail"
+}

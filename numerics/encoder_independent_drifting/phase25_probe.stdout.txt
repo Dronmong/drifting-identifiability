@@ -1,0 +1,28 @@
+=== training a representative cloud (5000 steps) ===
+
+=== the teacher, across the field's realized selectivity ===
+    ESS=0.900 ( 57.6 imgs) tau=  20.698 cos=+0.3472 var=0.0337 alpha=4.383 P=0.600 KID=+0.19423 dead=0.000
+    ESS=0.710 ( 45.4 imgs) tau=  10.368 cos=+0.4621 var=0.0366 alpha=4.381 P=0.594 KID=+0.19313 dead=0.000
+    ESS=0.520 ( 33.3 imgs) tau=   6.781 cos=+0.6832 var=0.0263 alpha=4.384 P=0.596 KID=+0.19429 dead=0.000
+    ESS=0.350 ( 22.4 imgs) tau=   4.795 cos=+0.8928 var=0.0304 alpha=4.386 P=0.590 KID=+0.19384 dead=0.000
+    ESS=0.240 ( 15.4 imgs) tau=   3.709 cos=+0.8974 var=0.0303 alpha=4.384 P=0.576 KID=+0.19230 dead=0.000
+    ESS=0.150 (  9.6 imgs) tau=   2.774 cos=+0.8777 var=0.0209 alpha=4.384 P=0.594 KID=+0.19365 dead=0.000
+
+=== PHASE 25: WHAT THE TEACHER IS ===
+   ESS   imgs       tau  drift cos  variance   alpha   prec  recall       KID   dead
+ 0.900   57.6    20.698    +0.3472    0.0337   4.383  0.600   0.000  +0.19423  0.000
+ 0.710   45.4    10.368    +0.4621    0.0366   4.381  0.594   0.000  +0.19313  0.000
+ 0.520   33.3     6.781    +0.6832    0.0263   4.384  0.596   0.000  +0.19429  0.000
+ 0.350   22.4     4.795    +0.8928    0.0304   4.386  0.590   0.000  +0.19384  0.000
+ 0.240   15.4     3.709    +0.8974    0.0303   4.384  0.576   0.000  +0.19230  0.000
+ 0.150    9.6     2.774    +0.8777    0.0209   4.384  0.594   0.000  +0.19365  0.000
+
+    real alpha 3.592
+    sharp/flat teacher variance ratio     0.729   (>1.5 = variance effect)
+    sharp/flat drift cosine ratio         2.193   (<0.5 = consistency collapse)
+    precision gained by sharpening       -0.012
+    alpha reduced by sharpening          -0.002
+
+  neither the teacher's quality nor its variance responds to bandwidth -- the mean-shift teacher FORM is the binding constraint and no kernel-family intervention can help
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase25_probe.json sha256=d4c8f1963ec6e3e2...

@@ -1,0 +1,109 @@
+=== M1: attractor, or unfinished trajectory? ===
+    M1 dim=  8 seed0 final= 1.224 late= 1.247 earlier= 1.295 growth=-0.0486
+    M1 dim=  8 seed1 final= 1.234 late= 1.205 earlier= 1.187 growth=+0.0175
+    M1 dim=  8 seed2 final= 1.249 late= 1.222 earlier= 1.238 growth=-0.0160
+    M1 dim= 32 seed0 final= 2.872 late= 2.936 earlier= 3.186 growth=-0.2495
+    M1 dim= 32 seed1 final= 2.939 late= 2.982 earlier= 3.155 growth=-0.1737
+    M1 dim= 32 seed2 final= 2.907 late= 2.994 earlier= 3.173 growth=-0.1792
+  -> still moving: the trace has not settled
+
+=== M2/M5: bandwidth, against the blur factor ===
+    M2 tau=0.05   seed0 2nd= 9.074 blur_predicts= 0.931
+    M2 tau=0.05   seed1 2nd= 8.945 blur_predicts= 0.931
+    M2 tau=0.05   seed2 2nd= 8.063 blur_predicts= 0.931
+    M2 tau=0.1    seed0 2nd= 1.945 blur_predicts= 0.762
+    M2 tau=0.1    seed1 2nd= 1.988 blur_predicts= 0.762
+    M2 tau=0.1    seed2 2nd= 1.913 blur_predicts= 0.762
+    M2 tau=0.2    seed0 2nd= 1.340 blur_predicts= 0.400
+    M2 tau=0.2    seed1 2nd= 1.202 blur_predicts= 0.400
+    M2 tau=0.2    seed2 2nd= 1.270 blur_predicts= 0.400
+    M2 tau=0.5    seed0 2nd= 1.061 blur_predicts= 0.047
+    M2 tau=0.5    seed1 2nd= 1.164 blur_predicts= 0.047
+    M2 tau=0.5    seed2 2nd= 1.187 blur_predicts= 0.047
+    M2 tau=1      seed0 2nd= 1.141 blur_predicts= 0.004
+    M2 tau=1      seed1 2nd= 1.183 blur_predicts= 0.004
+    M2 tau=1      seed2 2nd= 1.187 blur_predicts= 0.004
+
+=== M3: batch shape ===
+    M3 particles=  512 positives=   64 seed0 2nd= 1.340
+    M3 particles=  512 positives=   64 seed1 2nd= 1.202
+    M3 particles=  512 positives=   64 seed2 2nd= 1.270
+    M3 particles=  512 positives=  512 seed0 2nd= 1.264
+    M3 particles=  512 positives=  512 seed1 2nd= 1.269
+    M3 particles=  512 positives=  512 seed2 2nd= 1.127
+    M3 particles=   64 positives=   64 seed0 2nd= 2.667
+    M3 particles=   64 positives=   64 seed1 2nd= 2.591
+    M3 particles=   64 positives=   64 seed2 2nd= 2.554
+    M3 particles=   64 positives=  512 seed0 2nd= 2.512
+    M3 particles=   64 positives=  512 seed1 2nd= 2.553
+    M3 particles=   64 positives=  512 seed2 2nd= 2.677
+
+=== M4: balancing depth ===
+    M4 dim=  8 depth=  0 seed0 2nd= 1.340 ed2=  0.0116
+    M4 dim=  8 depth=  0 seed1 2nd= 1.202 ed2=  0.0064
+    M4 dim=  8 depth=  0 seed2 2nd= 1.270 ed2=  0.0069
+    M4 dim=  8 depth=  1 seed0 2nd=246.396 ed2=  0.0452
+    M4 dim=  8 depth=  1 seed1 2nd=310.309 ed2=  0.0156
+    M4 dim=  8 depth=  1 seed2 2nd=248.009 ed2=  0.0283
+    M4 dim=  8 depth=  2 seed0 2nd=268.961 ed2=  0.0256
+    M4 dim=  8 depth=  2 seed1 2nd=171.426 ed2=  0.0172
+    M4 dim=  8 depth=  2 seed2 2nd=216.529 ed2=  0.0338
+    M4 dim=  8 depth=  4 seed0 2nd=60.045 ed2=  0.0114
+    M4 dim=  8 depth=  4 seed1 2nd=45.035 ed2=  0.0172
+    M4 dim=  8 depth=  4 seed2 2nd=32.517 ed2=  0.0118
+    M4 dim=  8 depth= 16 seed0 2nd=74.932 ed2=  0.0150
+    M4 dim=  8 depth= 16 seed1 2nd= 5.972 ed2=  0.0104
+    M4 dim=  8 depth= 16 seed2 2nd= 5.368 ed2=  0.0153
+    M4 dim=  8 depth= 64 seed0 2nd=75.273 ed2=  0.0144
+    M4 dim=  8 depth= 64 seed1 2nd=27.154 ed2=  0.0144
+    M4 dim=  8 depth= 64 seed2 2nd= 5.253 ed2=  0.0097
+    M4 dim= 32 depth=  0 seed0 2nd= 3.858 ed2=  0.1514
+    M4 dim= 32 depth=  0 seed1 2nd= 3.959 ed2=  0.1611
+    M4 dim= 32 depth=  0 seed2 2nd= 3.835 ed2=  0.1484
+    M4 dim= 32 depth=  1 seed0 2nd=157.821 ed2=  0.0980
+    M4 dim= 32 depth=  1 seed1 2nd=96.473 ed2=  0.0466
+    M4 dim= 32 depth=  1 seed2 2nd=108.849 ed2=  0.2456
+    M4 dim= 32 depth=  2 seed0 2nd=112.855 ed2=  0.0621
+    M4 dim= 32 depth=  2 seed1 2nd=136.784 ed2=  0.0425
+    M4 dim= 32 depth=  2 seed2 2nd=102.669 ed2=  0.0537
+    M4 dim= 32 depth=  4 seed0 2nd= 5.993 ed2=  0.0800
+    M4 dim= 32 depth=  4 seed1 2nd= 6.130 ed2=  0.0862
+    M4 dim= 32 depth=  4 seed2 2nd= 6.045 ed2=  0.0840
+    M4 dim= 32 depth= 16 seed0 2nd= 5.370 ed2=  0.0721
+    M4 dim= 32 depth= 16 seed1 2nd= 5.406 ed2=  0.0764
+    M4 dim= 32 depth= 16 seed2 2nd= 5.340 ed2=  0.0735
+    M4 dim= 32 depth= 64 seed0 2nd= 5.402 ed2=  0.0727
+    M4 dim= 32 depth= 64 seed1 2nd= 5.378 ed2=  0.0720
+    M4 dim= 32 depth= 64 seed2 2nd= 5.394 ed2=  0.0740
+
+=== PHASE-6 FOLLOW-UP PROBE ===
+M1  still moving: the trace has not settled  (median final 2.061, window growth -0.1112)
+
+M2  bandwidth
+    tau=0.05     2nd= 8.945  blur_predicts= 0.931  out
+    tau=0.1      2nd= 1.945  blur_predicts= 0.762  out
+    tau=0.2      2nd= 1.270  blur_predicts= 0.400  in
+    tau=0.5      2nd= 1.164  blur_predicts= 0.047  in
+    tau=1        2nd= 1.183  blur_predicts= 0.004  in
+
+M3  batch shape (particles x positives)
+    512x64       2nd= 1.270  in
+    512x512      2nd= 1.264  in
+    64x64        2nd= 2.591  out
+    64x512       2nd= 2.553  out
+
+M4  balancing depth
+    dim=8_depth=0      2nd= 1.270  ed2=  0.0069  in
+    dim=8_depth=1      2nd=248.009  ed2=  0.0283  out
+    dim=8_depth=2      2nd=216.529  ed2=  0.0256  out
+    dim=8_depth=4      2nd=45.035  ed2=  0.0118  out
+    dim=8_depth=16     2nd= 5.972  ed2=  0.0150  out
+    dim=8_depth=64     2nd=27.154  ed2=  0.0144  out
+    dim=32_depth=0     2nd= 3.858  ed2=  0.1514  out
+    dim=32_depth=1     2nd=108.849  ed2=  0.0980  out
+    dim=32_depth=2     2nd=112.855  ed2=  0.0537  out
+    dim=32_depth=4     2nd= 6.045  ed2=  0.0840  out
+    dim=32_depth=16    2nd= 5.370  ed2=  0.0735  out
+    dim=32_depth=64    2nd= 5.394  ed2=  0.0727  out
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase7_probe.json sha256=47678f3b9ba04d4c...

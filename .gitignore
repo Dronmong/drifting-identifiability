@@ -1,3 +1,12 @@
 /.lake
 /papers/*.pdf
 /numerics/identifiability_runs/*-smoke/
+
+# Large binary run outputs: reproducible from the committed code + artifacts,
+# and too big for git history (one final_particles.npz alone exceeds 40 MB).
+*.npz
+*.bin
+*.pt
+*.pyc
+__pycache__/
+numerics/encoder_independent_drifting/f3b_checkpoints/

@@ -1,0 +1,159 @@
+{
+  "by_arm": {
+    "exact-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.18544491908097482,
+      "median_heldout_sw1": 0.3777420138549858,
+      "median_wall_seconds": 0.025487799997790717,
+      "rows": 1
+    },
+    "exact-free-particle-ceiling": {
+      "divergences": 0,
+      "median_ed2": 0.002139345225676159,
+      "median_heldout_sw1": 0.031184749442216,
+      "median_wall_seconds": 0.007069399995089043,
+      "rows": 1
+    },
+    "kll-atlas-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.17708626087390167,
+      "median_heldout_sw1": 0.3500076140617957,
+      "median_wall_seconds": 0.024040399999648798,
+      "rows": 1
+    },
+    "kll-paper-hybrid": {
+      "divergences": 0,
+      "median_ed2": 0.19912556597024844,
+      "median_heldout_sw1": 0.3733092278884374,
+      "median_wall_seconds": 0.033891099999891594,
+      "rows": 1
+    },
+    "kll-small-rsr": {
+      "divergences": 0,
+      "median_ed2": 0.11824324453398338,
+      "median_heldout_sw1": 0.27880285396672133,
+      "median_wall_seconds": 0.04312049999862211,
+      "rows": 1
+    },
+    "minibatch-sw": {
+      "divergences": 0,
+      "median_ed2": 0.06372559698155777,
+      "median_heldout_sw1": 0.20191365478089085,
+      "median_wall_seconds": 0.08216290000564186,
+      "rows": 1
+    },
+    "paper-neural": {
+      "divergences": 0,
+      "median_ed2": 0.07760696696792158,
+      "median_heldout_sw1": 0.18649849758871712,
+      "median_wall_seconds": 0.0653223999979673,
+      "rows": 1
+    }
+  },
+  "by_dimension": {
+    "16": {
+      "exact-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-small-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "minibatch-sw": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "paper-neural": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      }
+    },
+    "2": {
+      "exact-atlas-rsr": {
+        "median_ed2": 0.18544491908097482,
+        "median_heldout_sw1": 0.3777420138549858
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": 0.17708626087390167,
+        "median_heldout_sw1": 0.3500076140617957
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": 0.19912556597024844,
+        "median_heldout_sw1": 0.3733092278884374
+      },
+      "kll-small-rsr": {
+        "median_ed2": 0.11824324453398338,
+        "median_heldout_sw1": 0.27880285396672133
+      },
+      "minibatch-sw": {
+        "median_ed2": 0.06372559698155777,
+        "median_heldout_sw1": 0.20191365478089085
+      },
+      "paper-neural": {
+        "median_ed2": 0.07760696696792158,
+        "median_heldout_sw1": 0.18649849758871712
+      }
+    },
+    "4": {
+      "exact-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-small-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "minibatch-sw": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "paper-neural": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      }
+    },
+    "8": {
+      "exact-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-atlas-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-paper-hybrid": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "kll-small-rsr": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "minibatch-sw": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      },
+      "paper-neural": {
+        "median_ed2": NaN,
+        "median_heldout_sw1": NaN
+      }
+    }
+  }
+}

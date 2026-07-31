@@ -1,0 +1,1777 @@
+{
+  "P1_normalization_fixes_scale": false,
+  "P2_deficit_grows_with_eta": true,
+  "config": {
+    "batch": 64,
+    "dims": "8,32",
+    "out": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\second_moment_study.json",
+    "seeds": 2,
+    "steps": 600,
+    "threads": 4
+  },
+  "elapsed_seconds": 77.70060229301453,
+  "provenance": {
+    "cmdline": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\diagnose_secondmoment.py",
+      "--seeds",
+      "2",
+      "--steps",
+      "600"
+    ],
+    "commit": "3e4632f3c35c69b44f8cf140c563a8aa7a401395",
+    "git_dirty": true,
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "source_sha256": {
+      "numerics/encoder_independent_drifting/__init__.py": "fb0ed34480733df22faa02f604ed51f82f79534d8c22592f33b1538cab41652a",
+      "numerics/encoder_independent_drifting/adaptive_mixture.py": "e353bb0975922dc8c902b15a85e399e2d093c0e5c4eabe2106765a2480861385",
+      "numerics/encoder_independent_drifting/analyze_phase1_screen.py": "2a1325c599201e09c9e03d74e5a8005000aa4792362ef6907afc6691acf6d361",
+      "numerics/encoder_independent_drifting/audit_phase2.py": "13b5878ebd1f1380f4e7f1a2496ef7714c91c0689751ec07624308212c1d2ccd",
+      "numerics/encoder_independent_drifting/cifar.py": "304fc962b1c1e0a7744ada37f9f18f8831be136c420fd7e2908dce4dbe1034fa",
+      "numerics/encoder_independent_drifting/collision_suite.py": "9b5e1c7efba47275ceff98152feeeaaec783686bf6ba36110cbad46e836d18ad",
+      "numerics/encoder_independent_drifting/config.py": "1e5b21f69eeace84357dca3d204d4e300515c3c13128f9b54dd2848b0e64ccde",
+      "numerics/encoder_independent_drifting/datasets.py": "089c16f097f426f851f97b6528827300909accae6438c0646efe39b4d4152214",
+      "numerics/encoder_independent_drifting/diagnose_phase1.py": "efcd8ec7c2645ed1e409330e595e4f22b3810c4e41d0929ac896baf54108631d",
+      "numerics/encoder_independent_drifting/diagnose_phase2.py": "e188bb20859d1bc74c4472fab57cce7dbac5f6d94dc30909a9c8b0e940045c4e",
+      "numerics/encoder_independent_drifting/diagnose_phase4.py": "35d8986640a8dab8622cf56532671a6c4f30be6c124578a207ecff8370619729",
+      "numerics/encoder_independent_drifting/diagnose_phase5.py": "e2cd8696f5786680bc95c6f72db4eca679f5af3af5f3267a5baf77f77d530a8e",
+      "numerics/encoder_independent_drifting/diagnose_phase6.py": "ba8a829219f5fed6fda47f7cd7bdb0e8e4d7fe5b6dd9015460d52a1fae4edecd",
+      "numerics/encoder_independent_drifting/diagnose_secondmoment.py": "a6867aa21f424d41fcc6f40f266067c5e882e8bb800f77823c231d271d386883",
+      "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+      "numerics/encoder_independent_drifting/evaluate.py": "d83e23108176dca695491d63465b7b035f6cc7e38743b599ab8917b575bdbf92",
+      "numerics/encoder_independent_drifting/fixed_features.py": "9ec305966714ff36c32325eff73df643d869c34c23f64d12aac339a4dec803e1",
+      "numerics/encoder_independent_drifting/kernel_gradient.py": "5a1374d3a380ac7c8c1c96a327d3065a415ef0b2f0c6b3b12be0c99f09ff3b34",
+      "numerics/encoder_independent_drifting/kernels.py": "8f8305272e8fcc4817c399f1a311d5fc07431f407c181d901f5c52ce9f5f1a20",
+      "numerics/encoder_independent_drifting/metrics.py": "a24ae90af52ef1d7856285010dcfae228e7804ec20d66f87611173a2d21d7003",
+      "numerics/encoder_independent_drifting/models.py": "a50a36d9e11b4d51629ce6ceea179a8dfb225ab9448a0768c9e7279438af39a9",
+      "numerics/encoder_independent_drifting/objectives.py": "13050494e1cc3843a2d21f06bc7a27eaab6dd5815f0a45a84194fde973aea77d",
+      "numerics/encoder_independent_drifting/oracle.py": "d298b4c6e3ac275300ac3f218079be485831eb25efa871335f1f8c5d95959580",
+      "numerics/encoder_independent_drifting/reference_encoder.py": "c75e46a45b090dbf59e32f8afc456735c5d1589eb00e7e257304bda63d95636a",
+      "numerics/encoder_independent_drifting/run_attractor_study.py": "bf8d85df7bf0a9df83c0ab4048c4484cda93f245e71b35706832cfbb7b06dd62",
+      "numerics/encoder_independent_drifting/run_phase0_gate.py": "f1067a1cb1386e1d695e4124c280587e48882e1debb97914f09d4c09e87b330f",
+      "numerics/encoder_independent_drifting/run_phase1_screen.py": "163e066d0a15ead76df17817b86b21c98f162f0871625c135f08d34d4f26200b",
+      "numerics/encoder_independent_drifting/run_phase2_entry.py": "eabd3f5301071af3ce550429489003b9b6a7a1cf509e57791859f25d49dcf6b1",
+      "numerics/encoder_independent_drifting/run_phase2_screen.py": "0fe90c2b7be04ec2aa4d45658a0e4cba84ab74df19dd0ea1a97050c4aa22f8c2",
+      "numerics/encoder_independent_drifting/run_phase3_confirmation.py": "0b09022d93926fbb3296476e2ebe247590ac253d818b676d4fada7dace5bbfbd",
+      "numerics/encoder_independent_drifting/run_phase4.py": "a0d88766510091db09faaa533867d3a0df75cd0e1b2aa1d5731dae97381d9554",
+      "numerics/encoder_independent_drifting/run_phase5.py": "5b7a78ee145c90656affb3ce1f7520bc2dcd1cc1f58a9e3f9b150b36fe8c8902",
+      "numerics/encoder_independent_drifting/spectral_anchor.py": "4310106b3510d9fd9072d5637f920a913bc3576e25d14c518c6aaec876722555",
+      "numerics/encoder_independent_drifting/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numerics/encoder_independent_drifting/tests/harness.py": "d0b64892f52122a631e70577cb4934a8498976827752433851de58b898b6131e",
+      "numerics/encoder_independent_drifting/tests/run_all.py": "72d7408a7e2f4860ea56f060caee9f6efdd91b5cd43995fca016a5777be892fe",
+      "numerics/encoder_independent_drifting/tests/test_crossfit_controller.py": "866b3ee03320d651f3e749e6db884399952a4a5ed9ae03aac85d44f80298a9a2",
+      "numerics/encoder_independent_drifting/tests/test_fixed_features.py": "594522801b5fb51980ce11a2ef4ed55fa0828ee1518e7d1e13c5bdeb2e90f889",
+      "numerics/encoder_independent_drifting/tests/test_kernel_gradients.py": "dc1f2b9c2be17e56f48d9844973aaf437f56ce8ae658dfafc93f20f8453eebe0",
+      "numerics/encoder_independent_drifting/tests/test_phase2.py": "40a5127f91bb4473c2695c9a6058536c6ddec81754591b0298706a601428eb26",
+      "numerics/encoder_independent_drifting/tests/test_positive_kernel_mixture.py": "12eeb57ebd1eb5ea299b8fd47a6daf97c71d4c658920322d4a42ccf865a2e8f3",
+      "numerics/encoder_independent_drifting/tests/test_reforms.py": "c3786d93e6059c771df0c996a9d44649ead7f9d6d75ff8073105fb588478a6f9",
+      "numerics/encoder_independent_drifting/tests/test_reproducibility.py": "202868c4593184d449ac9a929dffe099a56706781cd9494a6aab812038892d55",
+      "numerics/encoder_independent_drifting/tests/test_spectral_anchor.py": "374860e43573db29180b17b2c63c933e591396a9d79655a11586efbd6479a459",
+      "numerics/encoder_independent_drifting/train.py": "9c352d2bf9ec3e272de97ccc19e03422c0e537342c9cb01ff77c2305d76f1d17"
+    },
+    "torch": "2.7.1+cpu"
+  },
+  "rms_deficits_by_eta": [
+    0.6020459134343454,
+    0.6020460637773014,
+    0.6020460695431711
+  ],
+  "rows": [
+    {
+      "dim": 8,
+      "ed2": 0.03347444958237111,
+      "effective_dimension_ratio": 0.6613363367198685,
+      "eta": 0.1,
+      "normalization": "rms",
+      "second_moment_ratio": 0.5826483205768783,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.0434827344910471,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.5662180801805862,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6580556807461736,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6273664815000015,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6101545754176424,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6865293307547674,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5689685757839061,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.7065161391992678,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.7213631331740995,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6688671713832863,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.033474622035094104,
+      "effective_dimension_ratio": 0.6613364008806388,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.5826466429504406,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.0434827750787835,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.566216943723967,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6580548148744637,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6273653450433824,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6101554954063341,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6865286272340031,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5689692251876886,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.7065169509539958,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.7213588579325322,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6688678207870687,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.016052761524381065,
+      "effective_dimension_ratio": 0.7238346222211529,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.7389057481326394,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.057950365040689476,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.7171436320980374,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.7605130895991057,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.7619033548632334,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.7074840214199344,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.7691954017016976,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.7025795617043992,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.80695520109654,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.8173315370824713,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.8234625581919905,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "ed2": 0.03347465551321882,
+      "effective_dimension_ratio": 0.6613364146189501,
+      "eta": 2.0,
+      "normalization": "rms",
+      "second_moment_ratio": 0.5826462641315675,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.04348277846109487,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.5662167813730214,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6580545984065362,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6273651826924368,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6101557118742615,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6865285190000394,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5689693334216522,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.7065170050709777,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.721358100294786,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6688680372549962,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.030720253278101906,
+      "effective_dimension_ratio": 0.6675319160501244,
+      "eta": 0.1,
+      "normalization": "none",
+      "second_moment_ratio": 0.6157957859590607,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.045737173904471976,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6502173897972704,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6637776863546929,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.5780437929574761,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.5687507013797086,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.645347864837685,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5841001932016754,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6469368825421337,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6771037924981943,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6509837622202551,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.03071004203069161,
+      "effective_dimension_ratio": 0.6675102948853991,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.6158821721085066,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.04574408615044254,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6501912843903532,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.663803737601015,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.578027761421278,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.5686997904201606,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6453510603128056,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5840583270615364,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6468842926041324,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6771387260821395,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6510112758026492,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.012267051196600764,
+      "effective_dimension_ratio": 0.8831731191238311,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.8147724431757867,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06480244137548848,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 1.0946609135115954,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.8891771315768836,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.8911873562306999,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.9752493662127142,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 1.1211381870758954,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.933043314177814,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.9603191315586856,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 1.112620783543498,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.9790991013240748,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "ed2": 0.030707619955280263,
+      "effective_dimension_ratio": 0.6675050522112961,
+      "eta": 2.0,
+      "normalization": "none",
+      "second_moment_ratio": 0.6159027531347069,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.04574615440817418,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6501796940229667,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6638144072382819,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.5780242951431811,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.568691666330871,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6453493813343524,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5840577312949885,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6468712399006739,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6771413799513074,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6510180458770571,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.03645241132799226,
+      "effective_dimension_ratio": 0.6619356484547314,
+      "eta": 0.1,
+      "normalization": "rms",
+      "second_moment_ratio": 0.5742583069492925,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.056623508802763255,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6191695990612903,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6734961525866661,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6103495075336683,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6992708605596464,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6716587117549432,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5858176606336376,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6017079562421915,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.5971277124918509,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6975441490089944,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.03645245944665332,
+      "effective_dimension_ratio": 0.6619360433388328,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.574257609526495,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.056623461860844194,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6191696527091979,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6734968500094635,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6103480053922585,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6992719871657038,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6716583362195907,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5858160511964127,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6017097802710464,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.5971278197876658,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6975461339815717,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.016754149796288864,
+      "effective_dimension_ratio": 0.7016108078296451,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.7671495192932897,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06932682364258992,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.7397683783782624,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.774716127462278,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.7221080237098,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.8222311134687578,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.7904512196744473,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.7134653994601733,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6809146388830591,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.744222603193896,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.7809653576148055,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "ed2": 0.036452468645856495,
+      "effective_dimension_ratio": 0.6619361148490734,
+      "eta": 2.0,
+      "normalization": "rms",
+      "second_moment_ratio": 0.57425750223068,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.05662344844886732,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6191697063571053,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6734969573052785,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6103476835048135,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6992722554052413,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.6716582289237758,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5858157293089677,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.6017100485105839,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.5971278197876658,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6975465095169242,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.029894925297031527,
+      "effective_dimension_ratio": 0.6516327317998015,
+      "eta": 0.1,
+      "normalization": "none",
+      "second_moment_ratio": 0.6320511996054656,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.05527862844160847,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6504557757610512,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6838761019886636,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6538262358105085,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6048478025386225,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.5835957990438589,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5642060581720973,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.5547300363338713,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6020956124023645,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.6000404798038571,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.02989692544857614,
+      "effective_dimension_ratio": 0.6516352072652766,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.6320199507300526,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.0552887829952457,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.650454231949489,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6838863230859026,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6538102121111911,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6048376346762648,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.5836342878631497,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5642120737137015,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.5547425465310128,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6020541956645938,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.600003481561247,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 8,
+      "ed2": 0.007191863889437045,
+      "effective_dimension_ratio": 0.8532211658154114,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.9684285212052632,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07771954650695066,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.9750949124701432,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.9545304907042315,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.9883836165180597,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 1.0325819833144847,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 1.08959302784887,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.8709831886373766,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.890472957851389,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.9542072485040466,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.9822212531107803,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 8,
+      "ed2": 0.029898526491107358,
+      "effective_dimension_ratio": 0.651636966791018,
+      "eta": 2.0,
+      "normalization": "none",
+      "second_moment_ratio": 0.6319997747099817,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.05529347764635387,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.6504408167593628,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.6838826498790823,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.6537983939675084,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.6048332161811042,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.5836669208454807,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.5642145225182484,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.5547510641120453,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.6020359893351368,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.5999870852177595,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.17388376844092557,
+      "effective_dimension_ratio": 0.2091756398547519,
+      "eta": 0.1,
+      "normalization": "rms",
+      "second_moment_ratio": 0.22164986618201654,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07752429589326432,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.20601053919224152,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.2031002689274139,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.20973246472215612,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.2288619271365622,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.21380747239969888,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.20908709693447702,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.1996315709751891,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.23286898336200418,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.1889004264839437,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.17388359830149192,
+      "effective_dimension_ratio": 0.20917539562789148,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.22165026291890216,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07752381023259397,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.2060113600271773,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.2031010487206029,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.20973340868233228,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.22886237859577688,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.21380762288610378,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.2090868780451608,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.19963173514217628,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.23286873711152345,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.18889996134414674,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.01794852148947701,
+      "effective_dimension_ratio": 0.34201855846282686,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.9104460876708622,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.11007986806008686,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.8873065319417518,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.893490647625631,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.8520970362605474,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.8953261439867055,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.9246774501758667,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.8385242569856883,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.8736394660939355,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.8816690923251058,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.8239481985299831,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "ed2": 0.17388356071100342,
+      "effective_dimension_ratio": 0.20917535127632653,
+      "eta": 2.0,
+      "normalization": "rms",
+      "second_moment_ratio": 0.221650358682978,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07752372130880926,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.20601151051358219,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.20310118552642553,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.20973355916873718,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.2288624743598527,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.21380767760843283,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.20908683700341402,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.19963174882275853,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.23286870975035892,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.1888998792606532,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.1880081000047582,
+      "effective_dimension_ratio": 0.21174362243998343,
+      "eta": 0.1,
+      "normalization": "none",
+      "second_moment_ratio": 0.2020649697181267,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07895676321813058,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.1978721707683361,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.21370093290981626,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.1939819502278161,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.19342155033340735,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.2224343386895108,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.2186525068629984,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.19387832748491524,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.21066831714181283,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23287269299995766,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.18800769860265532,
+      "effective_dimension_ratio": 0.21174227818713304,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.20206587430754355,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07895781632222781,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.19786554161305736,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.2136952083439544,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.19398344887595448,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.1934211182907008,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.22243845659655764,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.2186528443963629,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.19387119878025702,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.21066438825345007,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23287155888785294,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.013596542686817648,
+      "effective_dimension_ratio": 0.38464983317508555,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 1.003379870093399,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.11373666014138166,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.8928870000941853,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.9922714040437469,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.8654939263436312,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 1.0618718639100038,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 1.036201614457186,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 1.027838347765,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.9116807498187581,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.885529852854895,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.9490242531493753,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "ed2": 0.18800738337587286,
+      "effective_dimension_ratio": 0.21174226227485982,
+      "eta": 2.0,
+      "normalization": "none",
+      "second_moment_ratio": 0.20206623884357722,
+      "seed": 20269724,
+      "trace": [
+        {
+          "second_moment_ratio": 0.07895737077818668,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.1978662571837901,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.21369420924519547,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.1939837729079844,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.1934192956105325,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.22243925317529786,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.21865299291104326,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.19386934909741957,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.21066302461865752,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23287015474905665,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.19099098838472428,
+      "effective_dimension_ratio": 0.20905908284687608,
+      "eta": 0.1,
+      "normalization": "rms",
+      "second_moment_ratio": 0.19518681217993938,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06483046436860836,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.20219800918966743,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.2283493581403038,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.20188193943006744,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.2232999503385333,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.16135994023129865,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.20680126196106594,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.24063312247073124,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20801776015195403,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.19628436394179527,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.19099188702474712,
+      "effective_dimension_ratio": 0.20905886456149028,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.195185800800444,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06483054637235122,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.2021963281129386,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.2283518729217518,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.2018824587871056,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.22330025101892384,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.16135876484431752,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.20680157630874693,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.24063216576039775,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20801799249589215,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.19628404959411427,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.021248135672611967,
+      "effective_dimension_ratio": 0.34332551851104837,
+      "eta": 0.5,
+      "normalization": "rms",
+      "second_moment_ratio": 0.8480998748732222,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.09363050687934865,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.8296223541765709,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.932667054744824,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.8831600284454584,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.9235862882744269,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.756750766789665,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.9268255454560961,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.9844890467053957,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.8804410030085533,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.8745674575909443,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "ed2": 0.19099207122925166,
+      "effective_dimension_ratio": 0.2090588262094848,
+      "eta": 2.0,
+      "normalization": "rms",
+      "second_moment_ratio": 0.19518558212379636,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06483057370693218,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.20219601376525762,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.22835241961337094,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.2018825817927199,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.22330031935537623,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.16135855983496036,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.2068016583124898,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.24063197441833106,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20801799249589215,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.1962839812576619,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.20873133498653873,
+      "effective_dimension_ratio": 0.21447226350327991,
+      "eta": 0.1,
+      "normalization": "none",
+      "second_moment_ratio": 0.1706817636914971,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06606389291283371,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.1970825569385936,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.1951125619341717,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.18053943088545674,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.19906876238263616,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.1821776061809526,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.19370121091035988,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.20196769547840054,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20396439640340047,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23136809718311582,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.20873789000661258,
+      "effective_dimension_ratio": 0.21446298677375608,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.17067896038238978,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06606204435392961,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.1971585171356129,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.1951170851479004,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.18053469099083083,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.19905753560365078,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.18214545615283284,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.19371708278607863,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.20200637301854799,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20393456215236935,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23136725754463924,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    },
+    {
+      "dim": 32,
+      "ed2": 0.01570843015401313,
+      "effective_dimension_ratio": 0.3808092017683392,
+      "eta": 0.5,
+      "normalization": "none",
+      "second_moment_ratio": 0.9031644944948426,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.09764357628353909,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.8568965141785687,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 1.0896825982379725,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.9373047908254708,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.9682629656702704,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.9608875812919013,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 1.0202077688118834,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.9117224690398209,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 1.0581269258191865,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 1.0156690623990063,
+          "step": 540
+        }
+      ],
+      "variance_match": true
+    },
+    {
+      "dim": 32,
+      "ed2": 0.2087387621421226,
+      "effective_dimension_ratio": 0.2144608820330122,
+      "eta": 2.0,
+      "normalization": "none",
+      "second_moment_ratio": 0.17067965105274954,
+      "seed": 20269725,
+      "trace": [
+        {
+          "second_moment_ratio": 0.06606102189094602,
+          "step": 0
+        },
+        {
+          "second_moment_ratio": 0.19718250100242,
+          "step": 60
+        },
+        {
+          "second_moment_ratio": 0.1951186019141807,
+          "step": 120
+        },
+        {
+          "second_moment_ratio": 0.18053638381034007,
+          "step": 180
+        },
+        {
+          "second_moment_ratio": 0.19905469166687523,
+          "step": 240
+        },
+        {
+          "second_moment_ratio": 0.18213344390559516,
+          "step": 300
+        },
+        {
+          "second_moment_ratio": 0.19371999443563456,
+          "step": 360
+        },
+        {
+          "second_moment_ratio": 0.20202200112825744,
+          "step": 420
+        },
+        {
+          "second_moment_ratio": 0.20392286138392138,
+          "step": 480
+        },
+        {
+          "second_moment_ratio": 0.23137002022607836,
+          "step": 540
+        }
+      ],
+      "variance_match": false
+    }
+  ],
+  "status": "second-moment-mechanism-study-feeds-no-gate",
+  "summary": {
+    "norm=none_eta=0.1": {
+      "ed2": 0.10936417664143006,
+      "second_moment_ratio": 0.4089303778385937
+    },
+    "norm=none_eta=0.5": {
+      "ed2": 0.10935887031667346,
+      "second_moment_ratio": 0.40897402320802506
+    },
+    "norm=none_eta=2.0": {
+      "ed2": 0.10935750166557656,
+      "second_moment_ratio": 0.40898449598914205
+    },
+    "norm=rms_eta=0.1": {
+      "ed2": 0.10516808988445892,
+      "second_moment_ratio": 0.3979540865656545
+    },
+    "norm=rms_eta=0.5": {
+      "ed2": 0.10516802887407262,
+      "second_moment_ratio": 0.3979539362226986
+    },
+    "norm=rms_eta=0.5_R11": {
+      "ed2": 0.017351335642882937,
+      "second_moment_ratio": 0.8076246970832559
+    },
+    "norm=rms_eta=2.0": {
+      "ed2": 0.10516801467842996,
+      "second_moment_ratio": 0.397953930456829
+    }
+  }
+}

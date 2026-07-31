@@ -1,0 +1,1326 @@
+{
+  "configurations": {
+    "adaptive-m128-m256": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-143818-consumed",
+      "artifact_rows_sha256": "a7e2829dc23ed2bc103f61236a59d6293c4e68b6f43b448c99b0833fa8651b4c",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.049641325806411396,
+        "off_support_occupancy": 0.0400390625,
+        "relative_covariance_frobenius_error": 0.17205709781868816,
+        "support_precision": 0.9599609375,
+        "support_recall": 0.984375
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 2.8729583024978638,
+            "maximum_positive_representative_radius": 5.200262904167175,
+            "mean_negative_representative_rms_radius": 1.5463875161483884,
+            "mean_positive_representative_rms_radius": 1.8407583862543107,
+            "mean_representative_column_mass_relative_l2_error": 0.14602954871952534,
+            "mean_representative_field_relative_l2_error": 0.2093263454735279,
+            "mean_representative_row_mass_relative_l2_error": 0.11132040247321129,
+            "median_ed2": 0.025948375950346936,
+            "median_heldout_sw1": 0.0841941079898755,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9680471420288086,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.9447678923606873,
+            "maximum_positive_representative_radius": 3.242798089981079,
+            "mean_negative_representative_rms_radius": 0.11749280620715581,
+            "mean_positive_representative_rms_radius": 0.18707669526338577,
+            "mean_representative_column_mass_relative_l2_error": 0.0305835441686213,
+            "mean_representative_field_relative_l2_error": 0.004074121010489762,
+            "mean_representative_row_mass_relative_l2_error": 0.0007387802288576495,
+            "median_ed2": 0.007682730103574564,
+            "median_heldout_sw1": 0.0707406055583545,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9999752044677734,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 1.809173047542572,
+            "maximum_positive_representative_radius": 4.665485858917236,
+            "mean_negative_representative_rms_radius": 0.4018209159374237,
+            "mean_positive_representative_rms_radius": 0.5457743838429451,
+            "mean_representative_column_mass_relative_l2_error": 0.07410811632871628,
+            "mean_representative_field_relative_l2_error": 0.032704371958971024,
+            "mean_representative_row_mass_relative_l2_error": 0.011657931027002633,
+            "median_ed2": 0.010692122291099837,
+            "median_heldout_sw1": 0.0773247970915232,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9992660880088806,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 1.9099734425544739,
+            "maximum_positive_representative_radius": 4.583252549171448,
+            "mean_negative_representative_rms_radius": 0.8032610459718853,
+            "mean_positive_representative_rms_radius": 0.9322329327464104,
+            "mean_representative_column_mass_relative_l2_error": 0.09321920573711395,
+            "mean_representative_field_relative_l2_error": 0.08539554942399263,
+            "mean_representative_row_mass_relative_l2_error": 0.03758867480792105,
+            "median_ed2": 0.015954235906681324,
+            "median_heldout_sw1": 0.07397924034030082,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9918477535247803,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 1.530094027519226,
+            "maximum_positive_representative_radius": 2.057136833667755,
+            "mean_negative_representative_rms_radius": 0.48148951993789524,
+            "mean_positive_representative_rms_radius": 0.4196248918771744,
+            "mean_representative_column_mass_relative_l2_error": 0.04965293686836958,
+            "mean_representative_field_relative_l2_error": 0.029431911185383797,
+            "mean_representative_row_mass_relative_l2_error": 0.015042163780890405,
+            "median_ed2": 0.018099090903762383,
+            "median_heldout_sw1": 0.08651714322868195,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9929811954498291,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 1.6985663175582886,
+            "maximum_positive_representative_radius": 9.545604228973389,
+            "mean_negative_representative_rms_radius": 0.5787498251418584,
+            "mean_positive_representative_rms_radius": 0.7687385834753513,
+            "mean_representative_column_mass_relative_l2_error": 0.08340826909989119,
+            "mean_representative_field_relative_l2_error": 0.05892857722938061,
+            "mean_representative_row_mass_relative_l2_error": 0.02413056429941207,
+            "median_ed2": 0.009011625945188007,
+            "median_heldout_sw1": 0.0721842600321948,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9680471420288086,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 2.223285436630249,
+            "maximum_positive_representative_radius": 6.532344818115234,
+            "mean_negative_representative_rms_radius": 0.6263321367674507,
+            "mean_positive_representative_rms_radius": 0.7130323931574821,
+            "mean_representative_column_mass_relative_l2_error": 0.08391905296593904,
+            "mean_representative_field_relative_l2_error": 0.06074357032775879,
+            "mean_representative_row_mass_relative_l2_error": 0.025116041535511613,
+            "median_ed2": 0.009939258836729525,
+            "median_heldout_sw1": 0.06369543193981501,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9900715351104736,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 2.003019332885742,
+            "maximum_positive_representative_radius": 2.7163935899734497,
+            "mean_negative_representative_rms_radius": 0.6890447763726115,
+            "mean_positive_representative_rms_radius": 0.7963255763053894,
+            "mean_representative_column_mass_relative_l2_error": 0.10224030259996653,
+            "mean_representative_field_relative_l2_error": 0.07854115217924118,
+            "mean_representative_row_mass_relative_l2_error": 0.031869526486843824,
+            "median_ed2": 0.01710960919236415,
+            "median_heldout_sw1": 0.08758809581512797,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9883405566215515,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9652007912887071,
+          "median_ratio": 0.9695072242536509,
+          "targets": 8,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9801211071384826,
+          "median_ratio": 0.9795340009569854,
+          "targets": 8,
+          "wins": 6
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.03630272976698184,
+        "median_column_mass_relative_l2_error": 0.08391905296593904,
+        "median_online_training_wall_seconds": 0.4542606499962858,
+        "median_partition_projection_scalar_products": 655360.0,
+        "median_row_mass_relative_l2_error": 0.02023656922392547,
+        "minimum_field_cosine": 0.9680471420288086
+      },
+      "representative_count": [
+        128,
+        256
+      ],
+      "strategy": "variance-per-node",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0049858588966505,
+          "median_ratio": 1.0073198661303246,
+          "targets": 16,
+          "wins": 5
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0011598057563262,
+          "median_ratio": 1.0039088824470945,
+          "targets": 16,
+          "wins": 5
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9537319543358921,
+          "median_ratio": 0.9725807334662615,
+          "targets": 16,
+          "wins": 10
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9753747091253097,
+          "median_ratio": 0.9864066465885892,
+          "targets": 16,
+          "wins": 11
+        }
+      }
+    },
+    "dense-m512": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142413-consumed",
+      "artifact_rows_sha256": "09b64516ab1b3d89fc49afad4ad5c9c59555d3f14b9072ad3c9ed60d23c167a6",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.049904476618075566,
+        "off_support_occupancy": 0.03955078125,
+        "relative_covariance_frobenius_error": 0.17389599243452092,
+        "support_precision": 0.96044921875,
+        "support_recall": 0.98486328125
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.025103588722416248,
+            "median_heldout_sw1": 0.08295003004874407,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.007771987744836895,
+            "median_heldout_sw1": 0.07141147245659105,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.009674834046002223,
+            "median_heldout_sw1": 0.07383089101984794,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.015935542013885806,
+            "median_heldout_sw1": 0.07383237328591838,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.01796620406839078,
+            "median_heldout_sw1": 0.08613751374327874,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.008961412382586742,
+            "median_heldout_sw1": 0.0722908276935332,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.01050144571331435,
+            "median_heldout_sw1": 0.06586814096888695,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 0.0,
+            "maximum_positive_representative_radius": 0.0,
+            "mean_negative_representative_rms_radius": 0.0,
+            "mean_positive_representative_rms_radius": 0.0,
+            "mean_representative_column_mass_relative_l2_error": 0.0,
+            "mean_representative_field_relative_l2_error": 0.0,
+            "mean_representative_row_mass_relative_l2_error": 0.0,
+            "median_ed2": 0.017017993647837404,
+            "median_heldout_sw1": 0.08644265261414744,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 1.0,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.956393766735768,
+          "median_ratio": 0.9635990953687354,
+          "targets": 8,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9749839860256632,
+          "median_ratio": 0.9832048603347998,
+          "targets": 8,
+          "wins": 7
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.0,
+        "median_column_mass_relative_l2_error": 0.0,
+        "median_online_training_wall_seconds": 0.20467844999802765,
+        "median_partition_projection_scalar_products": 0.0,
+        "median_row_mass_relative_l2_error": 0.0,
+        "minimum_field_cosine": 1.0
+      },
+      "representative_count": 0,
+      "strategy": "dense",
+      "tail_reserve_fraction": 0.0,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 16,
+          "wins": 0
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 16,
+          "wins": 0
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9490003723863053,
+          "median_ratio": 0.9635990953687354,
+          "targets": 16,
+          "wins": 10
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9742447744278574,
+          "median_ratio": 0.978103938369214,
+          "targets": 16,
+          "wins": 12
+        }
+      }
+    },
+    "fixed-m128": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142230-consumed",
+      "artifact_rows_sha256": "bbd48f7aa9122b15efd2f777a4bcf0f2b79871f303a9144150c588d94072b950",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.04998835080894132,
+        "off_support_occupancy": 0.040771484375,
+        "relative_covariance_frobenius_error": 0.18488491722072736,
+        "support_precision": 0.959228515625,
+        "support_recall": 0.984375
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 5.090873718261719,
+            "maximum_positive_representative_radius": 9.247705459594727,
+            "mean_negative_representative_rms_radius": 2.3018461603671314,
+            "mean_positive_representative_rms_radius": 2.696518588066101,
+            "mean_representative_column_mass_relative_l2_error": 0.284611776471138,
+            "mean_representative_field_relative_l2_error": 0.37123339995741844,
+            "mean_representative_row_mass_relative_l2_error": 0.266034385189414,
+            "median_ed2": 0.026781938487850265,
+            "median_heldout_sw1": 0.08580390025368886,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9551811814308167,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 1.8769959211349487,
+            "maximum_positive_representative_radius": 4.590059161186218,
+            "mean_negative_representative_rms_radius": 0.1448534622148145,
+            "mean_positive_representative_rms_radius": 0.23644720129668712,
+            "mean_representative_column_mass_relative_l2_error": 0.041128779761493206,
+            "mean_representative_field_relative_l2_error": 0.01563621312379837,
+            "mean_representative_row_mass_relative_l2_error": 0.0009053152170963585,
+            "median_ed2": 0.007529116700706218,
+            "median_heldout_sw1": 0.06993989991865503,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9986822605133057,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 2.5804450511932373,
+            "maximum_positive_representative_radius": 5.853565573692322,
+            "mean_negative_representative_rms_radius": 0.4859198267338798,
+            "mean_positive_representative_rms_radius": 0.6324015110731125,
+            "mean_representative_column_mass_relative_l2_error": 0.09723636507987976,
+            "mean_representative_field_relative_l2_error": 0.05856998171657324,
+            "mean_representative_row_mass_relative_l2_error": 0.01606081542558968,
+            "median_ed2": 0.010885034606207933,
+            "median_heldout_sw1": 0.07620081606166063,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9973978996276855,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 3.9824864864349365,
+            "maximum_positive_representative_radius": 9.605592489242554,
+            "mean_negative_representative_rms_radius": 1.2308742803055792,
+            "mean_positive_representative_rms_radius": 1.4508054733276365,
+            "mean_representative_column_mass_relative_l2_error": 0.15935305319726467,
+            "mean_representative_field_relative_l2_error": 0.21893458254635334,
+            "mean_representative_row_mass_relative_l2_error": 0.07591488538309932,
+            "median_ed2": 0.01593725912256505,
+            "median_heldout_sw1": 0.07426276459187955,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9416647553443909,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 2.7966161966323853,
+            "maximum_positive_representative_radius": 3.253949522972107,
+            "mean_negative_representative_rms_radius": 0.7243269041995518,
+            "mean_positive_representative_rms_radius": 0.6818006873130799,
+            "mean_representative_column_mass_relative_l2_error": 0.09126954898238182,
+            "mean_representative_field_relative_l2_error": 0.08056599088013172,
+            "mean_representative_row_mass_relative_l2_error": 0.04167192499153316,
+            "median_ed2": 0.01830815255203677,
+            "median_heldout_sw1": 0.08690448114741196,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9644098281860352,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 2.6867828369140625,
+            "maximum_positive_representative_radius": 12.725927829742432,
+            "mean_negative_representative_rms_radius": 0.819448375934735,
+            "mean_positive_representative_rms_radius": 1.0771607786417006,
+            "mean_representative_column_mass_relative_l2_error": 0.1367929819971323,
+            "mean_representative_field_relative_l2_error": 0.17249098606407642,
+            "mean_representative_row_mass_relative_l2_error": 0.037560669326921925,
+            "median_ed2": 0.009826085952272079,
+            "median_heldout_sw1": 0.07264626819575726,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9416647553443909,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 4.292322278022766,
+            "maximum_positive_representative_radius": 9.884536504745483,
+            "mean_negative_representative_rms_radius": 0.8973457311047242,
+            "mean_positive_representative_rms_radius": 1.0301917299628258,
+            "mean_representative_column_mass_relative_l2_error": 0.12338145449757576,
+            "mean_representative_field_relative_l2_error": 0.12510412652045488,
+            "mean_representative_row_mass_relative_l2_error": 0.05030377581715584,
+            "median_ed2": 0.011567384544370007,
+            "median_heldout_sw1": 0.07042178995590886,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9623838067054749,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 3.889375686645508,
+            "maximum_positive_representative_radius": 4.717304110527039,
+            "mean_negative_representative_rms_radius": 0.9619791040895507,
+            "mean_positive_representative_rms_radius": 1.0796628668904305,
+            "mean_representative_column_mass_relative_l2_error": 0.1418809648603201,
+            "mean_representative_field_relative_l2_error": 0.13631984125822783,
+            "mean_representative_row_mass_relative_l2_error": 0.05984506546519697,
+            "median_ed2": 0.016781195510238378,
+            "median_heldout_sw1": 0.08889294286900057,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9551811814308167,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 8,
+          "wins": 0
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 8,
+          "wins": 0
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.08780042269633527,
+        "median_column_mass_relative_l2_error": 0.11475164536386728,
+        "median_online_training_wall_seconds": 0.27953975000127684,
+        "median_partition_projection_scalar_products": 143360.0,
+        "median_row_mass_relative_l2_error": 0.04238570178858936,
+        "minimum_field_cosine": 0.9416647553443909
+      },
+      "representative_count": 128,
+      "strategy": "fixed-level",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.053740366281895,
+          "median_ratio": 1.0377864459657398,
+          "targets": 16,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0264360931135277,
+          "median_ratio": 1.022386238283776,
+          "targets": 16,
+          "wins": 4
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 16,
+          "wins": 0
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0,
+          "median_ratio": 1.0,
+          "targets": 16,
+          "wins": 0
+        }
+      }
+    },
+    "radius-m128": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142518-consumed",
+      "artifact_rows_sha256": "5e3a5e0579406e4bb061435148cccea3bd52ceca065406ca8c9e2f51ce5add32",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.049573202256452745,
+        "off_support_occupancy": 0.03955078125,
+        "relative_covariance_frobenius_error": 0.1715961883318334,
+        "support_precision": 0.96044921875,
+        "support_recall": 0.98291015625
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 3.1616854667663574,
+            "maximum_positive_representative_radius": 3.389308214187622,
+            "mean_negative_representative_rms_radius": 2.049719964340329,
+            "mean_positive_representative_rms_radius": 2.333542740345001,
+            "mean_representative_column_mass_relative_l2_error": 0.2637930568307638,
+            "mean_representative_field_relative_l2_error": 0.49883995950222015,
+            "mean_representative_row_mass_relative_l2_error": 0.2392820082604885,
+            "median_ed2": 0.026485621056507647,
+            "median_heldout_sw1": 0.08520434885418902,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.8655872344970703,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.22583604604005814,
+            "maximum_positive_representative_radius": 0.2074149176478386,
+            "mean_negative_representative_rms_radius": 0.09553460909810382,
+            "mean_positive_representative_rms_radius": 0.09516817647963763,
+            "mean_representative_column_mass_relative_l2_error": 0.030135477427393198,
+            "mean_representative_field_relative_l2_error": 0.004502980620600283,
+            "mean_representative_row_mass_relative_l2_error": 0.0012499587464844808,
+            "median_ed2": 0.007757246235180593,
+            "median_heldout_sw1": 0.07140017328311306,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9999558329582214,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 0.7649863958358765,
+            "maximum_positive_representative_radius": 0.8388647437095642,
+            "mean_negative_representative_rms_radius": 0.37958884984254837,
+            "mean_positive_representative_rms_radius": 0.4487347386777401,
+            "mean_representative_column_mass_relative_l2_error": 0.08065931126475334,
+            "mean_representative_field_relative_l2_error": 0.05322723649442196,
+            "mean_representative_row_mass_relative_l2_error": 0.015162369818426669,
+            "median_ed2": 0.009947233648531784,
+            "median_heldout_sw1": 0.07473699107284035,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9955036044120789,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 1.8341724872589111,
+            "maximum_positive_representative_radius": 1.8986217379570007,
+            "mean_negative_representative_rms_radius": 1.0948145676869898,
+            "mean_positive_representative_rms_radius": 1.1755763620138169,
+            "mean_representative_column_mass_relative_l2_error": 0.1479497840628028,
+            "mean_representative_field_relative_l2_error": 0.2072927411645651,
+            "mean_representative_row_mass_relative_l2_error": 0.08633650746196508,
+            "median_ed2": 0.016448245685779073,
+            "median_heldout_sw1": 0.07549514539762006,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9556450247764587,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 1.1118724048137665,
+            "maximum_positive_representative_radius": 0.7588376998901367,
+            "mean_negative_representative_rms_radius": 0.5918901114957407,
+            "mean_positive_representative_rms_radius": 0.4769528411328793,
+            "mean_representative_column_mass_relative_l2_error": 0.06077378988265991,
+            "mean_representative_field_relative_l2_error": 0.02834590943530202,
+            "mean_representative_row_mass_relative_l2_error": 0.024805141481920145,
+            "median_ed2": 0.018183314055318034,
+            "median_heldout_sw1": 0.08675210228897025,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9950082302093506,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 1.2642163038253784,
+            "maximum_positive_representative_radius": 1.45743528008461,
+            "mean_negative_representative_rms_radius": 0.725116247101687,
+            "mean_positive_representative_rms_radius": 0.8117966741323471,
+            "mean_representative_column_mass_relative_l2_error": 0.11930121667683125,
+            "mean_representative_field_relative_l2_error": 0.15298613347113132,
+            "mean_representative_row_mass_relative_l2_error": 0.05191205395385623,
+            "median_ed2": 0.009265207509921547,
+            "median_heldout_sw1": 0.07165681247855028,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.8655872344970703,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 1.3349425792694092,
+            "maximum_positive_representative_radius": 1.280051201581955,
+            "mean_negative_representative_rms_radius": 0.7492871704278514,
+            "mean_positive_representative_rms_radius": 0.8125144265592099,
+            "mean_representative_column_mass_relative_l2_error": 0.11081425193697214,
+            "mean_representative_field_relative_l2_error": 0.1226981719955802,
+            "mean_representative_row_mass_relative_l2_error": 0.04958682332653552,
+            "median_ed2": 0.011224451520035483,
+            "median_heldout_sw1": 0.0683407403294258,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.967477560043335,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 1.4599360227584839,
+            "maximum_positive_representative_radius": 1.5282203257083893,
+            "mean_negative_representative_rms_radius": 0.8410250453511252,
+            "mean_positive_representative_rms_radius": 0.957734826207161,
+            "mean_representative_column_mass_relative_l2_error": 0.1311104018241167,
+            "mean_representative_field_relative_l2_error": 0.1450973330065608,
+            "mean_representative_row_mass_relative_l2_error": 0.05932060279883444,
+            "median_ed2": 0.01707582023158949,
+            "median_heldout_sw1": 0.08914189765925391,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9695746302604675,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9927014438160356,
+          "median_ratio": 0.984989590716171,
+          "targets": 8,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9974413036132895,
+          "median_ratio": 0.9899277344834139,
+          "targets": 8,
+          "wins": 5
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.056211960199067504,
+        "median_column_mass_relative_l2_error": 0.09410159243270755,
+        "median_online_training_wall_seconds": 1.1730795999974362,
+        "median_partition_projection_scalar_products": 655360.0,
+        "median_row_mass_relative_l2_error": 0.033028348814696074,
+        "minimum_field_cosine": 0.8655872344970703
+      },
+      "representative_count": 128,
+      "strategy": "radius-priority",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0231338684473028,
+          "median_ratio": 1.026791399539527,
+          "targets": 16,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0125663313847169,
+          "median_ratio": 1.0143975253759465,
+          "targets": 16,
+          "wins": 6
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9709544221575315,
+          "median_ratio": 0.984989590716171,
+          "targets": 16,
+          "wins": 10
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9864874571131464,
+          "median_ratio": 0.9899277344834139,
+          "targets": 16,
+          "wins": 9
+        }
+      }
+    },
+    "tail-m128": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142608-consumed",
+      "artifact_rows_sha256": "90249e413cc08fda644f483f3d945af0607c2b7606bf73f352cc6a3ef21e7dda",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.04836713874430533,
+        "off_support_occupancy": 0.039306640625,
+        "relative_covariance_frobenius_error": 0.1766153095648941,
+        "support_precision": 0.960693359375,
+        "support_recall": 0.9833984375
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 3.111300230026245,
+            "maximum_positive_representative_radius": 3.34128737449646,
+            "mean_negative_representative_rms_radius": 2.0600874002091585,
+            "mean_positive_representative_rms_radius": 2.3109819889068604,
+            "mean_representative_column_mass_relative_l2_error": 0.26331966929137707,
+            "mean_representative_field_relative_l2_error": 0.4572628401219845,
+            "mean_representative_row_mass_relative_l2_error": 0.24038279335945845,
+            "median_ed2": 0.026658738130412196,
+            "median_heldout_sw1": 0.08572007876885462,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.8749766945838928,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.22613269835710526,
+            "maximum_positive_representative_radius": 0.20711234211921692,
+            "mean_negative_representative_rms_radius": 0.09625423974939622,
+            "mean_positive_representative_rms_radius": 0.09537218771874904,
+            "mean_representative_column_mass_relative_l2_error": 0.030617278534919024,
+            "mean_representative_field_relative_l2_error": 0.005074051208794117,
+            "mean_representative_row_mass_relative_l2_error": 0.0012907776545034721,
+            "median_ed2": 0.00776862900455455,
+            "median_heldout_sw1": 0.07146757069680386,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9999727010726929,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 0.7620315253734589,
+            "maximum_positive_representative_radius": 0.7973743975162506,
+            "mean_negative_representative_rms_radius": 0.38085953948320816,
+            "mean_positive_representative_rms_radius": 0.44279489219188695,
+            "mean_representative_column_mass_relative_l2_error": 0.08262890391051769,
+            "mean_representative_field_relative_l2_error": 0.05788665730506182,
+            "mean_representative_row_mass_relative_l2_error": 0.017359960824251175,
+            "median_ed2": 0.009951040246306997,
+            "median_heldout_sw1": 0.07481573895976787,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9970505833625793,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 1.8696957230567932,
+            "maximum_positive_representative_radius": 1.8590197563171387,
+            "mean_negative_representative_rms_radius": 1.0991453081835063,
+            "mean_positive_representative_rms_radius": 1.1655341595411302,
+            "mean_representative_column_mass_relative_l2_error": 0.1499116700142622,
+            "mean_representative_field_relative_l2_error": 0.22242967411875725,
+            "mean_representative_row_mass_relative_l2_error": 0.08442154945805669,
+            "median_ed2": 0.01746862339952293,
+            "median_heldout_sw1": 0.0777614415471351,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.937745213508606,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 1.1243224740028381,
+            "maximum_positive_representative_radius": 0.7663484364748001,
+            "mean_negative_representative_rms_radius": 0.5990591002046131,
+            "mean_positive_representative_rms_radius": 0.47822943702340126,
+            "mean_representative_column_mass_relative_l2_error": 0.06205454096198082,
+            "mean_representative_field_relative_l2_error": 0.03663937980309129,
+            "mean_representative_row_mass_relative_l2_error": 0.024926918500568718,
+            "median_ed2": 0.018070589182565877,
+            "median_heldout_sw1": 0.08653822896045826,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9951575398445129,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 1.3103841543197632,
+            "maximum_positive_representative_radius": 1.3857766389846802,
+            "mean_negative_representative_rms_radius": 0.7295172353507952,
+            "mean_positive_representative_rms_radius": 0.7984492436051369,
+            "mean_representative_column_mass_relative_l2_error": 0.12288491055369377,
+            "mean_representative_field_relative_l2_error": 0.15656956005841494,
+            "mean_representative_row_mass_relative_l2_error": 0.05010615987703204,
+            "median_ed2": 0.00915280098902449,
+            "median_heldout_sw1": 0.07234744485048888,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.8749766945838928,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 1.321343094110489,
+            "maximum_positive_representative_radius": 1.270617514848709,
+            "mean_negative_representative_rms_radius": 0.7504876123159192,
+            "mean_positive_representative_rms_radius": 0.8098798081278801,
+            "mean_representative_column_mass_relative_l2_error": 0.1112457625567913,
+            "mean_representative_field_relative_l2_error": 0.14288747776299715,
+            "mean_representative_row_mass_relative_l2_error": 0.05167535040527582,
+            "median_ed2": 0.011813067308245717,
+            "median_heldout_sw1": 0.06892567984201811,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9677159786224365,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 1.4766309559345245,
+            "maximum_positive_representative_radius": 1.5605255663394928,
+            "mean_negative_representative_rms_radius": 0.8486918564420194,
+            "mean_positive_representative_rms_radius": 0.971332174539566,
+            "mean_representative_column_mass_relative_l2_error": 0.13223780319094658,
+            "mean_representative_field_relative_l2_error": 0.13742885366082191,
+            "mean_representative_row_mass_relative_l2_error": 0.05945776775479317,
+            "median_ed2": 0.01621485569638348,
+            "median_heldout_sw1": 0.08912214015968159,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9672325849533081,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0032315106140481,
+          "median_ratio": 0.9819810502843591,
+          "targets": 8,
+          "wins": 5
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0012804230850798,
+          "median_ratio": 0.9918396291474507,
+          "targets": 8,
+          "wins": 5
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.058059028164792484,
+        "median_column_mass_relative_l2_error": 0.09357189573347569,
+        "median_online_training_wall_seconds": 1.2792750500047987,
+        "median_partition_projection_scalar_products": 655360.0,
+        "median_row_mass_relative_l2_error": 0.03241859329864383,
+        "minimum_field_cosine": 0.8749766945838928
+      },
+      "representative_count": 128,
+      "strategy": "variance-with-tail-reserve",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0145625311834927,
+          "median_ratio": 1.0049818763137066,
+          "targets": 16,
+          "wins": 8
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0077726503632731,
+          "median_ratio": 1.0061190866402843,
+          "targets": 16,
+          "wins": 6
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9628202199023271,
+          "median_ratio": 0.9819810502843591,
+          "targets": 16,
+          "wins": 10
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.981817238427731,
+          "median_ratio": 0.9918396291474507,
+          "targets": 16,
+          "wins": 9
+        }
+      }
+    },
+    "variance-m128": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142845-consumed",
+      "artifact_rows_sha256": "8384fb4910b9aac54717db09b3e83190b750315d764be3fbef2b402d49aa7d66",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.050353720226269966,
+        "off_support_occupancy": 0.0400390625,
+        "relative_covariance_frobenius_error": 0.1767925199902044,
+        "support_precision": 0.9599609375,
+        "support_recall": 0.98388671875
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 3.9125314950942993,
+            "maximum_positive_representative_radius": 7.694041013717651,
+            "mean_negative_representative_rms_radius": 2.048122197482735,
+            "mean_positive_representative_rms_radius": 2.397470849752426,
+            "mean_representative_column_mass_relative_l2_error": 0.2438427023589611,
+            "mean_representative_field_relative_l2_error": 0.37898921966552734,
+            "mean_representative_row_mass_relative_l2_error": 0.21879409719258547,
+            "median_ed2": 0.026384694478513104,
+            "median_heldout_sw1": 0.08527431615931313,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9588684439659119,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.9447678923606873,
+            "maximum_positive_representative_radius": 3.242798089981079,
+            "mean_negative_representative_rms_radius": 0.11749280620715581,
+            "mean_positive_representative_rms_radius": 0.18707669526338577,
+            "mean_representative_column_mass_relative_l2_error": 0.0305835441686213,
+            "mean_representative_field_relative_l2_error": 0.004074121010489762,
+            "mean_representative_row_mass_relative_l2_error": 0.0007387802288576495,
+            "median_ed2": 0.007682730103574564,
+            "median_heldout_sw1": 0.0707406055583545,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9999752044677734,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 1.809173047542572,
+            "maximum_positive_representative_radius": 4.665485858917236,
+            "mean_negative_representative_rms_radius": 0.4018209159374237,
+            "mean_positive_representative_rms_radius": 0.5457743838429451,
+            "mean_representative_column_mass_relative_l2_error": 0.07410811632871628,
+            "mean_representative_field_relative_l2_error": 0.032704371958971024,
+            "mean_representative_row_mass_relative_l2_error": 0.011657931027002633,
+            "median_ed2": 0.010692122291099837,
+            "median_heldout_sw1": 0.0773247970915232,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9992660880088806,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 2.5459671020507812,
+            "maximum_positive_representative_radius": 6.607932925224304,
+            "mean_negative_representative_rms_radius": 1.1041791763156652,
+            "mean_positive_representative_rms_radius": 1.2674500346183777,
+            "mean_representative_column_mass_relative_l2_error": 0.13632049970328808,
+            "mean_representative_field_relative_l2_error": 0.15476500801742077,
+            "mean_representative_row_mass_relative_l2_error": 0.0745905633084476,
+            "median_ed2": 0.016852426770577855,
+            "median_heldout_sw1": 0.0767676336353959,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.979171633720398,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 1.9030691981315613,
+            "maximum_positive_representative_radius": 2.5685710310935974,
+            "mean_negative_representative_rms_radius": 0.6084469446679577,
+            "mean_positive_representative_rms_radius": 0.5173842877149581,
+            "mean_representative_column_mass_relative_l2_error": 0.06369261490181088,
+            "mean_representative_field_relative_l2_error": 0.04643202666193247,
+            "mean_representative_row_mass_relative_l2_error": 0.0267455450957641,
+            "median_ed2": 0.018212537294895137,
+            "median_heldout_sw1": 0.08679052063814083,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9746487736701965,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 2.0006279349327087,
+            "maximum_positive_representative_radius": 12.234815120697021,
+            "mean_negative_representative_rms_radius": 0.7314290857291781,
+            "mean_positive_representative_rms_radius": 0.9407224826514722,
+            "mean_representative_column_mass_relative_l2_error": 0.10662058647722006,
+            "mean_representative_field_relative_l2_error": 0.08877584803849459,
+            "mean_representative_row_mass_relative_l2_error": 0.042030385811813176,
+            "median_ed2": 0.00919009860781883,
+            "median_heldout_sw1": 0.0721842600321948,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9588684439659119,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 2.687339425086975,
+            "maximum_positive_representative_radius": 7.899137735366821,
+            "mean_negative_representative_rms_radius": 0.7745710065239109,
+            "mean_positive_representative_rms_radius": 0.8762655958533286,
+            "mean_representative_column_mass_relative_l2_error": 0.1038080295547843,
+            "mean_representative_field_relative_l2_error": 0.10026575811207294,
+            "mean_representative_row_mass_relative_l2_error": 0.044218108523637056,
+            "median_ed2": 0.010843354486547163,
+            "median_heldout_sw1": 0.06621044782545123,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9774571061134338,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 2.3369513750076294,
+            "maximum_positive_representative_radius": 3.3742810487747192,
+            "mean_negative_representative_rms_radius": 0.8475715067237615,
+            "mean_positive_representative_rms_radius": 0.9757881969213485,
+            "mean_representative_column_mass_relative_l2_error": 0.12522710673511028,
+            "mean_representative_field_relative_l2_error": 0.12139921821653843,
+            "mean_representative_row_mass_relative_l2_error": 0.05434001819230616,
+            "median_ed2": 0.01653769784782222,
+            "median_heldout_sw1": 0.08760878956210351,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9737439155578613,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9885643507499279,
+          "median_ratio": 0.9740826882292589,
+          "targets": 8,
+          "wins": 7
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9967083515551644,
+          "median_ratio": 0.9864344424722775,
+          "targets": 8,
+          "wins": 7
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.04862288120207816,
+        "median_column_mass_relative_l2_error": 0.09143438981845975,
+        "median_online_training_wall_seconds": 0.37919904999580467,
+        "median_partition_projection_scalar_products": 655360.0,
+        "median_row_mass_relative_l2_error": 0.03193995053879917,
+        "minimum_field_cosine": 0.9588684439659119
+      },
+      "representative_count": 128,
+      "strategy": "variance-per-node",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.0170764271203352,
+          "median_ratio": 1.0190204486796155,
+          "targets": 16,
+          "wins": 5
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0095959112269801,
+          "median_ratio": 1.0088614457029434,
+          "targets": 16,
+          "wins": 5
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9652059080825309,
+          "median_ratio": 0.9819132179599485,
+          "targets": 16,
+          "wins": 11
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9835935407966163,
+          "median_ratio": 0.9886194916045896,
+          "targets": 16,
+          "wins": 12
+        }
+      }
+    },
+    "variance-m256": {
+      "artifact": "numerics\\conditioned_transport_runs\\20260723-142918-consumed",
+      "artifact_rows_sha256": "600193df43b6433bd94e3d72af7023b96e814c659f92cb1495a62cae831f2df8",
+      "exploratory_support_medians": {
+        "normalized_mean_error": 0.049641325806411396,
+        "off_support_occupancy": 0.04052734375,
+        "relative_covariance_frobenius_error": 0.18447537261262673,
+        "support_precision": 0.95947265625,
+        "support_recall": 0.984375
+      },
+      "grouped": {
+        "by_dimension": {
+          "16": {
+            "maximum_negative_representative_radius": 2.8729583024978638,
+            "maximum_positive_representative_radius": 5.200262904167175,
+            "mean_negative_representative_rms_radius": 1.5463875161483884,
+            "mean_positive_representative_rms_radius": 1.8407583862543107,
+            "mean_representative_column_mass_relative_l2_error": 0.14602954871952534,
+            "mean_representative_field_relative_l2_error": 0.2093263454735279,
+            "mean_representative_row_mass_relative_l2_error": 0.11132040247321129,
+            "median_ed2": 0.025948375950346936,
+            "median_heldout_sw1": 0.0841941079898755,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9680471420288086,
+            "targets": 4
+          },
+          "2": {
+            "maximum_negative_representative_radius": 0.5649841874837875,
+            "maximum_positive_representative_radius": 2.1562898755073547,
+            "mean_negative_representative_rms_radius": 0.0725418129528407,
+            "mean_positive_representative_rms_radius": 0.11555069088935851,
+            "mean_representative_column_mass_relative_l2_error": 0.017600474413484335,
+            "mean_representative_field_relative_l2_error": 0.0015315937343984842,
+            "mean_representative_row_mass_relative_l2_error": 0.00034239391970913857,
+            "median_ed2": 0.007710974700305795,
+            "median_heldout_sw1": 0.07118736816506568,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9999970197677612,
+            "targets": 4
+          },
+          "4": {
+            "maximum_negative_representative_radius": 1.1745246350765228,
+            "maximum_positive_representative_radius": 2.7438647150993347,
+            "mean_negative_representative_rms_radius": 0.27441791583551095,
+            "mean_positive_representative_rms_radius": 0.3711384847760201,
+            "mean_representative_column_mass_relative_l2_error": 0.05010026227682829,
+            "mean_representative_field_relative_l2_error": 0.0175742048304528,
+            "mean_representative_row_mass_relative_l2_error": 0.0054282190394587815,
+            "median_ed2": 0.010435563319456831,
+            "median_heldout_sw1": 0.07647985558735426,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9997450709342957,
+            "targets": 4
+          },
+          "8": {
+            "maximum_negative_representative_radius": 1.9099734425544739,
+            "maximum_positive_representative_radius": 4.583252549171448,
+            "mean_negative_representative_rms_radius": 0.8032610459718853,
+            "mean_positive_representative_rms_radius": 0.9322329327464104,
+            "mean_representative_column_mass_relative_l2_error": 0.09321920573711395,
+            "mean_representative_field_relative_l2_error": 0.08539554942399263,
+            "mean_representative_row_mass_relative_l2_error": 0.03758867480792105,
+            "median_ed2": 0.015954235906681324,
+            "median_heldout_sw1": 0.07397924034030082,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9918477535247803,
+            "targets": 4
+          }
+        },
+        "by_family": {
+          "balanced-gmm": {
+            "maximum_negative_representative_radius": 1.2292421758174896,
+            "maximum_positive_representative_radius": 1.7382203936576843,
+            "mean_negative_representative_rms_radius": 0.42984986398369074,
+            "mean_positive_representative_rms_radius": 0.3690051879733801,
+            "mean_representative_column_mass_relative_l2_error": 0.04412811854854226,
+            "mean_representative_field_relative_l2_error": 0.025864897528663278,
+            "mean_representative_row_mass_relative_l2_error": 0.01337512762984261,
+            "median_ed2": 0.018070941696659792,
+            "median_heldout_sw1": 0.08640391285223331,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9929811954498291,
+            "targets": 4
+          },
+          "correlated-t": {
+            "maximum_negative_representative_radius": 1.3786630034446716,
+            "maximum_positive_representative_radius": 8.094293117523193,
+            "mean_negative_representative_rms_radius": 0.5226996278390288,
+            "mean_positive_representative_rms_radius": 0.6775946110486984,
+            "mean_representative_column_mass_relative_l2_error": 0.07303009368479252,
+            "mean_representative_field_relative_l2_error": 0.05169898318126798,
+            "mean_representative_row_mass_relative_l2_error": 0.02106380753684789,
+            "median_ed2": 0.008912552907312632,
+            "median_heldout_sw1": 0.0722709827390795,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9680471420288086,
+            "targets": 4
+          },
+          "nonlinear": {
+            "maximum_negative_representative_radius": 2.1572601795196533,
+            "maximum_positive_representative_radius": 5.144505500793457,
+            "mean_negative_representative_rms_radius": 0.5549793339683674,
+            "mean_positive_representative_rms_radius": 0.6283300511538983,
+            "mean_representative_column_mass_relative_l2_error": 0.07028937432914972,
+            "mean_representative_field_relative_l2_error": 0.05402252054773271,
+            "mean_representative_row_mass_relative_l2_error": 0.021953086310531944,
+            "median_ed2": 0.010796279621279492,
+            "median_heldout_sw1": 0.06729313531614745,
+            "minimum_mode_coverage": null,
+            "minimum_representative_field_cosine": 0.9900715351104736,
+            "targets": 4
+          },
+          "rare-gmm": {
+            "maximum_negative_representative_radius": 1.6692227721214294,
+            "maximum_positive_representative_radius": 2.1826117634773254,
+            "mean_negative_representative_rms_radius": 0.6098359435563907,
+            "mean_positive_representative_rms_radius": 0.7063920192420482,
+            "mean_representative_column_mass_relative_l2_error": 0.08641857467591763,
+            "mean_representative_field_relative_l2_error": 0.07013203483074903,
+            "mean_representative_row_mass_relative_l2_error": 0.02684366493485868,
+            "median_ed2": 0.017011250099967068,
+            "median_heldout_sw1": 0.08758809581512797,
+            "minimum_mode_coverage": 1.0,
+            "minimum_representative_field_cosine": 0.9883405566215515,
+            "targets": 4
+          }
+        }
+      },
+      "high_dimension_vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9652007912887071,
+          "median_ratio": 0.9695072242536509,
+          "targets": 8,
+          "wins": 6
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9801211071384826,
+          "median_ratio": 0.9795340009569854,
+          "targets": 8,
+          "wins": 6
+        }
+      },
+      "mechanism": {
+        "geometric_mean_positive_field_error": 0.02493746494208469,
+        "median_column_mass_relative_l2_error": 0.06157298386096954,
+        "median_online_training_wall_seconds": 0.49404605000381707,
+        "median_partition_projection_scalar_products": 655360.0,
+        "median_row_mass_relative_l2_error": 0.015210707671940327,
+        "minimum_field_cosine": 0.9680471420288086
+      },
+      "representative_count": 256,
+      "strategy": "variance-per-node",
+      "tail_reserve_fraction": 0.0625,
+      "vs_dense": {
+        "ed2": {
+          "geometric_mean_ratio": 1.016987164808613,
+          "median_ratio": 1.0061473581047404,
+          "targets": 16,
+          "wins": 5
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 1.0078169765438934,
+          "median_ratio": 1.0053702977105403,
+          "targets": 16,
+          "wins": 5
+        }
+      },
+      "vs_fixed": {
+        "ed2": {
+          "geometric_mean_ratio": 0.9651211981154667,
+          "median_ratio": 0.9725807334662615,
+          "targets": 16,
+          "wins": 9
+        },
+        "heldout_sw1": {
+          "geometric_mean_ratio": 0.9818604229775706,
+          "median_ratio": 0.9809194153989944,
+          "targets": 16,
+          "wins": 10
+        }
+      }
+    }
+  },
+  "dense_label": "dense-m512",
+  "fixed_label": "fixed-m128",
+  "guardrails": [
+    "strategy selection uses a consumed development registry",
+    "support metrics are exploratory",
+    "no configuration is confirmatory until frozen on a new registry"
+  ],
+  "mechanism_gate": {
+    "adaptive-m128-m256": {
+      "field_cosine_at_least_fixed": true,
+      "field_error_below_fixed": true
+    },
+    "fixed-m128": {
+      "field_cosine_at_least_fixed": true,
+      "field_error_below_fixed": false
+    },
+    "radius-m128": {
+      "field_cosine_at_least_fixed": false,
+      "field_error_below_fixed": true
+    },
+    "tail-m128": {
+      "field_cosine_at_least_fixed": false,
+      "field_error_below_fixed": true
+    },
+    "variance-m128": {
+      "field_cosine_at_least_fixed": true,
+      "field_error_below_fixed": true
+    },
+    "variance-m256": {
+      "field_cosine_at_least_fixed": true,
+      "field_error_below_fixed": true
+    }
+  },
+  "mechanism_ranking": [
+    "variance-m256",
+    "adaptive-m128-m256",
+    "variance-m128",
+    "radius-m128",
+    "tail-m128",
+    "fixed-m128",
+    "dense-m512"
+  ],
+  "registry_sha256": "7b4cc89a68d73784303b0e2bc417d53b2f91f02511099c88c3c8e6be535a3dc6",
+  "schema": "representative-strategy-development-analysis-v1",
+  "status": "consumed_registry_development_only"
+}

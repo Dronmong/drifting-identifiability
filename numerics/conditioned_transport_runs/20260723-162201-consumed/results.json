@@ -1,0 +1,76 @@
+{
+  "by_arm": {
+    "cta-exact-adaptive-rollout": {
+      "count": 32,
+      "maximum_rare_mass_error": 0.01755859375,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.012812470773781781,
+      "median_heldout_sw1": 0.07343893329141626,
+      "median_online_training_wall_seconds": 0.4027526999998372,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.008037109375,
+      "median_setup_plus_training_wall_seconds": 0.4544226999969396,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 8,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-fixed-control": {
+      "count": 32,
+      "maximum_rare_mass_error": 0.019824218749999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.016272770488680255,
+      "median_heldout_sw1": 0.08231594987247623,
+      "median_online_training_wall_seconds": 0.28883420000056503,
+      "median_paper_kernel_pairs": 2621440.0,
+      "median_rare_mass_error": 0.012783203125000002,
+      "median_setup_plus_training_wall_seconds": 0.3420198999992863,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 8,
+      "representative_leaf_population_range": [
+        4,
+        4
+      ]
+    },
+    "cta-exact-gated-hybrid": {
+      "count": 32,
+      "maximum_rare_mass_error": 0.023242187499999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.015937653626545867,
+      "median_heldout_sw1": 0.08088193247903921,
+      "median_online_training_wall_seconds": 0.40528969999650144,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.013027343750000002,
+      "median_setup_plus_training_wall_seconds": 0.4572801499925845,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 8,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "paper-neural-optimized": {
+      "count": 32,
+      "maximum_rare_mass_error": 0.05,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.04947314978248163,
+      "median_heldout_sw1": 0.16315283126459862,
+      "median_online_training_wall_seconds": 0.33269484999982524,
+      "median_paper_kernel_pairs": 2621440.0,
+      "median_rare_mass_error": 0.035,
+      "median_setup_plus_training_wall_seconds": 0.33269484999982524,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 8,
+      "representative_leaf_population_range": [
+        0,
+        0
+      ]
+    }
+  }
+}

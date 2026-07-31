@@ -1,0 +1,51 @@
+=== S1: is the field's tail demand coherent? ===
+    S1 generator   seed0 bulk_coh=-0.0329 tail_coh=+0.0912 tail_share=0.1845
+    S1 particles   seed0 bulk_coh=-0.0961 tail_coh=+0.1433 tail_share=0.2080
+    S1 real_data   seed0 bulk_coh=+0.3413 tail_coh=+0.2452 tail_share=0.2462
+    S1 generator   seed1 bulk_coh=+0.3750 tail_coh=+0.0658 tail_share=0.1605
+    S1 particles   seed1 bulk_coh=+0.0724 tail_coh=+0.0297 tail_share=0.1762
+    S1 real_data   seed1 bulk_coh=+0.1846 tail_coh=+0.2288 tail_share=0.1696
+    S1 generator   seed2 bulk_coh=+0.4059 tail_coh=+0.0005 tail_share=0.1248
+    S1 particles   seed2 bulk_coh=+0.2173 tail_coh=+0.0678 tail_share=0.1545
+    S1 real_data   seed2 bulk_coh=+0.2553 tail_coh=+0.1815 tail_share=0.2475
+
+=== S2/S3: targets, rollout, and averaging ===
+    S2 moving_K1          seed0 tail 0.2207 -> 0.0048  2nd= 0.547 ed2=  0.8145
+    S2 moving_K4          seed0 tail 0.2207 -> 0.0041  2nd= 0.550 ed2=  0.8151
+    S2 moving_K16         seed0 tail 0.2207 -> 0.0035  2nd= 0.571 ed2=  0.6682
+    S2 moving_avg4        seed0 tail 0.2207 -> 0.0049  2nd= 0.502 ed2=  0.9034
+    S2 moving_avg16       seed0 tail 0.2207 -> 0.0058  2nd= 0.404 ed2=  1.0487
+    S2 fixed_particles    seed0 tail 0.2216 -> 0.1722  2nd= 0.563 ed2=  0.5997
+    S2 fixed_data         seed0 tail 0.2216 -> 0.1006  2nd= 1.212 ed2=  0.3719
+    S2 moving_K1          seed1 tail 0.2101 -> 0.0027  2nd= 0.555 ed2=  0.6255
+    S2 moving_K4          seed1 tail 0.2101 -> 0.0036  2nd= 0.413 ed2=  1.1416
+    S2 moving_K16         seed1 tail 0.2101 -> 0.0036  2nd= 0.456 ed2=  0.9848
+    S2 moving_avg4        seed1 tail 0.2101 -> 0.0030  2nd= 0.551 ed2=  0.7735
+    S2 moving_avg16       seed1 tail 0.2101 -> 0.0035  2nd= 0.403 ed2=  1.2319
+    S2 fixed_particles    seed1 tail 0.2112 -> 0.1141  2nd= 0.647 ed2=  0.4347
+    S2 fixed_data         seed1 tail 0.2112 -> 0.0948  2nd= 1.126 ed2=  0.3438
+    S2 moving_K1          seed2 tail 0.2305 -> 0.0054  2nd= 0.322 ed2=  1.3075
+    S2 moving_K4          seed2 tail 0.2305 -> 0.0035  2nd= 0.455 ed2=  0.8793
+    S2 moving_K16         seed2 tail 0.2305 -> 0.0035  2nd= 0.489 ed2=  0.7738
+    S2 moving_avg4        seed2 tail 0.2305 -> 0.0051  2nd= 0.342 ed2=  1.3392
+    S2 moving_avg16       seed2 tail 0.2305 -> 0.0034  2nd= 0.483 ed2=  0.8733
+    S2 fixed_particles    seed2 tail 0.2254 -> 0.1590  2nd= 0.572 ed2=  0.4658
+    S2 fixed_data         seed2 tail 0.2254 -> 0.0940  2nd= 1.165 ed2=  0.3595
+
+=== PHASE-11 FOLLOW-UP AUDIT ===
+
+S1  cloud          bulk coherence   tail coherence   field tail share
+    generator              0.3750           0.0658             0.1605
+    particles              0.0724           0.0678             0.1762
+    real_data              0.2553           0.2288             0.2462
+
+S2/S3  arm                    tail end   2nd moment       ed2    score
+       moving_K1                0.0048        0.547    0.8145    3.389
+       moving_K4                0.0036        0.455    0.8793    3.374
+       moving_K16               0.0035        0.489    0.7738    3.036
+       moving_avg4              0.0049        0.502    0.9034    3.451
+       moving_avg16             0.0035        0.404    1.0487    3.692
+       fixed_particles          0.1590        0.572    0.4658    2.230
+       fixed_data               0.0948        1.165    0.3595    1.602
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase12_probe.json sha256=49e6f5f8723139fd...

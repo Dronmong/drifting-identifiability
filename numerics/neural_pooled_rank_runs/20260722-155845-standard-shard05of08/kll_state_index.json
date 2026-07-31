@@ -1,0 +1,3458 @@
+[
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 0,
+    "offset": 0,
+    "length": 1532,
+    "sha256": "d875a8aa343cba9beca76a63a5808149b362864307be079dca85250c2556c15a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 1,
+    "offset": 1532,
+    "length": 1532,
+    "sha256": "24b30d07f583b7990219f3c7618765b66373459b4afa3619fd7d4d06393ca268",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 2,
+    "offset": 3064,
+    "length": 1532,
+    "sha256": "bc8b227da9746445cbef143b2f797705751c0231945ffacbb2107df9428db5a4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 3,
+    "offset": 4596,
+    "length": 1532,
+    "sha256": "5758b990837f73f0f498b9f947d3f85fa4e311f8cc44df6cdaba8af2ec7ef484",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 4,
+    "offset": 6128,
+    "length": 1532,
+    "sha256": "42ae7dcf734c3e7ffab579d85f60a6510a62d66c79370c43e7afe90aedf88561",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 5,
+    "offset": 7660,
+    "length": 1532,
+    "sha256": "0ce06f7bc3001e30252bc8db46fd8e11b442ba309eb87f58cc4f3c6e88257b81",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 6,
+    "offset": 9192,
+    "length": 1532,
+    "sha256": "5ae14e8a99e6106411dedf5287c621e6c0ae739ca6500b9c09abddab955ca932",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 7,
+    "offset": 10724,
+    "length": 1532,
+    "sha256": "0decef731c882da40031d3031f35c97dd9a336fa96682edc492b659e7fcf5d5c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 8,
+    "offset": 12256,
+    "length": 1532,
+    "sha256": "1bff8d8f91c63ff8912754970ba32fc54dd04200aa536c060dba045f0222457c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 9,
+    "offset": 13788,
+    "length": 1532,
+    "sha256": "4a8977c3d3979d0cce08648c36d744af60674b554142a2fa43b41831f8aa90cb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 10,
+    "offset": 15320,
+    "length": 1532,
+    "sha256": "159cea36e9288e15b63508a320fc49b29efcae511f3a2c86b161faa5e57f03fd",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 11,
+    "offset": 16852,
+    "length": 1532,
+    "sha256": "4c0f61c5b69e24279abaa7ed168fac26ba993eff58be07cd555d46819644a9c5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 12,
+    "offset": 18384,
+    "length": 1532,
+    "sha256": "9e43d84bc54aa5405b46893fa18d870a9a6a1df5f7977bdbae1c8bcf5e50173d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 13,
+    "offset": 19916,
+    "length": 1532,
+    "sha256": "b6604528e5a16d9b8ff8df3a16d1aa4e66858d3ec21d41563373f7e14a3edc33",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 14,
+    "offset": 21448,
+    "length": 1532,
+    "sha256": "1de0b1a0681c5c64cf7a93a3a4d0e097904f8ea908a4e668c116f2475359bda9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 15,
+    "offset": 22980,
+    "length": 1532,
+    "sha256": "96dd68a5825ec8904dd946475e9eaf711cea59b86a7fec44ef521bf3f2236f2a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 16,
+    "offset": 24512,
+    "length": 1532,
+    "sha256": "4abb4f2d9c0668712e003ed68d850347107f58077e75630b26903c046a831dd3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 17,
+    "offset": 26044,
+    "length": 1532,
+    "sha256": "70af0a73dca9b354cc8a4c480a9cdf42e99b8402da2885e3f18b904fe9d10520",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 18,
+    "offset": 27576,
+    "length": 1532,
+    "sha256": "6a669e3ba9574a556f6a07e6b372aa2c8f5b201ff65228116e281862dc0bd32b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 19,
+    "offset": 29108,
+    "length": 1532,
+    "sha256": "573e549a90ae92a33bbc432cf3c224332b85bb24169b87f69ac5e3bf92a69fd4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 20,
+    "offset": 30640,
+    "length": 1532,
+    "sha256": "2cecbe4dafb3b55d3a551fad93bb59eb2f77492ee54aa3328ae7cc321cc0ea6e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 21,
+    "offset": 32172,
+    "length": 1532,
+    "sha256": "c8bb27d2407a5204b283187b80699aec84a49d8716308244212dec5c95ef2963",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 22,
+    "offset": 33704,
+    "length": 1532,
+    "sha256": "a00870a60bd5965be6fc6e47b9454fb66b03b2d1d0d26e6de8fabdffb4874166",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 23,
+    "offset": 35236,
+    "length": 1532,
+    "sha256": "42f4e508fa99dff1f9eab60eeed4fd49ee21b25242d391d0185f82ed58864fbc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 24,
+    "offset": 36768,
+    "length": 1532,
+    "sha256": "6036b7e4925c2432afc3adb76957f17cb0e3b4ca44c9dadebe2eee7bcbb5efd9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 25,
+    "offset": 38300,
+    "length": 1532,
+    "sha256": "f5a7e5a56f44604f1d2228e068446ff3a35c721445f5593e06664d79a186da76",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 26,
+    "offset": 39832,
+    "length": 1532,
+    "sha256": "8c7b7e32cbee12b8459b93b87051bf04e86363c997f776fae2895fb66528027c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 27,
+    "offset": 41364,
+    "length": 1532,
+    "sha256": "f6418bb93ad1b0384b8769f9bd5b8119deaecc39b86a7e1243e9063479cf05b5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 28,
+    "offset": 42896,
+    "length": 1532,
+    "sha256": "0cf3989d0716735ec394159cc03439eeb4ed5a1ac655ec5ca5c841da50f70ec2",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 29,
+    "offset": 44428,
+    "length": 1532,
+    "sha256": "059a9deceb2253caad5eed9aaad26072a67c217741fb648c42b671ca5bb09d15",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 30,
+    "offset": 45960,
+    "length": 1532,
+    "sha256": "bea54d1667666be6d0116fd71e2caa1428b1a80c320967d576b4dc0c1e627564",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 31,
+    "offset": 47492,
+    "length": 1532,
+    "sha256": "eec2cd4e0941caf9e22fd70f1cbff821b683fdd8aed457cb64fa542163607822",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 32,
+    "offset": 49024,
+    "length": 1532,
+    "sha256": "1273d8e831f2d40ee447bc48196d66e320d677a7b83935990a98574abc5f4eed",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 33,
+    "offset": 50556,
+    "length": 1532,
+    "sha256": "f7c2af70669c804fd260cda47ff749a3735ea4eaa723761bf759fe3a396c0881",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 34,
+    "offset": 52088,
+    "length": 1532,
+    "sha256": "9514349d108994a1da70787c90d391860f578588231d8fcdc2dfc36e8ce53149",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 35,
+    "offset": 53620,
+    "length": 1532,
+    "sha256": "2a75d5b1c658140124c4a289989502a4e8860e8e297af00d9ce98e24bd5704ff",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 36,
+    "offset": 55152,
+    "length": 1532,
+    "sha256": "d85398a9fefd4aa51deaa63495415223c05c491efe90c9767f11cbf2e6142f32",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 37,
+    "offset": 56684,
+    "length": 1532,
+    "sha256": "4c3ac42eff82cc3e230b4b70e5a7d664bfea11fa0db281d631395c7b09b04bfa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 38,
+    "offset": 58216,
+    "length": 1532,
+    "sha256": "4959a46b71b9c74ab3859bf5a9f6307982a563bd6b21068c6856d3055e46bb5c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 39,
+    "offset": 59748,
+    "length": 1532,
+    "sha256": "3a0be894c2050eac1c8240ef567f21742478782be27aa7a6283c9c326a7cb75a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 40,
+    "offset": 61280,
+    "length": 1532,
+    "sha256": "75feaa0c2998be74dc9b50c353b4e1d81c9d0b28ad17ecabc63e6da7fff06c3d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 41,
+    "offset": 62812,
+    "length": 1532,
+    "sha256": "76877dff2e0127bee975f997ef860c9bb669387c8c7c89a40cd80c9800ed3a9a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 42,
+    "offset": 64344,
+    "length": 1532,
+    "sha256": "d64ee6ae5681d167e801d663547f8546a07b8625e3b8e864cf97a65feb14e70b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 43,
+    "offset": 65876,
+    "length": 1532,
+    "sha256": "350f6cf51b5a95565fcf863b9ed7312008037bb4427b862758ea603b870f66ad",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 44,
+    "offset": 67408,
+    "length": 1532,
+    "sha256": "82633bc08654576d52197502cabaaca5e09d61b89117aac73f1ae2cb30805105",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 45,
+    "offset": 68940,
+    "length": 1532,
+    "sha256": "bc3d19ef3bd9f3f583d4559187cae3e8134c956c33239e4365f4a3e779f1343c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 46,
+    "offset": 70472,
+    "length": 1532,
+    "sha256": "6efe2fb3c5e34ef4b77f3749a303e626c76d6ae4bf1f81104d99dc9b2f5f1efc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 47,
+    "offset": 72004,
+    "length": 1532,
+    "sha256": "5a8b60ccee09eba8999ac9a37749b8afa45eb18333b1571dc000b6ccab149671",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 48,
+    "offset": 73536,
+    "length": 1532,
+    "sha256": "945a9ad2339d6a84ce509c9eb8d4fc02c3ecb62a398c56774310a1086f582505",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 49,
+    "offset": 75068,
+    "length": 1532,
+    "sha256": "1cf20cbdefe3847952a57fd45048731d30b894ef3cde7a1a19bd398fbd90b83c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 50,
+    "offset": 76600,
+    "length": 1532,
+    "sha256": "1a19f06e278117aea43065eb1c190347dcba990bdadce216928c62ef53b1c777",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 51,
+    "offset": 78132,
+    "length": 1532,
+    "sha256": "425ae416aebc084eec58154cb71cbb348728b19333425a07780a7c2a3bb256e8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 52,
+    "offset": 79664,
+    "length": 1532,
+    "sha256": "033752b4912d312b3cf63f8727bd0cbe95f52f82209c0e81c541510916a12fac",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 53,
+    "offset": 81196,
+    "length": 1532,
+    "sha256": "94a744edb90f8ba5bd5a075bbab8d1b4f5a31c1f20aad6262954c13b7bfb364e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 54,
+    "offset": 82728,
+    "length": 1532,
+    "sha256": "96e04e1324650c8b0f350ba823705c4ee28a7fc2c00298affc3a95f854ba65bf",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 55,
+    "offset": 84260,
+    "length": 1532,
+    "sha256": "5fa11149fa22a624a32c43fa76d8d179b26f2ccf2d0c4dd57fb46db52ab8fad6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 56,
+    "offset": 85792,
+    "length": 1532,
+    "sha256": "1dfc67629176f43fd6ee7404e7633c08c09e05e8cdd47fec4d8c56a7fdaa6f60",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 57,
+    "offset": 87324,
+    "length": 1532,
+    "sha256": "999fefd0a866302d4da784b575fe2dcaca8529b96a9c43863a331b4fac671d99",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 58,
+    "offset": 88856,
+    "length": 1532,
+    "sha256": "787ff8a816ed2b700a44065b5c83607ad47562066d4af18d5cde283cb68a38cb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 59,
+    "offset": 90388,
+    "length": 1532,
+    "sha256": "8d0dd81d11d5bb5389c1d0977a5a7b6cad510fe4dcfdd582892d396e6a1d63c1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 60,
+    "offset": 91920,
+    "length": 1532,
+    "sha256": "d0501f4edd345a99c01c72ca9d5cf36dd9642094a61e0b3cedd9ee75bfed8085",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 61,
+    "offset": 93452,
+    "length": 1532,
+    "sha256": "f0676fb26caed1dad6ba07246b02f38331403d4460b3142c664a481e85a084fe",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 62,
+    "offset": 94984,
+    "length": 1532,
+    "sha256": "808d7343d15376b689ea0f387f1bc5448695c5dd54390d747ee1e74c7d9e71ba",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 0,
+    "direction": 63,
+    "offset": 96516,
+    "length": 1532,
+    "sha256": "d540b8294aa445e1d9be8ef2b287ffdb8e00f14fae4c2e52ea62e133e85d7699",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 0,
+    "offset": 98048,
+    "length": 1532,
+    "sha256": "2f7c9fe5ba1d31093c3001e0adf65771c80e98acb7afaa20cbc6eb646b046975",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 1,
+    "offset": 99580,
+    "length": 1532,
+    "sha256": "64f2e7e30c883d42cce0ff4e0e89bdf5cfdf4e13cadea035954ac3fbf166bb2e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 2,
+    "offset": 101112,
+    "length": 1532,
+    "sha256": "491e315d9a19ff4992cc2104a86b28c5c5516dd44f3f9bf57f04c9b2d97cdda9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 3,
+    "offset": 102644,
+    "length": 1532,
+    "sha256": "17f01a527d8b475d21323d6ac00adbd28032b2be5ead5ab49403324f0c71e8a9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 4,
+    "offset": 104176,
+    "length": 1532,
+    "sha256": "34446efafae81961bec5e8007474a8b877efa7f3acb065954c46a1cfb92a3ca1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 5,
+    "offset": 105708,
+    "length": 1532,
+    "sha256": "c262c18d217abf670d8e3ba0198512143c7356f9bd42c380b0baa5d9207c8f2d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 6,
+    "offset": 107240,
+    "length": 1532,
+    "sha256": "865c572c59dae8a1ff0a1c709ea1590fade0c48f6b5f3cccdfaea2f55f43b5ad",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 7,
+    "offset": 108772,
+    "length": 1532,
+    "sha256": "1862480b354c6864d3b1eaa3ca65885da871e5e1fea2637e954c32fabdee4955",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 8,
+    "offset": 110304,
+    "length": 1532,
+    "sha256": "f110c3cc0f9289505bf387e25ea9e4e8f2ae51dc40c638d1a60d81b1a616dc44",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 9,
+    "offset": 111836,
+    "length": 1532,
+    "sha256": "e2c4c066b0a1007597144ca64f9fb68d6ca113271454c742f1c15947eddbfb08",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 10,
+    "offset": 113368,
+    "length": 1532,
+    "sha256": "41332d96588d39327653a0d014ccf470f2ec24df9776415c74f7f6462013a83f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 11,
+    "offset": 114900,
+    "length": 1532,
+    "sha256": "a22166e5e7f3d1ba6332d22cce10b0595c46dace7d917bdf92053e19d10f73ed",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 12,
+    "offset": 116432,
+    "length": 1532,
+    "sha256": "479ae741daba73d9ae05153a78b450eb6cba185a15c8205ebc9b0652f12f6e3e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 13,
+    "offset": 117964,
+    "length": 1532,
+    "sha256": "5dbb77e458a793da0cdae9fdd354fd2d0c9fb2a38cf0c4bfc30a4dc6258eb3da",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 14,
+    "offset": 119496,
+    "length": 1532,
+    "sha256": "879306a09a5474bd9916c1929de62c3bb1b368f8047cabbf1a92e852705b7905",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 15,
+    "offset": 121028,
+    "length": 1532,
+    "sha256": "66c31604e1a7ff209be8a8b33b34a98a4185655d71ffcacb31e0f7f42ce84b8d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 16,
+    "offset": 122560,
+    "length": 1532,
+    "sha256": "f43a8e4a38d5bca77cf13c2e738b0d005e2d65e8300906bd9e23809d8ea62d88",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 17,
+    "offset": 124092,
+    "length": 1532,
+    "sha256": "cc2ae74b3661da37b767cc69dbd34e40d4050d65094b5583e0cb7231b6ea527e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 18,
+    "offset": 125624,
+    "length": 1532,
+    "sha256": "9d82b1b669c80af8d47536ca97dd14f51f8738df514a64e0ef91f3b44aae9621",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 19,
+    "offset": 127156,
+    "length": 1532,
+    "sha256": "73c254c558b19fa5f49c65938d34286cf437498e775cc88d9ae5886c9b80b27f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 20,
+    "offset": 128688,
+    "length": 1532,
+    "sha256": "e5bae9071f92fdc52c0c3436afb55f100eb97da5e438a9a9dd5364357c863f53",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 21,
+    "offset": 130220,
+    "length": 1532,
+    "sha256": "58f949c7c3813cef3ba7fd91433c6936f4259c2727283d2c89c0512ff881172a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 22,
+    "offset": 131752,
+    "length": 1532,
+    "sha256": "9925376055998f8e06388939f89ad2d6da82ffb85900480bce7e0ba8131b862b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 23,
+    "offset": 133284,
+    "length": 1532,
+    "sha256": "178743d781ba7bcee436dfe8393790d5d22a5458d51dff7252be638333d2ca06",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 24,
+    "offset": 134816,
+    "length": 1532,
+    "sha256": "09ee82d7ef4bb366c341970bd6bc75a7d25ed8c2d880e118004ec43813ea38e0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 25,
+    "offset": 136348,
+    "length": 1532,
+    "sha256": "3c1d34415ac7cf1ce1644d3b634832674c77858342ea27561a5dd79455853faa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 26,
+    "offset": 137880,
+    "length": 1532,
+    "sha256": "36c36d5be869a83c6878fb95c032c4b3be68cb82374c7075b352ea7d519ada0c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 27,
+    "offset": 139412,
+    "length": 1532,
+    "sha256": "5f4b3b8313586ef60cd64c30c057f88583741392bc1a332ad49d1a315a8665e4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 28,
+    "offset": 140944,
+    "length": 1532,
+    "sha256": "e1431381ce8444ff04a9575014d8ebd58cd6c86cceb036ad3bb7c856914d64e7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 29,
+    "offset": 142476,
+    "length": 1532,
+    "sha256": "2c9326de0249b0a30d2050ea629ddd35ed08652812cadacfbc8251716e68cb38",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 30,
+    "offset": 144008,
+    "length": 1532,
+    "sha256": "43a94401558bf77b73d06fc1782d532af93a60929eb5a69c3419fe7c433fd3c6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 31,
+    "offset": 145540,
+    "length": 1532,
+    "sha256": "fac95e1e3dd82c805fe6ec526c965ad27593c44cd691a6034a0c6bae93f42172",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 32,
+    "offset": 147072,
+    "length": 1532,
+    "sha256": "41f099ac06b3f3cd2306dba9006465ddafd3a084a3bcc66b219f7648149aab79",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 33,
+    "offset": 148604,
+    "length": 1532,
+    "sha256": "f450c6cd621012c5e4c3cc4c9b3c0c7b9ffc1267a29ac7676b351cc922cb3ef0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 34,
+    "offset": 150136,
+    "length": 1532,
+    "sha256": "6594b267ecf9e5ad2ec4e912f547f147edcdb33aef98a93c58e316cfd0365f9c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 35,
+    "offset": 151668,
+    "length": 1532,
+    "sha256": "e0cd5ff91d02fdbc368f60ef9a03ef174eb1073c2e559f3eb407ac8650563ce3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 36,
+    "offset": 153200,
+    "length": 1532,
+    "sha256": "be79463d7f76e795a0f419e5b3b758e3fc1350218467517cdfeee0dc3686e96f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 37,
+    "offset": 154732,
+    "length": 1532,
+    "sha256": "ca33fa16a2d2bd684f951e90c70b7a3dda7b700eff5eb46c821edb77f5e37e53",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 38,
+    "offset": 156264,
+    "length": 1532,
+    "sha256": "bb6aae43ffd02358143fca704307ead50b79ee3692f7411a6dca6a5e454ba5b5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 39,
+    "offset": 157796,
+    "length": 1532,
+    "sha256": "40a32d4904a02fdacdeee9fec88477cf92311f64ff5527d1bec4164f36e6f072",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 40,
+    "offset": 159328,
+    "length": 1532,
+    "sha256": "ece1d732e36bc6d7e3e62451f364c9d3a115d4050a62949ef8256c6ef0d86aa0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 41,
+    "offset": 160860,
+    "length": 1532,
+    "sha256": "e68789ed13c04ff69d0df7f034d6c00886c49d38dff789cc01a638bb32dfdcf9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 42,
+    "offset": 162392,
+    "length": 1532,
+    "sha256": "48501f127523facb61b080cd7c1b48ff4f4e661901efce6a570c503667dfb51f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 43,
+    "offset": 163924,
+    "length": 1532,
+    "sha256": "2fbf668796028ed40e852ee84bced9bff38af0815137238b509f5d79f4ec29d8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 44,
+    "offset": 165456,
+    "length": 1532,
+    "sha256": "e08049eab98ecc1d9a9bb586edaee2784939e5e893f147328919e72594cc1fa6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 45,
+    "offset": 166988,
+    "length": 1532,
+    "sha256": "dea5ac777dd67a2f846327b133d21bdb9d760fdbe0df5ff214752276f2abeee2",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 46,
+    "offset": 168520,
+    "length": 1532,
+    "sha256": "60b6bffbf601c8e23880b5d5808d75f0841d3a7b120ff1a04f14940c5bc825c4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 47,
+    "offset": 170052,
+    "length": 1532,
+    "sha256": "8c2e3dce4d14ecab4522f59e3d2b00a2fa04a42782b8d57d9421ea3855822d02",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 48,
+    "offset": 171584,
+    "length": 1532,
+    "sha256": "703d8f2e43d15016be62620228c741c10efb5e89a95b045e019f1d1a7e94e47e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 49,
+    "offset": 173116,
+    "length": 1532,
+    "sha256": "a57d59190f9601be21bb633e074ff72880170fcbf982108383b82f505398bf5b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 50,
+    "offset": 174648,
+    "length": 1532,
+    "sha256": "31c2d4e76c3f74002dc28b7e6da916f2f99af834608ee7e30da81ab5bc6f723f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 51,
+    "offset": 176180,
+    "length": 1532,
+    "sha256": "a4fbd0a3dc97df7289d44b3330a8722a7d67e8952a6929ddb9c6072ed97b3930",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 52,
+    "offset": 177712,
+    "length": 1532,
+    "sha256": "ad44118de8cad0cd3c451ffdf399d5a2b293220f47549ed18fd869a0f013f5b6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 53,
+    "offset": 179244,
+    "length": 1532,
+    "sha256": "f5d247165e83d3ef671b5fff19183485c6c1e3ae2381b453cbbc43a1fde9d3d4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 54,
+    "offset": 180776,
+    "length": 1532,
+    "sha256": "aecfc1bcb70794d795e50c39bdcf37b8f0c28a50ec73170e796fc36c0caa2b20",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 55,
+    "offset": 182308,
+    "length": 1532,
+    "sha256": "b3ee7ceab65efe88884733550bc4c27526b3e489eedb17e3f5a960f114f7333a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 56,
+    "offset": 183840,
+    "length": 1532,
+    "sha256": "9976a15f2bd826cf8a173d73d4553290a7e635fb66f1f705d6bd16d7ae721435",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 57,
+    "offset": 185372,
+    "length": 1532,
+    "sha256": "31608d456f57a92bbe1c7520dd688e553cf7c786c0afd837470949706db3f7d7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 58,
+    "offset": 186904,
+    "length": 1532,
+    "sha256": "3f4c8fd3937c8a78c3f6262dfcb9430a9fbbe431e069946f59b8578f51b4e7fb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 59,
+    "offset": 188436,
+    "length": 1532,
+    "sha256": "e9cb560a9926dc4116cfbaaa753f25c7ca18c8c14d58e1db1896ee1cc1de2f31",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 60,
+    "offset": 189968,
+    "length": 1532,
+    "sha256": "6d9b97f84eb29ed6a6a99e103970e1b0dbd517ce4f586aa6386de6926768ef06",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 61,
+    "offset": 191500,
+    "length": 1532,
+    "sha256": "93c881fe7e59d98ea331c33eb4042af829a9b09644103ae9fefcb881e9f4801c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 62,
+    "offset": 193032,
+    "length": 1532,
+    "sha256": "5d313fa72e5f4b38a8b99032cfe002618b37133daa9eb61b7be40b39aa75022f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 1,
+    "direction": 63,
+    "offset": 194564,
+    "length": 1532,
+    "sha256": "0235db8e58601bb059367bd0787521c59712ea9e7761c26abba6bfc9ad84cdee",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 0,
+    "offset": 196096,
+    "length": 1532,
+    "sha256": "f33caeb91fc2e72dfbd3749626d2439ea8959eb3e9fc80cf16c0736e97420747",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 1,
+    "offset": 197628,
+    "length": 1532,
+    "sha256": "de0d8327c7c325fe440205dc0fcc5fb724483a458b6418c74c1730182ed08b9f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 2,
+    "offset": 199160,
+    "length": 1532,
+    "sha256": "9bb34eb19230ebda552cc7ad225aeb54e70f4a60f41ec54d4bea8a51b5e1738a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 3,
+    "offset": 200692,
+    "length": 1532,
+    "sha256": "3af292091e7f2ef2986ea088e66f84885548c8f7d84f37760dfb508add0407bc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 4,
+    "offset": 202224,
+    "length": 1532,
+    "sha256": "7a8c73f345edf0519683702ac0b5e88f2aa30046a46a960fcf4558ccb5d0d3d3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 5,
+    "offset": 203756,
+    "length": 1532,
+    "sha256": "5e209372b17bbeb0f337e3961c5e1f6e8843c27da0accaa87e71599972ebb2ff",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 6,
+    "offset": 205288,
+    "length": 1532,
+    "sha256": "f2d60aac69829fe3feb72ceaced966439e9546d560b2081e70bef78203e9743d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 7,
+    "offset": 206820,
+    "length": 1532,
+    "sha256": "eaf8efa8edbca4e416707888dde907dbb3a4a110f7b801d1b0c8a6f5ac3f1f4e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 8,
+    "offset": 208352,
+    "length": 1532,
+    "sha256": "ef56c000c8cb7eb541c9180d40c754981c86b694253e6204ae9fce01e39f9e0f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 9,
+    "offset": 209884,
+    "length": 1532,
+    "sha256": "33819fee8d497bbf1d8eb136d512ee54e4e47791e8f1a7d7e47a299d466d3e6b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 10,
+    "offset": 211416,
+    "length": 1532,
+    "sha256": "336c4c6c0513aa2f47ae01fe5c1ba4b7773662036ac92ccdc0d8c8630c58015a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 11,
+    "offset": 212948,
+    "length": 1532,
+    "sha256": "e94948c8c7dd69ef1c8c6d54ab2b77161ed1bcbf20fe913e8a9b213efc51c3a9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 12,
+    "offset": 214480,
+    "length": 1532,
+    "sha256": "e3864772a179c9ef5dc27509c9b97406a703eb8b342185e8192c4644482e5ce1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 13,
+    "offset": 216012,
+    "length": 1532,
+    "sha256": "e8b6c312d097cbd7e879b558958349d2d056712fc03c8e27b8acf02ea57a966d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 14,
+    "offset": 217544,
+    "length": 1532,
+    "sha256": "29c50f54138e18387a16721dcd45ad46f0a8c15c705897a4b548912f0738cee7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 15,
+    "offset": 219076,
+    "length": 1532,
+    "sha256": "5c8c98d5e91e8c0bc1c557541d62eb4bffbfebe747e059fd840747eb79e8f8ae",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 16,
+    "offset": 220608,
+    "length": 1532,
+    "sha256": "2345f9d8ecc2406f7649a3bd3d3c2cde22c3462073440e554d618ebd95bc612a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 17,
+    "offset": 222140,
+    "length": 1532,
+    "sha256": "91ee235fee92fe4a4994728f3f3ac2472923087132cf692660c953a2ee3ce39f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 18,
+    "offset": 223672,
+    "length": 1532,
+    "sha256": "c2d6340e2094c54dedaa89cf38d6aac2faf64d1ab317e30b932eb4edab13a43a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 19,
+    "offset": 225204,
+    "length": 1532,
+    "sha256": "88ed68bcad7dd28ad20168fbf43d2f2b3caa956656865caa1656b6281123ac1f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 20,
+    "offset": 226736,
+    "length": 1532,
+    "sha256": "a9c5c1a3b6610c862991a68d1043f1b2e6fab9f6dc274087b0c83f746cab0bc2",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 21,
+    "offset": 228268,
+    "length": 1532,
+    "sha256": "935b096ead3359cbff18fadf295b3aac12631735be928aaf42a2ba5a667b67d7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 22,
+    "offset": 229800,
+    "length": 1532,
+    "sha256": "ba57b1b1b819bf459a5bf4c83fc0868c6a24d7b651170be3fd8b313122e56f11",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 23,
+    "offset": 231332,
+    "length": 1532,
+    "sha256": "d0996c4280034d09b2510a2f9f63767bc528ff70f8a101fa6215580dc2bb23ec",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 24,
+    "offset": 232864,
+    "length": 1532,
+    "sha256": "01ec4845e2dd361ebadc96f5d787e244558b42bfab4f33887cac8f0e28597c53",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 25,
+    "offset": 234396,
+    "length": 1532,
+    "sha256": "22c47f38e2d459584b3ddbbfba4cef6b744c466a3de8760d6ab90f375260ba29",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 26,
+    "offset": 235928,
+    "length": 1532,
+    "sha256": "3c3222728dd15c0703c7762905f8c1c1ae4851fcd791860402888818bad44fc7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 27,
+    "offset": 237460,
+    "length": 1532,
+    "sha256": "ec560c443cd3a79b4b6f8c4edb88562f5a55af2fd0d2b8dd385c2cc1ed80127b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 28,
+    "offset": 238992,
+    "length": 1532,
+    "sha256": "c802bebe85556fa620f4ac301e10bb0b7223bec04d419b4476496653e55b7aa6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 29,
+    "offset": 240524,
+    "length": 1532,
+    "sha256": "be6e477cbb9975e628c5fb230b12df55669a6f23c5b62bcf3d9093cc2925a0f9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 30,
+    "offset": 242056,
+    "length": 1532,
+    "sha256": "c04aeee6ff37085519b54fcff14102ee59e426388c5c91f310a605be3c56ddd6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 31,
+    "offset": 243588,
+    "length": 1532,
+    "sha256": "594f8772579ab0c5c23e3d71dce419953bf00bb719f65ece987cbd5786d14fcc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 32,
+    "offset": 245120,
+    "length": 1532,
+    "sha256": "4107f2a71917f68ea79598d2e5141a6122a01c0835f871ecc3e782f6ba7923c2",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 33,
+    "offset": 246652,
+    "length": 1532,
+    "sha256": "71b61d8ae4bb2b20961799c69292861ce66e40ee10ab361f95933caf8fb6fa89",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 34,
+    "offset": 248184,
+    "length": 1532,
+    "sha256": "3112cd7bc259b515bcbaa83913ad196f4560ebac135326ff0d0a518bdae3a7a7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 35,
+    "offset": 249716,
+    "length": 1532,
+    "sha256": "0b7d8f1229d2dfafcd46fabfef30e38b9239c2b0365b01470c4e0dc19a9abe76",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 36,
+    "offset": 251248,
+    "length": 1532,
+    "sha256": "2320ad37a85834d3e397ddcd96994757e60e3dd594533dba0792d0b58e3d2610",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 37,
+    "offset": 252780,
+    "length": 1532,
+    "sha256": "8c22776d14a749634782fdd627b78ec7a1fcb39f03a0227fb09fb4c278c60115",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 38,
+    "offset": 254312,
+    "length": 1532,
+    "sha256": "f62a398c6d8b83dc325e98229af640aa221e451d2abcd9f13dfc2a3da9ed111e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 39,
+    "offset": 255844,
+    "length": 1532,
+    "sha256": "0bd5968e3f653c568eba58700f53551130debe44ffd45b29d8615dbb664f5508",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 40,
+    "offset": 257376,
+    "length": 1532,
+    "sha256": "743b9ee6c1ef18771edd0f891b59daa396e056eeffdce01cb4fdd00989776dff",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 41,
+    "offset": 258908,
+    "length": 1532,
+    "sha256": "d4d8ebcbf9898f199ef925e6d9e39333e6ba1b1c15c1c24a79dbdab19d00767a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 42,
+    "offset": 260440,
+    "length": 1532,
+    "sha256": "aeb077a806be9051b0de21fa13d838f3e47c04eb0aaf723ccacad3ea97a7afd8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 43,
+    "offset": 261972,
+    "length": 1532,
+    "sha256": "886396a0fe47d4f816618ec226f41ed5f939403e128b962cba5c19738be7b997",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 44,
+    "offset": 263504,
+    "length": 1532,
+    "sha256": "cc5a439caef73e27ee8519e2a1a918d3022f3cdcaa83c666bd9cadedaf993277",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 45,
+    "offset": 265036,
+    "length": 1532,
+    "sha256": "b88e3a3463fa833dbea87cb4f133bc67f19bdf9201a1ec73b89a3a2aa7a15450",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 46,
+    "offset": 266568,
+    "length": 1532,
+    "sha256": "49f0a657d364b379a7ebdf27968131dbaf94a74f7f296525d7295dca5599b02b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 47,
+    "offset": 268100,
+    "length": 1532,
+    "sha256": "cc77ed4e68e2fc8f46df110d544fa89c67951cf13a43a0904cdde9d47c55d08a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 48,
+    "offset": 269632,
+    "length": 1532,
+    "sha256": "970af548658789b8d738a03f208891950024a7b61a95d88b740130d05a17665b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 49,
+    "offset": 271164,
+    "length": 1532,
+    "sha256": "03df9e2232c16068fef04f4b51fbd2e242ae0240c4ef164c41457e59577d8779",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 50,
+    "offset": 272696,
+    "length": 1532,
+    "sha256": "06861e482b538c1d7e97cad2072d86c94aec301990ae5f8971a574b6334c1b67",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 51,
+    "offset": 274228,
+    "length": 1532,
+    "sha256": "21b640cc1193017176513cabfc1e85890555b3b6ede7e41f97a369b13da0ea49",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 52,
+    "offset": 275760,
+    "length": 1532,
+    "sha256": "ad62d1e98545428156c7644d729fed3ee597b2bd09126eb31ac10add84587ead",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 53,
+    "offset": 277292,
+    "length": 1532,
+    "sha256": "8b396d194bc0d778b6053cdd4280e0042a0af4ff39f51b81f921b739265f00f3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 54,
+    "offset": 278824,
+    "length": 1532,
+    "sha256": "3b205342394ebd0d6ab3dc4a21cd5bc3024b115270579086529ded015124c91a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 55,
+    "offset": 280356,
+    "length": 1532,
+    "sha256": "f90fde85dd1b21329a72b1a16efb51112ff8057efd718e6bdc51d87bb606b449",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 56,
+    "offset": 281888,
+    "length": 1532,
+    "sha256": "fee312f7e8f59437b2a6ba56a64c5ec9e904fe551c4c563b9c8c04c2cb0fdba1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 57,
+    "offset": 283420,
+    "length": 1532,
+    "sha256": "ef39131290dbb802b2dc6391d7c50f5737b7f190b9d0a3ba1ff781164ddcd2ee",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 58,
+    "offset": 284952,
+    "length": 1532,
+    "sha256": "db69043a72a6ea8af5debf57c12bbc2a87ce5d55dae6dbf6034f67f71cce1c58",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 59,
+    "offset": 286484,
+    "length": 1532,
+    "sha256": "3a3853caf0cb58d4ac741721d1c8333601a6482df82ee216d8605a3100c510aa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 60,
+    "offset": 288016,
+    "length": 1532,
+    "sha256": "246e359ade3c6ec66c0a7bff91df04a037434ab6b096342e71cb2908b3713cca",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 61,
+    "offset": 289548,
+    "length": 1532,
+    "sha256": "b240dd1a96f6713f412a8c4e738c4012599cf58e4076f8f06fb7e7288d8149bd",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 62,
+    "offset": 291080,
+    "length": 1532,
+    "sha256": "ed2366b99de9c0d572f63c0e6e3764cf53957ce31904d2adcf17519c3460bd4b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d4-rare-gmm",
+    "replication": 2,
+    "direction": 63,
+    "offset": 292612,
+    "length": 1532,
+    "sha256": "69ba93ef823a5dff7bc60b533820a46e4f5b28ed1578f1540c94b7662ad48a75",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 0,
+    "offset": 294144,
+    "length": 1532,
+    "sha256": "383d6f531cccc1680ab560efb3c05fe6cb6d39bf9730e22df5ac8d2c049ff5a1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 1,
+    "offset": 295676,
+    "length": 1532,
+    "sha256": "9ca0d16866d3f1dfc9b09a8e835c6215f33fc2d25d11921fbf709c9f3f718a55",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 2,
+    "offset": 297208,
+    "length": 1532,
+    "sha256": "4e9137df20cdc99b35a8df6248202814dd3bb38266453abdd2ae4bc6e8f88ef0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 3,
+    "offset": 298740,
+    "length": 1532,
+    "sha256": "6b5e3307817370905e86650b994fd56aef0814c778209b0c7d7f33b99402b86a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 4,
+    "offset": 300272,
+    "length": 1532,
+    "sha256": "5aa05d44342cc3f5b839cf690000ddd1f3f6fd4b739950d7368227ecdac5677a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 5,
+    "offset": 301804,
+    "length": 1532,
+    "sha256": "e195950817017c5378642c721e08c6a3c345d89d5bc8d314fc6b6cecaedad819",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 6,
+    "offset": 303336,
+    "length": 1532,
+    "sha256": "1e432a1c354c287f2f2f630bcf861ce871347756252d446f50f31502de0236cc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 7,
+    "offset": 304868,
+    "length": 1532,
+    "sha256": "d4f7b5297042b558d2d283f07ba94bb22513f2392530ba33b32d055b40c5e675",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 8,
+    "offset": 306400,
+    "length": 1532,
+    "sha256": "2b0a179bf1c3cb70b733fe833ff7ab86f6ac92f12dbd958079697cf39ab35142",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 9,
+    "offset": 307932,
+    "length": 1532,
+    "sha256": "472a7b6ff5bebabca23b6e68237fe82209e9a936cc315ee8f88582b3e690a3c7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 10,
+    "offset": 309464,
+    "length": 1532,
+    "sha256": "a6d828c05da6885669ce085027df9a4f240c70a04aba1d6647727aa631aaabc3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 11,
+    "offset": 310996,
+    "length": 1532,
+    "sha256": "e1b67de234dbd5093aecff88d16bbc97de71603c3dd5b5d0bf4b3d42a4fa5bfb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 12,
+    "offset": 312528,
+    "length": 1532,
+    "sha256": "6f8fdadc3fa6c55910ad21aceca234c855302cd24b608f59648d459b7d30bb55",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 13,
+    "offset": 314060,
+    "length": 1532,
+    "sha256": "80b470ff7872c84aa32a92794dec28da4937d1c14ee4d4f5cfbfa91a74d812fb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 14,
+    "offset": 315592,
+    "length": 1532,
+    "sha256": "d9cfce9e40bf22955128ae48875fe75f884b3d4a42c27f6e7ecc21e4c66f7c9f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 15,
+    "offset": 317124,
+    "length": 1532,
+    "sha256": "94790fb5fe38437976406d09bc2ba3a48262489937bb6db52a0c3a0cf3530cdc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 16,
+    "offset": 318656,
+    "length": 1532,
+    "sha256": "5638bbc6dde8a3752489cadc2cd49ee978618810866f4e3942a8caab2f8f11d1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 17,
+    "offset": 320188,
+    "length": 1532,
+    "sha256": "f5fb2c38eee36ee7defce492ddbc8c30293a7d122b37f2ced032d48375d56154",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 18,
+    "offset": 321720,
+    "length": 1532,
+    "sha256": "f05955ed30653117c57e311d9e89d6f926bd22986d855ab7d4e2549be07cdc86",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 19,
+    "offset": 323252,
+    "length": 1532,
+    "sha256": "4e335105d49de5896cd085988e0a9781815483ca1bc84c751997b5edb9628e9d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 20,
+    "offset": 324784,
+    "length": 1532,
+    "sha256": "30fe7466704012b7fe8984761cbd37fa324b9d898e078f3fe049b1be264f6aab",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 21,
+    "offset": 326316,
+    "length": 1532,
+    "sha256": "fc1c009c9dcfcff84b5db49d4d24f6498512bd01066fcf44919e9b0572138b7f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 22,
+    "offset": 327848,
+    "length": 1532,
+    "sha256": "3e2f5cd0681303e7c2ab134650c065788bd9215b9190fd797b164ec7ac774b4c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 23,
+    "offset": 329380,
+    "length": 1532,
+    "sha256": "b3b0b90fb145d50dde1d697a09a7feea6830076b44b5f5a41a101eca736215f9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 24,
+    "offset": 330912,
+    "length": 1532,
+    "sha256": "97c3998eb5bdf44df0cfdfd43956a1c5b3441159c41521b50fec7be6df666861",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 25,
+    "offset": 332444,
+    "length": 1532,
+    "sha256": "829b12047447da92cbe5b957024a1570922972803eceae71e485addfa4c2f158",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 26,
+    "offset": 333976,
+    "length": 1532,
+    "sha256": "caea60c44bb13b2f7244e19102e37beee3a7aaf8ec5f9fd71c6e247c367a259a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 27,
+    "offset": 335508,
+    "length": 1532,
+    "sha256": "ae4e7a18e9a496f9fe7beac50808c303e7de9d6c2bcb5f61f7c4df40b659b03b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 28,
+    "offset": 337040,
+    "length": 1532,
+    "sha256": "151ff76c6729416bfd7aa8b3aaefc63d7c3ef765c3c7d33984b7f08454ff7ea7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 29,
+    "offset": 338572,
+    "length": 1532,
+    "sha256": "c48655d254932f78e5e1ea73f585755adfe25d1a5493a93568c5d55bbd17559a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 30,
+    "offset": 340104,
+    "length": 1532,
+    "sha256": "65840b473d8a3adb964c06b34ae05cc8ff6222776fd6d30e77016eb6d9eec033",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 31,
+    "offset": 341636,
+    "length": 1532,
+    "sha256": "b2aa45bc5617e247ea6e70107c3ee2eccb08fb611f20037f42ac2802180086bc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 32,
+    "offset": 343168,
+    "length": 1532,
+    "sha256": "d7c8527757d66a960a1eabe6d8b6b15f14833fedaabe8438ffc24035cd798c39",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 33,
+    "offset": 344700,
+    "length": 1532,
+    "sha256": "ce9f215666f1d6a4f8fa3596e1a5b05d5448860e614b8fe231b783e152661377",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 34,
+    "offset": 346232,
+    "length": 1532,
+    "sha256": "f1935c0395a079628d0a4dd9721546257dc542e5362f7b1d25f39e445ead881d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 35,
+    "offset": 347764,
+    "length": 1532,
+    "sha256": "050ef917db847db48970ae4ca0db56b4fca63badaad230533db1d13186c70331",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 36,
+    "offset": 349296,
+    "length": 1532,
+    "sha256": "8dac4ccf9fab2ea3f3aea124bb4807d361ecf871934ff550b0d7d4bad9c00b68",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 37,
+    "offset": 350828,
+    "length": 1532,
+    "sha256": "272215ecbad719b6dd78e7f54fa8dc0b46d006827e50d1636a0a86782369a57a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 38,
+    "offset": 352360,
+    "length": 1532,
+    "sha256": "34fce6e31a21e3fa261e3247f2a658a0550256cd7297dc5c08aeb7b61b2801aa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 39,
+    "offset": 353892,
+    "length": 1532,
+    "sha256": "3ba218df5bdfc5596238745c070e485bcb029a779cb88b3a23a5bba024472709",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 40,
+    "offset": 355424,
+    "length": 1532,
+    "sha256": "6a85a8b9dbc35ce9de02a787fd83cce586b6aeac18ff77aa203babbb6f7c5b39",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 41,
+    "offset": 356956,
+    "length": 1532,
+    "sha256": "aab038c74959daf340f1fd599ede33f585e0fdbc7bc418d424602fbd230fa8ed",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 42,
+    "offset": 358488,
+    "length": 1532,
+    "sha256": "df22bec4e6711dc7e21968bfd2c8199aa2ce4026e7df1d67d6860b5206908de5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 43,
+    "offset": 360020,
+    "length": 1532,
+    "sha256": "2a2261c9265a876a3337a3b2a8ee58a3bc9c47c495398ee96c587a6171af3068",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 44,
+    "offset": 361552,
+    "length": 1532,
+    "sha256": "50c2c1c9e0aa997258f97ec6954ba8606322fb8b91de2396915f339458592e80",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 45,
+    "offset": 363084,
+    "length": 1532,
+    "sha256": "b319b2b84302e059395038c47a08e514bb077d9d45249bde18de87001af14e00",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 46,
+    "offset": 364616,
+    "length": 1532,
+    "sha256": "fe0933bf7e0138b142fec2bd0ff8b92ae4a7e0154751d82693c334d06f6a0737",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 47,
+    "offset": 366148,
+    "length": 1532,
+    "sha256": "de8eff49e2a126b2da146c677c2ab6ca8e6eee272631ede438650a77fbec61eb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 48,
+    "offset": 367680,
+    "length": 1532,
+    "sha256": "b333baca94379b0140554414c50d4d57f28073a1caf6440ff2d7ea6ac621e0f3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 49,
+    "offset": 369212,
+    "length": 1532,
+    "sha256": "ca48c18254c2331763836abe6aacb4db7c35cfd04965f649e8b04cb3ce18a5ab",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 50,
+    "offset": 370744,
+    "length": 1532,
+    "sha256": "3d3b22d204696a0cd4a732045fd2b85d0ecb683454a5a148285712fec6230953",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 51,
+    "offset": 372276,
+    "length": 1532,
+    "sha256": "101a395e0b7ce19cf30ded45713c8c9d8dfc55bf98c57b8e967a56240b0066dd",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 52,
+    "offset": 373808,
+    "length": 1532,
+    "sha256": "bc880bdc3e8789cf8317de5d5a46d4ba0c67ea5140c18246cb1deedc860f808e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 53,
+    "offset": 375340,
+    "length": 1532,
+    "sha256": "720596cd02beacc7aa3a0537aecfcd66310c023883d705d417283cd482df7003",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 54,
+    "offset": 376872,
+    "length": 1532,
+    "sha256": "4511a1f1595d046c4801e262f5ddf2d3d3c95a2fc83cd5b6c3a341364bcff1e0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 55,
+    "offset": 378404,
+    "length": 1532,
+    "sha256": "c5b28dd78da333b1e958db5d2e92081e6b77182f32649877deee1630e8d15795",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 56,
+    "offset": 379936,
+    "length": 1532,
+    "sha256": "343c9667ea48a677ef58ac94dd9e584f9112347dc4e45a98fe101c81174db62d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 57,
+    "offset": 381468,
+    "length": 1532,
+    "sha256": "c16ee38ace3b73b693db5722be838bed7d4fb10f07f23163206755035e0225ae",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 58,
+    "offset": 383000,
+    "length": 1532,
+    "sha256": "0c97ff6614562675f99e45fb05d8e6eed772d252d2024383a125158839b82dcb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 59,
+    "offset": 384532,
+    "length": 1532,
+    "sha256": "d2efa822db218df6c8300d064e338c948df024b8a8f71664b13d75d809688956",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 60,
+    "offset": 386064,
+    "length": 1532,
+    "sha256": "95cf66b9bae67b7876f297adb1a355180488261f647d59d45270549d89e010c5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 61,
+    "offset": 387596,
+    "length": 1532,
+    "sha256": "4608d3fd0e907513e81fafcd275460d80fe60642a1f451e723887da38fb14104",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 62,
+    "offset": 389128,
+    "length": 1532,
+    "sha256": "700b32a66abd668e03ee53cd54e9c612c94a7743d186b80f4c49b461e9f212c7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 0,
+    "direction": 63,
+    "offset": 390660,
+    "length": 1532,
+    "sha256": "001461ee68f5b93a78f5980544097505bfc3a4dbcbe0fd927e86bf5a30b2fb4a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 0,
+    "offset": 392192,
+    "length": 1532,
+    "sha256": "f777bfcb920eee7fd2042231c14bbbb6c9986da622c8949d225d1a3e76a26aee",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 1,
+    "offset": 393724,
+    "length": 1532,
+    "sha256": "ca6d9aee867cd540f175a92a2e0dec571c50009579c16e5a98f51697bac88fb1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 2,
+    "offset": 395256,
+    "length": 1532,
+    "sha256": "3d8e74b3afa845831e93722a9fbe975426b4bd16bf7b97a61b8f8dd253fcab6b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 3,
+    "offset": 396788,
+    "length": 1532,
+    "sha256": "0fe9af982d50d128f30e1ae959bedbd63d101283b28fd514df3a6df502942238",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 4,
+    "offset": 398320,
+    "length": 1532,
+    "sha256": "54c7301775cea51ee5fde250b28627774b851b7ebb2d91d7860bb8084af8b0e7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 5,
+    "offset": 399852,
+    "length": 1532,
+    "sha256": "de280ea6c41918fa741859a74e3d5bb47bc14aee401f2b2d9c8c54bfb752d743",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 6,
+    "offset": 401384,
+    "length": 1532,
+    "sha256": "29efb86bac76291687cef6f743c2c29b1575cd6507155e34e8b17f071cd5239e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 7,
+    "offset": 402916,
+    "length": 1532,
+    "sha256": "3392ce764e2e06cc736e89f5db81ff0862e74c337f398bd6371f9d6c9f4e886f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 8,
+    "offset": 404448,
+    "length": 1532,
+    "sha256": "4a9380645e7255fb7622e27d5ed84250e6f4d880bc1319ed70247b48727f378f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 9,
+    "offset": 405980,
+    "length": 1532,
+    "sha256": "307244489de1ebd50286d4555b622a06469e8fd88fa3d173f05cd427888002bc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 10,
+    "offset": 407512,
+    "length": 1532,
+    "sha256": "972726698b8e8caa03193245f03f433119c75597a53574fd656601f3c4cf0bb8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 11,
+    "offset": 409044,
+    "length": 1532,
+    "sha256": "511c6e3e10e008f256ef13bd1f25d6dfa00b32cdd93c9b7be840d74aea77c585",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 12,
+    "offset": 410576,
+    "length": 1532,
+    "sha256": "75032ea118952ea2d7eef2af8b7af1be9e37fb26a1264723b9b9032a7d190bef",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 13,
+    "offset": 412108,
+    "length": 1532,
+    "sha256": "a742eca528b1e1013081bced261e670da18482f9d114e47a3e93cb2802cc23d5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 14,
+    "offset": 413640,
+    "length": 1532,
+    "sha256": "42514fa2fe7b6c1f18148d5175c7ba918a0a251fabfc7f288c2f34d7e3954cba",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 15,
+    "offset": 415172,
+    "length": 1532,
+    "sha256": "4b1c3e02bf9baa348a312bfa8c7123d0d7ecbefa45fc60149a6ba8ffc1813afa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 16,
+    "offset": 416704,
+    "length": 1532,
+    "sha256": "226929397d7dd152c2c27b25f1f3d38c86a497fe4f5cf5702064674b9ace5770",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 17,
+    "offset": 418236,
+    "length": 1532,
+    "sha256": "5cc7c02bb864c4747f225031d9cccc225c6c711b8440b03f5e174e0a8db69d30",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 18,
+    "offset": 419768,
+    "length": 1532,
+    "sha256": "5f7b461ce2fbf5d4f8e2ad523dcb72b190bd17d7b297828f35adfc4c94adbbe1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 19,
+    "offset": 421300,
+    "length": 1532,
+    "sha256": "3b597bc88517c097385385deaa54b44d13b9f6361d84e23d570622e4032b51f6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 20,
+    "offset": 422832,
+    "length": 1532,
+    "sha256": "a90c08c1968f8a468e559b39464e7620192caee6fbc812012f6dd6cb822da396",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 21,
+    "offset": 424364,
+    "length": 1532,
+    "sha256": "57f8cfe3eae49da84b7a4049e7363f931b36b66d56daa42bc1f75addba4b5e88",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 22,
+    "offset": 425896,
+    "length": 1532,
+    "sha256": "6915add826b6059fec533f714d78a2306521bc7ab0bedb3c84999d51b33ddac5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 23,
+    "offset": 427428,
+    "length": 1532,
+    "sha256": "e0742ea82390d4d5f92c5de96d08aa4871b41fb5fd88f44f9d7c86d05e618b8f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 24,
+    "offset": 428960,
+    "length": 1532,
+    "sha256": "2eac89deb97ae5a8d57b83a8c4c1071f7087dc816533fa9fd580163c7c5a10f5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 25,
+    "offset": 430492,
+    "length": 1532,
+    "sha256": "8bc1dd267520b043af830d5fca89832200920da1169b77202fb6c6e5bb832fdd",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 26,
+    "offset": 432024,
+    "length": 1532,
+    "sha256": "7165ce010c9a3e8d036e626ec95ed885ee46f1ae38fe83af4d19668bb6f59436",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 27,
+    "offset": 433556,
+    "length": 1532,
+    "sha256": "526475d57a3b9edc149b30d769532cd19931b7239e82706700f7fc031c455c8f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 28,
+    "offset": 435088,
+    "length": 1532,
+    "sha256": "f36997c88106978b34efd05c1d36b04a36996bab2f764a0eba0c51603805dccf",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 29,
+    "offset": 436620,
+    "length": 1532,
+    "sha256": "a36a9f7a1bc0d817a39036050ce1005237a7a975f284c45674be06ed4760d3e3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 30,
+    "offset": 438152,
+    "length": 1532,
+    "sha256": "36c982237c86df8f14ebaaca20f021a8d3bdaa2a568b6b19e6838b7bb7ef0606",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 31,
+    "offset": 439684,
+    "length": 1532,
+    "sha256": "9bd8f405f293298dd9d2c111debc45ad4ad3236943c9cb8a181de51678f42cb5",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 32,
+    "offset": 441216,
+    "length": 1532,
+    "sha256": "acd7c65cc165f642e1e0199d4c7169ee9bcaeba5dde2ec655f6f8bc693ce653e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 33,
+    "offset": 442748,
+    "length": 1532,
+    "sha256": "bfaa3eddf2dea4b8a9dd3a1a806b10e0498437b16fb90062b5c3350724459233",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 34,
+    "offset": 444280,
+    "length": 1532,
+    "sha256": "28d976adb8b179ca05a1d89c48582b344f17cb552634267cf3ca6c131b6edbe3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 35,
+    "offset": 445812,
+    "length": 1532,
+    "sha256": "779e7482ae2c597ad2c9563a89d582ea6c453cb4f84fe2fea2b88dc639e0c17f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 36,
+    "offset": 447344,
+    "length": 1532,
+    "sha256": "ced719048fd0ac1b20c5c6a71f44bfc5379fabe649c72a64a67c3c63b9796964",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 37,
+    "offset": 448876,
+    "length": 1532,
+    "sha256": "ada568e9f85a5809e16dc4e77b889971298f2578a4d13b018e052c135eb3ed35",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 38,
+    "offset": 450408,
+    "length": 1532,
+    "sha256": "a902716130b0fcb60998f5b9ef8b2e5dd83c3577306f37ab59507d2c642fd6b6",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 39,
+    "offset": 451940,
+    "length": 1532,
+    "sha256": "6526701bd93c1e371cd7b7f3cf08127843cc4d207a7fa4d94e04e8ece7089383",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 40,
+    "offset": 453472,
+    "length": 1532,
+    "sha256": "d9ae769adf5999ece84003878d7e1f61c5b9285edecc6b006b6f34b61ffc61b9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 41,
+    "offset": 455004,
+    "length": 1532,
+    "sha256": "ac4a51cdce6d47970c0ef302037cd11d96e155228e6d28c838bae97080d3c541",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 42,
+    "offset": 456536,
+    "length": 1532,
+    "sha256": "720852bb739e25f2d2da266e28ab9c9b849abcd51d2a3cf25107d891dca0eda0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 43,
+    "offset": 458068,
+    "length": 1532,
+    "sha256": "031a8a21f9521f7ed1a73d4cc0def58a7c0c1df4895e5dcb30f4171ac1e9f534",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 44,
+    "offset": 459600,
+    "length": 1532,
+    "sha256": "a5fb25dc0b8484e8140628b93dc39cd1002afd5f479007b4a8aed3cb6f65b76d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 45,
+    "offset": 461132,
+    "length": 1532,
+    "sha256": "b335d302fa73afd65995dff119387bf4b8b6f9cd346f4ce3ce752980e035d6ba",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 46,
+    "offset": 462664,
+    "length": 1532,
+    "sha256": "47c654238d1a51a79f66fc4ec8a1e652320b218b8348b13efbcc83186f54d28a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 47,
+    "offset": 464196,
+    "length": 1532,
+    "sha256": "edd04abecdd6af003201d682ae78bf50a5091c476b0393564cff8a3e268a094f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 48,
+    "offset": 465728,
+    "length": 1532,
+    "sha256": "11aff47ae28e60a95f1c18c08dab2f358f5d5713122a5e95bb18c4ea247b7099",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 49,
+    "offset": 467260,
+    "length": 1532,
+    "sha256": "40b7c82abfe7fd0268df7064db41afc74bad6a7b537d796b0da7365b0fb62453",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 50,
+    "offset": 468792,
+    "length": 1532,
+    "sha256": "a14d59be659bc23c5e387dfa054ea47696fce8dc3c6c75c926d3ef5ca491206b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 51,
+    "offset": 470324,
+    "length": 1532,
+    "sha256": "1add773f95e8a517180238ea5ebab66f557bcc634ee368fd979ba6a1b5850e60",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 52,
+    "offset": 471856,
+    "length": 1532,
+    "sha256": "99fb70aa40614e850fdb2b7fb61965ca425cac9ff4586ec375522231f4481141",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 53,
+    "offset": 473388,
+    "length": 1532,
+    "sha256": "52a8a9878467279918f15df0d66facec704897cdb037f6b2c12363874a90cb3b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 54,
+    "offset": 474920,
+    "length": 1532,
+    "sha256": "c06163d7f68d44fac33c99a025a6fcf48f8f490f531a5905672d42a45b5774f4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 55,
+    "offset": 476452,
+    "length": 1532,
+    "sha256": "bcf74157d2b29dd0abdcdcc8d1c0e43754f5910594b265e48801d861311233e8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 56,
+    "offset": 477984,
+    "length": 1532,
+    "sha256": "43054f7b82927b5c25bb8fa6a4fed10c8c130107575b99daf5eff92229b04de1",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 57,
+    "offset": 479516,
+    "length": 1532,
+    "sha256": "63c5598b4c10df70979470bca746b20c852ead2aca531eeae2496d6ebacb117b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 58,
+    "offset": 481048,
+    "length": 1532,
+    "sha256": "3faa982300c4f45672c44b09639c213adf135bc8e2f3d1d20e2907570bdce8fb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 59,
+    "offset": 482580,
+    "length": 1532,
+    "sha256": "b5747400747c39f12a8c8f1851f5213010385265839966f94f05a775f71c96c9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 60,
+    "offset": 484112,
+    "length": 1532,
+    "sha256": "fbfaed789c8bed5d1cbcc14d152512ff9d8616667389fbb0f41e7d280ceaf60a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 61,
+    "offset": 485644,
+    "length": 1532,
+    "sha256": "008a033293901d425f5f3d7bdd596b509eb8c3101c66bda5eb20df0f4cb07ac0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 62,
+    "offset": 487176,
+    "length": 1532,
+    "sha256": "9fed0b2ea17255722cceaf9fda96b9a017d8f27fe8185a0e8701b11162441796",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 1,
+    "direction": 63,
+    "offset": 488708,
+    "length": 1532,
+    "sha256": "75517dc47e4a3a055fe7f374da0bb3c4f1b27091584de3c95ecb6a9ae3c8aabf",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 0,
+    "offset": 490240,
+    "length": 1532,
+    "sha256": "dd1bfb4d6be84595c5a529e7e2bbf03589c1ab5f2abfd87b035166cde012a26d",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 1,
+    "offset": 491772,
+    "length": 1532,
+    "sha256": "b8f727ca9ec12977846126daf45c24c0f5b73802acf1ef3bfd0f3575d179ca28",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 2,
+    "offset": 493304,
+    "length": 1532,
+    "sha256": "d6294d941b58691ab77b9a3efe22b6d19775d30236054cd3c3f33f41720a082f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 3,
+    "offset": 494836,
+    "length": 1532,
+    "sha256": "a1562db9b5126a9fcbb10820db90e655d0f1d28291ae64d958b223ae7721a154",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 4,
+    "offset": 496368,
+    "length": 1532,
+    "sha256": "e4fcb37daaf19b72c70ff0e7483660d4fa5a7dcfee467eaac61125b5c04690b2",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 5,
+    "offset": 497900,
+    "length": 1532,
+    "sha256": "c9af502024fd1540dc6ccff519c9ebdb4c8436a969d0bc2275cd01c92a3ff058",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 6,
+    "offset": 499432,
+    "length": 1532,
+    "sha256": "895cc00aab231c021d96377912923e33db32adb2b76760775eb0a64a11c668d4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 7,
+    "offset": 500964,
+    "length": 1532,
+    "sha256": "90ede66d95fbdc2e2aac539a4ab795afcae4251f10989c83c43d5dff5903b2b4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 8,
+    "offset": 502496,
+    "length": 1532,
+    "sha256": "0308d66d76100438601501fa4faccdb14a2d7abe159f9caa2c9b829b6d946b8a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 9,
+    "offset": 504028,
+    "length": 1532,
+    "sha256": "3a4e26ad3488aec27526291328fbd5b8385c1028ba184b87b69126480311ebdc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 10,
+    "offset": 505560,
+    "length": 1532,
+    "sha256": "62e297dd3bdffd5bc4bbe69a3f919e77f979a03347f46e1a0d8e531269a0761c",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 11,
+    "offset": 507092,
+    "length": 1532,
+    "sha256": "ef7726d6b6ff60a058290ade0cfc6972179248c58e9d9641564f0fe057b64757",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 12,
+    "offset": 508624,
+    "length": 1532,
+    "sha256": "2b5ae78a91ce89b854b681e6867ac4785a63122e5701c12636e704bc30de3dfb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 13,
+    "offset": 510156,
+    "length": 1532,
+    "sha256": "5c0a1e75f54df5ba14a617bdc1e12a26d738ec640aea8ac37facf40b33216c0a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 14,
+    "offset": 511688,
+    "length": 1532,
+    "sha256": "31a148fa954c6dcf886ab5a6efa82aaf189caf9fb2216bd1f3a0fc6edb18d43b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 15,
+    "offset": 513220,
+    "length": 1532,
+    "sha256": "8900a5d5477be3127368cb72cb312c2906c4542f50d32587ef627cb95a2c4fc9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 16,
+    "offset": 514752,
+    "length": 1532,
+    "sha256": "dac5dbd2306702c49a8ee59865832a3360fbf75a5810d7205462d96b78bdf7aa",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 17,
+    "offset": 516284,
+    "length": 1532,
+    "sha256": "c2999bac43b826bb226bf90d6dd6615c0438e06de297523dadfd690e276cdbf8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 18,
+    "offset": 517816,
+    "length": 1532,
+    "sha256": "e5365ac0c26a62ea732f5c6192178a9a224f7d41304e55359e57bee8c642e292",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 19,
+    "offset": 519348,
+    "length": 1532,
+    "sha256": "3705a9b1921a253918d1d54d1410942283a9b878c14d7554dedfaf51ab7f8dca",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 20,
+    "offset": 520880,
+    "length": 1532,
+    "sha256": "78205b19c78bc639745cb0e09c85fcaf08559b3cb31f7a3f079b02ecfae11214",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 21,
+    "offset": 522412,
+    "length": 1532,
+    "sha256": "24212aa6e47c7abef4e7ed55413c514aebe3ebd537fca18f45ce144e75e799ba",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 22,
+    "offset": 523944,
+    "length": 1532,
+    "sha256": "a801d47af5a84b23f3f189f30009e2b29656c0c20af1fa521dc47fa0c210b757",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 23,
+    "offset": 525476,
+    "length": 1532,
+    "sha256": "f776187ae37e6e34ad6dfa7e6abf159628cbf83773d5988aecf1f08a7fc8daca",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 24,
+    "offset": 527008,
+    "length": 1532,
+    "sha256": "e421e0b95fb3f9b0ac2b01fcc2d4a99cd903d7b3d1243ff63d2649e6f7827514",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 25,
+    "offset": 528540,
+    "length": 1532,
+    "sha256": "308a04b16ffce59609b34d446fbd99c2fecc751b6cb55ce042366fbdf7f28686",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 26,
+    "offset": 530072,
+    "length": 1532,
+    "sha256": "fde44e21cbaac25847a773b857b6cad8fc31c7ec6c243d75db79cd783b02869a",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 27,
+    "offset": 531604,
+    "length": 1532,
+    "sha256": "dcbb14bdf3aa5f42d954d17f2bd74abeb90a58cd264427425d9fd1afaf317526",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 28,
+    "offset": 533136,
+    "length": 1532,
+    "sha256": "db730466f3965cc04ba7f2c166ac535855b2cbef0c3a7291255d9caa6ea9c1b7",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 29,
+    "offset": 534668,
+    "length": 1532,
+    "sha256": "5c35c69ae6727bb5be398253d25e046d63a57ba8c1bd1100cc7629e5cc10389f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 30,
+    "offset": 536200,
+    "length": 1532,
+    "sha256": "7d2f64ae83d2ab850870703ccc3e9eb768923afe203ef6dc13cf17b4ede2d823",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 31,
+    "offset": 537732,
+    "length": 1532,
+    "sha256": "c34ca45a28a591443f6073a07550f88e06bc0bb733941e610590a9507b9e16ae",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 32,
+    "offset": 539264,
+    "length": 1532,
+    "sha256": "45f18cd1845b4851c34379fda64a5545195aec32b0a88f4a960ddbeb1017abda",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 33,
+    "offset": 540796,
+    "length": 1532,
+    "sha256": "56c2dc103b2f747c2ac19740c987a72b395fc64721f1305a259a5268bf7a1555",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 34,
+    "offset": 542328,
+    "length": 1532,
+    "sha256": "b40db19bd9be03fcc6f18514e87296759d42cb50020186e9084631d259b08808",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 35,
+    "offset": 543860,
+    "length": 1532,
+    "sha256": "99c01fd1050d2f2129c44ce2f0c0c0886021168e493ebed5bd219bb5abbee9ee",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 36,
+    "offset": 545392,
+    "length": 1532,
+    "sha256": "d182a43f42ea5186cd4043c77a969ad361765e3013eeae6ebdc7f42c92c3d4bb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 37,
+    "offset": 546924,
+    "length": 1532,
+    "sha256": "b43543d5e71490d8e8d09cd9ed9ef0b1c8146da973059920b51b18e57c301b40",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 38,
+    "offset": 548456,
+    "length": 1532,
+    "sha256": "11c782699ad233fac444be74f570e815d984232893131f4806433b34e9c2adcc",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 39,
+    "offset": 549988,
+    "length": 1532,
+    "sha256": "05e9e0cdeb9d73bd6f62ed815e089ef32dabcfcc79c5c9a495bb37ead1567e33",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 40,
+    "offset": 551520,
+    "length": 1532,
+    "sha256": "ba653dff4f20a4b71ccbd6eebcacd9441551fdd9d7ca7d2d998563272323a3b8",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 41,
+    "offset": 553052,
+    "length": 1532,
+    "sha256": "bc7e6b283436f2f6407b0db8e8a89b3a4040333a89cba4d1cbb81fc722a543c9",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 42,
+    "offset": 554584,
+    "length": 1532,
+    "sha256": "05437be70ec0c44247a662ecedd5c483c59a2cd7f2a06f91be2c3a428be3d0b0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 43,
+    "offset": 556116,
+    "length": 1532,
+    "sha256": "f4eec764571a5508f3edcf987dbf168fb3d09a8d12a44dd4f2065bb75963a43f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 44,
+    "offset": 557648,
+    "length": 1532,
+    "sha256": "524a0d5000b4f340aa4cb6c938213aeede4b713e0c4e5d9dc974f427461d165e",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 45,
+    "offset": 559180,
+    "length": 1532,
+    "sha256": "934a60e67d842cd4fa53a39230363b7006b0e46cf8fcdb3443c6f4997dc2b166",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 46,
+    "offset": 560712,
+    "length": 1532,
+    "sha256": "fb10bf1c7c9b9b15b2e110332bcd847be13c68de5b9195bb89de7e42b5bfdc96",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 47,
+    "offset": 562244,
+    "length": 1532,
+    "sha256": "0231ff8560efb40d199abfbb6095459b25bd0f476471e4d2aa00575eb989c0e0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 48,
+    "offset": 563776,
+    "length": 1532,
+    "sha256": "835264962c5c875b0720662c0752f231fffc5df5be7072b1d19dffffa06fa41b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 49,
+    "offset": 565308,
+    "length": 1532,
+    "sha256": "6e4788793f29afff0b7e1765734e0e7fdeb001945fb2e08b79bada064aa55ad3",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 50,
+    "offset": 566840,
+    "length": 1532,
+    "sha256": "7643a5e64caab4659cbbd80f2d168c94f755b4b8a884345ced1ff1a0d272b74f",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 51,
+    "offset": 568372,
+    "length": 1532,
+    "sha256": "bc00bcfa83a8839d0799a3eeb950b436f5fc258ac70dd5c2acb1d34a1539f777",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 52,
+    "offset": 569904,
+    "length": 1532,
+    "sha256": "0fb103d0aadd07cd3832b9d7618c71d85c853e4d8399d71d0f0ddf2fbfcb3c07",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 53,
+    "offset": 571436,
+    "length": 1532,
+    "sha256": "4a89998e6fc0daa30762c3edbdb5f52e379641003c7b459b2da09c9ca8dd8e00",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 54,
+    "offset": 572968,
+    "length": 1532,
+    "sha256": "4a21ef8493c070cb7ba308c3ee166a922d832f017f3eb08ea031027d6444d97b",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 55,
+    "offset": 574500,
+    "length": 1532,
+    "sha256": "0962a0d37e2b86e62588149094b2723ef6d55b087fbec456f544440cc2d0faa0",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 56,
+    "offset": 576032,
+    "length": 1532,
+    "sha256": "ddce671285bbeeb4bc3506efde58b628a21cefac30d6d78785605622810469bb",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 57,
+    "offset": 577564,
+    "length": 1532,
+    "sha256": "96b0f170c87be5a5f227b917a44ccfad40542c851ef221fa9bafbe299bca85ee",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 58,
+    "offset": 579096,
+    "length": 1532,
+    "sha256": "4882bbd8e3e2e0ff9499dc018e051b2eff7c6186d67f5032b7a48ea71443de70",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 59,
+    "offset": 580628,
+    "length": 1532,
+    "sha256": "eb129ae95f03a62bf0ab05df713a7695c47e875b941bc2759e1406ab76c3e729",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 60,
+    "offset": 582160,
+    "length": 1532,
+    "sha256": "1ead087f16b143d2cdfc1688d62824c9545de2346546f61971a8035cdcb4dcda",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 61,
+    "offset": 583692,
+    "length": 1532,
+    "sha256": "990c5f7e00e244da1dcd297da50422a3561afbdad35249a00aee9cc177638509",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 62,
+    "offset": 585224,
+    "length": 1532,
+    "sha256": "da054e4cf5521d9763012dc19a8eac006047cedc6d8900fb0b9ea8bae9bca4f4",
+    "observations": 20480
+  },
+  {
+    "target": "NPR-d16-rare-gmm",
+    "replication": 2,
+    "direction": 63,
+    "offset": 586756,
+    "length": 1532,
+    "sha256": "5f245fd3072894885b44b0049e7dd7134566271a3cbe4c9c3b2622a080d2361e",
+    "observations": 20480
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "by_arm": {
+    "cta-exact-global": {
+      "count": 4,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.07785331195861511,
+      "median_heldout_sw1": 0.18609731950639158
+    },
+    "cta-exact-hybrid": {
+      "count": 4,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.07019013665949725,
+      "median_heldout_sw1": 0.17532591689470844
+    },
+    "cta-kll-global": {
+      "count": 4,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.07602289766562187,
+      "median_heldout_sw1": 0.18609586350293628
+    },
+    "cta-kll-guarded": {
+      "count": 4,
+      "mean_selected_local_weight": 0.15625,
+      "median_ed2": 0.06848194214950754,
+      "median_heldout_sw1": 0.1746753607351487
+    },
+    "cta-kll-hybrid": {
+      "count": 4,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.06967619746926035,
+      "median_heldout_sw1": 0.1746778276225624
+    },
+    "paper-neural-optimized": {
+      "count": 4,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.12523947888679765,
+      "median_heldout_sw1": 0.25125748359131095
+    }
+  }
+}

@@ -1,0 +1,24 @@
+--- F1_paper_field ---
+    F1 seed 0
+      raw_snis               score_v2=   6.563 ed2= 1.5923 cover=0.959 near=0.524  17.0s
+      raw_paper              score_v2=   6.519 ed2= 1.4870 cover=0.963 near=0.530  17.8s
+      wavelet_snis           score_v2=  10.303 ed2= 3.6015 cover=0.889 near=0.442  42.1s
+      wavelet_paper          score_v2=  10.498 ed2= 3.7494 cover=0.877 near=0.439  43.6s
+      wavelet_paper_anchor   score_v2=   9.655 ed2= 3.1581 cover=0.895 near=0.464  46.6s
+      SKY                    score_v2=   1.837 ed2= 0.1722 cover=0.945
+    F1 seed 1
+      raw_snis               score_v2=   8.304 ed2= 2.3166 cover=0.971 near=0.518  18.1s
+      raw_paper              score_v2=   8.146 ed2= 2.2532 cover=0.965 near=0.526  18.3s
+      wavelet_snis           score_v2=   9.992 ed2= 3.3205 cover=0.934 near=0.502  46.9s
+      wavelet_paper          score_v2=  10.045 ed2= 3.3938 cover=0.918 near=0.501  46.1s
+      wavelet_paper_anchor   score_v2=   9.265 ed2= 2.8803 cover=0.930 near=0.525  46.9s
+      SKY                    score_v2=   2.202 ed2= 0.2631 cover=0.975
+    F1 seed 2
+      raw_snis               score_v2=   7.491 ed2= 1.8770 cover=0.965 near=0.529  18.4s
+      raw_paper              score_v2=   6.174 ed2= 1.3205 cover=0.973 near=0.561  18.5s
+      wavelet_snis           score_v2=  10.115 ed2= 3.2897 cover=0.926 near=0.501  46.5s
+      wavelet_paper          score_v2=   9.680 ed2= 3.0627 cover=0.928 near=0.504  45.8s
+      wavelet_paper_anchor   score_v2=   8.887 ed2= 2.6161 cover=0.945 near=0.516  48.4s
+      SKY                    score_v2=   1.829 ed2= 0.1815 cover=0.969
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase2_diagnosis.json sha256=6c216d05ecc06771...

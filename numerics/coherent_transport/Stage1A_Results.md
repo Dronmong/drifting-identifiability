@@ -1,5 +1,22 @@
 # Stage 1A results: coherent-plan free-particle screen
 
+> **Audit status (2026-07-24): superseded diagnostic; Gate 1A is not
+> established by this file.**
+>
+> The averaged `est_coupling` is a valid marginal-preserving EST coupling.
+> However, the reported winning `hard_consensus` arm selects the modal target
+> independently in every row and does not preserve the target marginal. In a
+> reproduced 256-particle cell it used only 171 targets, had collisions of up
+> to five sources per target, and target-marginal L1 error `0.664`. It is a
+> single-target route, not a balanced coherent transport plan. The
+> checkerboard leakage metric also failed to count out-of-domain even-parity
+> cells as leakage. The screen remains evidence that barycentric averaging can
+> create bridges and that discrete target identities improve endpoint support,
+> but it cannot support the stronger causal or promotion claims below.
+>
+> Corrected primitives and the replacement route audit are in
+> `est_plan.py`, `metrics.py`, and `run_balanced_plan_audit.py`.
+
 Per `AnchoredCoherentTransportResearchPlan.md` §9 (Stage 1A), §15, §18.
 Screen only (3 seeds, declared-not-tuned η, one target realization/family). This
 is a **go/no-go**, not a promotion; no confirmation claim is made.

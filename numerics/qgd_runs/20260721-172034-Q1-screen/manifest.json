@@ -1,0 +1,147 @@
+{
+  "protocol": "QGD-development-Q1-v1",
+  "profile": {
+    "name": "screen",
+    "steps": 400,
+    "batch": 64,
+    "seeds": 3,
+    "eval_size": 2048,
+    "ed_size": 512,
+    "checkpoint_period": 10,
+    "bank_a_size": 1024,
+    "bank_a_reps": 4,
+    "bank_b_size": 2048,
+    "bank_b_reps": 4,
+    "diagnostic_samples": 4096
+  },
+  "arms": [
+    {
+      "label": "lbqcd",
+      "kind": "paper",
+      "rho": 0.0,
+      "local_kind": "paper",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    },
+    {
+      "label": "periodic-4p1q",
+      "kind": "periodic",
+      "rho": 0.0,
+      "local_kind": "paper",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    },
+    {
+      "label": "fixed-mix-q0.10",
+      "kind": "fixed",
+      "rho": 0.0,
+      "local_kind": "paper",
+      "quantile_weight": 0.1,
+      "metric": "adam"
+    },
+    {
+      "label": "qgd-paper-r0.05",
+      "kind": "guarded",
+      "rho": 0.05,
+      "local_kind": "paper",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    },
+    {
+      "label": "qgd-paper-r0.10",
+      "kind": "guarded",
+      "rho": 0.1,
+      "local_kind": "paper",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    },
+    {
+      "label": "qgd-paper-r0.20",
+      "kind": "guarded",
+      "rho": 0.2,
+      "local_kind": "paper",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    },
+    {
+      "label": "qgd-sharp-r0.10",
+      "kind": "guarded",
+      "rho": 0.1,
+      "local_kind": "sharp",
+      "quantile_weight": 0.0,
+      "metric": "adam"
+    }
+  ],
+  "prefix_fraction": 0.7,
+  "virtual_batch": 1024,
+  "paper_tau": 0.5,
+  "initializations": [
+    "missing",
+    "concentrated"
+  ],
+  "workers": 6,
+  "task_count": 48,
+  "registry_sha256": "3CA4E4AC966513271D1FD1B5C7B8D721926C8EE7572F18A1395FE453F8C71701",
+  "commit": "90b9710ad5ba50523bd4dfd95453805579d4be74",
+  "pre_run_git_status": [
+    "M numerics/lbqcd.py",
+    "?? numerics/QuantileGuardedDriftingProtocol.md",
+    "?? numerics/QuantileGuardedDriftingResearchPlan.md",
+    "?? numerics/conservative_runs/20260721-153352-S2-smoke/",
+    "?? numerics/qgd_development_registry.json",
+    "?? numerics/qgd_runs/",
+    "?? numerics/quantile_guarded_drifting.py",
+    "?? numerics/run_quantile_guarded_development.py"
+  ],
+  "command": [
+    "numerics/run_quantile_guarded_development.py",
+    "--profile",
+    "screen",
+    "--workers",
+    "6"
+  ],
+  "python": "3.14.4 (main, Apr  7 2026, 20:48:46) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 301.02096240001265,
+  "invariants": {
+    "status": "pass",
+    "lbqcd": "pass",
+    "paper": "pass",
+    "conservative": "pass",
+    "qgd": {
+      "status": "pass",
+      "check_count": 14,
+      "checks": [
+        "rank_stopgrad_finite_difference",
+        "projection_inactive",
+        "projection_quantile_active",
+        "projection_local_active",
+        "projection_both_active",
+        "projection_opposing_fallback",
+        "projection_zero_gradients",
+        "projection_collinear_safe",
+        "projection_trust_fallback",
+        "adam_proposal_matches_step",
+        "dual_optimizer_state_independence",
+        "guard_disabled_paper_bitwise",
+        "checkpoint_selector_earliest_one_se",
+        "checkpoint_selector_constant_earliest"
+      ]
+    },
+    "registry_targets": 8,
+    "registry_sha256": "3CA4E4AC966513271D1FD1B5C7B8D721926C8EE7572F18A1395FE453F8C71701"
+  },
+  "source_sha256": {
+    "numerics\\run_quantile_guarded_development.py": "F51E2F10E851DA6EB9257FDF4398A7A9B7D342EC39E02A2EC318FBB00881FC3E",
+    "numerics\\quantile_guarded_drifting.py": "28BA243254E86ED0B5DDF5E9512A531FCF9F9832A8C6345F8C97A1AAF696DE8B",
+    "numerics\\qgd_development_registry.json": "3CA4E4AC966513271D1FD1B5C7B8D721926C8EE7572F18A1395FE453F8C71701",
+    "numerics\\QuantileGuardedDriftingResearchPlan.md": "250E1036E61C2F7B4DF1D4411EF2C41F128CA2FC1CD86F064C82F285BD110695",
+    "numerics\\QuantileGuardedDriftingProtocol.md": "BD2F0E5F7D3FFECD3C76A9FBDAF645B3D7E4BD0EC95CA085DB7A8ED1BB63CACC",
+    "numerics\\lbqcd.py": "E41F73F5C6F71A97D171BBF239D241D78A3360B2C1C1FE692BF686FFB14428A5",
+    "numerics\\run_identifiability_generator.py": "9D2AFC10EFFEF57BC9AB9EE2A514198C6DC5971AF695597E2DCA0D354BF16793",
+    "numerics\\identifiability_drift.py": "E9810568908BEAE971CF285057F280DD95DA264B4808BED1FE4E143C487D0194",
+    "numerics\\conservative_finishers.py": "7D818F0B0BAEF5F1EFCBAFD6662F503E41B38C77252E1B5E1704182BA002EE5B",
+    "numerics\\lowdim_drift.py": "71C5B49D9CEB38CE239F5BAFF966CB9C077485F9ABC081B8798E18618EBF64F6"
+  }
+}

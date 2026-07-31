@@ -1,0 +1,39 @@
+=== Phase 11: whiten the regression metric ===
+    W0_gamma=0           seed0 tail 0.2035 -> 0.0095 -> 0.0040  2nd= 0.595 ed2=  0.7186
+    W1_gamma=0.5         seed0 tail 0.2035 -> 0.0091 -> 0.0034  2nd= 0.352 ed2=  1.2022
+    W2_gamma=0.9         seed0 tail 0.2035 -> 0.0090 -> 0.0036  2nd= 0.291 ed2=  1.4052
+    W3_gamma=0.99        seed0 tail 0.2035 -> 0.0109 -> 0.0082  2nd= 0.276 ed2=  1.5451
+    W2R_gamma=0.9+R11    seed0 tail 0.2035 -> 0.0106 -> 0.0347  2nd= 1.083 ed2=  0.1495
+    E1_r11               seed0 tail 0.2035 -> 0.0461 -> 0.0920  2nd= 0.999 ed2=  0.2096
+    W0_gamma=0           seed1 tail 0.1994 -> 0.0114 -> 0.0061  2nd= 0.418 ed2=  0.9130
+    W1_gamma=0.5         seed1 tail 0.1994 -> 0.0112 -> 0.0044  2nd= 0.302 ed2=  1.4205
+    W2_gamma=0.9         seed1 tail 0.1994 -> 0.0077 -> 0.0059  2nd= 0.221 ed2=  1.8504
+    W3_gamma=0.99        seed1 tail 0.1994 -> 0.0086 -> 0.0140  2nd= 0.227 ed2=  1.7389
+    W2R_gamma=0.9+R11    seed1 tail 0.1994 -> 0.0126 -> 0.0273  2nd= 0.966 ed2=  0.1208
+    E1_r11               seed1 tail 0.1994 -> 0.0398 -> 0.0404  2nd= 1.048 ed2=  0.1305
+    W0_gamma=0           seed2 tail 0.2169 -> 0.0077 -> 0.0050  2nd= 0.347 ed2=  1.1788
+    W1_gamma=0.5         seed2 tail 0.2169 -> 0.0105 -> 0.0034  2nd= 0.356 ed2=  1.1021
+    W2_gamma=0.9         seed2 tail 0.2169 -> 0.0157 -> 0.0056  2nd= 0.233 ed2=  1.7853
+    W3_gamma=0.99        seed2 tail 0.2169 -> 0.0155 -> 0.0097  2nd= 0.231 ed2=  1.8939
+    W2R_gamma=0.9+R11    seed2 tail 0.2169 -> 0.0089 -> 0.0308  2nd= 0.956 ed2=  0.1376
+    E1_r11               seed2 tail 0.2169 -> 0.0447 -> 0.0665  2nd= 1.009 ed2=  0.1161
+
+=== PHASE 11 ===
+arm                     tail@init  tail@100  tail_end  2nd_mom      ed2   score  band
+W0_gamma=0                 0.2035    0.0095    0.0050    0.418   0.9130   5.000  out
+W1_gamma=0.5               0.2035    0.0105    0.0034    0.352   1.2022   5.996  out
+W2_gamma=0.9               0.2035    0.0090    0.0056    0.233   1.7853   6.989  out
+W3_gamma=0.99              0.2035    0.0109    0.0097    0.231   1.7389   7.097  out
+W2R_gamma=0.9+R11          0.2035    0.0106    0.0308    0.966   0.1376   1.733  in 
+E1_r11                     0.2035    0.0447    0.0665    1.009   0.1305   1.830  in 
+    (real data tail = 0.1416)
+
+  tail at step 100, relative to the unwhitened baseline:
+    W1_gamma=0.5           x   1.10
+    W2_gamma=0.9           x   0.94
+    W3_gamma=0.99          x   1.15
+
+  prediction 1 (tail did not collapse): False
+  gate passed=False  -- no whitened arm reproduces R11
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase11.json sha256=af057da06a8317b1...

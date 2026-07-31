@@ -1,0 +1,43 @@
+=== a trained cloud for comparison (5000 steps) ===
+
+=== stationarity: what does the field do at each cloud? ===
+    real_data   raw|V|=   0.508 rel=0.0186 outward=  -0.261 R11 gain=1.0086 ESS=0.630
+    generated   raw|V|=   0.528 rel=0.0196 outward=  -0.335 R11 gain=1.0200 ESS=0.600
+
+=== the attractor: iterate the TRAINING map from each start ===
+      real_data      step   0 KID=-0.00017 P=0.699 R=0.724 alpha=3.585 2nd=0.983 moved/step=0.0000 from_start=0.0000
+      real_data      step   5 KID=-0.00017 P=0.691 R=0.729 alpha=3.583 2nd=1.028 moved/step=0.0298 from_start=0.0444
+      real_data      step  10 KID=-0.00004 P=0.682 R=0.725 alpha=3.582 2nd=0.949 moved/step=0.0479 from_start=0.0632
+      real_data      step  15 KID=-0.00006 P=0.674 R=0.734 alpha=3.581 2nd=1.026 moved/step=0.0136 from_start=0.0716
+      real_data      step  20 KID=+0.00003 P=0.670 R=0.721 alpha=3.582 2nd=1.019 moved/step=0.0145 from_start=0.0851
+      real_data      step  25 KID=-0.00004 P=0.680 R=0.738 alpha=3.582 2nd=1.140 moved/step=0.0834 from_start=0.1197
+      real_data      step  30 KID=+0.00010 P=0.672 R=0.728 alpha=3.581 2nd=1.061 moved/step=0.0141 from_start=0.1106
+      real_data      step  35 KID=+0.00069 P=0.672 R=0.713 alpha=3.581 2nd=0.836 moved/step=0.0961 from_start=0.1313
+      real_data      step  40 KID=+0.00041 P=0.682 R=0.717 alpha=3.579 2nd=0.979 moved/step=0.0187 from_start=0.1234
+      generated      step   0 KID=+0.15016 P=0.566 R=0.000 alpha=4.432 2nd=0.966 moved/step=0.0000 from_start=0.0000
+      generated      step   5 KID=+0.14651 P=0.564 R=0.000 alpha=4.436 2nd=0.988 moved/step=0.0334 from_start=0.0370
+      generated      step  10 KID=+0.14435 P=0.561 R=0.000 alpha=4.442 2nd=1.021 moved/step=0.0517 from_start=0.0640
+      generated      step  15 KID=+0.14637 P=0.582 R=0.000 alpha=4.446 2nd=0.901 moved/step=0.0458 from_start=0.0764
+      generated      step  20 KID=+0.14347 P=0.574 R=0.000 alpha=4.452 2nd=0.971 moved/step=0.0394 from_start=0.0842
+      generated      step  25 KID=+0.14138 P=0.566 R=0.000 alpha=4.458 2nd=1.006 moved/step=0.0953 from_start=0.1016
+      generated      step  30 KID=+0.14152 P=0.562 R=0.000 alpha=4.462 2nd=0.951 moved/step=0.0400 from_start=0.1068
+      generated      step  35 KID=+0.13987 P=0.551 R=0.000 alpha=4.468 2nd=1.033 moved/step=0.0154 from_start=0.1260
+      generated      step  40 KID=+0.14184 P=0.570 R=0.000 alpha=4.478 2nd=0.908 moved/step=0.0348 from_start=0.1323
+
+=== PHASE 26: IS THE TRUTH A FIXED POINT? ===
+cloud          raw |V|  relative   outward  R11 gain     ESS
+real_data        0.508    0.0186    -0.261    1.0086   0.630
+generated        0.528    0.0196    -0.335    1.0200   0.600
+
+    raw drift at truth / at generated = 0.9609   (<<1 would mean the truth is stationary)
+    R11 gain at the truth = 1.0086   (1.0 = unbiased there)
+
+iterating from         KID    prec  recall   alpha    2nd
+real_data step0   -0.00017   0.699   0.724   3.585  0.983
+real_data step40  +0.00041   0.682   0.717   3.579  0.979
+generated step0   +0.15016   0.566   0.000   4.432  0.966
+generated step40  +0.14184   0.570   0.000   4.478  0.908
+
+  mixed: the drift does not vanish at the truth but the iteration does not destroy it either; stationarity is partial
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase26_probe.json sha256=2764368e8e8c883f...

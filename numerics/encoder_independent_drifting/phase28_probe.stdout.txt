@@ -1,0 +1,39 @@
+=== Stage 0: is the AE region (high alpha, HIGH recall) a trap? ===
+      ae_recon     step   0 KID=+0.07962 P=0.633 R=0.301 alpha=4.858
+      ae_recon     step  20 KID=+0.08356 P=0.619 R=0.281 alpha=4.850
+      ae_recon     step  40 KID=+0.08599 P=0.625 R=0.270 alpha=4.845
+
+=== Stage A: can the generator emit sharp images at all? ===
+    n=  512 mse=0.01144 KID=+0.06110 P=0.791 R=0.224 alpha=4.417
+    n= 2048 mse=0.04928 KID=+0.19587 P=0.850 R=0.000 alpha=4.431
+
+=== Stage B: drifting from the warm start, vs cold ===
+      warm         step     0 KID=+0.19587 P=0.850 R=0.000 alpha=4.431 2nd=0.810
+      warm         step  1500 KID=+0.14095 P=0.768 R=0.000 alpha=4.320 2nd=1.067
+      warm         step  3000 KID=+0.12319 P=0.773 R=0.000 alpha=4.312 2nd=0.924
+      warm         step  4500 KID=+0.12137 P=0.705 R=0.004 alpha=4.338 2nd=0.959
+      warm         step  6000 KID=+0.12239 P=0.715 R=0.005 alpha=4.356 2nd=0.959
+      cold         step     0 KID=+0.28094 P=0.668 R=0.000 alpha=3.012 2nd=0.378
+      cold         step  1500 KID=+0.14131 P=0.598 R=0.000 alpha=4.425 2nd=1.036
+      cold         step  3000 KID=+0.14902 P=0.588 R=0.000 alpha=4.488 2nd=1.049
+      cold         step  4500 KID=+0.15038 P=0.518 R=0.000 alpha=4.491 2nd=1.011
+      cold         step  6000 KID=+0.14959 P=0.523 R=0.000 alpha=4.503 2nd=0.997
+
+=== PHASE 28 ===
+stage                        KID    prec  recall   alpha
+0 ae_recon start        +0.07962   0.633   0.301   4.858
+0 ae_recon +40          +0.08599   0.625   0.270   4.845
+A memorize n=512        +0.06110   0.791   0.224   4.417
+A memorize n=2048       +0.19587   0.850   0.000   4.431
+B warm start            +0.19587   0.850   0.000   4.431
+B warm +6000            +0.12239   0.715   0.005   4.356
+B cold +6000            +0.14959   0.523   0.000   4.503
+
+    AE region attractor: partial   (recall change -0.031)
+    generator can be sharp: False
+    warm holds sharpness:   False   (recall lost -0.005)
+    warm beats cold on KID by +0.02720
+
+  the generator cannot emit sharp images even with a fixed pairing and a sharp target -- the blur is the GENERATOR's, the field is exonerated, and 27 phases tuned the wrong component
+
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\phase28_probe.json sha256=35a975c7ea8c3c83...

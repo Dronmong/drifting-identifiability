@@ -1,0 +1,112 @@
+{
+  "by_arm": {
+    "cta-exact-fixed-control": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.031054687499999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.013562245200628986,
+      "median_heldout_sw1": 0.07946825109741812,
+      "median_online_training_wall_seconds": 0.28700120000212337,
+      "median_paper_kernel_pairs": 2621440.0,
+      "median_rare_mass_error": 0.0185546875,
+      "median_setup_plus_training_wall_seconds": 0.33937210000294726,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        4,
+        4
+      ]
+    },
+    "cta-exact-gated-hybrid": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.030566406249999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.013852944119367994,
+      "median_heldout_sw1": 0.0777126938537946,
+      "median_online_training_wall_seconds": 0.3853881499962881,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.0185546875,
+      "median_setup_plus_training_wall_seconds": 0.43550169999798527,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout2": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.030078124999999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.016363560016451784,
+      "median_heldout_sw1": 0.08174796037138249,
+      "median_online_training_wall_seconds": 0.41614715000105207,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.012011718749999997,
+      "median_setup_plus_training_wall_seconds": 0.4662607000027492,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout4": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.026171874999999997,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.01910555974809136,
+      "median_heldout_sw1": 0.07701316815178645,
+      "median_online_training_wall_seconds": 0.47892570000112755,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.015673828124999997,
+      "median_setup_plus_training_wall_seconds": 0.52931764999812,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout4-safe": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.030566406249999997,
+      "mean_selected_local_weight": 0.07415436014489388,
+      "median_ed2": 0.016616023713447614,
+      "median_heldout_sw1": 0.08028873010007632,
+      "median_online_training_wall_seconds": 0.5061637500002689,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.017138671874999997,
+      "median_setup_plus_training_wall_seconds": 0.5562773000019661,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    },
+    "cta-exact-rollout4-safe-balanced": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.028613281249999997,
+      "mean_selected_local_weight": 0.07358917422461672,
+      "median_ed2": 0.012789632519730754,
+      "median_heldout_sw1": 0.08325518243816205,
+      "median_online_training_wall_seconds": 0.5176709000006667,
+      "median_paper_kernel_pairs": 3932160.0,
+      "median_rare_mass_error": 0.017871093749999997,
+      "median_setup_plus_training_wall_seconds": 0.5673560499999439,
+      "minimum_mode_coverage": 1.0,
+      "minimum_rare_mode_coverage": 1.0,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        2,
+        4
+      ]
+    }
+  }
+}

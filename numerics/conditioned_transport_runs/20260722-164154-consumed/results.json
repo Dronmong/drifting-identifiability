@@ -1,0 +1,34 @@
+{
+  "by_arm": {
+    "cta-exact-global": {
+      "count": 16,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.020210315515444277,
+      "median_heldout_sw1": 0.092197919182005
+    },
+    "cta-exact-hybrid": {
+      "count": 16,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.017120012071282886,
+      "median_heldout_sw1": 0.08259709014334263
+    },
+    "cta-kll-global": {
+      "count": 16,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.020612362052922828,
+      "median_heldout_sw1": 0.0948201138477825
+    },
+    "cta-kll-guarded": {
+      "count": 16,
+      "mean_selected_local_weight": 0.16703125000000002,
+      "median_ed2": 0.01680065764083216,
+      "median_heldout_sw1": 0.09197580563431183
+    },
+    "cta-kll-hybrid": {
+      "count": 16,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.014910024430670132,
+      "median_heldout_sw1": 0.08074198193108295
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "by_arm": {
+    "cta-exact-global": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.0392578125,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.017264965850062097,
+      "median_heldout_sw1": 0.10190727731143984,
+      "median_online_training_wall_seconds": 0.15506539999842062,
+      "median_paper_kernel_pairs": 0.0,
+      "median_rare_mass_error": 0.028613281249999997,
+      "median_setup_plus_training_wall_seconds": 0.21293805000095745,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        0,
+        0
+      ]
+    },
+    "cta-exact-hybrid": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.0431640625,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.013881529970349082,
+      "median_heldout_sw1": 0.09019256154670993,
+      "median_online_training_wall_seconds": 0.21696910000173375,
+      "median_paper_kernel_pairs": 1310720.0,
+      "median_rare_mass_error": 0.024218749999999997,
+      "median_setup_plus_training_wall_seconds": 0.2740806500041799,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        8,
+        8
+      ]
+    },
+    "cta-kll-global": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.0392578125,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.017058543313681618,
+      "median_heldout_sw1": 0.0965621889923945,
+      "median_online_training_wall_seconds": 0.15537460000632564,
+      "median_paper_kernel_pairs": 0.0,
+      "median_rare_mass_error": 0.025195312499999997,
+      "median_setup_plus_training_wall_seconds": 0.2012506500032032,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        0,
+        0
+      ]
+    },
+    "cta-kll-guarded": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.0392578125,
+      "mean_selected_local_weight": 0.18421875,
+      "median_ed2": 0.013732449593802265,
+      "median_heldout_sw1": 0.08751552814290692,
+      "median_online_training_wall_seconds": 0.2644010499934666,
+      "median_paper_kernel_pairs": 1310720.0,
+      "median_rare_mass_error": 0.020556640624999997,
+      "median_setup_plus_training_wall_seconds": 0.3191300499966019,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        8,
+        8
+      ]
+    },
+    "cta-kll-hybrid": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.040234375,
+      "mean_selected_local_weight": 0.25,
+      "median_ed2": 0.016144924332629706,
+      "median_heldout_sw1": 0.08964828073092725,
+      "median_online_training_wall_seconds": 0.2219920000025013,
+      "median_paper_kernel_pairs": 1310720.0,
+      "median_rare_mass_error": 0.024707031249999997,
+      "median_setup_plus_training_wall_seconds": 0.2697601500003657,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        8,
+        8
+      ]
+    },
+    "paper-neural-optimized": {
+      "count": 16,
+      "maximum_rare_mass_error": 0.05,
+      "mean_selected_local_weight": 0.0,
+      "median_ed2": 0.04730487493655866,
+      "median_heldout_sw1": 0.14903054459133477,
+      "median_online_training_wall_seconds": 0.3550511499925051,
+      "median_paper_kernel_pairs": 2621440.0,
+      "median_rare_mass_error": 0.05,
+      "median_setup_plus_training_wall_seconds": 0.3550511499925051,
+      "minimum_mode_coverage": 0.5,
+      "minimum_rare_mode_coverage": 0.5,
+      "rare_target_count": 4,
+      "representative_leaf_population_range": [
+        0,
+        0
+      ]
+    }
+  }
+}

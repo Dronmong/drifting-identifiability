@@ -1,0 +1,77 @@
+{
+  "actual_rows": 96,
+  "artifact_sha256": {
+    "kll_state_index.json": "7aa25dc4bc21d25b1bd790e46f48ca4b636da4795dae50671f6fdce4197d9778",
+    "kll_states.bin": "c65e114c72edb1f9ccedcd2b794d8b7ef5e85eb225294a79ad2b91b9bedcaba9",
+    "outputs.npz": "4ba9edcbbb2e1a5c0a5ef80e5f3dce0da11b846103561ba63256ed31b2e9f27f",
+    "references.npz": "6e11c30e670b344fab658e30a2ea7e629e08da7541269b6818603469319582be",
+    "results.json": "b4a3453f1c4f79aed8526269b288e70cc2a6c277173eabfd28f54fdd2cffded7",
+    "rows.csv": "4bc6e91a514e326443b776cb816263b7ff8c848021cf05937e9c5a88b8941b88",
+    "summary.md": "f3f5267db6ea615a3180138356e51997fb34c03bd3a783474e7b3aef551633d0"
+  },
+  "audit_sha256": "09ca4c0f7a7c830b6a48b8bf5029b3b6a596c436eee376c4b5e36fe23f4cf968",
+  "command": [
+    "numerics/run_conditioned_transport_development.py",
+    "--profile",
+    "consumed",
+    "--registry",
+    "numerics/projection_kernel_confirmation_registry.json",
+    "--active-directions",
+    "32",
+    "--local-representatives",
+    "128",
+    "--representative-audit-calls",
+    "2"
+  ],
+  "cost_constants": {
+    "paper_batch": 64,
+    "particle_population": 512,
+    "student_microbatch": 64
+  },
+  "expected_rows": 96,
+  "git_commit": "3669673e40bef4a7c4cb368609ce957e34f90864",
+  "git_dirty": true,
+  "kll_state_count": 1536,
+  "numpy": "2.5.1",
+  "profile": {
+    "atlas_knots": 128,
+    "evaluation_samples": 2048,
+    "generator_budget": 20480,
+    "name": "consumed",
+    "smoke_only": false,
+    "target_pool": 20480
+  },
+  "registered_arms": [
+    "cta-exact-global",
+    "cta-kll-global",
+    "cta-exact-hybrid",
+    "cta-kll-hybrid",
+    "cta-kll-guarded",
+    "paper-neural-optimized"
+  ],
+  "registry_filename": "projection_kernel_confirmation_registry.json",
+  "registry_sha256": "3a148bfa4c427fc26e44c95c43b213efda13f79b87d329f37c5f7f0ccff44c05",
+  "schema": "conditioned-transport-development-v2",
+  "shard_count": 1,
+  "shard_index": 0,
+  "source_sha256": {
+    "numerics\\ConditionedTransportAmortizationResearch.md": "7bb56c87fd5dd9224256ff6ec25103fa758bbd631c3fadc7218f0950318ff9f1",
+    "numerics\\ProjectionKernelCostOptimizationPlan.md": "fab5ea4bb140ca0dd0d24c10b6a4a52280e7962bb3fbe7919bc81f1da2113f17",
+    "numerics\\ProjectionKernelOptimizationConfirmationProtocol.md": "53749ffeb49177257b75a5207aa46771fa8fd1756708d0a0500171c881cb9b8d",
+    "numerics\\generate_neural_pooled_rank_registry.py": "418c0110bd0e97974d2f608dfff10eeda4f6569eac72ade517a19530740ccb8c",
+    "numerics\\lowdim_drift.py": "71c5b49d9ceb38ce239f5baff966cb9c077485f9abc081b8798e18618ebf64f6",
+    "numerics\\neural_pooled_rank.py": "370b599cbbd3cb4ccf1750b515226523be4742e47476173015e15cb6a392e378",
+    "numerics\\neural_pooled_rank_tests.py": "e7fb2cabe33881c7e207a5b9f5087f730879b4245ad4867dc852322ea33cd0f1",
+    "numerics\\persistent_quantile_transport.py": "0e3a7c07f6d2d26220d7796878796835b4c9172ce49b3ab57b4eecfed4afd57e",
+    "numerics\\projected_quantile_accumulators.py": "489ac7199bc7ac2fec2001549c2bac40f06d1bdd7149e8f6897299a8049ea6e7",
+    "numerics\\run_conditioned_transport_development.py": "9e467e8279733379e8af86a12193f5d7223698bf5ce79f5b79c0dbe8e1389e99",
+    "numerics\\run_neural_pooled_rank_development.py": "5cf30a9b2c5ea15689662fea1d6b6b9c23828f8ba058cf65e9df16cb0a81b7c4",
+    "numerics\\standard_projected_kll.py": "53ec8dee2bd6a0d32a6ec2ef059e1fdd5bba36b6fb8bc915f66309a4035d9479"
+  },
+  "timing_scope": {
+    "online_training": "train loop only; excludes atlas and evaluation",
+    "setup_plus_training": "conditioned-direction construction plus selected atlas build plus online training; excludes target generation and evaluation"
+  },
+  "torch": "2.7.1+cpu",
+  "wall_seconds": 74.40712210000493
+}
