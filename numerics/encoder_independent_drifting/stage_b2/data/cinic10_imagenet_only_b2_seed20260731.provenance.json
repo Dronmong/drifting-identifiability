@@ -1,0 +1,63 @@
+{
+  "schema": "drifting-identifiability-b2-external-pool-v1",
+  "source_id": "cinic10-imagenet-only-balanced-600-per-class-seed-20260731",
+  "dataset": "CINIC-10 Is Not ImageNet or CIFAR-10",
+  "dataset_doi": "https://doi.org/10.7488/ds/2448",
+  "archive_url": "https://datashare.ed.ac.uk/bitstreams/e8e186cc-2688-48f1-aa5a-3fda1a43f8b6/download",
+  "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "archive_path": "C:\\Users\\Dronm\\.cache\\cinic-10\\CINIC-10.tar.gz",
+  "archive_sha256": "31b095acf6d75e25a9e028bae82a07a0f94ff6b00671be2802d34ac4efa81a9e",
+  "output_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+  "output_sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728",
+  "selection_seed": 20260731,
+  "samples_per_class": 600,
+  "samples": 6000,
+  "shape": [
+    6000,
+    32,
+    32,
+    3
+  ],
+  "dtype": "uint8",
+  "classes": [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+  ],
+  "candidate_counts": {
+    "airplane": 21000,
+    "automobile": 21000,
+    "bird": 21000,
+    "cat": 21000,
+    "deer": 21000,
+    "dog": 21000,
+    "frog": 21000,
+    "horse": 21000,
+    "ship": 21000,
+    "truck": 21000
+  },
+  "filename_exclusions": {
+    "cifar_filename": 60000
+  },
+  "rejected_after_decode": {
+    "decoded_pixel_duplicate_in_pool": 8
+  },
+  "selection_guarantees": {
+    "only_imagenet_style_filenames": true,
+    "all_cifar_style_filenames_excluded": true,
+    "decoded_pixel_overlap_with_complete_cifar10": 0,
+    "decoded_pixel_duplicates_within_pool": 0,
+    "class_balanced": true,
+    "all_source_paths_recorded_inside_npz": true
+  },
+  "scientific_scope": "Fresh class-aligned 32x32 ImageNet-derived distribution-shift pool. It is not an in-domain replacement test set for CIFAR-10.",
+  "reuse_attestation": "Repository search before sourcing found no prior CINIC-10 use; this pool was built after B2 design/preflight and before any B2 baseline or candidate training."
+}

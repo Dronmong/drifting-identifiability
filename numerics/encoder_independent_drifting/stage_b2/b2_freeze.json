@@ -1,0 +1,157 @@
+{
+  "allocation_digests": {
+    "audit_0_floor_negatives": "31719cb3e9c8adbf",
+    "audit_0_positives": "4bc10af75ae0c249",
+    "audit_0_probe_centres": "89cf3e9427e9baca",
+    "audit_1_floor_negatives": "ef7bfa1cabbc954d",
+    "audit_1_positives": "746592abf60d92f2",
+    "audit_1_probe_centres": "14e11bb8a5593788",
+    "audit_2_floor_negatives": "dafedae22153b98d",
+    "audit_2_positives": "3af0004ca9f93f45",
+    "audit_2_probe_centres": "1bcb053fb9bb8453",
+    "audit_3_floor_negatives": "c75bd31c4f09fa7f",
+    "audit_3_positives": "eade846981e22f18",
+    "audit_3_probe_centres": "5ed484fec8a0656e",
+    "audit_4_floor_negatives": "3c1f13a67c9e7a0f",
+    "audit_4_positives": "08204592e5ec0e5c",
+    "audit_4_probe_centres": "5c79ae3a56e7ad50",
+    "audit_5_floor_negatives": "1b37aa5f8d1ebf0d",
+    "audit_5_positives": "6f78675526a5bdf2",
+    "audit_5_probe_centres": "f3d32facd80c1a38",
+    "control_0": "db5c6c3a14f8caa4",
+    "control_1": "d6e938674bed22ed",
+    "control_2": "bc5e07698ed5b00a",
+    "reference": "cb6a06d91b59a8ab",
+    "source_id": "81652f4082643a27",
+    "unused": "748c6ccf1d5ccfbb"
+  },
+  "b0_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f3b_confirmatory.json",
+  "b0_artifact_sha256": "cd60e98a773fd4c575817cd03dffbaee605e3085402a2ae318c439c2c647f636",
+  "b1_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\b1_confirmatory.json",
+  "b1_artifact_sha256": "26770733c98ec346e0461020a6515b97e19b48389d209edb4cd98ceae6bf51c5",
+  "b2_config": {
+    "audit_batch": 128,
+    "audit_replicates": 6,
+    "bandwidth_quantile": 0.5,
+    "baseline_recall_floor": 0.05,
+    "calibration_ratio_tolerance_factor": 2.0,
+    "correction_every": 10,
+    "correction_nfe": 8,
+    "drift_paired_wins_required": 5,
+    "drift_reduction_fraction": 0.5,
+    "ess_iterations": 24,
+    "ess_samples": 128,
+    "event_gradient_ratio": 0.25,
+    "maximum_preflight_memory_fraction": 0.95,
+    "metric_control_floor": 0.5,
+    "negative_batch": 64,
+    "positive_batch": 64,
+    "probe_batch": 64,
+    "probe_noise_std": 0.05,
+    "recall_noninferiority_margin": 0.025,
+    "target_ess_fraction": 0.6
+  },
+  "baseline_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_baseline.json",
+  "baseline_sha256": "745cd302ad270ad0aa8c2ef35a1f3ff9234835c8c46c7b391418385880a142b0",
+  "claim_scope": "paired finite-sample mechanism test on a genuinely fresh source; not an empirical proof of the exact zero-drift converse",
+  "confirmation_units": [
+    300,
+    301,
+    302
+  ],
+  "effective_gradient_ratio": 0.025,
+  "fresh_data": {
+    "applied_encoding": "integer-zero-255-to-minus-one-one",
+    "input_dtype": "uint8",
+    "normalized_range": [
+      -1.0,
+      1.0
+    ],
+    "operator_attested_unused": true,
+    "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+    "requested_float_encoding": "auto",
+    "reuse_attestation_required": "operator must attest this source was not used for B0/B1 selection, B2 design, training, calibration, or threshold choice",
+    "samples": 6000,
+    "sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728",
+    "shape": [
+      6000,
+      3,
+      32,
+      32
+    ],
+    "source_id": "cinic10-imagenet-only-balanced-600-per-class-seed-20260731"
+  },
+  "lambda_event": 0.00019294302093274076,
+  "preflight_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_preflight.json",
+  "preflight_sha256": "7e0a18f7403db1c2ca885523b6c439b36ef90c675d0160d6032d8d30ad4f961f",
+  "profile": {
+    "evaluation": {
+      "generated_samples": 512,
+      "nfe_ladder": [
+        32
+      ],
+      "reference_samples": 2048
+    },
+    "model": {
+      "attention_resolutions": [
+        8
+      ],
+      "base_channels": 64,
+      "channel_multipliers": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "channels": 3,
+      "dropout": 0.0,
+      "image_size": 32,
+      "residual_blocks": 1,
+      "time_embedding_dim": 256
+    },
+    "name": "compact",
+    "purpose": "resource-realistic B0 reachability development",
+    "train": {
+      "batch": 64,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "checkpoint_steps": [
+        30000
+      ],
+      "ema_decay": 0.9999,
+      "gradient_clip": 1.0,
+      "horizontal_flip": true,
+      "learning_rate": 0.0002,
+      "log_every": 100,
+      "steps": 30000,
+      "weight_decay": 0.0
+    }
+  },
+  "protocol": "numerics/EncoderIndependentB2Protocol.md",
+  "protocol_sha256": "7b81e9941b6ba0e2413b38f2b3e5a10c499c47f67a669af10e0be449f4538370",
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+    "numerics/encoder_independent_drifting/cifar.py": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+    "numerics/encoder_independent_drifting/config.py": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/f3b.py": "bc56e4132cc50e1f92cd689ac0bba55ec25492f38fe886a1a737a2d02d0bca19",
+    "numerics/encoder_independent_drifting/f3b_freeze.py": "aed3c96c8671dc94b498d65cb1018a21b2b9bfc6df46c745585602638ac009c3",
+    "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+    "numerics/encoder_independent_drifting/stage_b2/__init__.py": "6949bce8383d7f44d72a94ef5c30ead63280327c786ecee23ce0a6add241d8af",
+    "numerics/encoder_independent_drifting/stage_b2/artifacts.py": "486a52fd58a864d9b7aad7ff6d459930da3b05e889ade3341108f6899028c66b",
+    "numerics/encoder_independent_drifting/stage_b2/baseline.py": "f69909b66c27f96d4d5e298e585d91d1bcb32e91813a23f48e78c4a8a3ae9378",
+    "numerics/encoder_independent_drifting/stage_b2/confirmation.py": "0f7ed8d7de906b27af6f677190c72d2912a29b408951bf4c7a89188ed703ad99",
+    "numerics/encoder_independent_drifting/stage_b2/core.py": "5616a4905d1ca599c0e21ec6e1b6063ea8ff3b0cabbba974ebdf7aa3e8e18fac",
+    "numerics/encoder_independent_drifting/stage_b2/evaluation.py": "b2611eca619a0eb202c920f1bfd6b141e1575ed1dfebcb9659f8fadd5d471362",
+    "numerics/encoder_independent_drifting/stage_b2/freeze.py": "00df130d697a0cfe691d0e541059e513b888f78455e5daa4cb1bae9d8c83f7d7",
+    "numerics/encoder_independent_drifting/stage_b2/fresh_data.py": "0d4b65a13735c36800224eb30a5fa549d5bc48ff28e225a95b743d6afaa844d1",
+    "numerics/encoder_independent_drifting/stage_b2/metrics.py": "fe58e695a451842a8261cf014a74cd28071769295d1de8a510a9a00af47e0e54",
+    "numerics/encoder_independent_drifting/stage_b2/preflight.py": "e2c8a019b1c8751b04adb62743152392f158e5fd44eb85a344a8da0133454d90",
+    "numerics/encoder_independent_drifting/stage_b2/source_cinic10_pool.py": "e6bc2a906bd8069476655e9232faeb83ada9b2276a07c6989549e96b28b97722",
+    "numerics/encoder_independent_drifting/stage_b2/tests/__init__.py": "924be7c4e6609e33309dc2d0917d4bd260f31e3038015004bbff12765e1f662f",
+    "numerics/encoder_independent_drifting/stage_b2/tests/test_b2.py": "b0b57fc22f070ea5bf7ed02159f23aec77a18da29b6aebf4168b6dcace6c856d"
+  },
+  "status": "b2-confirmation-freeze",
+  "tau": 7.085388360479058
+}
