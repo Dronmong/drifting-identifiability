@@ -1,0 +1,11 @@
+=== B2.5 unit 500 ===
+
+=== B2.5 unit 500 arm B0 ===
+
+=== B2.5 unit 500 arm B1 ===
+
+=== B2.5 unit 500 arm B2 ===
+
+=== B2.5 unit 500 arm B1B2 ===
+wrote C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\stage_b25\b25_unit_500.json sha256=229dff09ddba1753dac3fb7904375116ff22e2ca39aa796c52429eb70858d161
+=== B2.5 unit 501 ===
