@@ -1,0 +1,440 @@
+{
+  "b2_tau": 7.085388360479058,
+  "b3_config": {
+    "arms": [
+      {
+        "backward_microbatch": 256,
+        "field_cloud": 256,
+        "name": "B3-native",
+        "width": 64
+      },
+      {
+        "backward_microbatch": 256,
+        "field_cloud": 256,
+        "name": "B3-capacity",
+        "width": 368
+      }
+    ],
+    "bootstrap_replicates": 500,
+    "bridge_parameter_count": 3893443,
+    "calibration_samples": 256,
+    "capacity_parameter_tolerance_fraction": 0.01,
+    "channels": 3,
+    "checkpoint_steps": [
+      10000,
+      20000,
+      30000
+    ],
+    "density_coverage_neighbors": 5,
+    "eta": 0.5,
+    "image_size": 32,
+    "latent_dim": 32,
+    "learning_rate": 0.002,
+    "log_every": 500,
+    "maximum_preflight_memory_fraction": 0.95,
+    "positives": 64,
+    "recovery_every": 1000,
+    "steps": 30000,
+    "target_ess_fraction": 0.05,
+    "units": [
+      600,
+      601,
+      602
+    ]
+  },
+  "calibrations": {
+    "600": {
+      "indices_sha256": "dda287f2628d09d615dcf7ad651900925219f1290839703c9caa0f9d3376e789",
+      "kernel": {
+        "base": "smooth_laplace",
+        "combine": "sum",
+        "eps": 0.001,
+        "legacy_target_ess_fraction": 0.05,
+        "taus": [
+          7.99423360824585
+        ],
+        "weights": [
+          1.0
+        ]
+      },
+      "sample_count": 256,
+      "with_replacement": true
+    },
+    "601": {
+      "indices_sha256": "647ed056f82dcfc15f34e03628c3023b9d4032d879c2dcf96666c38f5d9f2ab1",
+      "kernel": {
+        "base": "smooth_laplace",
+        "combine": "sum",
+        "eps": 0.001,
+        "legacy_target_ess_fraction": 0.05,
+        "taus": [
+          8.073943138122559
+        ],
+        "weights": [
+          1.0
+        ]
+      },
+      "sample_count": 256,
+      "with_replacement": true
+    },
+    "602": {
+      "indices_sha256": "84a6fd650b3853395202a31adf1d4439f385850d907fe27827eb1552c20705fe",
+      "kernel": {
+        "base": "smooth_laplace",
+        "combine": "sum",
+        "eps": 0.001,
+        "legacy_target_ess_fraction": 0.05,
+        "taus": [
+          7.871457099914551
+        ],
+        "weights": [
+          1.0
+        ]
+      },
+      "sample_count": 256,
+      "with_replacement": true
+    }
+  },
+  "capacity_match": {
+    "bridge_parameters": 3893443,
+    "parameters": {
+      "B3-capacity": 3864003,
+      "B3-native": 146691
+    },
+    "passes": true,
+    "relative_gap": 0.007561430846682486,
+    "same_field_cloud": true
+  },
+  "device": {
+    "allow_tf32": false,
+    "capability": "sm_89",
+    "cublas_workspace_config": ":4096:8",
+    "cuda_version": "12.6",
+    "deterministic_algorithms": true,
+    "device": "cuda",
+    "gpu_memory_gib": 6.0,
+    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "torch_version": "2.7.1+cu126"
+  },
+  "equation_compatibility": {
+    "adam_update_max_abs_difference": 1.4901161193847656e-08,
+    "adam_update_relative_difference": 1.6703725163505678e-09,
+    "chunk_loss": 75.97285079956055,
+    "full_loss": 75.97285461425781,
+    "full_vs_chunk_forward_max_abs": 0.0,
+    "gradient_max_abs_difference": 1.9073486328125e-06,
+    "gradient_relative_difference": 8.90144054759185e-08,
+    "legacy_vs_helper_cloud_max_abs": 0.0,
+    "legacy_vs_helper_teacher_max_abs": 0.0,
+    "loss_abs_difference": 3.814697265625e-06,
+    "passes": true
+  },
+  "evaluation_allocations": {
+    "in_domain_development_reused": {
+      "audit_0_floor_negatives": "ee2d5f9c55c07718",
+      "audit_0_positives": "e00186624be8c953",
+      "audit_0_probe_centres": "e8636998ea60cd30",
+      "audit_1_floor_negatives": "03d8c8a7b369b08b",
+      "audit_1_positives": "63ceb507bc98a2c3",
+      "audit_1_probe_centres": "5497ef15b38b40c0",
+      "audit_2_floor_negatives": "76f638b856a8b47e",
+      "audit_2_positives": "454390f0dc68d397",
+      "audit_2_probe_centres": "890ba01660cfd2a1",
+      "audit_3_floor_negatives": "9a29e23475dc4e08",
+      "audit_3_positives": "c38771291aef265c",
+      "audit_3_probe_centres": "496861972d5c1f8e",
+      "audit_4_floor_negatives": "8e508640aa557369",
+      "audit_4_positives": "005daf41d3c4d3ac",
+      "audit_4_probe_centres": "1821842ab59539ca",
+      "audit_5_floor_negatives": "78f36f9a6909f79f",
+      "audit_5_positives": "5a7d3a5849990f37",
+      "audit_5_probe_centres": "abea28f810d1c280",
+      "control_0": "472d4a1582f0059e",
+      "control_1": "2e87da925b8c91a2",
+      "control_2": "99d4adef3e7a74b4",
+      "reference": "8e9f34a4481f002e",
+      "source_id": "d4f790ab7d5a00da",
+      "unused": "be2ce4d567772281"
+    },
+    "shifted_disjoint": {
+      "audit_0_floor_negatives": "3360e408f6648cfa",
+      "audit_0_positives": "340ead666fb33bff",
+      "audit_0_probe_centres": "3d10dd8bf18acdd6",
+      "audit_1_floor_negatives": "4d7f1481563abe35",
+      "audit_1_positives": "8c0cc1156e587442",
+      "audit_1_probe_centres": "4a16beed953b20a7",
+      "audit_2_floor_negatives": "689481801faa61d1",
+      "audit_2_positives": "39b3252b35720802",
+      "audit_2_probe_centres": "c64f739e1b622163",
+      "audit_3_floor_negatives": "6156434ff3ffa080",
+      "audit_3_positives": "79625f50619d0da8",
+      "audit_3_probe_centres": "bc221c824c2d5a0f",
+      "audit_4_floor_negatives": "c7de1d926e152fc0",
+      "audit_4_positives": "312bdca2b3cb528f",
+      "audit_4_probe_centres": "4fb60c2463070d0d",
+      "audit_5_floor_negatives": "c9f538b805fb9f58",
+      "audit_5_positives": "2efbed47a0d7e8fb",
+      "audit_5_probe_centres": "76eedd6fb06245a5",
+      "control_0": "27931ef4273c3c50",
+      "control_1": "78a4cca5415d8c0a",
+      "control_2": "7abefc115e102d45",
+      "reference": "3e6f9ad86fce93d5",
+      "source_id": "9a966e3cc73d31b4",
+      "unused": "4c76819d5aac48c2"
+    }
+  },
+  "external_data": {
+    "archive_md5_matching_official_etag": "6ee4d0c996905fe93221de577967a372",
+    "archive_path": "C:\\Users\\Dronm\\.cache\\cinic-10\\CINIC-10.tar.gz",
+    "archive_sha256": "31b095acf6d75e25a9e028bae82a07a0f94ff6b00671be2802d34ac4efa81a9e",
+    "archive_url": "https://datashare.ed.ac.uk/bitstreams/e8e186cc-2688-48f1-aa5a-3fda1a43f8b6/download",
+    "artifact_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.npz",
+    "artifact_sha256": "a16f0534c219a0cd68eb5b43bf533f488855988c6ac1f799be668199ea706b51",
+    "candidate_counts_after_path_exclusion": {
+      "airplane": 20400,
+      "automobile": 20400,
+      "bird": 20400,
+      "cat": 20400,
+      "deer": 20400,
+      "dog": 20400,
+      "frog": 20400,
+      "horse": 20400,
+      "ship": 20400,
+      "truck": 20400
+    },
+    "classes": [
+      "airplane",
+      "automobile",
+      "bird",
+      "cat",
+      "deer",
+      "dog",
+      "frog",
+      "horse",
+      "ship",
+      "truck"
+    ],
+    "dataset": "CINIC-10 Is Not ImageNet or CIFAR-10",
+    "dataset_doi": "https://doi.org/10.7488/ds/2448",
+    "dtype": "uint8",
+    "excluded_pools": [
+      {
+        "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+        "samples": 6000,
+        "sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728"
+      }
+    ],
+    "filename_exclusions": {
+      "cifar_filename": 60000
+    },
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "output_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.npz",
+    "output_sha256": "a16f0534c219a0cd68eb5b43bf533f488855988c6ac1f799be668199ea706b51",
+    "provenance_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.provenance.json",
+    "provenance_sha256": "0da740ee5bcf41acbe2ac010ba94d8493993fda9a913e93caa67d0c935405791",
+    "rejected_after_decode": {
+      "decoded_pixel_duplicate_in_pool": 7,
+      "decoded_pixel_match_to_exclusion_pool": 16
+    },
+    "samples": 6000,
+    "samples_per_class": 600,
+    "schema": "drifting-identifiability-b25-external-pool-v1",
+    "scientific_scope": "Development-only class-aligned shifted evaluation pool. It is not an in-domain replacement for the CIFAR-10 target law.",
+    "selection_guarantees": {
+      "all_cifar_style_filenames_excluded": true,
+      "all_source_paths_recorded_inside_npz": true,
+      "class_balanced": true,
+      "decoded_pixel_duplicates_within_pool": 0,
+      "decoded_pixel_overlap_with_complete_cifar10": 0,
+      "decoded_pixel_overlap_with_excluded_pools": 0,
+      "only_imagenet_style_filenames": true,
+      "source_path_overlap_with_excluded_pools": 0
+    },
+    "selection_seed": 20260801,
+    "shape": [
+      6000,
+      32,
+      32,
+      3
+    ],
+    "source_id": "cinic10-imagenet-only-b25-disjoint-balanced-600-seed-20260801"
+  },
+  "phase30_compatibility": {
+    "all_relevant_sources_identical": false,
+    "artifact_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\phase30.json",
+    "artifact_sha256": "7c5f77de924b4873c0193603bb9715a48d17f08a9faf856d1981070942f703df",
+    "files": {
+      "cifar.py": {
+        "current_sha256": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+        "historical_sha256": "304fc962b1c1e0a7744ada37f9f18f8831be136c420fd7e2908dce4dbe1034fa",
+        "identical": false
+      },
+      "config.py": {
+        "current_sha256": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
+        "historical_sha256": "50b6f662d1a5dbd8733531cd5b0f4b887197ea2a47541869287036753266efc7",
+        "identical": false
+      },
+      "diagnose_phase25.py": {
+        "current_sha256": "8e610b195c5314d704ad202ca135e4cba9665c4ebe224afe852545356f90820a",
+        "historical_sha256": "8e610b195c5314d704ad202ca135e4cba9665c4ebe224afe852545356f90820a",
+        "identical": true
+      },
+      "fixed_features.py": {
+        "current_sha256": "7a0010799e18e79f926bb55e679b4e221dcab81e29a73574d6222947304780b3",
+        "historical_sha256": "7a0010799e18e79f926bb55e679b4e221dcab81e29a73574d6222947304780b3",
+        "identical": true
+      },
+      "kernel_gradient.py": {
+        "current_sha256": "305d214b3a9717a108638131b7c5ea709e7c85e205658c1cf0e6ab3d91f6c5e1",
+        "historical_sha256": "305d214b3a9717a108638131b7c5ea709e7c85e205658c1cf0e6ab3d91f6c5e1",
+        "identical": true
+      },
+      "kernels.py": {
+        "current_sha256": "fbd8c4438e0b70cf2b207d83c895bc2630a588fd327ff7b6490b60bc6fcc8d7c",
+        "historical_sha256": "fbd8c4438e0b70cf2b207d83c895bc2630a588fd327ff7b6490b60bc6fcc8d7c",
+        "identical": true
+      },
+      "models.py": {
+        "current_sha256": "8b4d2eae199d01372007931216d3da519858d3f29b513189f96c2e8a07d0ffb4",
+        "historical_sha256": "8b4d2eae199d01372007931216d3da519858d3f29b513189f96c2e8a07d0ffb4",
+        "identical": true
+      },
+      "objectives.py": {
+        "current_sha256": "f25eabed539e1ab561c0bc9c82a96d2ddabc45df834999ec794c88b460f3c718",
+        "historical_sha256": "366fe4d5e8057c6b7dc20bdafa646f4a4585bd386cdfb8e17328f4a5075e88c2",
+        "identical": false
+      },
+      "run_phase30.py": {
+        "current_sha256": "7a31ef060ab559cbab0a80ac6fe968895bfdabe4a1a49530758f2d42fcc6203e",
+        "historical_sha256": "7a31ef060ab559cbab0a80ac6fe968895bfdabe4a1a49530758f2d42fcc6203e",
+        "identical": true
+      }
+    },
+    "reading": "equation-level compatibility is tested separately; changed source hashes forbid an exact historical-replay claim"
+  },
+  "profile": {
+    "evaluation": {
+      "generated_samples": 512,
+      "nfe_ladder": [
+        32
+      ],
+      "reference_samples": 2048
+    },
+    "model": {
+      "attention_resolutions": [
+        8
+      ],
+      "base_channels": 64,
+      "channel_multipliers": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "channels": 3,
+      "dropout": 0.0,
+      "image_size": 32,
+      "residual_blocks": 1,
+      "time_embedding_dim": 256
+    },
+    "name": "compact",
+    "purpose": "resource-realistic B0 reachability development",
+    "train": {
+      "batch": 64,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "checkpoint_steps": [
+        30000
+      ],
+      "ema_decay": 0.9999,
+      "gradient_clip": 1.0,
+      "horizontal_flip": true,
+      "learning_rate": 0.0002,
+      "log_every": 100,
+      "steps": 30000,
+      "weight_decay": 0.0
+    }
+  },
+  "projected_training_hours_three_units_both_arms": 23.42016988992691,
+  "protocol": "numerics/EncoderIndependentB3Protocol.md",
+  "protocol_sha256": "8a42be4edd986dffbf9563d39b946cd0a78ee0fef6dc555451a526918ebd78af",
+  "reference_artifacts": {
+    "B0": {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f3b_confirmatory.json",
+      "sha256": "cd60e98a773fd4c575817cd03dffbaee605e3085402a2ae318c439c2c647f636",
+      "status": "f3b-b0-confirmatory"
+    },
+    "B1": {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\b1_confirmatory.json",
+      "sha256": "26770733c98ec346e0461020a6515b97e19b48389d209edb4cd98ceae6bf51c5",
+      "status": "b1-confirmatory"
+    },
+    "B2": {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_confirmatory.json",
+      "sha256": "b962baa01245a16de112493c3943d6010b0e2795249e79223dd2e2496e6b59af",
+      "status": "b2-confirmatory"
+    }
+  },
+  "resource_probe": {
+    "B3-capacity": {
+      "elapsed_seconds": 88.24782633781433,
+      "parameters": 3864003,
+      "peak_memory_bytes": 4088030208,
+      "peak_memory_reserved_bytes": 5238685696,
+      "projected_hours_per_30000_step_unit": 7.3539855281511946,
+      "seconds_per_step": 0.8824782633781433,
+      "steps": 100
+    },
+    "B3-native": {
+      "elapsed_seconds": 5.4328532218933105,
+      "parameters": 146691,
+      "peak_memory_bytes": 671647744,
+      "peak_memory_reserved_bytes": 713031680,
+      "projected_hours_per_30000_step_unit": 0.4527377684911092,
+      "seconds_per_step": 0.05432853221893311,
+      "steps": 100
+    }
+  },
+  "scope": "mechanical and resource readiness only; no B3 training unit was consumed",
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+    "numerics/encoder_independent_drifting/cifar.py": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+    "numerics/encoder_independent_drifting/config.py": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnose_phase25.py": "8e610b195c5314d704ad202ca135e4cba9665c4ebe224afe852545356f90820a",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/f3b.py": "bc56e4132cc50e1f92cd689ac0bba55ec25492f38fe886a1a737a2d02d0bca19",
+    "numerics/encoder_independent_drifting/f3b_freeze.py": "aed3c96c8671dc94b498d65cb1018a21b2b9bfc6df46c745585602638ac009c3",
+    "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+    "numerics/encoder_independent_drifting/fixed_features.py": "7a0010799e18e79f926bb55e679b4e221dcab81e29a73574d6222947304780b3",
+    "numerics/encoder_independent_drifting/kernel_gradient.py": "305d214b3a9717a108638131b7c5ea709e7c85e205658c1cf0e6ab3d91f6c5e1",
+    "numerics/encoder_independent_drifting/kernels.py": "fbd8c4438e0b70cf2b207d83c895bc2630a588fd327ff7b6490b60bc6fcc8d7c",
+    "numerics/encoder_independent_drifting/models.py": "8b4d2eae199d01372007931216d3da519858d3f29b513189f96c2e8a07d0ffb4",
+    "numerics/encoder_independent_drifting/objectives.py": "f25eabed539e1ab561c0bc9c82a96d2ddabc45df834999ec794c88b460f3c718",
+    "numerics/encoder_independent_drifting/stage_b2/artifacts.py": "486a52fd58a864d9b7aad7ff6d459930da3b05e889ade3341108f6899028c66b",
+    "numerics/encoder_independent_drifting/stage_b2/core.py": "5616a4905d1ca599c0e21ec6e1b6063ea8ff3b0cabbba974ebdf7aa3e8e18fac",
+    "numerics/encoder_independent_drifting/stage_b25/artifacts.py": "b0ccffa49d40fdad2b0c512031d09bfc310e028b14b69460b9266e11e58e5cca",
+    "numerics/encoder_independent_drifting/stage_b25/evaluation.py": "a789e762a6284fc053e6bc8e308a285bd248e30b44044c2383bcb876f11f37ca",
+    "numerics/encoder_independent_drifting/stage_b3/__init__.py": "fb48a2eb834ae9f79a6fa87f6e8763a726c7c9074ded8c1fd57a190c9d0ac01c",
+    "numerics/encoder_independent_drifting/stage_b3/aggregate.py": "03dff8197e513e9a6dfa5dc439d24c9361f281ad0c1275ee61fa909f403b742a",
+    "numerics/encoder_independent_drifting/stage_b3/artifacts.py": "c3bbdc593c0588a6fa970ccefad492cde977d726f1804cf5c4a76ef5c1c1a4c5",
+    "numerics/encoder_independent_drifting/stage_b3/core.py": "c7aea3d5b91dc1f2e6d298ca84005459c99aa58d816db4d9bccdde6d68ef294a",
+    "numerics/encoder_independent_drifting/stage_b3/evaluation.py": "2f17c9f8afb459bb4bd4711cd1b26e6db403b764c639b793226d20cc343e6b9f",
+    "numerics/encoder_independent_drifting/stage_b3/preflight.py": "cf4182ff51c2d013339f8c39fc080ba23654596febd6443332bb1df9c6fbc828",
+    "numerics/encoder_independent_drifting/stage_b3/references.py": "bdee4a579927597487b3fc4fcd9a611641c03cbea6eb1213831dcb94eef5a6de",
+    "numerics/encoder_independent_drifting/stage_b3/run_overnight.ps1": "1ff59fedd1d0301cf6698c034fe0c5a57fb5b005f9caaaff05d6494964a56f72",
+    "numerics/encoder_independent_drifting/stage_b3/run_unit.py": "752b3a1b68e97aa45c394277ff9095ab2b55d2d1bb6e894049edde1c2ad1c94f",
+    "numerics/encoder_independent_drifting/stage_b3/tests/__init__.py": "589377fdfb1e1d2a90f1f2de33542272532bbb7f7a5da5f5b5b095390e8599d9",
+    "numerics/encoder_independent_drifting/stage_b3/tests/test_b3.py": "7d1b46a6127adb6efc5eef0ef82f738381d2bbab4f2e496bb1baf75907cc1ef7"
+  },
+  "status": "b3-preflight",
+  "verdict": {
+    "capacity_match_passes": true,
+    "decision": "GO",
+    "equation_compatibility_passes": true,
+    "gpu_resource_probe_completed": true,
+    "memory_passes": true,
+    "reading": "GO: exact microbatch mechanics, matched capacity, data boundaries, and GPU headroom pass"
+  }
+}

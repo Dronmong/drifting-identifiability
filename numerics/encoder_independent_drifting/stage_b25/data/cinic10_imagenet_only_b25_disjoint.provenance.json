@@ -1,0 +1,73 @@
+{
+  "schema": "drifting-identifiability-b25-external-pool-v1",
+  "source_id": "cinic10-imagenet-only-b25-disjoint-balanced-600-seed-20260801",
+  "dataset": "CINIC-10 Is Not ImageNet or CIFAR-10",
+  "dataset_doi": "https://doi.org/10.7488/ds/2448",
+  "archive_url": "https://datashare.ed.ac.uk/bitstreams/e8e186cc-2688-48f1-aa5a-3fda1a43f8b6/download",
+  "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "archive_path": "C:\\Users\\Dronm\\.cache\\cinic-10\\CINIC-10.tar.gz",
+  "archive_md5_matching_official_etag": "6ee4d0c996905fe93221de577967a372",
+  "archive_sha256": "31b095acf6d75e25a9e028bae82a07a0f94ff6b00671be2802d34ac4efa81a9e",
+  "output_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.npz",
+  "output_sha256": "a16f0534c219a0cd68eb5b43bf533f488855988c6ac1f799be668199ea706b51",
+  "selection_seed": 20260801,
+  "samples_per_class": 600,
+  "samples": 6000,
+  "shape": [
+    6000,
+    32,
+    32,
+    3
+  ],
+  "dtype": "uint8",
+  "classes": [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+  ],
+  "candidate_counts_after_path_exclusion": {
+    "airplane": 20400,
+    "automobile": 20400,
+    "bird": 20400,
+    "cat": 20400,
+    "deer": 20400,
+    "dog": 20400,
+    "frog": 20400,
+    "horse": 20400,
+    "ship": 20400,
+    "truck": 20400
+  },
+  "filename_exclusions": {
+    "cifar_filename": 60000
+  },
+  "rejected_after_decode": {
+    "decoded_pixel_duplicate_in_pool": 7,
+    "decoded_pixel_match_to_exclusion_pool": 16
+  },
+  "excluded_pools": [
+    {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+      "sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728",
+      "samples": 6000
+    }
+  ],
+  "selection_guarantees": {
+    "only_imagenet_style_filenames": true,
+    "all_cifar_style_filenames_excluded": true,
+    "decoded_pixel_overlap_with_complete_cifar10": 0,
+    "source_path_overlap_with_excluded_pools": 0,
+    "decoded_pixel_overlap_with_excluded_pools": 0,
+    "decoded_pixel_duplicates_within_pool": 0,
+    "class_balanced": true,
+    "all_source_paths_recorded_inside_npz": true
+  },
+  "scientific_scope": "Development-only class-aligned shifted evaluation pool. It is not an in-domain replacement for the CIFAR-10 target law."
+}

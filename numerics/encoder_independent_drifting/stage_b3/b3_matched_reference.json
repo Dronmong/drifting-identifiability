@@ -1,0 +1,2457 @@
+{
+  "b3": {
+    "B3-capacity": {
+      "in_domain_development_reused": {
+        "coverage": {
+          "median": 0.07080078125,
+          "raw_units": [
+            0.0927734375,
+            0.05419921875,
+            0.07080078125
+          ]
+        },
+        "density": {
+          "median": 0.616015625,
+          "raw_units": [
+            0.64765625,
+            0.271484375,
+            0.616015625
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 17.070555210113525,
+          "raw_units": [
+            18.852932453155518,
+            16.87458896636963,
+            17.070555210113525
+          ]
+        },
+        "effective_rank": {
+          "median": 4.419437484937222,
+          "raw_units": [
+            4.419437484937222,
+            4.89491235290396,
+            3.6686619178629947
+          ]
+        },
+        "fid": {
+          "median": 190.71466973391364,
+          "raw_units": [
+            178.6306461509313,
+            226.62482697620436,
+            190.71466973391364
+          ]
+        },
+        "kid": {
+          "median": 0.12862519516281257,
+          "raw_units": [
+            0.11463816009032879,
+            0.18199158925833903,
+            0.12862519516281257
+          ]
+        },
+        "precision": {
+          "median": 0.576171875,
+          "raw_units": [
+            0.576171875,
+            0.337890625,
+            0.63671875
+          ]
+        },
+        "recall": {
+          "median": 0.0,
+          "raw_units": [
+            0.00048828125,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "shifted_disjoint": {
+        "coverage": {
+          "median": 0.0595703125,
+          "raw_units": [
+            0.06884765625,
+            0.044921875,
+            0.0595703125
+          ]
+        },
+        "density": {
+          "median": 0.51640625,
+          "raw_units": [
+            0.51640625,
+            0.189453125,
+            0.51640625
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 20.518809636433918,
+          "raw_units": [
+            22.45162296295166,
+            19.972178141276043,
+            20.518809636433918
+          ]
+        },
+        "effective_rank": {
+          "median": 4.419437484937222,
+          "raw_units": [
+            4.419437484937222,
+            4.89491235290396,
+            3.6686619178629947
+          ]
+        },
+        "fid": {
+          "median": 204.17264851322912,
+          "raw_units": [
+            193.17189804712467,
+            237.30256343690118,
+            204.17264851322912
+          ]
+        },
+        "kid": {
+          "median": 0.13761149628094316,
+          "raw_units": [
+            0.1265798403613707,
+            0.18878888551152073,
+            0.13761149628094316
+          ]
+        },
+        "precision": {
+          "median": 0.47265625,
+          "raw_units": [
+            0.47265625,
+            0.22265625,
+            0.5078125
+          ]
+        },
+        "recall": {
+          "median": 0.0,
+          "raw_units": [
+            0.0,
+            0.00048828125,
+            0.0
+          ]
+        }
+      },
+      "training": {
+        "parameters": 3864003,
+        "peak_memory_reserved_bytes_raw_units": [
+          5402263552,
+          5402263552,
+          5402263552
+        ],
+        "wall_seconds_median": 23724.59711956978,
+        "wall_seconds_raw_units": [
+          23733.188091516495,
+          23664.299559354782,
+          23724.59711956978
+        ]
+      }
+    },
+    "B3-native": {
+      "in_domain_development_reused": {
+        "coverage": {
+          "median": 0.0703125,
+          "raw_units": [
+            0.05126953125,
+            0.07958984375,
+            0.0703125
+          ]
+        },
+        "density": {
+          "median": 0.522265625,
+          "raw_units": [
+            0.35078125,
+            0.619140625,
+            0.522265625
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 17.031045118967693,
+          "raw_units": [
+            17.031045118967693,
+            13.767215251922607,
+            18.958375295003254
+          ]
+        },
+        "effective_rank": {
+          "median": 4.2099098475027645,
+          "raw_units": [
+            4.700619879645337,
+            4.2099098475027645,
+            4.111760762922666
+          ]
+        },
+        "fid": {
+          "median": 193.727082446951,
+          "raw_units": [
+            213.54160219520287,
+            190.0061599354897,
+            193.727082446951
+          ]
+        },
+        "kid": {
+          "median": 0.14085699208914892,
+          "raw_units": [
+            0.15067110093329728,
+            0.1356225835490643,
+            0.14085699208914892
+          ]
+        },
+        "precision": {
+          "median": 0.494140625,
+          "raw_units": [
+            0.4453125,
+            0.642578125,
+            0.494140625
+          ]
+        },
+        "recall": {
+          "median": 0.0,
+          "raw_units": [
+            0.0,
+            0.0,
+            0.00146484375
+          ]
+        }
+      },
+      "shifted_disjoint": {
+        "coverage": {
+          "median": 0.05859375,
+          "raw_units": [
+            0.0498046875,
+            0.0615234375,
+            0.05859375
+          ]
+        },
+        "density": {
+          "median": 0.384375,
+          "raw_units": [
+            0.287890625,
+            0.43203125,
+            0.384375
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 19.62692626317342,
+          "raw_units": [
+            19.62692626317342,
+            16.28403902053833,
+            23.28899319966634
+          ]
+        },
+        "effective_rank": {
+          "median": 4.2099098475027645,
+          "raw_units": [
+            4.700619879645337,
+            4.2099098475027645,
+            4.111760762922666
+          ]
+        },
+        "fid": {
+          "median": 209.6385927557858,
+          "raw_units": [
+            226.2755650695263,
+            203.82956540929496,
+            209.6385927557858
+          ]
+        },
+        "kid": {
+          "median": 0.15616128947194374,
+          "raw_units": [
+            0.16038297444191718,
+            0.1501576977949859,
+            0.15616128947194374
+          ]
+        },
+        "precision": {
+          "median": 0.353515625,
+          "raw_units": [
+            0.328125,
+            0.4765625,
+            0.353515625
+          ]
+        },
+        "recall": {
+          "median": 0.0,
+          "raw_units": [
+            0.0,
+            0.0,
+            0.0009765625
+          ]
+        }
+      },
+      "training": {
+        "parameters": 146691,
+        "peak_memory_reserved_bytes_raw_units": [
+          1906311168,
+          1906311168,
+          1906311168
+        ],
+        "wall_seconds_median": 1589.9561054706573,
+        "wall_seconds_raw_units": [
+          1592.3004043102264,
+          1589.4571254253387,
+          1589.9561054706573
+        ]
+      }
+    }
+  },
+  "frozen_bridge_references": {
+    "B0": {
+      "in_domain_development_reused": {
+        "coverage": {
+          "median": 0.22998046875,
+          "raw_units": [
+            0.21630859375,
+            0.23681640625,
+            0.22998046875
+          ]
+        },
+        "density": {
+          "median": 1.11484375,
+          "raw_units": [
+            1.086328125,
+            1.215234375,
+            1.11484375
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 20.50352891286214,
+          "raw_units": [
+            19.751948356628418,
+            20.50352891286214,
+            25.106047948201496
+          ]
+        },
+        "effective_rank": {
+          "median": 13.40860246754122,
+          "raw_units": [
+            13.40860246754122,
+            11.766843924640703,
+            14.768753862616558
+          ]
+        },
+        "fid": {
+          "median": 150.71004665242094,
+          "raw_units": [
+            150.71004665242094,
+            152.08583205417304,
+            143.52262024416825
+          ]
+        },
+        "kid": {
+          "median": 0.10555058465346301,
+          "raw_units": [
+            0.10598853661839014,
+            0.10555058465346301,
+            0.09616650033408813
+          ]
+        },
+        "precision": {
+          "median": 0.771484375,
+          "raw_units": [
+            0.771484375,
+            0.76953125,
+            0.7734375
+          ]
+        },
+        "recall": {
+          "median": 0.21142578125,
+          "raw_units": [
+            0.1279296875,
+            0.2529296875,
+            0.21142578125
+          ]
+        }
+      },
+      "shifted_disjoint": {
+        "coverage": {
+          "median": 0.2978515625,
+          "raw_units": [
+            0.2890625,
+            0.30322265625,
+            0.2978515625
+          ]
+        },
+        "density": {
+          "median": 1.787890625,
+          "raw_units": [
+            1.787890625,
+            1.962109375,
+            1.74609375
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 19.809439659118652,
+          "raw_units": [
+            19.809439659118652,
+            18.96468210220337,
+            24.63891537984212
+          ]
+        },
+        "effective_rank": {
+          "median": 13.40860246754122,
+          "raw_units": [
+            13.40860246754122,
+            11.766843924640703,
+            14.768753862616558
+          ]
+        },
+        "fid": {
+          "median": 140.4166385031306,
+          "raw_units": [
+            140.4166385031306,
+            142.4962956294707,
+            135.37567211398067
+          ]
+        },
+        "kid": {
+          "median": 0.09080189677184292,
+          "raw_units": [
+            0.09080189677184292,
+            0.09108286248343678,
+            0.08379743485214508
+          ]
+        },
+        "precision": {
+          "median": 0.853515625,
+          "raw_units": [
+            0.828125,
+            0.86328125,
+            0.853515625
+          ]
+        },
+        "recall": {
+          "median": 0.15869140625,
+          "raw_units": [
+            0.1181640625,
+            0.1962890625,
+            0.15869140625
+          ]
+        }
+      }
+    },
+    "B1": {
+      "in_domain_development_reused": {
+        "coverage": {
+          "median": 0.25,
+          "raw_units": [
+            0.25634765625,
+            0.24560546875,
+            0.25
+          ]
+        },
+        "density": {
+          "median": 1.1015625,
+          "raw_units": [
+            1.040234375,
+            1.21484375,
+            1.1015625
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 16.131711800893147,
+          "raw_units": [
+            14.392014980316162,
+            16.131711800893147,
+            19.080021063486736
+          ]
+        },
+        "effective_rank": {
+          "median": 12.14664149115655,
+          "raw_units": [
+            12.14664149115655,
+            10.464129637447483,
+            13.024214927484143
+          ]
+        },
+        "fid": {
+          "median": 133.1601823096497,
+          "raw_units": [
+            132.8171729326627,
+            140.17575617907505,
+            133.1601823096497
+          ]
+        },
+        "kid": {
+          "median": 0.08311828657026687,
+          "raw_units": [
+            0.08311828657026687,
+            0.08974998876582063,
+            0.0822148917086909
+          ]
+        },
+        "precision": {
+          "median": 0.755859375,
+          "raw_units": [
+            0.748046875,
+            0.763671875,
+            0.755859375
+          ]
+        },
+        "recall": {
+          "median": 0.23974609375,
+          "raw_units": [
+            0.20361328125,
+            0.259765625,
+            0.23974609375
+          ]
+        }
+      },
+      "shifted_disjoint": {
+        "coverage": {
+          "median": 0.33349609375,
+          "raw_units": [
+            0.33349609375,
+            0.33447265625,
+            0.3291015625
+          ]
+        },
+        "density": {
+          "median": 1.657421875,
+          "raw_units": [
+            1.603125,
+            1.882421875,
+            1.657421875
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 15.457271893819174,
+          "raw_units": [
+            14.557874838511148,
+            15.457271893819174,
+            20.11689631144206
+          ]
+        },
+        "effective_rank": {
+          "median": 12.14664149115655,
+          "raw_units": [
+            12.14664149115655,
+            10.464129637447483,
+            13.024214927484143
+          ]
+        },
+        "fid": {
+          "median": 128.07881776526972,
+          "raw_units": [
+            125.26295140550948,
+            132.0711969965118,
+            128.07881776526972
+          ]
+        },
+        "kid": {
+          "median": 0.0730881575239608,
+          "raw_units": [
+            0.07134189256621193,
+            0.07759039504910348,
+            0.0730881575239608
+          ]
+        },
+        "precision": {
+          "median": 0.83984375,
+          "raw_units": [
+            0.830078125,
+            0.857421875,
+            0.83984375
+          ]
+        },
+        "recall": {
+          "median": 0.16357421875,
+          "raw_units": [
+            0.16357421875,
+            0.1953125,
+            0.16162109375
+          ]
+        }
+      }
+    },
+    "B2": {
+      "in_domain_development_reused": {
+        "coverage": {
+          "median": 0.22412109375,
+          "raw_units": [
+            0.2275390625,
+            0.21337890625,
+            0.22412109375
+          ]
+        },
+        "density": {
+          "median": 1.034765625,
+          "raw_units": [
+            0.95703125,
+            1.034765625,
+            1.112890625
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 15.297506332397461,
+          "raw_units": [
+            12.767537117004395,
+            15.297506332397461,
+            17.96879990895589
+          ]
+        },
+        "effective_rank": {
+          "median": 8.210888961964095,
+          "raw_units": [
+            8.210888961964095,
+            7.140453051755358,
+            9.170297647832308
+          ]
+        },
+        "fid": {
+          "median": 145.44009969565468,
+          "raw_units": [
+            145.44009969565468,
+            157.1051309393308,
+            145.30029990195237
+          ]
+        },
+        "kid": {
+          "median": 0.0981853345825181,
+          "raw_units": [
+            0.0981853345825181,
+            0.11130737654313272,
+            0.0973155214974959
+          ]
+        },
+        "precision": {
+          "median": 0.740234375,
+          "raw_units": [
+            0.740234375,
+            0.73046875,
+            0.771484375
+          ]
+        },
+        "recall": {
+          "median": 0.171875,
+          "raw_units": [
+            0.14404296875,
+            0.23779296875,
+            0.171875
+          ]
+        }
+      },
+      "shifted_disjoint": {
+        "coverage": {
+          "median": 0.2919921875,
+          "raw_units": [
+            0.29638671875,
+            0.27587890625,
+            0.2919921875
+          ]
+        },
+        "density": {
+          "median": 1.70546875,
+          "raw_units": [
+            1.594921875,
+            1.823828125,
+            1.70546875
+          ]
+        },
+        "drift_raw_energy": {
+          "median": 14.710432052612305,
+          "raw_units": [
+            13.938839594523111,
+            14.710432052612305,
+            19.06361134847005
+          ]
+        },
+        "effective_rank": {
+          "median": 8.210888961964095,
+          "raw_units": [
+            8.210888961964095,
+            7.140453051755358,
+            9.170297647832308
+          ]
+        },
+        "fid": {
+          "median": 137.65200570566873,
+          "raw_units": [
+            136.62267979846047,
+            147.73224584491925,
+            137.65200570566873
+          ]
+        },
+        "kid": {
+          "median": 0.08565631023893205,
+          "raw_units": [
+            0.08482775100210693,
+            0.09686765500433347,
+            0.08565631023893205
+          ]
+        },
+        "precision": {
+          "median": 0.84765625,
+          "raw_units": [
+            0.818359375,
+            0.84765625,
+            0.85546875
+          ]
+        },
+        "recall": {
+          "median": 0.12109375,
+          "raw_units": [
+            0.12109375,
+            0.169921875,
+            0.11962890625
+          ]
+        }
+      }
+    }
+  },
+  "limits": [
+    "Three units provide coarse consistency, not high-powered inference.",
+    "No source was pooled and no intermediate checkpoint selected the result.",
+    "Cross-architecture intervals use independent generated resampling.",
+    "This is not an evaluation of the complete published paper model."
+  ],
+  "preflight_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b3\\b3_preflight.json",
+  "preflight_sha256": "e522085220bdd701e511fbc018bcbd9bc76dd070545e05dd699cb0db2aabcf23",
+  "raw_unit_comparisons": [
+    {
+      "cross_architecture": {
+        "B3-capacity": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.00864962347193865,
+                "high": 0.014937468380404214,
+                "low": 0.002077103660950097,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.1953125,
+                  "high": -0.14155273437500004,
+                  "low": -0.25,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.12744140625,
+                  "high": -0.11376953125,
+                  "low": -0.14088134765625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.035777943589527794,
+                "high": 0.04164711367219095,
+                "low": 0.02951589121906899,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.35546875,
+                  "high": -0.30078125,
+                  "low": -0.409228515625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1181640625,
+                  "high": -0.10400390625,
+                  "low": -0.13232421875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.031519873520061914,
+                "high": 0.03721395146226801,
+                "low": 0.025701898302341188,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.171875,
+                  "high": -0.111328125,
+                  "low": -0.23046875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.203125,
+                  "high": -0.1875,
+                  "low": -0.220703125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.05523794779515878,
+                "high": 0.06106839024283125,
+                "low": 0.04967592133139478,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.357421875,
+                  "high": -0.30366210937500004,
+                  "low": -0.408203125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.16357421875,
+                  "high": -0.14794921875,
+                  "low": -0.1806884765625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.016452825507810687,
+                "high": 0.021753968297382815,
+                "low": 0.010731696100230814,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.1640625,
+                  "high": -0.10834960937500004,
+                  "low": -0.22265625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1435546875,
+                  "high": -0.12890625,
+                  "low": -0.16041259765625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.04175208935926378,
+                "high": 0.04729117955540062,
+                "low": 0.03627393186845216,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.345703125,
+                  "high": -0.29389648437500004,
+                  "low": -0.395556640625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.12109375,
+                  "high": -0.10716552734375001,
+                  "low": -0.13330078125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "B3-native": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.044682564314907136,
+                "high": 0.051591724604619506,
+                "low": 0.03748843882486049,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.326171875,
+                  "high": -0.27045898437500004,
+                  "low": -0.37890625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1279296875,
+                  "high": -0.11302490234375001,
+                  "low": -0.1435546875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.06958107767007427,
+                "high": 0.07655394592445874,
+                "low": 0.06337868407128928,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.5,
+                  "high": -0.44921875,
+                  "low": -0.552734375,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1181640625,
+                  "high": -0.10423583984375001,
+                  "low": -0.130859375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.0675528143630304,
+                "high": 0.07357286615350668,
+                "low": 0.061301383343128166,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.302734375,
+                  "high": -0.2459960937500001,
+                  "low": -0.36328125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.20361328125,
+                  "high": -0.18577880859375,
+                  "low": -0.22216796875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.08904108187570525,
+                "high": 0.09519270896092442,
+                "low": 0.0834406741086168,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.501953125,
+                  "high": -0.45014648437500004,
+                  "low": -0.55078125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.16357421875,
+                  "high": -0.146484375,
+                  "low": -0.1796875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.05248576635077917,
+                "high": 0.0586569080226476,
+                "low": 0.04697517771245006,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.294921875,
+                  "high": -0.23920898437500004,
+                  "low": -0.3515625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.14404296875,
+                  "high": -0.13037109375,
+                  "low": -0.158203125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07555522343981025,
+                "high": 0.08205357791136769,
+                "low": 0.0692777409511906,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.490234375,
+                  "high": -0.43647460937500004,
+                  "low": -0.546875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.12109375,
+                  "high": -0.10791015625,
+                  "low": -0.13502197265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      },
+      "within_b3": {
+        "10000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.037242903248299264,
+              "generated_subsample": 409,
+              "high": -0.03415090359508649,
+              "low": -0.040372615414831836,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.19140625,
+                "high": 0.24711914062499996,
+                "low": 0.134765625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.03263107304642787,
+              "generated_subsample": 409,
+              "high": -0.028998944837038732,
+              "low": -0.03608700475954672,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.03125,
+                "high": 0.034228515624999956,
+                "low": -0.095703125,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "20000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.029991886462436224,
+              "generated_subsample": 409,
+              "high": -0.026976049360042487,
+              "low": -0.03319341150407355,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.123046875,
+                "high": 0.17875976562499996,
+                "low": 0.060546875,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0009765625,
+                "high": 0.00244140625,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.027951606095251602,
+              "generated_subsample": 409,
+              "high": -0.024912081807397846,
+              "low": -0.031123400434366143,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.119140625,
+                "high": 0.17485351562499996,
+                "low": 0.060546875,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.00048828125,
+                "high": 0.00146484375,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "30000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.036032940842968486,
+              "generated_subsample": 409,
+              "high": -0.03282200102425805,
+              "low": -0.03940309511402208,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.130859375,
+                "high": 0.19047851562499996,
+                "low": 0.072265625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.00048828125,
+                "high": 0.00146484375,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.03380313408054647,
+              "generated_subsample": 409,
+              "high": -0.03054994317277898,
+              "low": -0.03736798609860836,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.14453125,
+                "high": 0.203125,
+                "low": 0.086865234375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "cross_architecture": {
+        "B3-capacity": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07644100460487602,
+                "high": 0.08390499631630138,
+                "low": 0.06869389984984817,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.431640625,
+                  "high": -0.375,
+                  "low": -0.484375,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.2529296875,
+                  "high": -0.23509521484375,
+                  "low": -0.2724609375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.09770602302808395,
+                "high": 0.10477735991165267,
+                "low": 0.09038500806496716,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.640625,
+                  "high": -0.596630859375,
+                  "low": -0.686572265625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.19580078125,
+                  "high": -0.1787109375,
+                  "low": -0.21314697265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.0922416004925184,
+                "high": 0.09909825775850961,
+                "low": 0.08513980264110124,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.42578125,
+                  "high": -0.36420898437500004,
+                  "low": -0.478515625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.259765625,
+                  "high": -0.24290771484375,
+                  "low": -0.27734375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.11119849046241725,
+                "high": 0.11699767201270231,
+                "low": 0.1048861011370418,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.634765625,
+                  "high": -0.587890625,
+                  "low": -0.681640625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.19482421875,
+                  "high": -0.17796630859375,
+                  "low": -0.21240234375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07068421271520631,
+                "high": 0.07771701548580363,
+                "low": 0.06361214963974304,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.392578125,
+                  "high": -0.333984375,
+                  "low": -0.45322265625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.23779296875,
+                  "high": -0.22019042968750002,
+                  "low": -0.25611572265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.09192123050718726,
+                "high": 0.09825314409738502,
+                "low": 0.0850363294718806,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.625,
+                  "high": -0.578125,
+                  "low": -0.66796875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.16943359375,
+                  "high": -0.154296875,
+                  "low": -0.18629150390625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "B3-native": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.030071998895601304,
+                "high": 0.037601232853,
+                "low": 0.02285785800707336,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.126953125,
+                  "high": -0.07421875,
+                  "low": -0.181640625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.2529296875,
+                  "high": -0.23558349609375,
+                  "low": -0.27197265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.05907483531154911,
+                "high": 0.06616299500085918,
+                "low": 0.05238633707438799,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.38671875,
+                  "high": -0.3359375,
+                  "low": -0.435546875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1962890625,
+                  "high": -0.18015136718750002,
+                  "low": -0.2138671875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.04587259478324368,
+                "high": 0.05275859101824284,
+                "low": 0.038866228343319674,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.12109375,
+                  "high": -0.06640625,
+                  "low": -0.176806640625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.259765625,
+                  "high": -0.24169921875,
+                  "low": -0.279296875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07256730274588241,
+                "high": 0.07940967788691342,
+                "low": 0.06549427275648598,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.380859375,
+                  "high": -0.32905273437500004,
+                  "low": -0.427734375,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.1953125,
+                  "high": -0.1787109375,
+                  "low": -0.21265869140625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.024315207005931594,
+                "high": 0.0315544502508719,
+                "low": 0.016330233423282027,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.087890625,
+                  "high": -0.03125,
+                  "low": -0.14453125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.23779296875,
+                  "high": -0.21800537109375,
+                  "low": -0.25513916015625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.053290042790652414,
+                "high": 0.059686376721467344,
+                "low": 0.04559412718241076,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.37109375,
+                  "high": -0.32421875,
+                  "low": -0.423828125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.169921875,
+                  "high": -0.15404052734375,
+                  "low": -0.1845703125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      },
+      "within_b3": {
+        "10000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": 0.05435706429868903,
+              "generated_subsample": 409,
+              "high": 0.05866756996559569,
+              "low": 0.05023666080976008,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.34375,
+                "high": -0.2890625,
+                "low": -0.3984375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": 0.046450239521580894,
+              "generated_subsample": 409,
+              "high": 0.05077373035458925,
+              "low": 0.04268163224690706,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.35546875,
+                "high": -0.29975585937500004,
+                "low": -0.405322265625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "20000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": 0.05608058603839838,
+              "generated_subsample": 409,
+              "high": 0.06119306577079574,
+              "low": 0.051313485792168115,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.244140625,
+                "high": -0.181640625,
+                "low": -0.298828125,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": 0.047373751632305616,
+              "generated_subsample": 409,
+              "high": 0.05242085679334062,
+              "low": 0.0432773353382209,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.236328125,
+                "high": -0.17578125,
+                "low": -0.29306640625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "30000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": 0.04636900570927471,
+              "generated_subsample": 409,
+              "high": 0.050886239805571165,
+              "low": 0.04232106418621982,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.3046875,
+                "high": -0.25390625,
+                "low": -0.357421875,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": 0.03863118771653484,
+              "generated_subsample": 409,
+              "high": 0.04303615964075377,
+              "low": 0.03457037732812666,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": -0.25390625,
+                "high": -0.20014648437500004,
+                "low": -0.31640625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.00048828125,
+                "high": 0.00146484375,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "cross_architecture": {
+        "B3-capacity": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.03245869482872443,
+                "high": 0.03903227721244585,
+                "low": 0.025795524800118687,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.13671875,
+                  "high": -0.08100585937500004,
+                  "low": -0.185546875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.21142578125,
+                  "high": -0.19384765625,
+                  "low": -0.2294921875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.05381406142879808,
+                "high": 0.0598395414871647,
+                "low": 0.04773139769795594,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.345703125,
+                  "high": -0.29296875,
+                  "low": -0.404296875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.15869140625,
+                  "high": -0.14281005859375,
+                  "low": -0.17626953125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.04641030345412167,
+                "high": 0.051951671487560226,
+                "low": 0.04026912842467156,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.119140625,
+                  "high": -0.0625,
+                  "low": -0.173828125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.23974609375,
+                  "high": -0.22142333984375,
+                  "low": -0.25732421875,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.06452333875698235,
+                "high": 0.07034184195812627,
+                "low": 0.058747730782316175,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.33203125,
+                  "high": -0.279296875,
+                  "low": -0.387744140625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.16162109375,
+                  "high": -0.14622802734375,
+                  "low": -0.177734375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.03130967366531667,
+                "high": 0.037787599928871936,
+                "low": 0.024808873034553158,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.134765625,
+                  "high": -0.07802734375000009,
+                  "low": -0.185546875,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.171875,
+                  "high": -0.1552734375,
+                  "low": -0.18775634765625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.0519551860420111,
+                "high": 0.05706667630515346,
+                "low": 0.04640066026761221,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.34765625,
+                  "high": -0.29584960937500004,
+                  "low": -0.400390625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.11962890625,
+                  "high": -0.10521240234375001,
+                  "low": -0.13502197265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "B3-native": {
+          "B0": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.04469049175506079,
+                "high": 0.05165111844126242,
+                "low": 0.038109044324999855,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.279296875,
+                  "high": -0.22749023437500004,
+                  "low": -0.33203125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.2099609375,
+                  "high": -0.19161376953125003,
+                  "low": -0.2265625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07236385461979866,
+                "high": 0.07827898489867709,
+                "low": 0.06593413704528875,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.5,
+                  "high": -0.443359375,
+                  "low": -0.549853515625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.15771484375,
+                  "high": -0.14329833984375,
+                  "low": -0.1728515625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B1": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.05864210038045803,
+                "high": 0.06514500558775671,
+                "low": 0.052535084167243506,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.26171875,
+                  "high": -0.19624023437500004,
+                  "low": -0.317431640625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.23828125,
+                  "high": -0.22191162109375,
+                  "low": -0.25537109375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.08307313194798294,
+                "high": 0.08863763340861293,
+                "low": 0.07638926624660887,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.486328125,
+                  "high": -0.4375,
+                  "low": -0.538134765625,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.16064453125,
+                  "high": -0.14525146484375,
+                  "low": -0.17578125,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "B2": {
+            "in_domain_development_reused": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.04354147059165303,
+                "high": 0.04937721412302511,
+                "low": 0.036857841844211224,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.27734375,
+                  "high": -0.21875,
+                  "low": -0.33203125,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.17041015625,
+                  "high": -0.15550537109375,
+                  "low": -0.1865234375,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            },
+            "shifted_disjoint": {
+              "kid": {
+                "baseline_generated_subsample": 409,
+                "candidate_generated_subsample": 409,
+                "difference": 0.07050497923301169,
+                "high": 0.07703150425395806,
+                "low": 0.06448455258938976,
+                "method": "independent-generated/common-reference-without-replacement-subsampling",
+                "reference_subsample": 512,
+                "replicates": 500
+              },
+              "pairing": "independent generated samples; shared reference",
+              "precision_recall": {
+                "k": 3,
+                "precision": {
+                  "difference": -0.501953125,
+                  "high": -0.451171875,
+                  "low": -0.552734375,
+                  "method": "independent-generated-membership-bootstrap",
+                  "replicates": 500
+                },
+                "recall": {
+                  "difference": -0.11865234375,
+                  "high": -0.10570068359375001,
+                  "low": -0.13209228515625,
+                  "method": "shared-reference-membership-bootstrap",
+                  "replicates": 500
+                },
+                "scope": "conditional on trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      },
+      "within_b3": {
+        "10000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.015190534995962235,
+              "generated_subsample": 409,
+              "high": -0.01163071698563052,
+              "low": -0.018399375001761385,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.19140625,
+                "high": 0.25112304687499987,
+                "low": 0.125,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": -0.00048828125,
+                "high": 0.0,
+                "low": -0.001953125,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.023142222781349364,
+              "generated_subsample": 409,
+              "high": -0.019421885836122078,
+              "low": -0.026575749868380648,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.2890625,
+                "high": 0.34765625,
+                "low": 0.232421875,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "20000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.0038036888922747814,
+              "generated_subsample": 409,
+              "high": 1.1360143190485901e-05,
+              "low": -0.007216001730290266,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.20703125,
+                "high": 0.26665039062499996,
+                "low": 0.147412109375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.010047743964734845,
+              "generated_subsample": 409,
+              "high": -0.0065401128003952595,
+              "low": -0.013384073150234942,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.138671875,
+                "high": 0.203125,
+                "low": 0.067333984375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": 0.0,
+                "high": 0.0,
+                "low": 0.0,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        },
+        "30000": {
+          "in_domain_development_reused": {
+            "kid": {
+              "difference": -0.012231796926336358,
+              "generated_subsample": 409,
+              "high": -0.00871199971657114,
+              "low": -0.01552286071632194,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.142578125,
+                "high": 0.203125,
+                "low": 0.086865234375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": -0.00146484375,
+                "high": 0.0,
+                "low": -0.00341796875,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          },
+          "shifted_disjoint": {
+            "kid": {
+              "difference": -0.018549793191000585,
+              "generated_subsample": 409,
+              "high": -0.015189747854827218,
+              "low": -0.02191831997390744,
+              "method": "paired-without-replacement-subsampling",
+              "reference_subsample": 512,
+              "replicates": 500
+            },
+            "pairing": "same one-step latent draws",
+            "precision_recall": {
+              "k": 3,
+              "precision": {
+                "difference": 0.154296875,
+                "high": 0.21196289062499996,
+                "low": 0.096630859375,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              },
+              "recall": {
+                "difference": -0.0009765625,
+                "high": 0.0,
+                "low": -0.00244140625,
+                "replicates": 500,
+                "scope": "conditional on the trained models and full-set kNN manifolds"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "reading": "descriptive matched rows; B3 has no pass/fail category",
+  "reference_measurement_only": true,
+  "status": "b3-matched-reference",
+  "unit_artifacts": [
+    {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b3\\b3_unit_600.json",
+      "sha256": "9b0c4b3417326b3be658861e69a170fd49d48a70c2fc74ba11b193b499bfd69d",
+      "unit": 600
+    },
+    {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b3\\b3_unit_601.json",
+      "sha256": "55789024016594e24352244d20c1cf6a20de0540996cc235af4e182a4e2b1ed1",
+      "unit": 601
+    },
+    {
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b3\\b3_unit_602.json",
+      "sha256": "58fb5949863cbc6bf8f5c3620622271846b3d4d04e10c0b0a23d3b36987e78af",
+      "unit": 602
+    }
+  ],
+  "verdict": null
+}

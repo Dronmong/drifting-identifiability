@@ -1,0 +1,480 @@
+{
+  "b1_freeze_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\b1_freeze.json",
+  "b1_freeze_sha256": "a0d64146bdfde46accefcebb4fd4f0c7b12f395a0ef766fef9ca7b4f084b66d3",
+  "b25_config": {
+    "arms": [
+      "B0",
+      "B1",
+      "B2",
+      "B1B2"
+    ],
+    "bootstrap_replicates": 500,
+    "checkpoint_steps": [
+      10000,
+      20000,
+      30000
+    ],
+    "density_coverage_neighbors": 5,
+    "diagnostic_steps": [
+      10000,
+      20000,
+      30000
+    ],
+    "drift_effect_retention": 0.8,
+    "final_step": 30000,
+    "quality_retention_fraction": 0.9,
+    "rank_retention_floor": 0.85,
+    "unit_wins_required": 2,
+    "units": [
+      500,
+      501,
+      502
+    ]
+  },
+  "b2_freeze_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_freeze.json",
+  "b2_freeze_sha256": "4345e6e22dd950211d4ce9d56aa87e266569b02cb0f7e82be1ce02ead4d10c45",
+  "device": {
+    "allow_tf32": false,
+    "capability": "sm_89",
+    "cuda_version": "12.6",
+    "device": "cuda",
+    "gpu_memory_gib": 6.0,
+    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "torch_version": "2.7.1+cu126"
+  },
+  "evaluation_allocations": {
+    "in_domain_development_reused": {
+      "audit_0_floor_negatives": "3ef5c5f089e9c50c",
+      "audit_0_positives": "3366b661621d93f1",
+      "audit_0_probe_centres": "c017fbb41da45452",
+      "audit_1_floor_negatives": "28e0bee8e64bcd1a",
+      "audit_1_positives": "dd30d31d30d96f59",
+      "audit_1_probe_centres": "b49bbe4f15bc20d4",
+      "audit_2_floor_negatives": "18218ec0ef397bdb",
+      "audit_2_positives": "d68725a4d8922276",
+      "audit_2_probe_centres": "8d288c8f4a81275c",
+      "audit_3_floor_negatives": "0c378d0e0b17e5c4",
+      "audit_3_positives": "f2388582f25e6b06",
+      "audit_3_probe_centres": "17625ad9ad809f7e",
+      "audit_4_floor_negatives": "b3a9328929383482",
+      "audit_4_positives": "fea27a9c1381bc0a",
+      "audit_4_probe_centres": "d3f07579580b7a06",
+      "audit_5_floor_negatives": "9d8b3e0ee64ac2e4",
+      "audit_5_positives": "0fc7743c1cb5a385",
+      "audit_5_probe_centres": "cd97ac307f4f95eb",
+      "control_0": "cb23ab4607a4c1c1",
+      "control_1": "918d64ff3b15932b",
+      "control_2": "d4e15d91d92ca1c9",
+      "reference": "4fd42386b2ed05e3",
+      "source_id": "07b4aa9e0dcb5617",
+      "unused": "1a83299217f49044"
+    },
+    "shifted_disjoint": {
+      "audit_0_floor_negatives": "3360e408f6648cfa",
+      "audit_0_positives": "340ead666fb33bff",
+      "audit_0_probe_centres": "3d10dd8bf18acdd6",
+      "audit_1_floor_negatives": "4d7f1481563abe35",
+      "audit_1_positives": "8c0cc1156e587442",
+      "audit_1_probe_centres": "4a16beed953b20a7",
+      "audit_2_floor_negatives": "689481801faa61d1",
+      "audit_2_positives": "39b3252b35720802",
+      "audit_2_probe_centres": "c64f739e1b622163",
+      "audit_3_floor_negatives": "6156434ff3ffa080",
+      "audit_3_positives": "79625f50619d0da8",
+      "audit_3_probe_centres": "bc221c824c2d5a0f",
+      "audit_4_floor_negatives": "c7de1d926e152fc0",
+      "audit_4_positives": "312bdca2b3cb528f",
+      "audit_4_probe_centres": "4fb60c2463070d0d",
+      "audit_5_floor_negatives": "c9f538b805fb9f58",
+      "audit_5_positives": "2efbed47a0d7e8fb",
+      "audit_5_probe_centres": "76eedd6fb06245a5",
+      "control_0": "27931ef4273c3c50",
+      "control_1": "78a4cca5415d8c0a",
+      "control_2": "7abefc115e102d45",
+      "reference": "3e6f9ad86fce93d5",
+      "source_id": "9a966e3cc73d31b4",
+      "unused": "4c76819d5aac48c2"
+    }
+  },
+  "external_data": {
+    "archive_md5_matching_official_etag": "6ee4d0c996905fe93221de577967a372",
+    "archive_path": "C:\\Users\\Dronm\\.cache\\cinic-10\\CINIC-10.tar.gz",
+    "archive_sha256": "31b095acf6d75e25a9e028bae82a07a0f94ff6b00671be2802d34ac4efa81a9e",
+    "archive_url": "https://datashare.ed.ac.uk/bitstreams/e8e186cc-2688-48f1-aa5a-3fda1a43f8b6/download",
+    "artifact_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.npz",
+    "artifact_sha256": "a16f0534c219a0cd68eb5b43bf533f488855988c6ac1f799be668199ea706b51",
+    "candidate_counts_after_path_exclusion": {
+      "airplane": 20400,
+      "automobile": 20400,
+      "bird": 20400,
+      "cat": 20400,
+      "deer": 20400,
+      "dog": 20400,
+      "frog": 20400,
+      "horse": 20400,
+      "ship": 20400,
+      "truck": 20400
+    },
+    "classes": [
+      "airplane",
+      "automobile",
+      "bird",
+      "cat",
+      "deer",
+      "dog",
+      "frog",
+      "horse",
+      "ship",
+      "truck"
+    ],
+    "dataset": "CINIC-10 Is Not ImageNet or CIFAR-10",
+    "dataset_doi": "https://doi.org/10.7488/ds/2448",
+    "dtype": "uint8",
+    "excluded_pools": [
+      {
+        "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+        "samples": 6000,
+        "sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728"
+      }
+    ],
+    "filename_exclusions": {
+      "cifar_filename": 60000
+    },
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "output_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.npz",
+    "output_sha256": "a16f0534c219a0cd68eb5b43bf533f488855988c6ac1f799be668199ea706b51",
+    "provenance_path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b25\\data\\cinic10_imagenet_only_b25_disjoint.provenance.json",
+    "provenance_sha256": "0da740ee5bcf41acbe2ac010ba94d8493993fda9a913e93caa67d0c935405791",
+    "rejected_after_decode": {
+      "decoded_pixel_duplicate_in_pool": 7,
+      "decoded_pixel_match_to_exclusion_pool": 16
+    },
+    "samples": 6000,
+    "samples_per_class": 600,
+    "schema": "drifting-identifiability-b25-external-pool-v1",
+    "scientific_scope": "Development-only class-aligned shifted evaluation pool. It is not an in-domain replacement for the CIFAR-10 target law.",
+    "selection_guarantees": {
+      "all_cifar_style_filenames_excluded": true,
+      "all_source_paths_recorded_inside_npz": true,
+      "class_balanced": true,
+      "decoded_pixel_duplicates_within_pool": 0,
+      "decoded_pixel_overlap_with_complete_cifar10": 0,
+      "decoded_pixel_overlap_with_excluded_pools": 0,
+      "only_imagenet_style_filenames": true,
+      "source_path_overlap_with_excluded_pools": 0
+    },
+    "selection_seed": 20260801,
+    "shape": [
+      6000,
+      32,
+      32,
+      3
+    ],
+    "source_id": "cinic10-imagenet-only-b25-disjoint-balanced-600-seed-20260801"
+  },
+  "frozen_constants": {
+    "b1_scale": 0.4299860893300136,
+    "lambda_b1": 0.9310125645774651,
+    "lambda_b2": 0.00019294302093274076,
+    "tau_b2": 7.085388360479058
+  },
+  "profile": {
+    "evaluation": {
+      "generated_samples": 512,
+      "nfe_ladder": [
+        32
+      ],
+      "reference_samples": 2048
+    },
+    "model": {
+      "attention_resolutions": [
+        8
+      ],
+      "base_channels": 64,
+      "channel_multipliers": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "channels": 3,
+      "dropout": 0.0,
+      "image_size": 32,
+      "residual_blocks": 1,
+      "time_embedding_dim": 256
+    },
+    "name": "compact",
+    "purpose": "B2.5 paired development factorial",
+    "train": {
+      "batch": 64,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "checkpoint_steps": [
+        10000,
+        20000,
+        30000
+      ],
+      "ema_decay": 0.9999,
+      "gradient_clip": 1.0,
+      "horizontal_flip": true,
+      "learning_rate": 0.0002,
+      "log_every": 100,
+      "steps": 30000,
+      "weight_decay": 0.0
+    }
+  },
+  "protocol": "numerics/EncoderIndependentB25Protocol.md",
+  "protocol_sha256": "55eae695284b180a33f70eb60e299299b1ab1d490b2538fe4327390b1c43e4e4",
+  "scope": "mechanical and resource readiness only; this does not consume the three-unit B2.5 development experiment",
+  "smoke": {
+    "combined_cell_is_full_dose": true,
+    "combined_diagnostics_have_all_components": true,
+    "flow_streams_exactly_paired": true,
+    "passes": true,
+    "rows": {
+      "B0": {
+        "anchor_events": 0,
+        "correction_events": 0,
+        "flow_loss_step_1": 1.5409244298934937,
+        "gradient_diagnostics": [
+          {
+            "arm": "B0",
+            "combined_norm_pre_clip": 2.1241963648810933,
+            "global_clip_factor": 0.4707662702623904,
+            "pairwise_cosines": {},
+            "step": 2,
+            "weighted_component_norms_post_clip": {
+              "flow": 1.0
+            },
+            "weighted_component_norms_pre_clip": {
+              "flow": 2.1241963648810933
+            }
+          },
+          {
+            "arm": "B0",
+            "combined_norm_pre_clip": 2.0594426625919695,
+            "global_clip_factor": 0.48556826473693704,
+            "pairwise_cosines": {},
+            "step": 4,
+            "weighted_component_norms_post_clip": {
+              "flow": 1.0
+            },
+            "weighted_component_norms_pre_clip": {
+              "flow": 2.0594426625919695
+            }
+          }
+        ],
+        "peak_memory_bytes": 71009792,
+        "peak_memory_reserved_bytes": 71303168
+      },
+      "B1": {
+        "anchor_events": 4,
+        "correction_events": 0,
+        "flow_loss_step_1": 1.5409244298934937,
+        "gradient_diagnostics": [
+          {
+            "arm": "B1",
+            "combined_norm_pre_clip": 7.7306226364728525,
+            "global_clip_factor": 0.1293556867311087,
+            "pairwise_cosines": {
+              "flow_vs_b1_weighted": 0.007274163731289422
+            },
+            "step": 2,
+            "weighted_component_norms_post_clip": {
+              "b1_weighted": 0.9570536499021174,
+              "flow": 0.283032678379925
+            },
+            "weighted_component_norms_pre_clip": {
+              "b1_weighted": 7.398620610252274,
+              "flow": 2.188018830345389
+            }
+          },
+          {
+            "arm": "B1",
+            "combined_norm_pre_clip": 40.981177954294296,
+            "global_clip_factor": 0.02440144597881704,
+            "pairwise_cosines": {
+              "flow_vs_b1_weighted": -0.01634632897457267
+            },
+            "step": 4,
+            "weighted_component_norms_post_clip": {
+              "b1_weighted": 0.9995256459909848,
+              "flow": 0.051201618603249476
+            },
+            "weighted_component_norms_pre_clip": {
+              "b1_weighted": 40.96173836823751,
+              "flow": 2.098302643527672
+            }
+          }
+        ],
+        "peak_memory_bytes": 72208384,
+        "peak_memory_reserved_bytes": 73400320
+      },
+      "B1B2": {
+        "anchor_events": 4,
+        "correction_events": 4,
+        "flow_loss_step_1": 1.5409244298934937,
+        "gradient_diagnostics": [
+          {
+            "arm": "B1B2",
+            "combined_norm_pre_clip": 7.620579618311434,
+            "global_clip_factor": 0.1312236142244492,
+            "pairwise_cosines": {
+              "b1_weighted_vs_b2_weighted": -0.016472683769104664,
+              "flow_vs_b1_weighted": 0.007525252654622933,
+              "flow_vs_b2_weighted": 0.07773764144091333
+            },
+            "step": 2,
+            "weighted_component_norms_post_clip": {
+              "b1_weighted": 0.9557917672878512,
+              "b2_weighted": 0.005617179117089266,
+              "flow": 0.28676102586185304
+            },
+            "weighted_component_norms_pre_clip": {
+              "b1_weighted": 7.2836872611436645,
+              "b2_weighted": 0.04280616069209508,
+              "flow": 2.1852852290089153
+            }
+          },
+          {
+            "arm": "B1B2",
+            "combined_norm_pre_clip": 41.26841476798068,
+            "global_clip_factor": 0.024231606802010714,
+            "pairwise_cosines": {
+              "b1_weighted_vs_b2_weighted": -0.03758717574824767,
+              "flow_vs_b1_weighted": -0.016045452157131188,
+              "flow_vs_b2_weighted": 0.15886999776728383
+            },
+            "step": 4,
+            "weighted_component_norms_post_clip": {
+              "b1_weighted": 0.9995528232909604,
+              "b2_weighted": 0.0010222160308368806,
+              "flow": 0.050832446712080294
+            },
+            "weighted_component_norms_pre_clip": {
+              "b1_weighted": 41.24996049407745,
+              "b2_weighted": 0.04218523514305532,
+              "flow": 2.0977744945854053
+            }
+          }
+        ],
+        "peak_memory_bytes": 73410048,
+        "peak_memory_reserved_bytes": 75497472
+      },
+      "B2": {
+        "anchor_events": 0,
+        "correction_events": 4,
+        "flow_loss_step_1": 1.5409244298934937,
+        "gradient_diagnostics": [
+          {
+            "arm": "B2",
+            "combined_norm_pre_clip": 2.1284775912490876,
+            "global_clip_factor": 0.46981936953968795,
+            "pairwise_cosines": {
+              "flow_vs_b2_weighted": 0.06607597558822378
+            },
+            "step": 2,
+            "weighted_component_norms_post_clip": {
+              "b2_weighted": 0.02000254580960602,
+              "flow": 0.9984791149413876
+            },
+            "weighted_component_norms_pre_clip": {
+              "b2_weighted": 0.042574970523679756,
+              "flow": 2.1252404214829657
+            }
+          },
+          {
+            "arm": "B2",
+            "combined_norm_pre_clip": 2.062442232646599,
+            "global_clip_factor": 0.48486206506582463,
+            "pairwise_cosines": {
+              "flow_vs_b2_weighted": 0.09172694417540711
+            },
+            "step": 4,
+            "weighted_component_norms_post_clip": {
+              "b2_weighted": 0.018508725765304112,
+              "flow": 0.9981323914296663
+            },
+            "weighted_component_norms_pre_clip": {
+              "b2_weighted": 0.038173177690837445,
+              "flow": 2.05859039785709
+            }
+          }
+        ],
+        "peak_memory_bytes": 72612864,
+        "peak_memory_reserved_bytes": 73400320
+      }
+    }
+  },
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+    "numerics/encoder_independent_drifting/b1.py": "324ee2d31b6beb1db928c7b333e23576fe511391e4d3c813f87c5791bda283d0",
+    "numerics/encoder_independent_drifting/b1_freeze.py": "bc39cf99257d331db88de426e8b6d06677b771f3054084eeb486e7f769e79cd8",
+    "numerics/encoder_independent_drifting/cifar.py": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+    "numerics/encoder_independent_drifting/config.py": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/f3b.py": "bc56e4132cc50e1f92cd689ac0bba55ec25492f38fe886a1a737a2d02d0bca19",
+    "numerics/encoder_independent_drifting/f3b_freeze.py": "aed3c96c8671dc94b498d65cb1018a21b2b9bfc6df46c745585602638ac009c3",
+    "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+    "numerics/encoder_independent_drifting/spectral_anchor.py": "e6a2b98dcd1e47b7baa638fd1b8664cb4a42356cd5d91492418e3d662209f40c",
+    "numerics/encoder_independent_drifting/stage_b2/__init__.py": "6949bce8383d7f44d72a94ef5c30ead63280327c786ecee23ce0a6add241d8af",
+    "numerics/encoder_independent_drifting/stage_b2/artifacts.py": "486a52fd58a864d9b7aad7ff6d459930da3b05e889ade3341108f6899028c66b",
+    "numerics/encoder_independent_drifting/stage_b2/core.py": "5616a4905d1ca599c0e21ec6e1b6063ea8ff3b0cabbba974ebdf7aa3e8e18fac",
+    "numerics/encoder_independent_drifting/stage_b2/fresh_data.py": "0d4b65a13735c36800224eb30a5fa549d5bc48ff28e225a95b743d6afaa844d1",
+    "numerics/encoder_independent_drifting/stage_b2/metrics.py": "fe58e695a451842a8261cf014a74cd28071769295d1de8a510a9a00af47e0e54",
+    "numerics/encoder_independent_drifting/stage_b2/source_cinic10_pool.py": "e6bc2a906bd8069476655e9232faeb83ada9b2276a07c6989549e96b28b97722",
+    "numerics/encoder_independent_drifting/stage_b25/__init__.py": "a2980d46513158a6d225628f303a8dbd174471366632584ee017cfbad461bbf9",
+    "numerics/encoder_independent_drifting/stage_b25/aggregate.py": "491dfc6ae318822adef547e7d9795b997747d5ce46dd696c2f57d0803390a95b",
+    "numerics/encoder_independent_drifting/stage_b25/artifacts.py": "b0ccffa49d40fdad2b0c512031d09bfc310e028b14b69460b9266e11e58e5cca",
+    "numerics/encoder_independent_drifting/stage_b25/core.py": "8f64b7daf9017c631e8cff8ffdc82ada52c7f928629c5a082913d7817a99c77c",
+    "numerics/encoder_independent_drifting/stage_b25/evaluation.py": "a789e762a6284fc053e6bc8e308a285bd248e30b44044c2383bcb876f11f37ca",
+    "numerics/encoder_independent_drifting/stage_b25/preflight.py": "9f794694e5de6f496d9e5d2405d40b960f5efde45d906743a6c61d1721831374",
+    "numerics/encoder_independent_drifting/stage_b25/run_unit.py": "d082129a3d114d6b36c8b1e7131f3c9eef3f4eb24cd3ac3208671fccbeb02f53",
+    "numerics/encoder_independent_drifting/stage_b25/source_pool.py": "2cd665bcdad79c5e9eb6e76d0348783c8ff180c1b7029b30ad94d5b801347c7d",
+    "numerics/encoder_independent_drifting/stage_b25/tests/__init__.py": "bb4fad81cbd28df1a0cad95085ec2f86fe91a89810e6875a923763a1efa0b288",
+    "numerics/encoder_independent_drifting/stage_b25/tests/test_b25.py": "df8d4bea76b5f3762563703448d799e78cef56301e646823b7b701fa26dced70"
+  },
+  "status": "b25-preflight",
+  "throughput": {
+    "anchor_events": 10,
+    "arm": "B1B2",
+    "component_gradient_diagnostics": [
+      {
+        "arm": "B1B2",
+        "combined_norm_pre_clip": 1.270082919259499,
+        "global_clip_factor": 0.7873501681158217,
+        "pairwise_cosines": {
+          "b1_weighted_vs_b2_weighted": -0.23675847603344333,
+          "flow_vs_b1_weighted": 0.6367835289728327,
+          "flow_vs_b2_weighted": 0.12064394859519505
+        },
+        "step": 100,
+        "weighted_component_norms_post_clip": {
+          "b1_weighted": 0.47608744491784427,
+          "b2_weighted": 0.6668319205133547,
+          "flow": 0.4076908114440015
+        },
+        "weighted_component_norms_pre_clip": {
+          "b1_weighted": 0.6046705318640515,
+          "b2_weighted": 0.8469318322610196,
+          "flow": 0.5178011359540713
+        }
+      }
+    ],
+    "correction_events": 10,
+    "elapsed_seconds": 21.477241277694702,
+    "peak_memory_bytes": 4882157056,
+    "peak_memory_reserved_bytes": 5184159744,
+    "projected_hours_per_full_combined_unit": 1.7897701064745586,
+    "seconds_per_step": 0.21477241277694703,
+    "steps": 100
+  },
+  "verdict": {
+    "decision": "GO",
+    "memory_passes": true,
+    "reading": "GO: full-dose factorial mechanics, pairing, data boundaries, and device headroom pass",
+    "smoke_passes": true
+  }
+}
