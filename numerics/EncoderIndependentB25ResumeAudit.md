@@ -389,6 +389,115 @@ experiment and would forfeit that cross-check against unit 500.
 
 ---
 
+## 7.2 How close was unit 500, and could 501/502 change the verdict?
+
+Asked before committing 16.5 h to a restart. The margins look small; the
+structure behind them does not.
+
+### The two failing margins
+
+| condition | unit 500 | threshold | shortfall |
+|---|---:|---:|---|
+| drift effect retained | 0.7564 | 0.80 | B1B2 energy must drop 0.304 (**1.9%**) |
+| rank restored | 0.7938 | 0.85 | B1B2 rank must rise 0.787 (**7.1%**) |
+| precision retained | 0.7930 | 0.7523 | passes, +5.4% |
+| recall retained | 0.2148 | 0.1811 | passes, +18.7% |
+
+Both misses are small. Taken alone, that reads like a coin flip.
+
+### But no checkpoint of unit 500 passes both at once
+
+The same trained models, evaluated at three checkpoints, in-domain:
+
+| step | drift retained (≥0.80) | rank restored (≥0.85) |
+|---:|---:|---:|
+| 10 000 | 0.7865 ✗ | **0.8728 ✓** |
+| 20 000 | **0.9504 ✓** | 0.7705 ✗ |
+| 30 000 | 0.7564 ✗ | 0.7938 ✗ |
+
+**Each condition is cleared at some checkpoint. Neither is cleared at the same
+checkpoint as the other.** Three independent looks at one run, and every one
+fails at least one condition — usually the one the previous checkpoint passed.
+
+### The reason: the two conditions pull in opposite directions
+
+Effective rank is computed on generated raw pixels and is **identical across
+both evaluation instruments** (13.998 / 12.856 / 8.072 / 11.111 in-domain and
+shifted). It carries no evaluation noise — it is a pure property of the trained
+model. So the gate is asking the mechanism itself to move, and the mechanism has
+essentially one axis: how much B1 neutralises B2.
+
+Normalising unit 500 at step 30 000, with `t = 0` at pure B2 and `t = 1` at
+pure B1:
+
+```
+drift fraction(t) = 1.0000 − 0.3182·t          (B1 retains 0.6818 of B2's reduction)
+rank ratio(t)     = 0.5766 + 0.3418·t          (B2 0.5766, B1 0.9184)
+```
+
+The gate requires
+
+```
+drift ≥ 0.80  ⟹  t ≤ 0.629
+rank  ≥ 0.85  ⟹  t ≥ 0.799
+```
+
+**These are inconsistent. No blend of B1 and B2 satisfies both.** The
+interpolation line never enters the pass region — it misses by about 0.055 in
+rank ratio at the best available point.
+
+Passing therefore requires B1B2 to sit **strictly above** the B1–B2
+interpolation on rank while holding its drift position — genuine selective
+complementarity, cancelling B2's geometry damage but not its drift reduction.
+Unit 500 sat **0.044 below** that line. The required swing is ≈ +0.10 in rank
+ratio.
+
+For scale, the checkpoint-to-checkpoint standard deviations within unit 500 are
+**0.054** (rank retention) and **0.104** (drift retention). The required move is
+roughly two standard deviations in a specific direction, and it is needed in
+**both** remaining units, because a restart re-runs unit 500 under the same
+seeds and the same 27 hashed sources with `use_deterministic_algorithms(True)` —
+it will reproduce and fail again, so 2-of-3 means 501 **and** 502.
+
+### The drift condition is also measuring the wrong thing
+
+From §3: B2's raw energy is **13.933 against a real-versus-real floor of
+14.103** — below the floor a correctly distributed sample cannot beat. So
+condition 1 asks B1B2 to retain 80% of a reduction that is itself partly
+estimator exploitation.
+
+On a floor-relative reading, which is the defensible one:
+
+| arm | energy | excess over floor | share of B0's excess removed |
+|---|---:|---:|---:|
+| B0 | 20.904 | +6.801 | — |
+| B1 | 16.151 | +2.048 | 69.9% |
+| B2 | 13.933 | **−0.170** | 102.5% — overshoots the floor |
+| **B1B2** | 15.631 | **+1.528** | **77.5%** |
+
+**B1B2 is the best arm that approaches the floor from above.** The gate marks it
+down for not matching an arm that went through the floor.
+
+### Answer
+
+Unit 500 is close on the numbers and far on the structure. The two failing
+conditions are in direct tension along the only axis this mechanism can move,
+no blend point satisfies both, and one of the two is calibrated against a
+partly-artifactual reference.
+
+**Re-running is unlikely to change the verdict**, and if it did, the verdict
+would not mean what it appears to mean. The information B2.5 was built to
+produce — *do the spectral anchor and the raw drift term compound?* — is
+already visible in unit 500: **they do, substantially and super-additively on
+rank (`I_rank = +4.18`), but not selectively**, and B1B2 leads on recall, KID
+and FID while being the best-behaved arm on the floor-relative drift axis.
+
+That is a usable answer to ASFD's premise. It is not a `promising` verdict under
+a heuristic the protocol itself calls *"a prospective development heuristic, not
+a calibrated test."*
+
+---
+
 ## 8. Unrelated finding: uncommitted work
 
 `git status` shows a substantial body of uncommitted work, including the plan
