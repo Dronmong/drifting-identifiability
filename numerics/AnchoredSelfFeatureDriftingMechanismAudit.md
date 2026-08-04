@@ -778,7 +778,7 @@ Ordered by expected value, not by section number.
 
 | # | change | section | cost |
 |---|---|---|---|
-| 1 | Replace projection with a weighted sum; make gradient cosine an abort criterion, not a repair | §7.1 | none |
+| 1 | Replace projection with a weighted sum; abort on outcomes, not on cosine (refined in **A.6**) | §7.1 | none |
 | 2 | Per-component gradient caps (0.15/0.10/0.10), not a shared total | §7.1 | none |
 | 3 | Re-space radii to span local→global; apply to the raw branch too | §5.6 | none |
 | 4 | Enlarge the cached positive bank (256+); asymmetric negative batch | §5.7 | storage |
@@ -819,3 +819,675 @@ floor.
 
 None of these require abandoning the design. All three are fixed by changes that
 cost no compute.
+
+**Appendix A** below is the revised specification: drop-in replacement text for
+every affected section of the plan, written so that the plan is implementable
+as amended.
+
+---
+
+# Appendix A — Revised specification
+
+This appendix replaces the corresponding sections of
+[`AnchoredSelfFeatureDriftingResearchPlan.md`](AnchoredSelfFeatureDriftingResearchPlan.md).
+Sections not listed here are unchanged and stand as written. Nothing in this
+appendix authorizes an experiment; it defines what would be run if one were
+authorized.
+
+Numbering matches the plan's own sections so the two documents can be read side
+by side.
+
+---
+
+## A.0 A prerequisite the plan does not state: no frozen constant transfers
+
+The plan's §1, §3.2 and §7.1 speak of retaining "the existing raw correction"
+and "the existing spectral anchor." Read as a reuse of B1's and B2's frozen
+numerical constants, that is wrong, and the error would be silent.
+
+| constant | value | why it does not transfer |
+|---|---:|---|
+| B2 Laplace bandwidth τ | 7.085388360479058 | calibrated on all-class CIFAR-32 raw pixels, median pairwise distance 37.49. Automobile-only is a tighter cloud with a different median. |
+| B2 event weight λ | 1.9294302093274076e-4 | calibrated to hit event gradient ratio 0.25 against the **F3B bridge's** flow-matching loss. EMF's loss has an unrelated gradient scale. |
+| B1 event weight | 0.9310125645774651 | same reason. |
+| B1 projected scale | 0.4299860893300136 | derived from bridge-scale activations. |
+
+**What transfers is the *form* of each term and the *calibration procedure*,
+never the numbers.** Every coefficient, bandwidth, and scale in ASFD must be
+re-derived outcome-blind against CAP-EMF-1 on automobile-only data, and the
+artifact must record that it did so rather than loading a B1/B2 freeze.
+
+This also means the ASFD arms are a **new development configuration**, not a
+continuation of a confirmed one. §12's claim ledger should say so.
+
+---
+
+## A.1 Replaces §5.2 — feature levels
+
+### A.1.1 Naming
+
+Delete the term `bottleneck`. The trunk is a U-ViT with long skips
+([`stage_pmf_r/model.py:43–50, 123–130`](encoder_independent_drifting/stage_pmf_r/model.py#L43));
+every block runs at the same width and the same token count, and there is no
+spatially compressed stage. Calling block 6 a bottleneck imports an intuition
+the architecture does not supply.
+
+### A.1.2 Levels
+
+Predeclare **four** levels spanning the trunk, mirroring TFD's verified
+encoder/mid/decoder spread rather than the self-perceptual paper's single
+midblock:
+
+| label | tap point (depth 12) |
+|---|---|
+| `enc_mid` | output of encoder block 3 |
+| `enc_final` | output of encoder block 6 |
+| `dec_mid` | output of decoder block 9, **after** its long-skip fusion |
+| `dec_final` | output of decoder block 12, **before** `final_norm` and `pixel_head` |
+
+Rationale, recorded so the choice is falsifiable: TFD Fig. 4b finds that
+combining intermediate and deep representations matters and that deep-only is
+worse; five levels beat three. A distributional field over many levels does not
+over-constrain the way a per-sample regression does, because each level
+contributes an independent nonnegative discrepancy whose zero set contains the
+true one — extra levels tighten an intersection rather than over-determining a
+point. This is the same argument the plan already uses for separate squares.
+
+The final level is taken **before** `final_norm`/`pixel_head` so the descriptor
+is not a near-affine image of the output pixels, which would make it redundant
+with the raw branch by construction.
+
+### A.1.3 Per-level descriptor
+
+Unchanged from the plan: reshape the 16×16 image tokens, 2×2 non-overlapping
+average pool to 8×8 = 64 local vectors, plus one global channel-mean and one
+global channel-standard-deviation vector. **66 vectors per level.**
+
+### A.1.4 Token-grid extraction
+
+The current trunk prepends two conditioning tokens
+(`torch.cat((time_token, interval_token, patches), dim=1)`,
+[`model.py:121`](encoder_independent_drifting/stage_pmf_r/model.py#L121)), so
+the image grid is `tokens[:, 2:]`. CAP-EMF-1 §10.2 proposes AdaLN-Zero
+conditioning instead, in which case there are exactly 256 tokens and no slice.
+
+**Write the extraction against whichever conditioning CAP-EMF-1 freezes, and
+assert it.** §6.1.1's parity test cannot catch an off-by-two slice, because it
+only checks that ordinary model outputs are unchanged — and they are, since
+extraction is a read-only hook. Add the assertions in A.10.
+
+### A.1.5 Cost of four levels
+
+Kernel work scales with levels; the trunk forward does not. At `n_z = 64`
+probes, `n_p = 256` positives, `n_q = 64` negatives, `C = 512`:
+
+- per level per location: `64×256×512 + 64×64×512 ≈ 10.5M` MACs
+- × 66 locations × 4 levels ≈ **5.5 GFLOP**
+- radii share the distance matrices; only the softmax temperature changes
+
+Against a forward+backward of the frozen trunk on 64 images at 256 tokens,
+depth 12, width 512 (**≈ 2 TFLOP**), the kernel work is **≈ 0.3%**. Four levels
+and three radii are free relative to the extraction they ride on.
+
+Peak activation memory is dominated by the frozen trunk's backward graph, not
+the kernels: generated-side feature tensors are `4 × 64 × 66 × 512 × 4 B ≈
+35 MB` and the distance matrices `≈ 4 MB` per level.
+
+---
+
+## A.2 Replaces §5.3 — feature noising and `t_f` selection
+
+The construction stands: `x_{t_f} = (1−t_f)x + t_f ξ`, evaluated at absolute
+time `t_f` and interval 0, with independent noise streams per role and no
+positive/negative noise pairing. This is the in-distribution corruption for a
+time-conditioned flow trunk, and up to the `(1−t_f)` signal scaling it matches
+TFD's ablated `σ_tf = 0.1`.
+
+**Change: do not freeze `t_f = 0.10` by analogy. Select it.**
+
+Run §6.2's geometry audit — as amended in A.5 — over the grid
+
+    t_f ∈ {0.05, 0.10, 0.20, 0.35, 0.50}
+
+on **target-training images only**, and select the value maximizing a
+predeclared composite of the audit statistics (benign-vs-random AUC, the
+per-band sensitivity profile of A.5.2, and inter-level non-redundancy),
+subject to every hard threshold passing. Freeze one value for the run and
+record the full profile across the grid.
+
+This is calibration, not tuning: it is the same status as the ESS bandwidth
+calibration the plan already performs, it touches no held-out data, and it
+does not create the interpretability hazard §5.3 is guarding against — which is
+about varying `t_f`, layer set, and kernel *together inside the training
+experiment*.
+
+**Record the tradeoff being navigated.** Along `t_f`, injectivity and semantic
+abstraction pull in opposite directions: at small `t_f` a direct-`x` trunk's
+task is near-identity, so hidden states are near-invertible codes — maximal
+injectivity, minimal abstraction; at large `t_f` the trunk must use global
+context — more abstraction, more collision risk. ASFD wants abstraction from
+the semantic branch and relies on the **raw** branch for correctness, so it can
+afford to sit further toward abstraction than an injectivity-seeking design
+would. Naming this makes the selection principled rather than inherited.
+
+---
+
+## A.3 Replaces §5.4 — feature normalization
+
+The plan's single scalar per level, `S_j`, is retained as the second stage, but
+is preceded by a conditional per-channel stage with a **predeclared trigger**,
+so that outlier-channel domination cannot silently reduce the semantic metric
+to a one- or two-dimensional statistic.
+
+**Stage 1 — conditional per-channel scaling.** On the target-only calibration
+allocation, compute the token-level principal-component variance share of level
+`j`. If `PC1 > 0.35`, apply frozen per-channel scales
+
+    s_{j,c} = max( σ_{j,c},  0.1 · median_c σ_{j,c} )
+
+and divide channel `c` by `s_{j,c}`. The floor bounds amplification of
+low-variance noise channels at 10×. If `PC1 ≤ 0.35`, this stage is the identity.
+Record which branch fired.
+
+**Stage 2 — scalar level scale.** As the plan specifies:
+
+    S_j = (1/√C_j) · mean_{a≠b, ℓ} ‖ h_j(x_a)_ℓ − h_j(x_b)_ℓ ‖₂
+
+computed **after** stage 1, then frozen. Reject zero, non-finite, or poorly
+resolved scales.
+
+Both stages are frozen from target-only data before any correction event, so
+the metric cannot move in response to model failure — the property the plan's
+§5.4 was protecting, now protected against the channel-domination failure too.
+
+---
+
+## A.4 Replaces §5.5–§5.6 — fields, radii, and health gates
+
+### A.4.1 Field and energy — unchanged in form
+
+The sample-split normalized Laplace mean-shift difference, and the
+mean-of-squared-norms energy over `(j, r, ℓ, z)`, stand exactly as written.
+Separate squares before averaging is correct and must not be relaxed. Positives
+and probes detached; generated negatives differentiable through the frozen
+trunk.
+
+### A.4.2 Batch shapes — the highest-value change in this appendix
+
+| role | plan | **revised** | why |
+|---|---:|---:|---|
+| positives per event | 64 | **256** | cached; costs storage, not compute |
+| probes per event | 64 | 64 | unchanged |
+| negatives per event | 64 | 64 | each costs a generator forward |
+
+At 64-vs-64 the real-versus-real floor is **54–67% of total measured energy**
+(§5.4 of the audit). The floor falls roughly as `1/n`, so 64 → 256 positives
+should cut the positive side's contribution ≈ 4× and lift signal-to-floor from
+≈ 0.85 toward ≈ 3. **Most of what the correction currently differentiates is
+sampling noise.**
+
+Asymmetric roles are legitimate here and should be used: the positive bank is
+precomputed, so a larger positive side is nearly free, while the negative side
+is bounded by generator-forward cost.
+
+**Bank storage arithmetic**, so the decision is made on numbers: 66 vectors ×
+512 channels × 4 levels × 2 views = 270 336 values per image ≈ **0.52 MB per
+image in fp16**; × 5 000 automobile training images ≈ **2.6 GB**. This fits in
+host RAM, pinned, paged to the GPU per event at 256 images × 0.52 MB ≈ 132 MB.
+Store fp16; accumulate kernels and energies in fp32.
+
+### A.4.3 Radii — span a real range
+
+Replace `R = {0.35, 0.60, 0.85}` with
+
+    R = {0.10, 0.35, 0.85}
+
+as target **median off-diagonal** ESS fractions, calibrated per feature level by
+bisection exactly as
+[`stage_b2/core.py:244`](encoder_independent_drifting/stage_b2/core.py#L244)
+does for the raw branch.
+
+The plan's set spans under 2× in τ and contains no local regime; all three
+fields are therefore blind to sub-bandwidth structure in the same way and
+averaging them does not repair it. TFD's ablated set spans 10×. At `n_p = 256`,
+ESS fraction 0.10 is **25.6 effective neighbours** — comfortably clear of the
+one-to-five-neighbour tail that motivated the plan's health floors, which is
+precisely what the enlarged bank in A.4.2 buys.
+
+**Fallback ladder.** If the smallest radius fails the health floors at the
+frozen batch size, step it along the predeclared ladder `{0.10, 0.15, 0.20}` and
+record which rung was used. Do not silently widen it.
+
+### A.4.4 The raw branch is multi-radius too
+
+The rank collapse measured in B2 is a property of **broad-bandwidth barycenter
+matching**, not of pixel geometry. A single raw radius at ESS 0.60 reproduces
+it. Apply the same three-radius construction, with separate squares averaged, to
+`E_raw`.
+
+This is one reason A.0 matters: the raw branch is no longer B2's frozen
+single-τ configuration, so nothing is being reused numerically and the
+incumbent arm is a new configuration too. Say so in the artifact.
+
+### A.4.5 Health gates — now two-sided and applied to both roles
+
+Retain the plan's prospective limits (5th-percentile ESS ≥ 0.10, 95th-percentile
+maximum weight ≤ 0.50) as **calibration-time** rejection criteria on the target
+side, and add **runtime** gates the plan lacks:
+
+| gate | applies to | threshold | rationale |
+|---|---|---|---|
+| negative-side median ESS | every level × radius, every logged event | **≤ 0.90** | if it approaches 1 the negative barycenter approaches a plain batch mean and the energy degenerates to first-moment matching |
+| raw energy vs real-real floor | raw branch, every checkpoint | **≥ floor** | B2 scored 13.933 against a floor of 14.103; a correctly distributed sample cannot beat the floor, so undershooting is estimator exploitation |
+
+[`stage_b2/core.py:214`](encoder_independent_drifting/stage_b2/core.py#L214)
+already records `positive` and `negative` weight health separately — the
+plumbing exists; only the thresholds are missing. B2's negative-side ESS ran
+0.666 → 0.702 across audits with nothing watching it.
+
+### A.4.6 Logging — add the location split
+
+Retain the plan's per-level, per-radius log list, and add:
+
+- **energy split between the 2 global and 64 local vectors.** 97% of `E_self`
+  is position-locked: location `ℓ` of a generated image is only ever compared
+  with location `ℓ` of a target image. Under the horizontal flip recorded in
+  §5.7's augmentation bits, token `(i,j)` maps to `(i, 15−j)`, so a flipped car
+  reads as far from an unflipped one at every local location. A large fraction
+  of the energy may be measuring pose rather than semantics, and the split is
+  the only way to see it.
+- **negative-side ESS and maximum-weight summaries**, matching the positive side.
+- **train-bank minus fresh-bank energy gap** at every checkpoint (see A.7).
+
+Note the audit/deployment mismatch explicitly in the artifact: §6.2.1 undoes
+known flips and translations *for the qualification audit*, but the training
+field gets no registration. The audit measures the feature map under conditions
+the objective never enjoys.
+
+---
+
+## A.5 Replaces §6.2 — feature qualification gate
+
+### A.5.1 Fail-fast ordering
+
+Run **G7 and G8 first**. Both are cheap, target-only, and test the two
+assumptions the entire branch rests on. If either fails, §11's "cancel the ASFD
+arm" branch fires before any bank construction or coefficient calibration is
+spent.
+
+### A.5.2 G7 (new) — two-sided per-band sensitivity
+
+The plan's §6.2.5 is an **upper** bound only: *"the response to small
+high-frequency noise is not more than four times the response of a normalized
+raw-pixel control."* A feature map with **zero** high-frequency sensitivity
+passes it trivially — and that is the failure this architecture is most likely
+to have, because the trunk allocates capacity under an MSE objective that
+underweights exactly the bands the foundation is missing. S3R's EMF arm measured
+final raw Haar variance ratios LL 0.509, LH 0.410, HL 0.512, **HH 0.159**.
+
+Replace with a two-sided, per-band test. Inject fixed-energy perturbations into
+each orthonormal Haar band and measure the feature-distance response relative to
+a normalized raw-pixel control:
+
+    ρ_b = Δ_feature(band b) / Δ_raw(band b),   b ∈ {LL, LH, HL, HH}
+
+**Require `ρ_b ∈ [0.25, 4.0]` in every band, for every level.** Report the full
+profile alongside S3R's Haar table so the trunk's blind spots are visible before
+any training is spent.
+
+### A.5.3 G8 (new) — inter-level non-redundancy
+
+§6.2.6 checks the semantic field against the **raw** field but nothing checks
+the levels against **each other**. Under the plan's original two adjacent levels
+this was the gap most likely to make the branch a silent no-op.
+
+Require, on target-only data, for every pair of levels:
+
+- median field cosine `< 0.90` at the audit events, **and**
+- linear CKA between level descriptors `< 0.95`.
+
+Levels failing the pair test are dropped, not tuned; record which survive.
+
+### A.5.4 G9 (new) — local-token rank and concentration
+
+The plan's §6.2.3 checks effective rank ≥ 16 and PC1 ≤ 50% on the **global**
+mean/std descriptor, but 64 of 66 vectors per level are local tokens. Apply the
+same two checks to the local-token descriptor. If token-level PC1 exceeds 0.35,
+A.3's per-channel stage fires; if it still exceeds 0.50 after that stage, the
+level fails.
+
+### A.5.5 Tighten G6
+
+`|cosine| < 0.995` against the raw field permits ~99% shared variance. Require
+**`|cosine| < 0.90`** at the median audit event. A semantic branch that is
+90%-aligned with the raw branch is not adding geometry, it is adding weight.
+
+### A.5.6 Unchanged
+
+G1 (benign vs random AUC ≥ 0.80, computed both on the invariant global
+descriptor and on registered local tokens), G2 (patch-shuffle/phase-scramble
+farther in ≥ 80% of paired cases), G4 (pairwise-distance CV ≥ 0.05), and the
+uncurated nearest-neighbour grids as sanity checks rather than
+threshold-selection devices.
+
+---
+
+## A.6 Replaces §7 — gradient integration
+
+### A.6.1 No projection
+
+Delete the first-order projection entirely. The applied update is
+
+    g_total = g₀ + λ₁g₁ + λ_r g_r + λ_s g_s
+
+which **is** the gradient of
+
+    L = L_EMF + λ₁L_B1 + λ_r E_raw + λ_s E_self,
+
+so §3.1's implication applies to the objective the optimizer actually descends,
+and `λ_raw > 0` does the work the plan claims for it. Ordinary global gradient
+clipping — as already used by the foundation — is applied afterwards to the
+summed gradient, exactly as B2.5 does.
+
+Projection would make the update non-conservative, leaving no potential whose
+stationary points the dynamics seek, and would delete precisely the component of
+the raw anchor that opposes `g₀` — which is the only component that does any
+work, since an anchor that agrees with the primary gradient changes nothing.
+
+### A.6.2 Per-component caps, not a shared total
+
+| component | cap on `‖λᵢgᵢ‖ / ‖g₀‖` |
+|---|---:|
+| B1 spectral | 0.15 |
+| raw Laplace | 0.10 |
+| self-feature | 0.10 |
+
+Each cap is applied to its own weighted gradient norm, independently, after AMP
+unscaling. The total auxiliary norm is then permitted to reach 0.35 in the ASFD
+arm and 0.25 in the raw arm.
+
+This is the point. Under the plan's shared 0.25 cap the ASFD arm runs at
+**≈ 29% less raw anchor and 29% less B1** than the arm it is compared against,
+so any Stage-D difference confounds "added a semantic term" with "cut the
+protection by a third" — and the confound points the wrong way, since the arm
+carrying the new pressure is the one with weakened protection.
+
+B2.5's protocol §2 already settled the principle: *"'B1 present' and 'B2
+present' have the same treatment level in the single and combined cells...
+Consequently the full combined cell can have greater correction compute and a
+larger total correction gradient than either single arm. That is not a confound
+in the factorial interaction; it is the defined joint treatment."* Report the
+realized total as a Pareto cost, as B2.5 does.
+
+Cadence remains one correction event in ten.
+
+### A.6.3 Abort criteria — outcomes, not cosines
+
+This refines the audit's own §3.4 recommendation, which said to abort on
+sustained negative `cos(g₀, gᵢ)`. That is too aggressive: **a correction that
+never opposes the primary gradient is useless**, so mild opposition is the
+working regime, not a fault. Cosines are diagnostics with one pathological
+threshold; the real aborts are outcome-based.
+
+| abort | threshold |
+|---|---|
+| non-finite gradient, broken bank hash, zero generated-input Jacobian | any occurrence (as the plan already specifies) |
+| **feature-space effective rank** vs the arm's own step-0 value | `< 0.70`, sustained over two logged checkpoints |
+| **raw-pixel effective rank** vs the paired control | `< 0.70`, sustained over two logged checkpoints |
+| **raw energy below the real-real floor** | any checkpoint |
+| **negative-side median ESS** | `> 0.90` sustained (A.4.5) |
+| anti-parallel auxiliary | `cos(g₀, gᵢ) < −0.8` sustained over a 200-event window — the term is negating training, not correcting it |
+
+Cosines outside the last row are logged and interpreted, never acted on.
+
+### A.6.4 Mandatory diagnostics — additions to §7.2
+
+Retain the plan's list and add: negative-side ESS and maximum weight per level
+and radius; the global-vs-local energy split; the **train-bank minus fresh-bank
+energy gap**; raw energy expressed as excess over the real-real floor rather
+than as a raw number; and realized per-component post-cap ratios for **both**
+arms so the dose match in A.6.2 is auditable rather than asserted.
+
+---
+
+## A.7 Replaces §5.7 — target feature banks
+
+The construction stands. Two changes.
+
+**Views per image: 2 → 4.** Over ≈ 16 000 correction events the positive
+barycenter built from 2 frozen views is a *fixed* random function whose
+deviation from the population barycenter is a fixed bias the generator can
+partly learn to match. Four views halves that bias at 2× the storage — ≈ 5.2 GB
+fp16 for four levels, still host-RAM resident. If storage binds, prefer more
+views over more levels.
+
+**Log the bias directly.** §7.2 must record the **train-bank minus fresh-bank
+energy gap** at every checkpoint. The Stage-D gate already evaluates on a fresh
+bank, so the failure is *caught*; the gap is what makes it *visible* early
+enough to act on.
+
+Evaluation continues to use a separately seeded fresh bank, as the plan
+specifies.
+
+---
+
+## A.8 Replaces §8 Stage D — paired development fork
+
+### A.8.1 Arms
+
+Unchanged in identity — `EMF-control`, `EMF-raw`, `EMF-ASFD` — with A.6.2's
+per-component caps so that "raw present" and "B1 present" mean the same thing
+in every arm. All shared streams as the plan specifies.
+
+### A.8.2 Revised advancement gate
+
+`EMF-ASFD` advances only if, relative to `EMF-raw`:
+
+1. it reduces **fresh-bank** semantic energy;
+2. its fresh-bank raw energy is not worse by more than 5% **and is not below the
+   real-versus-real floor** *(new: two-sided)*;
+3. it retains ≥ 90% of the incumbent's **raw-pixel** effective rank;
+4. it retains ≥ 90% of the incumbent's **feature-space** effective rank *(new)*;
+5. it does not increase **within-class maximum pairwise SSIM** *(new — this is
+   TFD's own missing-mode diagnostic, and the failure its coverage ablation
+   describes)*;
+6. precision and recall stay within prospective uncertainty margins;
+7. duplicates and nearest-training-image concentration do not increase;
+8. the semantic post-cap gradient share is nonzero; and
+9. projected cost is compatible with the remaining budget.
+
+Conditions 4 and 5 are the ones the plan's gate could not see. Its rank
+condition is raw-pixel only, and a within-class semantic collapse — samples
+varying in colour, background and texture while repeating one car pose — can
+preserve raw-pixel rank and a raw-pixel characteristic-function anchor while
+being exactly the failure TFD reports.
+
+### A.8.3 Coverage protection
+
+B1 is a random-Fourier-feature characteristic-function criterion in **raw pixel
+space** ([`b1.py:3`](encoder_independent_drifting/b1.py#L3)), and its own
+docstring records that the finite V-statistic *"is not itself measure
+determining."* It has never been tested against a feature-space pressure. TFD
+reports its feature-space coverage term is **essential**.
+
+Adopt option (b) of the audit's §8: keep the clean single factor, but make
+conditions 4 and 5 **monitored abort criteria** during training (A.6.3), not
+merely end-of-run report items, and **predeclare the anchor-margin arm as the
+immediate follow-up** rather than "a later experiment."
+
+Recorded counterargument, since it is real: TFD's drifting loss is the
+**primary** objective while ASFD's semantic term is auxiliary and
+cadence-averaged near 2.5%. But B2's dosing was comparably light — λ = 1.9×10⁻⁴,
+one event in ten — and the rank loss was 38–40% anyway. Light dosing is not the
+protection it appears to be.
+
+---
+
+## A.9 Replaces §8 Stage E — confirmation
+
+### A.9.1 The missing decision rule
+
+Stage D has a nine-condition gate; Stage E, as written, says only *"Report:"*.
+Every confirmation in this repository has had a preregistered k-of-n rule — B0
+3/3, B1 3/3, B2 2/3.
+
+Nine simultaneous conditions across two units is a rule a genuinely better
+method can easily fail. **Designate two primary endpoints and require both in
+both units:**
+
+| primary endpoint | rule |
+|---|---|
+| KID against `EMF-raw` on the sealed split | lower in **2 of 2** units |
+| recall non-inferiority against `EMF-raw` | within a prospectively declared margin in **2 of 2** units |
+
+Everything else in §8's report list is **report-only** and cannot promote or
+demote the result.
+
+### A.9.2 Two limits that must be stated, not discovered
+
+**The two units share one foundation.** CAP-EMF-1 trains a single capability
+unit (S3R §10.4: *"One strong unit is more informative for this proof of
+concept"*), and Stage E clones it into two continuations with new stochastic
+streams. Those units therefore measure **continuation variance, not foundation
+variance**. No Stage-E result can claim replication across foundations. This
+belongs in §12's "may not claim" list.
+
+**The sealed split is 1 000 images.** B0/B1/B2 used 2 048-sample references and
+three units and were still described as *"coarse consistency, not high-powered
+inference."* Report KID with paired without-replacement subsampling over common
+indices; report FID as **indicative only** — this repository has already
+measured FID's small-sample bias, with a floor near 70 at n = 512.
+
+---
+
+## A.10 Additions to §10 — required tests
+
+Retain the plan's list and add:
+
+| test | catches |
+|---|---|
+| extracted grid reshapes to exactly 16×16, and its spatial autocorrelation is nontrivial | the conditioning-token off-by-two slice, which §6.1.1 cannot see |
+| summed-gradient regression: the applied update equals `∇(L_EMF + λ₁L_B1 + λ_rE_raw + λ_sE_self)` to float tolerance | reintroduction of projection |
+| per-component cap correctness on **weighted** norms, **after** AMP unscale | caps silently applied to unscaled or unweighted gradients |
+| inter-level field cosine and CKA on a synthetic two-level fixture | G8 plumbing |
+| per-band Haar sensitivity on a fixture with a known band response | G7 plumbing |
+| negative-side ESS gate fires on a synthetic degenerate negative cloud | A.4.5 |
+| real-real floor is deterministic given the allocation, and the sub-floor abort fires | A.6.3 |
+| ESS calibration converges for every level × radius, including the fallback ladder | A.4.3 |
+| bank hash reproduces under replay at 4 views | A.7 |
+| no frozen B1/B2 constant is loaded anywhere in the ASFD path | A.0 |
+
+---
+
+## A.11 Replaces §9 — cost, and what this actually costs
+
+The plan does not state a budget for Stages D and E. It should, because the
+answer is large and the user is renting the GPU.
+
+Correction events cost ≈ 2× an ordinary update (one differentiable frozen-trunk
+forward/backward on the generated batch, plus kernels at ≈ 0.3%) at one event in
+ten, so a corrected arm costs **≈ 1.1× per update**.
+
+Expressed in foundation-update-equivalents against CAP-EMF-1's 160 k:
+
+| stage | arms × units × updates | equivalents | fraction of foundation |
+|---|---|---:|---:|
+| Stage D | 3 × 1 × 20 k | ≈ 66 k | ≈ 41% |
+| Stage E (3 arms) | 3 × 2 × 20 k | ≈ 132 k | ≈ 83% |
+| Stage E (**2 arms** — recommended) | 2 × 2 × 20 k | ≈ 88 k | ≈ 55% |
+
+**ASFD as specified roughly doubles the total budget.** Dropping `EMF-control`
+from Stage E — it is established in Stage D and Stage E's primary comparison is
+against `EMF-raw` — saves ≈ 28% of the foundation cost for no loss of primary
+inference.
+
+If the budget will not carry both stages, **run Stage D only and report it as a
+development-scope result.** That is consistent with how this repository has
+reported B2.5 and S3R, and it is far better than shortening both stages until
+neither can resolve anything. §9's existing rule — *"If compute runs short,
+shorten all matched continuation arms equally. Never protect the candidate's
+update count by shortening only its control."* — is correct and stands.
+
+---
+
+## A.12 Replaces §11 — amended decision tree
+
+The plan's tree is sound. Three amendments.
+
+**"If the feature audit fails"** — the audit now fails earlier and for sharper
+reasons. Record *which* gate failed, because the remedies differ: a G7 band
+failure argues for a different `t_f` or a decorrelated trunk (A.13); a G8
+redundancy failure argues for wider level spacing; a G9 concentration failure
+argues that A.3's per-channel stage was insufficient.
+
+**"If semantic energy falls but rank/coverage falls"** — this is no longer only
+a post-hoc branch. A.6.3 makes it a runtime abort, so the arm stops instead of
+burning the full continuation to reconfirm a published ablation.
+
+**New branch — "if raw energy falls below the floor."** Stop the arm. This is
+estimator exploitation, not distributional improvement, and it is the signature
+that produced B2's rank collapse. Do not record it as a drift-reduction success.
+
+---
+
+## A.13 Fallback if the trunk is blind
+
+If G7's band profile comes back degenerate — most likely `ρ_HH < 0.25`, since
+the trunk allocates capacity under an MSE objective that underweights exactly
+the band CAP-EMF-1 is expected to be weakest in — the plan's §11 cancels the
+arm. Two intermediate options are worth preregistering before that:
+
+1. **Decorrelate the feature map from the generator.** Extract from a trunk
+   checkpoint that is *not* the fork point — an earlier checkpoint, or an
+   independently seeded foundation. The trunk's blind spots are correlated with
+   the generator's precisely because they are the same weights at the moment the
+   branch switches on. Cost: a stored checkpoint, or a second foundation run.
+2. **Re-select `t_f`** toward the abstraction end of A.2's grid and re-run G7.
+   The band profile is a function of `t_f`, and this costs one audit pass.
+
+Only if both fail should the scattering or random-convolution branch be
+designed, as §11 specifies.
+
+Partial mitigation worth recording: the trunk is trained on **real** noised
+images, so its features do encode real-image structure, not merely the
+generator's output manifold. The self-referential problem is weaker than
+"the student teaching itself" — but the band argument survives it, because it
+concerns capacity allocation under MSE, not which images were seen.
+
+---
+
+## A.14 Amended claim ledger (§12)
+
+Add to **"may not claim"**:
+
+- replication across foundations — Stage E's units share one foundation
+  checkpoint and measure continuation variance only (A.9.2);
+- that any B1 or B2 confirmation transfers — every constant is re-derived and
+  the raw branch is a new multi-radius configuration (A.0, A.4.4);
+- that reduced raw drift energy is itself an improvement, unless it approaches
+  the real-versus-real floor from above (A.4.5).
+
+The plan's existing "may claim" paragraph stands, with one insertion: the
+improvement is *"on a single foundation, at development scope"* unless Stage E
+runs and both primary endpoints hold in both units.
+
+---
+
+## A.15 Ordering
+
+1. **Finish B2.5 units 501 and 502** (~11 h local, already implemented and
+   paused). It is the only measurement of whether the spectral anchor and the
+   raw drift term compound, which is exactly ASFD's §3.2 premise extended to a
+   third term. Unit 500 fails two of four preregistered conditions despite
+   `B1B2` leading on recall, KID and FID — that ambiguity should be resolved
+   before a third correction term is designed on top of it.
+2. **CAP-EMF-1 foundation**, unchanged, with A.1.4's conditioning decision
+   recorded so extraction can be written against it.
+3. **Stage B qualification, G7 and G8 first** (A.5.1), over A.2's `t_f` grid.
+4. **Stage C preflight**, with A.10's added tests.
+5. **Stage D**, with A.6's gradient scheme and A.8's gate.
+6. **Stage E only if budget remains** (A.11), two arms, two primary endpoints.
+
+Steps 3 and 4 are cheap and target-only. They are where this plan should be
+allowed to fail.
+
