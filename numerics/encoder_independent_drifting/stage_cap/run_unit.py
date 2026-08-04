@@ -1,0 +1,181 @@
+"""Run the single CAP-EMF-1 capability unit.
+
+Blocked unless a source-matched preflight returning GO is present **and** the
+operator explicitly opts in.  This is the expensive rented-GPU run; it must not
+be startable by accident.
+
+No test image is instantiated here.  The sealed evaluation is a separate step
+that runs only after the final checkpoint is frozen and hashed.
+"""
+
+from __future__ import annotations
+
+import argparse
+import time
+from pathlib import Path
+
+import torch
+
+from ..device import configure, resolve_device
+from ..diagnostics import write_json
+from . import CAP_PHASE, CAP_UNIT
+from .artifacts import (
+    CHECKPOINTS,
+    DEFAULT_PREFLIGHT,
+    DEFAULT_RESULT,
+    assert_result_path_unused,
+    checkpoint_path,
+    load_preflight,
+    profile_payload,
+    save_checkpoint,
+)
+from .config import profile
+from .data import automobile_train_pool
+from .diagnostics import capability_gate
+from .training import clip_fraction, train_cap_unit
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="CAP-EMF-1 capability unit")
+    parser.add_argument("--preflight", type=Path, default=DEFAULT_PREFLIGHT)
+    parser.add_argument("--out", type=Path, default=DEFAULT_RESULT)
+    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--data-root", default=None)
+    parser.add_argument("--checkpoint-dir", type=Path, default=CHECKPOINTS)
+    parser.add_argument("--recovery", type=Path, default=None)
+    parser.add_argument(
+        "--nondeterministic",
+        action="store_true",
+        help=(
+            "disable deterministic CUDA kernels. Faster, and therefore cheaper "
+            "on a rented GPU, but exact replay is then only guaranteed through "
+            "the recovery file. The choice is recorded in the artifact."
+        ),
+    )
+    parser.add_argument(
+        "--i-have-authorized-the-budget-run",
+        action="store_true",
+        help="explicit opt-in; the run is refused without it",
+    )
+    args = parser.parse_args()
+
+    if not args.i_have_authorized_the_budget_run:
+        raise SystemExit(
+            "CAP-EMF-1 is the budget run. Re-invoke with "
+            "--i-have-authorized-the-budget-run once the cloud benchmark has "
+            "projected the cost and the operator has approved it."
+        )
+
+    assert_result_path_unused(args.out)
+    preflight = load_preflight(args.preflight)
+    frozen = profile("capability")
+    payload = profile_payload(frozen)
+    if preflight["profile"] != payload:
+        raise RuntimeError("CAP-EMF-1 profile differs from the preflight")
+
+    planned = [
+        checkpoint_path(step, kind)
+        for step in frozen.train.checkpoint_updates
+        for kind in ("raw", "ema")
+    ]
+    if any(path.exists() for path in planned):
+        raise RuntimeError(
+            "a planned CAP checkpoint already exists; inspect before resuming"
+        )
+
+    torch.set_num_threads(4)
+    if not args.nondeterministic:
+        # Requires CUBLAS_WORKSPACE_CONFIG=:4096:8 in the environment.
+        torch.use_deterministic_algorithms(True)
+    device = resolve_device(args.device)
+    settings = configure(device)
+    pool = automobile_train_pool(args.data_root)
+    recovery = args.recovery or (args.checkpoint_dir / "cap_recovery.pt")
+
+    saved: dict[str, dict] = {}
+
+    def checkpoint(step: int, raw_state: dict, ema_state: dict) -> None:
+        entry = {}
+        for kind, state in (("raw", raw_state), ("ema", ema_state)):
+            path = checkpoint_path(step, kind)
+            entry[kind] = {
+                "path": str(path.resolve()),
+                "sha256": save_checkpoint(
+                    path,
+                    state,
+                    step=step,
+                    kind=kind,
+                    profile=payload,
+                    preflight_sha=preflight["artifact_sha256"],
+                    parameter_count=parameters["count"],
+                ),
+            }
+        saved[str(step)] = entry
+
+    parameters = {"count": 0}
+    started = time.time()
+    outcome = train_cap_unit(
+        pool,
+        frozen,
+        device,
+        recovery_path=recovery,
+        checkpoint=checkpoint,
+        progress=lambda message: print(message, flush=True),
+    )
+    parameters["count"] = outcome.parameter_count
+
+    final = outcome.health[-1]
+    gate = capability_gate(
+        final,
+        outcome.best_rank_ratio,
+        clip_fraction(outcome),
+        outcome.nonfinite_updates,
+        1,
+        frozen.gate,
+    )
+
+    result = {
+        "status": "cap-emf1-unit",
+        "phase": CAP_PHASE,
+        "unit": CAP_UNIT,
+        "development_only": True,
+        "correction": "none",
+        "deterministic_algorithms": not args.nondeterministic,
+        "precision": "fp32",
+        "device": settings,
+        "preflight_sha256": preflight["artifact_sha256"],
+        "profile": payload,
+        "parameter_count": outcome.parameter_count,
+        "training": {
+            "history": outcome.history,
+            "health": outcome.health,
+            "wall_seconds": outcome.wall_seconds,
+            "peak_memory_bytes": outcome.peak_memory_bytes,
+            "peak_memory_reserved_bytes": outcome.peak_memory_reserved_bytes,
+            "optimizer_updates": outcome.optimizer_updates,
+            "examples_seen": outcome.examples_seen,
+            "model_forwards": outcome.model_forwards,
+            "clipped_updates": outcome.clipped_updates,
+            "clip_fraction_final_window": clip_fraction(outcome),
+            "nonfinite_updates": outcome.nonfinite_updates,
+            "best_rank_ratio": outcome.best_rank_ratio,
+        },
+        "checkpoints": saved,
+        "train_only_gate": gate,
+        "elapsed_seconds": time.time() - started,
+        "limits": [
+            "One developmental capability unit; no replication claim.",
+            "The train-only gate uses no test image; the sealed evaluation is "
+            "a separate step run after this artifact is hashed.",
+            "Step 160000 is the result. No intermediate checkpoint may be "
+            "selected on any metric.",
+        ],
+    }
+    digest = write_json(args.out, result)
+    print(f"CAP-EMF-1 train-only verdict={gate['verdict']}")
+    print(f"wrote {args.out} sha256={digest}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
