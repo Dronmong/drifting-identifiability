@@ -227,16 +227,57 @@ That is the correct prospective position and must not be relaxed after seeing
 
 | file | purpose |
 |---|---|
-| `stage_b25/verify_resume.py` | new; read-only fail-fast verification of all 27 source hashes, artifacts, freezes, data binding, orphaned checkpoints, disk and GPU headroom |
-| `stage_b25/run_all.sh` | amended to invoke `verify_resume` before any training and to timestamp each unit |
+| `numerics/b25_verify_resume.py` | new; read-only fail-fast verification of manifest equality, artifacts, freezes, data binding, orphaned checkpoints, disk and GPU headroom |
+| `stage_b25/run_all.sh` | amended to invoke the verifier before any training and to timestamp each unit |
 
-Neither file is in the preflight's hashed source manifest, so neither
-invalidates the hash-bound preflight. `run_all.sh` remains resumable: it skips
-completed units, refuses half-written artifacts, and refuses to overwrite the
-aggregate.
+`run_all.sh` remains resumable: it skips completed units, refuses half-written
+artifacts, and refuses to overwrite the aggregate. **No training code was
+modified.** The 27 hashed sources are untouched, which is what makes 501/502
+comparable to 500 at all.
 
-**No training code was modified.** The 27 hashed sources are untouched, which
-is what makes 501/502 comparable to 500 at all.
+### 6.1 A correction — the first placement of the verifier broke the run
+
+This section originally read *"Neither file is in the preflight's hashed source
+manifest, so neither invalidates the hash-bound preflight."* **That was wrong**,
+and the first launch aborted on it:
+
+```
+RuntimeError: B2.5 executable sources changed after preflight
+```
+
+`source_manifest()` does not read the recorded keys — it *rebuilds* the manifest
+with `paths.extend(sorted(HERE.rglob("*.py")))`
+([`stage_b25/artifacts.py:62`](encoder_independent_drifting/stage_b25/artifacts.py#L62)).
+The verifier was placed in `stage_b25/`, so it became a 28th entry in a manifest
+recorded with 27, and `load_preflight`'s dict comparison failed. Every recorded
+file still matched; the manifest simply gained a member.
+
+The same trap exists one level up: `diagnostics.py:190`, `b1_freeze.py:38`,
+`f3b_freeze.py:44` and `f1_k200.py:88` all glob `PACKAGE.glob("*.py")` over
+`encoder_independent_drifting/`. **Neither that package nor `stage_b25/` can
+accept a new module without invalidating a hash-bound preflight.** The verifier
+now lives at `numerics/b25_verify_resume.py`, outside every such glob.
+
+Two consequences worth keeping:
+
+1. **The guard worked exactly as designed.** Nothing trained, no artifact was
+   written, no checkpoint was created, and no state needed cleaning. The failure
+   was immediate and legible.
+2. **The verifier had the wrong check.** It verified that every *recorded* path
+   still hashes correctly — necessary, but blind to an *added* file, which is
+   precisely what happened. It now performs whole-dict equality against a live
+   `source_manifest()`, the same comparison `load_preflight` makes, and reports
+   added / removed / changed separately. That check is what turned green before
+   the relaunch:
+
+   ```
+   [PASS] source manifest equality    27 files, manifest identical
+   ```
+
+A second process error, unrelated to the manifest: the first launch piped the
+driver through `tee` without `pipefail`, so the failing run reported **exit 0**.
+The relaunch sets `pipefail` so a failure inside the driver surfaces as a
+failure.
 
 ---
 

@@ -15,7 +15,11 @@ D=numerics/encoder_independent_drifting/stage_b25
 # Fail fast: an eleven-hour resume is only comparable with unit 500 if every
 # hashed input still matches, and an interrupted unit leaves checkpoints that
 # block the restart. Both are cheap to detect and expensive to discover late.
-"${UV[@]}" numerics.encoder_independent_drifting.stage_b25.verify_resume
+#
+# The verifier lives at numerics/ top level, NOT in this package: stage_b25's
+# source manifest is built by rglob, so any module added here would itself
+# invalidate the hash-bound preflight it is meant to check.
+"${UV[@]}" numerics.b25_verify_resume
 
 for U in 500 501 502; do
   R="$D/b25_unit_$U.json"; S="$R.sha256"

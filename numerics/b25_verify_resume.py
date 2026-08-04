@@ -1,21 +1,27 @@
 """Fail-fast pre-run verification for a B2.5 resume.
 
-Unit 500 completed on 2026-08-01/02 and units 501/502 are pending.  Those two
-units cost roughly eleven GPU-hours and are only comparable with unit 500 if
-every hashed input is byte-identical to what unit 500 ran against.  This module
-checks that *before* the run rather than discovering drift afterwards.
+Unit 500 completed on 2026-08-01/02; units 501/502 are pending.  Those two units
+cost roughly eleven GPU-hours and are only comparable with unit 500 if every
+hashed input is byte-identical to what unit 500 ran against.  This checks that
+*before* the run rather than discovering drift afterwards.
 
-It is deliberately read-only: it trains nothing, writes nothing, and touches no
-evaluation source.  ``run_all.sh`` invokes it first and refuses to start on a
-nonzero exit.
+**This file deliberately lives at the top of ``numerics/`` rather than inside
+the stage package.**  ``stage_b25/artifacts.py:source_manifest`` builds its
+manifest with ``HERE.rglob("*.py")``, and ``diagnostics.py``/``b1_freeze.py``/
+``f3b_freeze.py`` glob ``PACKAGE.glob("*.py")``, so adding *any* module to
+``stage_b25/`` or to ``encoder_independent_drifting/`` silently invalidates a
+hash-bound preflight — the recorded files all still match, but the computed
+manifest gains an entry and the dict comparison fails.  An earlier draft of
+this tool lived in ``stage_b25/`` and did exactly that, aborting the resume at
+``load_preflight``.  Nothing trained, but the guard is the only reason.
 
-The one failure mode that is not a hash problem is an interrupted unit.  B2.5
-has **no within-unit recovery** — ``core.py`` saves a checkpoint only at the
-three declared steps and keeps no optimizer/RNG recovery state — so a crash at
-update 25 000 loses the unit.  Worse, the surviving checkpoints then trip
-``run_unit.py``'s "a planned B2.5 checkpoint path already exists" guard and
-block the restart.  ``orphaned_checkpoints`` finds exactly those files and the
-caller prints the removal command, so a 3 a.m. recovery is mechanical.
+That episode is also why :func:`check_manifest_equality` exists.  Verifying
+that every *recorded* path still hashes correctly is necessary but **not
+sufficient**: it cannot see a file that was added.  The check that matters is
+whole-dict equality against the live ``source_manifest()`` — the same
+comparison ``load_preflight`` makes.
+
+Read-only: trains nothing, writes nothing, touches no evaluation source.
 """
 
 from __future__ import annotations
@@ -26,17 +32,25 @@ import json
 import shutil
 from pathlib import Path
 
-from .artifacts import DEFAULT_PREFLIGHT, HERE
-from .core import B25_ARMS, B25Config
+from numerics.encoder_independent_drifting.stage_b25.artifacts import (
+    DEFAULT_PREFLIGHT,
+    HERE,
+    config_payload,
+    source_manifest,
+)
+from numerics.encoder_independent_drifting.stage_b25.core import (
+    B25_ARMS,
+    B25Config,
+    b25_config,
+)
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = REPOSITORY_ROOT / "numerics" / "EncoderIndependentB25Protocol.md"
 CHECKPOINTS = HERE / "checkpoints"
 
-# Unit 500 measured 5.49 h wall including evaluation.  Two units is the
-# projection quoted to the operator; it is a measurement, not a promise.
+# Unit 500 measured 5.49 h wall including evaluation, and its heaviest arm
+# (B1B2) peaked at 4.97 GiB reserved.  Measurements, not promises.
 MEASURED_UNIT_HOURS = 5.49
-# Peak reserved bytes recorded by unit 500's heaviest arm (B1B2).
 MEASURED_PEAK_RESERVED_GIB = 4.97
 MINIMUM_FREE_DISK_GIB = 5.0
 
@@ -56,9 +70,8 @@ def orphaned_checkpoints(config: B25Config) -> list[Path]:
     """Checkpoints belonging to a unit that never produced a sealed artifact."""
     if not CHECKPOINTS.is_dir():
         return []
-    artifacts = unit_artifacts(config)
     orphans: list[Path] = []
-    for unit, (result, sidecar) in artifacts.items():
+    for unit, (result, sidecar) in unit_artifacts(config).items():
         if result.exists() and sidecar.exists():
             continue
         for arm in B25_ARMS:
@@ -67,6 +80,30 @@ def orphaned_checkpoints(config: B25Config) -> list[Path]:
                 if path.exists():
                     orphans.append(path)
     return orphans
+
+
+def check_manifest_equality(recorded: dict[str, str]) -> tuple[bool, str]:
+    """The exact comparison ``load_preflight`` makes: whole-dict equality.
+
+    Reports added and removed paths separately from content drift, because the
+    three have different causes and different fixes.
+    """
+    live = source_manifest()
+    if live == recorded:
+        return True, f"{len(live)} files, manifest identical"
+    added = sorted(set(live) - set(recorded))
+    removed = sorted(set(recorded) - set(live))
+    changed = sorted(
+        name for name in set(live) & set(recorded) if live[name] != recorded[name]
+    )
+    parts = []
+    if added:
+        parts.append(f"ADDED {len(added)}: {', '.join(added)}")
+    if removed:
+        parts.append(f"REMOVED {len(removed)}: {', '.join(removed)}")
+    if changed:
+        parts.append(f"CHANGED {len(changed)}: {', '.join(changed)}")
+    return False, "; ".join(parts)
 
 
 def _check_sidecar(path: Path) -> tuple[bool, str]:
@@ -94,8 +131,8 @@ def run_checks(config: B25Config, preflight_path: Path) -> list[tuple[str, bool,
         return results
     preflight = json.loads(preflight_path.read_text(encoding="utf-8"))
     # ``load_preflight`` injects this after verifying the sidecar, and unit
-    # artifacts record that injected value; recompute it rather than importing
-    # the raising loader, so every check below still reports itemized.
+    # artifacts record that injected value; recompute rather than importing the
+    # raising loader, so every check below still reports itemized.
     preflight_digest = _sha256(preflight_path)
 
     record(
@@ -104,18 +141,15 @@ def run_checks(config: B25Config, preflight_path: Path) -> list[tuple[str, bool,
         str(preflight.get("verdict", {}).get("decision")),
     )
 
-    drifted = [
-        name
-        for name, digest in sorted(preflight["source_sha256"].items())
-        if not (REPOSITORY_ROOT / name).exists()
-        or _sha256(REPOSITORY_ROOT / name) != digest
-    ]
+    # The check that actually gates the run.  Whole-dict equality, not
+    # per-recorded-path verification: only this can see an added file.
+    ok, detail = check_manifest_equality(preflight["source_sha256"])
+    record("source manifest equality", ok, detail)
+
     record(
-        "hashed executable sources",
-        not drifted,
-        f"{len(preflight['source_sha256'])} files match"
-        if not drifted
-        else "DRIFTED: " + ", ".join(drifted),
+        "stage configuration",
+        preflight.get("b25_config") == config_payload(b25_config()),
+        "B25Config matches preflight",
     )
 
     record(
@@ -140,9 +174,8 @@ def run_checks(config: B25Config, preflight_path: Path) -> list[tuple[str, bool,
         external["source_id"],
     )
 
-    artifacts = unit_artifacts(config)
     completed, pending = [], []
-    for unit, (result, sidecar) in artifacts.items():
+    for unit, (result, sidecar) in unit_artifacts(config).items():
         if result.exists() and sidecar.exists():
             ok, detail = _check_sidecar(result)
             record(f"unit {unit} artifact", ok, detail)
@@ -214,7 +247,7 @@ def run_checks(config: B25Config, preflight_path: Path) -> list[tuple[str, bool,
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description="B2.5 resume verification")
     parser.add_argument("--preflight", type=Path, default=DEFAULT_PREFLIGHT)
     args = parser.parse_args()
     config = B25Config()
