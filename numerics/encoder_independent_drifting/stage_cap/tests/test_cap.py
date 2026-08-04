@@ -9,7 +9,13 @@ from pathlib import Path
 import torch
 
 from ..artifacts import _DEPENDENCIES, manifest_difference, source_manifest
-from ..config import FEATURE_LEVELS, PARAMETER_CEILING, CAPTrainConfig, profile
+from ..config import (
+    FEATURE_LEVELS,
+    PARAMETER_CEILING,
+    TRAIN_POOL_SIZE,
+    examples_seen,
+    profile,
+)
 from ..data import sealed_test_pool
 from ..diagnostics import (
     capability_gate,
@@ -41,10 +47,31 @@ def test_capability_profile_is_frozen():
     assert frozen.model.tokens == 256
     assert frozen.model.width == 512
     assert frozen.model.depth == 12
-    assert frozen.train.updates == 160_000
+    assert frozen.train.updates == 320_000
     assert frozen.train.effective_batch == 64
-    assert frozen.train.checkpoint_updates[-1] == 160_000
+    assert frozen.train.checkpoint_updates[-1] == 320_000
     assert frozen.train.ema_decay == 0.9999
+
+
+def test_epoch_count_is_a_healthy_regime():
+    """410 epochs, not the 4,096 a 5,000-image class would have given.
+
+    The single-class draft made memorization the likely route to coherent
+    samples; unconditional CIFAR-10 at this horizon does not.
+    """
+    frozen = profile("capability")
+    epochs = examples_seen(frozen.train) / TRAIN_POOL_SIZE
+    assert 300 < epochs < 600, epochs
+    assert examples_seen(frozen.train) == 20_480_000
+
+
+def test_matched_drifting_budget_is_stated_in_examples():
+    """A drifting arm with a 256-cloud matches on examples, not updates."""
+    frozen = profile("capability")
+    total = examples_seen(frozen.train)
+    assert total // 256 == 80_000
+    # Matching updates instead would give drifting 4x the data exposure.
+    assert frozen.train.updates * 256 == 4 * total
 
 
 def test_parameter_count_clears_the_ceiling():

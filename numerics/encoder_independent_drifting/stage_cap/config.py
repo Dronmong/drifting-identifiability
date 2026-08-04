@@ -9,9 +9,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-AUTOMOBILE_LABEL = 1
-TRAIN_POOL_SIZE = 5_000
-SEALED_TEST_POOL_SIZE = 1_000
+# Unconditional CIFAR-10, all ten classes.  The earlier single-class draft used
+# 5,000 automobile images, which at this horizon is 4,096 epochs: memorization
+# becomes the likely route to coherent-looking samples, and FID against a
+# 1,000-image reference is small-sample biased beyond rescue.  The full training
+# set gives 410 epochs and makes the standard 50k-sample FID protocol available,
+# so the headline number is comparable to published CIFAR-10 results.
+TRAIN_POOL_SIZE = 50_000
+SEALED_TEST_POOL_SIZE = 10_000
 
 # Protocol section 5.4.  The port must report the exact parameter count and it
 # is frozen at that value; this is the ceiling the count must clear.
@@ -107,7 +112,11 @@ class CAPObjectiveConfig:
 
 @dataclass(frozen=True)
 class CAPTrainConfig:
-    updates: int = 160_000
+    # 320k x 64 = 20.48M examples = 410 epochs over CIFAR-10.  160k was chosen
+    # by analogy to nothing in particular; EMF's own pixel experiment used
+    # 600k, and coherent samples are the point of the run, so the budget is set
+    # from the outset rather than extended mid-flight.
+    updates: int = 320_000
     micro_batch: int = 16
     accumulation_steps: int = 4
     learning_rate: float = 1e-4
@@ -118,7 +127,7 @@ class CAPTrainConfig:
     ema_decay: float = 0.9999
     horizontal_flip: bool = True
     log_every: int = 200
-    checkpoint_updates: tuple[int, ...] = (20_000, 40_000, 80_000, 120_000, 160_000)
+    checkpoint_updates: tuple[int, ...] = (40_000, 80_000, 160_000, 240_000, 320_000)
     health_every: int = 2_000
     health_samples: int = 512
     audit_samples: int = 2_048
@@ -244,8 +253,8 @@ def profile(name: str) -> CAPProfile:
         result = CAPProfile(
             name="capability",
             purpose=(
-                "one-call raw-pixel EMF capability foundation on CIFAR-10 "
-                "automobiles; no correction, no test access during training"
+                "one-call raw-pixel EMF capability foundation on unconditional "
+                "CIFAR-10; no correction, no test access during training"
             ),
             model=CAPModelConfig(),
             objective=CAPObjectiveConfig(),
@@ -258,8 +267,18 @@ def profile(name: str) -> CAPProfile:
     if name == "capability":
         if result.train.effective_batch != 64:
             raise RuntimeError("CAP-EMF-1 effective batch drifted from 64")
-        if result.train.updates != 160_000:
-            raise RuntimeError("CAP-EMF-1 horizon drifted from 160,000 updates")
+        if result.train.updates != 320_000:
+            raise RuntimeError("CAP-EMF-1 horizon drifted from 320,000 updates")
         if result.model.tokens != 256:
             raise RuntimeError("CAP-EMF-1 token count drifted from 256")
     return result
+
+
+def examples_seen(train: CAPTrainConfig) -> int:
+    """Total training examples, the quantity a matched drifting arm must equal.
+
+    EMF sees 64 examples per update; a drifting field needs a cloud of order
+    256.  Matching *updates* would hand drifting four times the data exposure,
+    so the comparison is matched on this number instead.
+    """
+    return train.updates * train.effective_batch

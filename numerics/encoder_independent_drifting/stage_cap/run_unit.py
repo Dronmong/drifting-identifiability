@@ -30,7 +30,7 @@ from .artifacts import (
     save_checkpoint,
 )
 from .config import profile
-from .data import automobile_train_pool
+from .data import cifar10_train_pool
 from .diagnostics import capability_gate
 from .training import clip_fraction, train_cap_unit
 
@@ -89,7 +89,7 @@ def main() -> int:
         torch.use_deterministic_algorithms(True)
     device = resolve_device(args.device)
     settings = configure(device)
-    pool = automobile_train_pool(args.data_root)
+    pool = cifar10_train_pool(args.data_root)
     recovery = args.recovery or (args.checkpoint_dir / "cap_recovery.pt")
 
     saved: dict[str, dict] = {}

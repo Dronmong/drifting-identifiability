@@ -32,18 +32,18 @@
     {
       "data": {
         "convergence_rates": [
-          10.618681812918059,
-          10.019932980547212
+          9.908738421653739,
+          10.049033809996882
         ],
-        "jvp_magnitude": 1.6337657549285758,
+        "jvp_magnitude": 1.1203857382478444,
         "note": "the production emf_delta of 0.01 is a stopped local difference by design, not an exact derivative; this check verifies the implementation converges to the right limit",
         "relative_errors": {
-          "0.0001": 0.01099011719506535,
-          "0.001": 0.11670055758107846,
-          "1e-05": 0.0010968254195314142
+          "0.0001": 0.01921480670328813,
+          "0.001": 0.19039449344552092,
+          "1e-05": 0.0019121048915342533
         }
       },
-      "detail": "relative max error {'0.001': 0.11670055758107846, '0.0001': 0.01099011719506535, '1e-05': 0.0010968254195314142}, first-order rates [10.62, 10.02]",
+      "detail": "relative max error {'0.001': 0.19039449344552092, '0.0001': 0.01921480670328813, '1e-05': 0.0019121048915342533}, first-order rates [9.91, 10.05]",
       "name": "EMF finite difference vs float64 JVP",
       "passed": true
     },
@@ -57,10 +57,10 @@
     },
     {
       "data": {
-        "resumed": 1.0526772737503052,
-        "uninterrupted": 1.0526772737503052
+        "resumed": 1.0272489190101624,
+        "uninterrupted": 1.0272489190101624
       },
-      "detail": "final raw_mse 1.05267727375 vs 1.05267727375",
+      "detail": "final raw_mse 1.02724891901 vs 1.02724891901",
       "name": "restart determinism",
       "passed": true
     },
@@ -68,9 +68,9 @@
       "data": {
         "half_life": 6931.125226233421,
         "mature_at": 34656,
-        "residual_initialization_weight": 1.1244517658381064e-07
+        "residual_initialization_weight": 1.2643917736964356e-14
       },
-      "detail": "half-life 6931 updates, mature by 34656, residual initialization weight at 160000 = 1.12e-07",
+      "detail": "half-life 6931 updates, mature by 34656, residual initialization weight at 320000 = 1.26e-14",
       "name": "EMA arithmetic and maturity",
       "passed": true
     },
@@ -128,9 +128,9 @@
           {
             "micro_batch": 16,
             "peak_memory_reserved_bytes": 4674551808,
-            "projected_hours_this_device": 99.56151538425021,
-            "seconds_per_microbatch": 0.5600335240364075,
-            "seconds_per_update": 2.24013409614563,
+            "projected_hours_this_device": 200.2519268459744,
+            "seconds_per_microbatch": 0.563208544254303,
+            "seconds_per_update": 2.252834177017212,
             "steps": 20,
             "warmup": 4
           }
@@ -139,16 +139,16 @@
         "chosen": {
           "micro_batch": 16,
           "peak_memory_reserved_bytes": 4674551808,
-          "projected_hours_this_device": 99.56151538425021,
-          "seconds_per_microbatch": 0.5600335240364075,
-          "seconds_per_update": 2.24013409614563,
+          "projected_hours_this_device": 200.2519268459744,
+          "seconds_per_microbatch": 0.563208544254303,
+          "seconds_per_update": 2.252834177017212,
           "steps": 20,
           "warmup": 4
         },
         "failures": [],
         "production_micro_batch_fits": true
       },
-      "detail": "micro_batch 16: 2.240 s/update, 4.35 GiB, 99.6 h on this device",
+      "detail": "micro_batch 16: 2.253 s/update, 4.35 GiB, 200.3 h on this device",
       "name": "throughput probe",
       "passed": true
     }
@@ -197,18 +197,18 @@
       "logit_mean": 0.8,
       "logit_std": 0.8
     },
-    "purpose": "one-call raw-pixel EMF capability foundation on CIFAR-10 automobiles; no correction, no test access during training",
+    "purpose": "one-call raw-pixel EMF capability foundation on unconditional CIFAR-10; no correction, no test access during training",
     "train": {
       "accumulation_steps": 4,
       "audit_samples": 2048,
       "beta1": 0.9,
       "beta2": 0.95,
       "checkpoint_updates": [
-        20000,
         40000,
         80000,
-        120000,
-        160000
+        160000,
+        240000,
+        320000
       ],
       "ema_decay": 0.9999,
       "gradient_clip": 10.0,
@@ -219,7 +219,7 @@
       "log_every": 200,
       "micro_batch": 16,
       "recovery_every": 1000,
-      "updates": 160000,
+      "updates": 320000,
       "weight_decay": 0.0
     }
   },
@@ -231,8 +231,8 @@
     "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
     "numerics/encoder_independent_drifting/stage_cap/__init__.py": "658132676062900a979112fec281bb9817a15c8382be12f1a127b5a34333f879",
     "numerics/encoder_independent_drifting/stage_cap/artifacts.py": "05558382799f0fddee45931a167763dd29755f171dbd6b39fca7f673c74884d2",
-    "numerics/encoder_independent_drifting/stage_cap/config.py": "270608cd052365b8bca7e753d8eb5256fe5d7b1d9cc41f943a5ea6ec1329e24e",
-    "numerics/encoder_independent_drifting/stage_cap/data.py": "3144a33e9150a7cc98f353644bce5db2316467f308738ed99721486f4151af7e",
+    "numerics/encoder_independent_drifting/stage_cap/config.py": "3de74b5626e10bd0496bf419863784780bfc4b269f645e4ea5e644d4944c738f",
+    "numerics/encoder_independent_drifting/stage_cap/data.py": "e120dd818d3bda4991b4eaaeeb82cba9b6f2f60a60c1e6732da4acd571c1153c",
     "numerics/encoder_independent_drifting/stage_cap/diagnostics.py": "734d9770dc916a0a4054c87830975635c146132858ac7b6758c24a0179557fb5",
     "numerics/encoder_independent_drifting/stage_cap/model.py": "85334bbe0d58381c9ebf205ddf9c1de09d30ca7e4fcb8a8c87d3ac1ec842e188",
     "numerics/encoder_independent_drifting/stage_cap/objective.py": "cbb3d775fe72f5f2bfcc7fa9cd58627a2f80a0c4a8297db5e439548325402ccd",

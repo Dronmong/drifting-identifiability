@@ -10,8 +10,22 @@
 ## 1. The question
 
 > Can a spatially adequate raw-pixel Euler Mean Flow model produce recognizable,
-> diverse CIFAR-10 automobiles with **exactly one network call** and **no learned
-> encoder**, given a full rented-GPU training budget?
+> diverse **unconditional CIFAR-10** images with **exactly one network call** and
+> **no learned encoder**, given a full rented-GPU training budget?
+
+### 1.1 Amended 2026-08-04: target and budget
+
+Two changes, both driven by the stated priority that the mechanism must produce
+**coherent images** and by the head-to-head deliverable in
+[`EncoderIndependentHeadToHeadProtocol.md`](EncoderIndependentHeadToHeadProtocol.md).
+
+| | was | now | why |
+|---|---|---|---|
+| target | 5 000 automobile images | **50 000, all classes** | 5 000 images at this horizon is ~4 096 epochs, which makes **memorization the likely route to coherent-looking samples**; 410 epochs does not. It also makes the standard 50 k-sample FID protocol available, so the headline number is comparable to published CIFAR-10 results instead of a small-sample-biased number against 1 000 images. |
+| updates | 160 000 | **320 000** | 160 k was chosen by analogy to nothing in particular; EMF's own pixel experiment used 600 k. Coherent samples are the point of the run, so the budget is set from the outset rather than extended mid-flight. |
+
+320 000 × 64 = **20.48 M examples = 410 epochs**. That number is also the
+matched budget the drifting arm must equal — see §10.1.
 
 One question, one unit, one evaluation. This is a **capability experiment**, not
 a comparison and not a mechanism screen — S3R already made the mechanism choice
@@ -54,7 +68,7 @@ selected GPU.
 
 | item | value |
 |---|---|
-| data | 5 000 CIFAR-10 automobile **train** images; the 1 000 automobile **test** images are sealed |
+| data | **50 000 CIFAR-10 train images, all classes**; the 10 000 test images are sealed |
 | representation | raw RGB 32×32; no VAE, encoder, teacher, reference bank, or perceptual loss |
 | inference | one direct endpoint call, counted |
 | objective | direct-`x` Euler Mean Flow, JVP-free (§4) |
@@ -66,9 +80,9 @@ selected GPU.
 | optimizer | AdamW, lr `1e-4`, betas `(0.9, 0.95)`, weight decay 0 |
 | effective batch | 64 (microbatch × accumulation, split freely) |
 | gradient clip | 10.0, with clip fraction logged |
-| updates | **160 000** = 10.24 M examples ≈ 2 048 nominal class epochs |
-| EMA | 0.9999 |
-| checkpoints | 20 k, 40 k, 80 k, 120 k, **160 k (primary)** |
+| updates | **320 000** = 20.48 M examples = **410 epochs** |
+| EMA | 0.9999 (46 half-lives; residual initialization weight 1.26e-14) |
+| checkpoints | 40 k, 80 k, 160 k, 240 k, **320 k (primary)** |
 | precision | BF16/AMP; sensitive reductions and all diagnostics in FP32 |
 | augmentation | horizontal flip only, recorded per example |
 | correction | **none** |
@@ -240,17 +254,25 @@ and that must be recorded before the fork is designed.**
 
 ### 7.2 Sealed evaluation, run once
 
-Access the 1 000 automobile test images only after the checkpoint is frozen and
-hashed. Report:
+Runs once, after the checkpoint is frozen and hashed.
 
-- fixed-seed **uncurated** one-call sample grids;
-- class recognizability on a train-only-fitted diagnostic classifier;
+**FID follows the standard CIFAR-10 protocol: 50 000 generated samples against
+the 50 000 training images.** This is the whole reason the target changed — the
+headline number is directly comparable to published CIFAR-10 unconditional FID
+rather than an indicative figure against 1 000 images. Generating 50 k samples
+from a one-call model costs a few minutes.
+
+The 10 000 sealed test images are opened only here, and only for the held-out
+checks. Report:
+
+- **FID-50k against the training set** — the comparable headline number;
+- FID against the sealed 10 k test set — honest held-out cross-check;
 - KID with paired without-replacement subsampling;
-- **FID as report-only** — at n = 1 000 it is small-sample biased and not
-  comparable to published 50 k-sample FID;
+- fixed-seed **uncurated** one-call sample grids, each shipped **beside its
+  nearest-training-image grid** so coherence cannot be achieved by copying;
 - precision/recall and density/coverage;
 - raw-pixel effective rank and multiscale spectrum;
-- duplicate rate and nearest-training-image concentration.
+- duplicate rate and nearest-training-image distance distribution.
 
 ### 7.3 Verdict
 
@@ -323,6 +345,22 @@ to overwrite.
 
 ---
 
+## 10.1 The matched budget for the drifting arm
+
+The head-to-head comparison matches on **examples seen, not optimizer
+updates**. EMF sees 64 examples per update; a drifting field needs a cloud of
+order 256. Matching updates would hand drifting **four times** the data
+exposure.
+
+| arm | per update | updates | examples |
+|---|---:|---:|---:|
+| CAP-EMF-1 | 64 | 320 000 | 20 480 000 |
+| base drifting, cloud 256 | 256 | **80 000** | 20 480 000 |
+
+Both arms therefore see the same data the same number of times, on the same
+trunk, against the same evaluation. Where the two cannot be matched — the batch
+structure itself — both figures are reported.
+
 ## 10. Interface to ASFD
 
 If the verdict is PASS, the foundation supplies:
@@ -346,13 +384,18 @@ failed S1 Sinkhorn arm is not revived without new evidence.
 
 A favourable result supports only:
 
-> On a focused one-class 32×32 task, a raw-pixel, one-call EMF foundation can
-> generate recognizable, diverse automobiles without a learned encoder.
+> On unconditional CIFAR-10 at 32×32, a raw-pixel, one-call EMF foundation can
+> generate recognizable, diverse images without a learned encoder, at a FID
+> reported under the standard 50 k protocol.
+
+Because the reference set and sample count now follow the standard protocol,
+the FID **is** quotable next to published CIFAR-10 numbers — with the compute
+difference stated, since 320 k updates at batch 64 is a fraction of what the
+strongest published results use.
 
 It does **not** establish ImageNet-scale encoder independence, reproduce the
-drifting paper's model, demonstrate that any correction helps, or license a
-comparison against published FID. It is one unit: developmental scope, no
-replication claim.
+drifting paper's complete model, or demonstrate that any correction helps. It
+is one unit: developmental scope, no replication claim.
 
 ---
 
