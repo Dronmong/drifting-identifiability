@@ -292,6 +292,103 @@ unit 500's measured 5.49 h per unit, plus aggregation.
 
 ---
 
+## 7.1 BLOCKED — the B1 freeze binding was broken by unrelated work
+
+The relaunch cleared `load_preflight` and then failed one call later:
+
+```
+File "numerics/encoder_independent_drifting/b1_freeze.py", line 175, in load_freeze
+  raise RuntimeError("B1 executable sources changed after freeze")
+```
+
+### What drifted
+
+The **B1 freeze carries its own source manifest**, independent of B2.5's, built
+by `sorted(PACKAGE.glob("*.py")) + sorted((PACKAGE / "tests").glob("*.py"))`
+([`b1_freeze.py:38`](encoder_independent_drifting/b1_freeze.py#L38)) over the
+whole `encoder_independent_drifting` package **including `tests/`**. Recorded
+113 files; live 115:
+
+| | path |
+|---|---|
+| ADDED | `encoder_independent_drifting/tests/test_pmf_s3.py` |
+| ADDED | `encoder_independent_drifting/tests/test_pmf_s3r.py` |
+| CHANGED | `encoder_independent_drifting/tests/run_all.py` |
+
+All three are the S3/S3R work of 2026-08-03 — **after** unit 500 ran on
+2026-08-01/02, which is why unit 500 succeeded and 501 cannot. The `run_all.py`
+change is a 4-line registration of the two new test modules.
+
+The B2 freeze is unaffected: 21 files, manifest identical.
+
+### The recorded bytes are unrecoverable
+
+| candidate | sha256 | |
+|---|---|---|
+| B1 recorded | `876d49e2c71fef61` | target |
+| worktree now | `726a79dac591a302` | differs |
+| worktree minus the 4 registration lines | `7ca9f4759b2b0b68` | differs |
+| `HEAD:` blob, LF | `511d945c3ba681db` | differs |
+| `HEAD:` blob, CRLF | `fe04c7bcf3e4b1fe` | differs |
+
+`tests/run_all.py` has been committed exactly once, at `b89936a` (2026-07-31),
+and that version is not what the B1 freeze recorded — so the file carried
+uncommitted edits before the freeze and has carried more since. A search of all
+**392 dangling and unreachable git blobs** found no object that reproduces it.
+
+**The B1-era bytes cannot be restored from this repository.**
+
+### Why no fix is local
+
+Every repair path cascades:
+
+- **Editing `b1_freeze.py`** to narrow its manifest self-invalidates — that file
+  is itself inside `PACKAGE.glob("*.py")`.
+- **Editing `stage_b25/artifacts.py`** to bypass `load_b1_freeze` changes a
+  stage_b25 source, invalidating the B2.5 preflight. Regenerating the preflight
+  changes its SHA-256, and `aggregate.py` requires **every** unit to carry a
+  matching `preflight_sha256`
+  ([`aggregate.py:38`](encoder_independent_drifting/stage_b25/aggregate.py#L38)).
+  **Unit 500 would be orphaned**, so this costs the 5.49 h it already bought
+  *and* compromises a freeze guard. Strictly worse than simply restarting.
+
+### The structural lesson
+
+`encoder_independent_drifting/tests/` is hash-bound by a completed confirmation.
+**No test can ever be added to it without invalidating the B1 freeze**, and
+nothing warns the author at the time — the breakage surfaces only when some
+later stage tries to load the freeze. The same is true of the package root
+(`diagnostics.py:190`, `f3b_freeze.py:44`, `f1_k200.py:88`) and of
+`stage_b25/` (`rglob`).
+
+Future stages should hash an **explicit dependency list** — as
+`stage_b25/artifacts.py:_DEPENDENCIES` already does for the parent package —
+rather than globbing directories that other work will legitimately grow into.
+
+### State after two failed launches
+
+Both failures were before any training. `assert_result_path_unused` and the
+planned-checkpoint guard both passed, no `b25_unit_501.json` exists, and no
+`b25_u501_*` checkpoint was written. **Nothing needs cleaning.**
+
+### The decision
+
+| option | cost | integrity |
+|---|---|---|
+| **A. Re-run B2.5 from scratch** under a fresh preflight bound to current sources | preflight (minutes) + **3 units ≈ 16.5 h**; discards unit 500's 5.49 h | clean |
+| **B. Drop B2.5**, proceed to CAP-EMF-1 | none | clean, but precondition P2 of the ASFD specification goes unanswered |
+| ~~C. Bypass the B1 guard~~ | same cascade as A *plus* a compromised freeze | rejected |
+
+**Recommendation: A.** It is one night, it resolves the premise ASFD's §3.2
+rests on, and unit 500's sealed artifact — while no longer aggregatable —
+remains a valid informal fourth replicate to check the new units against.
+
+The rerun should keep the design **identical**, not "fixed". The clip confound
+of §3 is a real limitation, but changing the clip would make it a different
+experiment and would forfeit that cross-check against unit 500.
+
+---
+
 ## 8. Unrelated finding: uncommitted work
 
 `git status` shows a substantial body of uncommitted work, including the plan
