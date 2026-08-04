@@ -11,11 +11,17 @@ UV=(uv run --python 3.12
     --with torch==2.7.1+cu126 --with torchvision==0.22.1+cu126
     --with numpy --with scipy --with pillow python -m)
 D=numerics/encoder_independent_drifting/stage_b25
+
+# Fail fast: an eleven-hour resume is only comparable with unit 500 if every
+# hashed input still matches, and an interrupted unit leaves checkpoints that
+# block the restart. Both are cheap to detect and expensive to discover late.
+"${UV[@]}" numerics.encoder_independent_drifting.stage_b25.verify_resume
+
 for U in 500 501 502; do
   R="$D/b25_unit_$U.json"; S="$R.sha256"
   if [ -f "$R" ] && [ -f "$S" ]; then echo "Skipping completed B2.5 unit $U"; continue; fi
   if [ -f "$R" ] || [ -f "$S" ]; then echo "Incomplete artifact for unit $U; inspect before resuming" >&2; exit 1; fi
-  echo "=== B2.5 unit $U ==="
+  echo "=== B2.5 unit $U === (started $(date '+%Y-%m-%d %H:%M:%S'))"
   "${UV[@]}" numerics.encoder_independent_drifting.stage_b25.run_unit --unit "$U" --device cuda
 done
 A="$D/b25_development.json"
