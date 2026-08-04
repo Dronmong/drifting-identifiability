@@ -68,13 +68,42 @@ ASFD does not begin until all of the following hold. Each is a hard gate.
 | # | precondition | evidence required |
 |---|---|---|
 | P1 | CAP-EMF-1 foundation passes its capability gate | recognizable uncurated automobiles, nontrivial train-only classifier recognizability, no memorization veto, adequate raw variance and high-frequency retention, stable one-call forward counter, mature EMA |
-| P2 | B2.5 units 501 and 502 complete and aggregate | resolves whether the spectral anchor and raw drift term compound — ASFD stacks a third term on exactly that question, and unit 500 fails two of four preregistered conditions |
+| P2 | ~~B2.5 units 501 and 502 complete and aggregate~~ **satisfied with qualification** | see below |
 | P3 | Feature qualification gate passes (§7) | run on target-training images only |
 | P4 | Preflight passes (§8, Stage C) | mechanical, numerical, and cost |
 
 **A failed foundation cancels ASFD outright.** Hidden states of a generator that
 cannot produce recognizable images are not a credible semantic metric, and no
 correction manufactures spatial structure the endpoint model never learned.
+
+### 2.1 P2, resolved
+
+B2.5 is **closed on unit 500** and will not be restarted. Full reasoning in
+[`EncoderIndependentB25ResumeAudit.md`](EncoderIndependentB25ResumeAudit.md)
+§7.2 and §9; the short version:
+
+> The B1 anchor and the B2 raw correction **compound super-additively**
+> (`I_rank = +4.18`, `I_recall = +0.0449`), and `B1B2` leads recall, KID and FID
+> while remaining the best-behaved arm on the floor-relative drift axis. But
+> they do **not** separate: the same B1 pressure that restores rank gives back a
+> quarter of B2's drift reduction, roughly in proportion, and **no blend of B1
+> and B2 satisfies both preregistered thresholds** — the interpolation line never
+> enters the pass region.
+
+Two consequences bind this specification.
+
+**First, ASFD's third term must clear a higher bar than "it helps".** Stacked
+corrections in this program move along a single tradeoff line: more drift
+reduction costs geometry, and anchoring back costs drift reduction. A
+self-feature term that simply lands somewhere else on that line adds cost
+without adding capability. §8's Stage D gate is therefore written to demand
+*simultaneous* retention on both axes, and §11.1's fallbacks exist because the
+most likely outcome is another point on the same line.
+
+**Second, the raw-energy criterion is floor-relative.** B2's energy sat *below*
+the real-versus-real sampling floor (13.933 against 14.103), and B2.5's
+condition 1 benchmarked against that reduction — rewarding estimator
+exploitation. ASFD never inherits that comparison. See §8, Stage D condition 2.
 
 ---
 
@@ -733,8 +762,11 @@ present" and "B1 present" mean the same thing in every arm. No test images.
 **Advancement gate.** `EMF-ASFD` advances only if, relative to `EMF-raw`:
 
 1. it reduces **fresh-bank** semantic energy;
-2. its fresh-bank raw energy is not worse by more than 5% **and is not below the
-   real-versus-real floor**;
+2. its fresh-bank raw **excess over the real-versus-real floor** —
+   `E_raw − floor`, never the raw energy — is not worse by more than 5% **and is
+   not negative**. B2 scored 13.933 against a floor of 14.103, and B2.5's gate
+   benchmarked against that reduction; a criterion stated on raw energy rewards
+   going through the floor, which a correctly distributed sample cannot do;
 3. it retains `≥ 90%` of the incumbent's **raw-pixel** effective rank;
 4. it retains `≥ 90%` of the incumbent's **feature-space** effective rank;
 5. it does not increase **within-class maximum pairwise SSIM**;
@@ -995,14 +1027,13 @@ foundation, at development scope."*
 
 ## 13. Build order
 
-1. **Finish B2.5 units 501 and 502** (~11 h local, implemented, paused). It is
-   the only measurement of whether the spectral anchor and the raw drift term
-   compound, which is ASFD's premise extended to a third term. Unit 500 fails
-   two of four preregistered conditions despite `B1B2` leading on recall, KID
-   and FID; that ambiguity should be resolved before a third correction term is
-   built on top of it.
-2. **CAP-EMF-1 foundation.** Record the conditioning decision so extraction can
-   be written against it.
+1. ~~Finish B2.5 units 501 and 502.~~ **Done — closed on unit 500** (§2.1). The
+   premise is answered with qualification; restarting could not realistically
+   change the verdict, and one of the two failing conditions was miscalibrated.
+2. **CAP-EMF-1 foundation** —
+   [`EncoderIndependentCAPEMF1Protocol.md`](EncoderIndependentCAPEMF1Protocol.md).
+   Record the conditioning decision so feature extraction (§4.3) can be written
+   against it.
 3. **Implement `stage_asfd`**, tests first, with G7/G8 and the summed-gradient
    regression as the earliest green targets.
 4. **Stage B qualification — G7 and G8 first**, over the `t_f` grid, then banks,

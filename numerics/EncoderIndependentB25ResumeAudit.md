@@ -510,6 +510,90 @@ this program is currently building on:
   `encoder_independent_drifting/tests/run_all.py`.
 
 None of it affects this run — no B2.5-hashed source is among them, which
-`verify_resume.py` confirms. But wipe protection was an explicit concern
+`b25_verify_resume.py` confirms. But wipe protection was an explicit concern
 earlier in this program, and the S3R package is the foundation the whole ASFD
 sequence depends on. It should be committed.
+
+---
+
+## 9. Resolution — B2.5 is closed as answered-with-qualification
+
+**Decision: do not restart. B2.5 is closed on unit 500.**
+
+### What B2.5 was for
+
+One question: *do the B1 spectral anchor and the B2 raw drift correction solve
+complementary problems, or do they trade off?* It was queued ahead of ASFD
+because ASFD proposes stacking a **third** correction term on that same
+mechanism.
+
+### What unit 500 answers
+
+**They compound, substantially and super-additively — but not selectively.**
+
+| outcome | interaction `I = B1B2 − B1 − B2 + B0` |
+|---|---:|
+| effective rank | **+4.18** |
+| recall | **+0.0449** |
+| raw drift energy | +6.45 |
+| precision | −0.0078 |
+
+B1 recovers most of B2's geometry loss (rank/B0 from 0.577 to 0.794) and B1B2
+leads every appearance metric — recall 0.2148, KID 0.0529, FID 110.7, all best
+of the four cells. It is also the best-behaved arm on the floor-relative drift
+axis (§7.2), removing 77.5% of B0's legitimate excess while remaining above the
+floor that B2 goes through.
+
+What it does **not** do is separate the two effects: the same B1 pressure that
+restores rank also gives back a quarter of B2's drift reduction, roughly in
+proportion (§7.2). There is no blend point that satisfies both preregistered
+thresholds.
+
+### Why this is enough, and why more units would not help
+
+1. **The verdict cannot realistically change.** No blend of B1 and B2 satisfies
+   both conditions; the required super-additive selectivity is ≈ +0.10 in rank
+   ratio against checkpoint standard deviations of 0.054–0.104, and it is needed
+   in both remaining units because a restart reproduces unit 500
+   deterministically.
+2. **One of the two conditions is miscalibrated.** Condition 1 benchmarks
+   against B2's reduction, and B2's energy sits *below* the real-versus-real
+   floor. It rewards estimator exploitation.
+3. **The interaction is confounded with clip incidence** (§3). Three units of a
+   confounded interaction is not three times the information; the confound is
+   systematic and would replicate.
+
+### What this licenses, and what it does not
+
+**Licensed:**
+
+- ASFD precondition **P2 is satisfied with qualification** — stacked corrections
+  compound rather than cancel, at development scope, on one unit.
+- The floor-relative reading of drift energy is adopted as the correct axis.
+
+**Not licensed:**
+
+- no `promising` verdict; `aggregate.py` was never run and no
+  `b25_development.json` exists;
+- no claim of replication — this is one training unit;
+- no promotion of `B1B2` to anything.
+
+The aggregate is deliberately left unwritten. Unit 500's artifact remains sealed
+and hash-verified as the record.
+
+### Consequences carried into ASFD
+
+| finding | change to the ASFD specification |
+|---|---|
+| condition 1 rewarded going below the floor | Stage D's raw-energy condition is stated as **floor-relative excess**, two-sided |
+| the global clip acted as an unlabelled shared cap (§3) | per-component caps, already specified in §6.2, are confirmed as necessary rather than merely preferable |
+| B1 restores rank but not selectively | ASFD's third term must be justified on evidence that it is *not* simply another point on the same tradeoff line |
+
+### The structural repair worth making regardless
+
+`encoder_independent_drifting/tests/` is hash-bound by a completed
+confirmation, so **no test can be added to it without invalidating B1** (§7.1),
+and nothing warns the author at the time. Any future stage should hash an
+explicit dependency list, as `stage_b25/artifacts.py:_DEPENDENCIES` already does
+for the parent package, rather than globbing directories that later work will
+legitimately grow into. `stage_cap` follows that rule from the start.
