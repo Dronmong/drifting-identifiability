@@ -156,13 +156,13 @@ class CAPTrainConfig:
     # 0.9999 EMA, so this cannot become checkpoint selection on a metric.
     snapshot_every: int = 25_000
     log_every: int = 500
-    checkpoint_updates: tuple[int, ...] = (
-        100_000,
-        200_000,
-        400_000,
-        600_000,
-        750_000,
-    )
+    # Every 50k. The primary result is still the final checkpoint; the density
+    # is insurance. Under the budget-stop rule the last completed checkpoint
+    # becomes the result, and a sparse ladder (100k/200k/400k/600k/750k) would
+    # throw away up to 200k updates of finished work on a shortfall. Fifteen
+    # checkpoints cost ~4.5 GB and about eight minutes of audit time across a
+    # forty-hour run.
+    checkpoint_updates: tuple[int, ...] = tuple(range(50_000, 750_001, 50_000))
     health_every: int = 2_000
     health_samples: int = 512
     audit_samples: int = 2_048

@@ -93,7 +93,7 @@ selected GPU.
 | gradient clip | 10.0, with clip fraction logged |
 | updates | **750 000** = 48 M examples = **960 epochs** |
 | EMA | 0.9999 (108 half-lives; residual initialization weight 2.67e-33) |
-| checkpoints | 100 k, 200 k, 400 k, 600 k, **750 k (primary)** |
+| checkpoints | **every 50 k**, primary at **750 k** |
 | precision | **TF32 matmul, FP32 storage and accumulation** (§3.1) |
 
 ### 3.1 Precision: TF32, and why not BF16
@@ -384,6 +384,16 @@ value and the 4090 is the right card.
 750 k, **the last completed checkpoint is the result** and the fact is recorded
 in the artifact. This is a budget stop, not a metric selection: no checkpoint
 may ever be chosen by looking at its numbers.
+
+Checkpoints are therefore spaced every 50 k rather than on a sparse ladder. A
+shortfall is the expected case at pessimistic scaling, and a 100 k/200 k/400 k/
+600 k ladder would discard up to 200 k updates of finished work; 50 k caps the
+loss at 50 k for ~4.5 GB and about eight minutes of audit time.
+
+**Restarts are cheap.** Optimizer, model, EMA and all four RNG streams are
+written atomically every 1 000 updates and a restart continues exactly, so the
+run does not need one uninterrupted session. `48 h` is an operator constraint,
+not a session requirement.
 
 **If a second envelope becomes available, spend it on images seen, not on a
 bigger model.** At 37.7 M we are at published CIFAR-10 parameter scale; at 48 M

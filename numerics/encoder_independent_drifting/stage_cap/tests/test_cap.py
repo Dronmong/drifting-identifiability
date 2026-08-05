@@ -71,6 +71,18 @@ def test_capability_profile_is_frozen():
     assert frozen.train.ema_decay == 0.9999
 
 
+def test_checkpoints_are_dense_enough_for_a_budget_stop():
+    """The budget-stop rule takes the last completed checkpoint.
+
+    A sparse ladder would discard finished work on a shortfall, and a shortfall
+    is the expected case at pessimistic GPU scaling.
+    """
+    steps = profile("capability").train.checkpoint_updates
+    gaps = [b - a for a, b in zip(steps, steps[1:])]
+    assert max(gaps) <= 50_000, gaps
+    assert steps[0] <= 50_000
+
+
 def test_parameters_sit_in_the_published_cifar10_band():
     """35-56M is where every strong CIFAR-10 model lives; DDPM is 35.7M.
 
