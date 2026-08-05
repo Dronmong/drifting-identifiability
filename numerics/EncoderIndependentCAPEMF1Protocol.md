@@ -347,6 +347,49 @@ optimizer, EMA and checkpoint stack — on available 4090/5090 instances. Select
 by measured dollars per update. Project the full 160 k cost plus evaluation, and
 **launch only if it stays under the reserved budget boundary**.
 
+### 8.2.1 Budget envelope — 48 hours, $25
+
+The frozen configuration is sized to this envelope, not the other way round.
+All timings are measured on the RTX 4050 laptop at production shape
+(`micro_batch 16`, TF32, 3.25 GiB) and scaled by 5–7× for a rented 4090.
+
+| item | measured / projected |
+|---|---|
+| local, 4050 | **0.987 s/update**, 205.7 h for 750 k updates |
+| 4090 at 6× | **≈ 0.165 s/update → ≈ 34 h** |
+| 4090 at 5× (pessimistic) | ≈ 41 h |
+| 4090 at 7× (optimistic) | ≈ 29 h |
+| rental, $0.40/h | **≈ $14** |
+| rental, $0.50/h | ≈ $17 |
+| benchmark + evaluation | ≈ $2 |
+| **total** | **≈ $16, ≈ 36 h wall** |
+
+Headroom against the envelope: ~12 h and ~$9 even at the pessimistic scaling.
+
+**How the envelope was met.** Three measured changes, together **2.25× more
+images seen per GPU-hour** (0.987 s/update against 2.223):
+
+| change | measured | note |
+|---|---:|---|
+| active-row gather in the local difference | **1.24×** | the two stopped evaluations were running on rows whose quotient is multiplied by zero; over half of every batch |
+| TF32 matmuls | **1.25×** | FP32 storage and accumulation preserved |
+| width 512 → 384 | **1.43×** | 37.7 M ≈ DDPM's 35.7 M; the extra width bought itself out of ~30% of the images |
+
+**What was rejected, and why.** A 5090 gives ~1.3× in FP32 but ~2.5× in BF16,
+at typically 1.5–2× the rental rate — so it only pays off with BF16, and BF16
+is ruled out by §3.1's cancellation argument. Under FP32/TF32 a 5090 is poor
+value and the 4090 is the right card.
+
+**Budget stop rule, predeclared.** If wall clock or budget is exhausted before
+750 k, **the last completed checkpoint is the result** and the fact is recorded
+in the artifact. This is a budget stop, not a metric selection: no checkpoint
+may ever be chosen by looking at its numbers.
+
+**If a second envelope becomes available, spend it on images seen, not on a
+bigger model.** At 37.7 M we are at published CIFAR-10 parameter scale; at 48 M
+images we are at roughly half DDPM's 102 M and a quarter of EDM's ~200 M. That
+is the axis this run is short on.
+
 ### 8.3 The run
 
 One full capability unit. Developmental scope. Early termination only for a

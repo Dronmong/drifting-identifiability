@@ -242,6 +242,90 @@ rely on the self-feature map being injective.*
 
 ---
 
+## 3.8 Why this should beat encoderless drifting
+
+The formal sections above say *what* the mechanism is. This says *why it is
+expected to work*, which is a separate claim and a weaker one.
+
+### 3.8.1 The failure encoderless drifting actually has
+
+The drifting field is a difference of two barycenters:
+
+```
+V(z) = Σ_a w_a(z)·y⁺_a  −  Σ_b w_b(z)·y⁻_b ,     w ∝ exp(−‖z − y‖/τ)
+```
+
+**The weights are the similarity judgement.** Everything the method knows about
+what makes two images alike is `‖z − y‖`. With raw pixels that is Euclidean
+distance in ℝ³⁰⁷², and on natural images that distance is dominated by
+low-frequency layout and mean colour. Two photographs of the same object under
+a small shift are pixel-far; a photograph and a blurred version of it are
+pixel-near.
+
+So the positive barycenter `B⁺(z)` is an average over images that happen to
+share a coarse colour layout with `z` — not over images that share content. The
+field points at that average, and the average of pixel-neighbours is blurry.
+**This is the mechanism behind the paper's own report that its method needed a
+feature extractor**, and behind Phases 17–30 here: raw-pixel drifting reached
+recall 0.0000 while the bridge reached 0.17–0.24 at matched capacity (B3).
+
+### 3.8.2 What ASFD changes
+
+Three things, and they are separable — each could be right while the others are
+wrong.
+
+**1. Drifting becomes a correction, not the objective.** The generator is
+already a working one-call EMF model. This matters because of a distinction
+this repository established empirically: F1 showed that *iterating* the drift
+map destroys every distribution it touches, including real data, collapsing to
+a rank-≈1.7 attractor. B2 then showed that the same field's **zero set**, used
+as a gradient signal through model parameters, is harmless to coverage and
+reduces its own held-out discrepancy. The flow and the zero set are different
+objects, and only the second is used here.
+
+**2. The similarity judgement moves into feature space.** The identical field
+is computed with `‖·‖` taken over frozen trunk activations instead of pixels.
+If those activations encode content, the barycenter becomes an average over
+*semantically* similar images, and the target the field points at is a
+meaningful one.
+
+**3. Correctness stops depending on the similarity judgement.** An independently
+squared raw-pixel Laplace energy runs alongside with `λ_raw > 0`, and §3.4's
+theorem makes its zero identify `p = q` outright. If the feature map collapses
+two different images, that collision cannot become an equilibrium.
+
+### 3.8.3 Why a denoising trunk should encode content at all
+
+This is the load-bearing assumption, and it is an assumption.
+
+The trunk is trained to map `(1−t)x + tξ` back to `x`. At moderate `t` that is
+not a local filtering problem: recovering a heavily corrupted image requires
+inferring what the image *is*. A network that solves it must carry content in
+its hidden states. This is the same reason diffusion activations transfer to
+segmentation and correspondence (DIFT, CleanDIFT), and the same reason
+Teacher-Feature Drifting works from a diffusion teacher's intermediate layers.
+
+The open question — the actual novelty — is whether a **self-supplied** trunk
+suffices where TFD needed a pretrained teacher. §7's qualification gate exists
+to answer that on target-only data before any training budget is spent, and
+§10 records the reason it might not: the trunk allocates capacity under MSE,
+which underweights exactly the high-frequency bands an MSE-trained generator is
+weakest in.
+
+### 3.8.4 What the comparison is, precisely
+
+Not "our drifting beats their drifting." The honest form:
+
+> a working generator, plus a drifting-derived correction evaluated in a
+> content-aware geometry, against a generator whose only objective is drifting
+> in pixel geometry.
+
+Both arms are encoder-free. Both run on the same trunk, the same data, the same
+examples seen, the same evaluation. The difference is where the similarity
+judgement is made and whether drifting is the objective or a correction to one.
+
+---
+
 ## 4. Architecture
 
 ### 4.1 The foundation trunk
