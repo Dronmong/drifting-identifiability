@@ -547,6 +547,34 @@ def test_evaluation_is_hashed_into_the_manifest():
     assert any(name.endswith("stage_cap/evaluation.py") for name in manifest)
 
 
+def test_microbatch_override_preserves_the_effective_batch():
+    """The one shape the benchmark may change, and the guard on it.
+
+    A 24 GB card fits the whole batch in one microbatch, removing three
+    quarters of the kernel launches. That is an execution detail; the effective
+    batch, the horizon and the objective must not move with it.
+    """
+    frozen = profile("capability")
+    effective = frozen.train.effective_batch
+    for micro in (16, 32, 64):
+        assert effective % micro == 0
+        adjusted = replace(
+            frozen,
+            train=replace(
+                frozen.train,
+                micro_batch=micro,
+                accumulation_steps=effective // micro,
+            ),
+        )
+        adjusted.validate()
+        assert adjusted.train.effective_batch == effective
+        assert adjusted.train.updates == frozen.train.updates
+        assert adjusted.model == frozen.model
+        assert adjusted.objective == frozen.objective
+    # A microbatch that does not divide the effective batch must be refused.
+    assert effective % 48 != 0
+
+
 def test_checkpoints_survive_a_resume():
     """A caller keeping its own dict loses every pre-resume checkpoint.
 

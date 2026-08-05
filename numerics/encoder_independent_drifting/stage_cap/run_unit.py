@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import time
+from dataclasses import replace
 from pathlib import Path
 
 import torch
@@ -44,6 +45,19 @@ def main() -> int:
     parser.add_argument("--checkpoint-dir", type=Path, default=CHECKPOINTS)
     parser.add_argument("--recovery", type=Path, default=None)
     parser.add_argument(
+        "--micro-batch",
+        type=int,
+        default=None,
+        help=(
+            "override the microbatch, holding the effective batch at 64 by "
+            "adjusting accumulation. This is the one shape the protocol lets "
+            "the benchmark change: a 24 GB card fits the whole batch in one "
+            "microbatch, which removes three quarters of the kernel launches. "
+            "It is not a scientific knob -- the effective batch, the horizon "
+            "and the objective are unchanged."
+        ),
+    )
+    parser.add_argument(
         "--nondeterministic",
         action="store_true",
         help=(
@@ -72,6 +86,30 @@ def main() -> int:
     payload = profile_payload(frozen)
     if preflight["profile"] != payload:
         raise RuntimeError("CAP-EMF-1 profile differs from the preflight")
+
+    if args.micro_batch is not None:
+        effective = frozen.train.effective_batch
+        if effective % args.micro_batch:
+            raise ValueError(
+                f"microbatch {args.micro_batch} does not divide the frozen "
+                f"effective batch {effective}"
+            )
+        frozen = replace(
+            frozen,
+            train=replace(
+                frozen.train,
+                micro_batch=args.micro_batch,
+                accumulation_steps=effective // args.micro_batch,
+            ),
+        )
+        frozen.validate()
+        if frozen.train.effective_batch != effective:
+            raise RuntimeError("the effective batch moved; refusing to run")
+        print(
+            f"microbatch override: {args.micro_batch} x "
+            f"{frozen.train.accumulation_steps} = {effective}",
+            flush=True,
+        )
 
     planned = [
         checkpoint_path(step, kind)
@@ -179,6 +217,15 @@ def main() -> int:
         "device": settings,
         "preflight_sha256": preflight["artifact_sha256"],
         "profile": payload,
+        # The declared profile above is what the preflight bound. This is what
+        # actually ran: identical in every scientific respect, and possibly
+        # different in how the effective batch was split across microbatches.
+        "realized_batch_split": {
+            "micro_batch": frozen.train.micro_batch,
+            "accumulation_steps": frozen.train.accumulation_steps,
+            "effective_batch": frozen.train.effective_batch,
+            "overridden": args.micro_batch is not None,
+        },
         "parameter_count": outcome.parameter_count,
         "training": {
             "history": outcome.history,
