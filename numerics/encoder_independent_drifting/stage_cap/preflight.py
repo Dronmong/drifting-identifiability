@@ -34,7 +34,13 @@ PARAMETER_CEILING_NOTE = (
     "value. If the cloud benchmark exceeds budget, reduce width once - never "
     "the patch grid, the objective, or the training horizon."
 )
-from .config import FEATURE_LEVELS, PARAMETER_CEILING, profile
+from .config import (
+    FEATURE_LEVELS,
+    PARAMETER_CEILING,
+    enable_tf32,
+    examples_seen,
+    profile,
+)
 from .diagnostics import haar_transform, rank_noncollapse
 from .model import CAPPixelTransformer, one_step_sample
 from .objective import (
@@ -418,6 +424,8 @@ def main() -> int:
     assert_result_path_unused(args.out)
     device = resolve_device(args.device)
     settings = configure(device)
+    # The throughput probe must measure the precision the run will use.
+    precision = enable_tf32()
     scratch = args.scratch or (args.out.parent / "_preflight_scratch")
     scratch.mkdir(parents=True, exist_ok=True)
 
@@ -443,6 +451,8 @@ def main() -> int:
         "status": "cap-emf1-preflight",
         "scope": "local mechanics only; no quality run and no test access",
         "device": settings,
+        "precision": precision,
+        "examples_seen_target": examples_seen(profile("capability").train),
         "protocol_sha256": file_sha256(PROTOCOL),
         "source_sha256": source_manifest(),
         "profile": profile_payload(profile("capability")),

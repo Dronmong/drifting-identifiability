@@ -35,6 +35,10 @@ class ObjectiveOutcome:
     per_sample_raw_mse: torch.Tensor
     diagonal_raw_mse: torch.Tensor
     interior_raw_mse: torch.Tensor
+    # Per-sample network evaluations actually performed. Not a constant: the
+    # two stopped evaluations run only on active rows, so this is
+    # ``batch + 2 * active`` rather than ``3 * batch``.
+    model_evaluations: int
 
 
 def sample_time_triangle(
@@ -108,22 +112,35 @@ def emf_local_difference(
 
     Only intervals longer than ``delta`` are advanced; the remaining rows carry
     a zero quotient and reduce exactly to endpoint regression.
+
+    **The two stopped evaluations run on the active rows only.**  Inactive rows
+    have their quotient multiplied by zero, so evaluating them was pure waste —
+    and with ``diagonal_fraction = 0.5`` plus the short-interval rows, roughly
+    half to sixty percent of every batch is inactive.
+
+    The optimization is *mathematically* exact and is regression-tested against
+    the dense path: inactive rows match bitwise, active rows to ~1e-13 relative
+    in float64.  They cannot match bitwise, and never could — GEMM reduction
+    order depends on batch shape, so the same rows evaluated alone round
+    differently from the same rows evaluated inside a larger batch.
     """
     interval = t - r
     active = interval > delta
-    advance = active.to(t.dtype) * delta
     current = model(state, t, interval)
+    quotient = torch.zeros_like(current)
     with torch.no_grad():
         if bool((t <= 0).any()):
             raise ValueError("direct-x EMF requires strictly positive t")
-        boundary = model(state, t, torch.zeros_like(t))
-        divisor = t.clamp_min(denominator_floor)[:, None, None, None]
-        future_state = (
-            state + advance[:, None, None, None] * (boundary - state) / divisor
-        )
-        future = model(future_state, t - advance, interval - advance)
-        quotient = (future - current.detach()) / delta
-        quotient = quotient * active[:, None, None, None]
+        index = active.nonzero(as_tuple=True)[0]
+        if index.numel():
+            sub_state = state[index]
+            sub_t = t[index]
+            sub_interval = interval[index]
+            boundary = model(sub_state, sub_t, torch.zeros_like(sub_t))
+            divisor = sub_t.clamp_min(denominator_floor)[:, None, None, None]
+            future_state = sub_state + delta * (boundary - sub_state) / divisor
+            future = model(future_state, sub_t - delta, sub_interval - delta)
+            quotient[index] = (future - current.detach()[index]) / delta
     return current, quotient
 
 
@@ -139,6 +156,7 @@ def emf_loss(
     t, r, diagonal, state = _conditions(clean, noise, triangle)
     if bool((r <= 0).any()):
         raise ValueError("Equation 18 requires strictly positive r")
+    active = int(((t - r) > config.emf_delta).sum())
     current, quotient = emf_local_difference(
         model, state, t, r, config.emf_delta, config.emf_denominator_floor
     )
@@ -160,6 +178,7 @@ def emf_loss(
         per_sample_raw_mse=per_sample.detach(),
         diagonal_raw_mse=_masked_mean(per_sample, diagonal),
         interior_raw_mse=_masked_mean(per_sample, ~diagonal),
+        model_evaluations=len(clean) + 2 * active,
     )
 
 

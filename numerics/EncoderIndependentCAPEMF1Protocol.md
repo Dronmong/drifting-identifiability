@@ -21,11 +21,21 @@ Two changes, both driven by the stated priority that the mechanism must produce
 
 | | was | now | why |
 |---|---|---|---|
-| target | 5 000 automobile images | **50 000, all classes** | 5 000 images at this horizon is ~4 096 epochs, which makes **memorization the likely route to coherent-looking samples**; 410 epochs does not. It also makes the standard 50 k-sample FID protocol available, so the headline number is comparable to published CIFAR-10 results instead of a small-sample-biased number against 1 000 images. |
-| updates | 160 000 | **320 000** | 160 k was chosen by analogy to nothing in particular; EMF's own pixel experiment used 600 k. Coherent samples are the point of the run, so the budget is set from the outset rather than extended mid-flight. |
+| target | 5 000 automobile images | **50 000, all classes** | 5 000 images at this horizon is ~4 096 epochs, which makes **memorization the likely route to coherent-looking samples**. It also makes the standard 50 k-sample FID protocol available, so the headline number is comparable to published CIFAR-10 results instead of a small-sample-biased number against 1 000 images. |
+| width | 512 (63.5 M) | **384 (37.7 M)** | 37.7 M is essentially DDPM's 35.7 M and sits inside the 35–56 M band every strong CIFAR-10 model occupies. Width 512 measured **1.43× slower** for no capacity argument at 32×32: at a fixed GPU budget the extra parameters buy themselves out of ~30% of the images seen. |
+| updates | 160 000 | **750 000** | 160 k was chosen by analogy to nothing in particular. DDPM used 102 M images on this dataset; 750 k × 64 = **48 M images (960 epochs)** is roughly half that at its parameter count — the closest a 48 h / $25 envelope gets to a known-good configuration. |
+| precision | unspecified | **TF32 matmul, FP32 storage** | measured 1.23–1.30× on Ada, with FP32 inputs, outputs and accumulation. See §3.1 for why BF16 is rejected. |
+| local difference | dense | **active rows only** | the two stopped evaluations were being run on rows whose quotient is multiplied by zero. Skipping them is mathematically exact and measured **1.24×**. |
 
-320 000 × 64 = **20.48 M examples = 410 epochs**. That number is also the
-matched budget the drifting arm must equal — see §10.1.
+**Combined: 2.25× more images seen per GPU-hour** than the configuration this
+protocol was first written against — 0.987 s/update versus 2.223, measured on
+the same card.
+
+### 1.2 What this run is short of
+
+Parameters are **not** the constraint. At 37.7 M we sit at published CIFAR-10
+scale. Images seen is the constraint: DDPM used 102 M and EDM ~200 M, against
+our 48 M. Any future budget should be spent on more images, not a bigger model.
 
 One question, one unit, one evaluation. This is a **capability experiment**, not
 a comparison and not a mechanism screen — S3R already made the mechanism choice
@@ -73,17 +83,38 @@ selected GPU.
 | inference | one direct endpoint call, counted |
 | objective | direct-`x` Euler Mean Flow, JVP-free (§4) |
 | patch size | **2** → 16×16 = **256 image tokens** |
-| trunk | width 512, depth 12, 8 heads, mlp ratio 4.0, long U-shaped skips |
+| trunk | **width 384**, depth 12, 8 heads, mlp ratio 4.0, long U-shaped skips |
+| parameters | **37 726 863** (measured) |
 | conditioning | **AdaLN-Zero** for absolute time and interval (§5.2) |
 | output | shallow convolutional pixel head/refiner |
 | auxiliary branch | **none** — EMF is JVP-free and needs no velocity branch |
 | optimizer | AdamW, lr `1e-4`, betas `(0.9, 0.95)`, weight decay 0 |
 | effective batch | 64 (microbatch × accumulation, split freely) |
 | gradient clip | 10.0, with clip fraction logged |
-| updates | **320 000** = 20.48 M examples = **410 epochs** |
-| EMA | 0.9999 (46 half-lives; residual initialization weight 1.26e-14) |
-| checkpoints | 40 k, 80 k, 160 k, 240 k, **320 k (primary)** |
-| precision | BF16/AMP; sensitive reductions and all diagnostics in FP32 |
+| updates | **750 000** = 48 M examples = **960 epochs** |
+| EMA | 0.9999 (108 half-lives; residual initialization weight 2.67e-33) |
+| checkpoints | 100 k, 200 k, 400 k, 600 k, **750 k (primary)** |
+| precision | **TF32 matmul, FP32 storage and accumulation** (§3.1) |
+
+### 3.1 Precision: TF32, and why not BF16
+
+The earlier draft specified BF16/AMP. That is **rejected**, for a numerical
+reason rather than a performance one:
+
+> The EMF local difference computes `(future − current) / δ` with `δ = 0.01`,
+> from two evaluations of the *same network* at nearby inputs. It is a
+> difference of nearly-equal quantities divided by a small number — the
+> textbook setting for **catastrophic cancellation**. BF16 carries 2–3
+> significant decimal digits, so with outputs of order 1 the difference of
+> order 0.01 would be dominated by rounding noise.
+
+TF32 reduces mantissa precision *inside the matmul only*. Inputs, outputs and
+accumulation remain FP32, so the subtraction happens at full precision and the
+cancellation problem does not arise. Measured **1.23–1.30×** on Ada, for a
+one-line change and no numerical risk.
+
+If a future run wants BF16 anyway, it must re-pass the first-order convergence
+check of §8.1 with the local difference held in FP32.
 | augmentation | horizontal flip only, recorded per example |
 | correction | **none** |
 
@@ -354,8 +385,8 @@ exposure.
 
 | arm | per update | updates | examples |
 |---|---:|---:|---:|
-| CAP-EMF-1 | 64 | 320 000 | 20 480 000 |
-| base drifting, cloud 256 | 256 | **80 000** | 20 480 000 |
+| CAP-EMF-1 | 64 | 750 000 | 48 000 000 |
+| base drifting, cloud 256 | 256 | **187 500** | 48 000 000 |
 
 Both arms therefore see the same data the same number of times, on the same
 trunk, against the same evaluation. Where the two cannot be matched — the batch

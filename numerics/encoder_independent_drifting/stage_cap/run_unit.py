@@ -29,7 +29,7 @@ from .artifacts import (
     profile_payload,
     save_checkpoint,
 )
-from .config import profile
+from .config import enable_tf32, examples_seen, profile
 from .data import cifar10_train_pool
 from .diagnostics import capability_gate
 from .training import clip_fraction, train_cap_unit
@@ -84,6 +84,7 @@ def main() -> int:
         )
 
     torch.set_num_threads(4)
+    precision = enable_tf32()
     if not args.nondeterministic:
         # Requires CUBLAS_WORKSPACE_CONFIG=:4096:8 in the environment.
         torch.use_deterministic_algorithms(True)
@@ -141,7 +142,8 @@ def main() -> int:
         "development_only": True,
         "correction": "none",
         "deterministic_algorithms": not args.nondeterministic,
-        "precision": "fp32",
+        "precision": precision,
+        "examples_seen_target": examples_seen(frozen.train),
         "device": settings,
         "preflight_sha256": preflight["artifact_sha256"],
         "profile": payload,

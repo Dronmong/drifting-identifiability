@@ -215,9 +215,9 @@ def train_cap_unit(
             )
             result = emf_loss(model, clean, noise, triangle, profile.objective)
             (result.loss / train.accumulation_steps).backward()
-            # Three model evaluations per microbatch: the graded current field
-            # plus the two stopped ones inside the local difference.
-            outcome.model_forwards += 3 * train.micro_batch
+            # Not a constant: the two stopped evaluations run on active rows
+            # only, so this is batch + 2*active rather than 3*batch.
+            outcome.model_forwards += result.model_evaluations
             losses.append(
                 (
                     float(result.loss.detach()),

@@ -30,7 +30,12 @@ class CAPModelConfig:
     image_size: int = 32
     channels: int = 3
     patch_size: int = 2
-    width: int = 512
+    # 384 gives 37.7M parameters, essentially DDPM's 35.7M and inside the
+    # 35-56M band every strong CIFAR-10 model sits in.  Width 512 measured 1.43x
+    # slower for no capacity argument at 32x32: at a fixed GPU budget the extra
+    # parameters cost 30% of the images seen, and images seen is what this run
+    # is short of.
+    width: int = 384
     depth: int = 12
     heads: int = 8
     mlp_ratio: float = 4.0
@@ -112,11 +117,12 @@ class CAPObjectiveConfig:
 
 @dataclass(frozen=True)
 class CAPTrainConfig:
-    # 320k x 64 = 20.48M examples = 410 epochs over CIFAR-10.  160k was chosen
-    # by analogy to nothing in particular; EMF's own pixel experiment used
-    # 600k, and coherent samples are the point of the run, so the budget is set
-    # from the outset rather than extended mid-flight.
-    updates: int = 320_000
+    # 750k x 64 = 48M examples = 960 epochs.  DDPM used 800k x 128 = 102M
+    # images (2048 epochs) on this dataset, so this is roughly half its budget
+    # at its parameter count -- the closest a 48 h / $25 envelope gets to a
+    # known-good CIFAR-10 configuration.  Images seen, not parameters, is what
+    # this run is short of.
+    updates: int = 750_000
     micro_batch: int = 16
     accumulation_steps: int = 4
     learning_rate: float = 1e-4
@@ -126,8 +132,14 @@ class CAPTrainConfig:
     gradient_clip: float = 10.0
     ema_decay: float = 0.9999
     horizontal_flip: bool = True
-    log_every: int = 200
-    checkpoint_updates: tuple[int, ...] = (40_000, 80_000, 160_000, 240_000, 320_000)
+    log_every: int = 500
+    checkpoint_updates: tuple[int, ...] = (
+        100_000,
+        200_000,
+        400_000,
+        600_000,
+        750_000,
+    )
     health_every: int = 2_000
     health_samples: int = 512
     audit_samples: int = 2_048
@@ -267,11 +279,42 @@ def profile(name: str) -> CAPProfile:
     if name == "capability":
         if result.train.effective_batch != 64:
             raise RuntimeError("CAP-EMF-1 effective batch drifted from 64")
-        if result.train.updates != 320_000:
-            raise RuntimeError("CAP-EMF-1 horizon drifted from 320,000 updates")
+        if result.train.updates != 750_000:
+            raise RuntimeError("CAP-EMF-1 horizon drifted from 750,000 updates")
+        if result.model.width != 384:
+            raise RuntimeError("CAP-EMF-1 width drifted from 384")
         if result.model.tokens != 256:
             raise RuntimeError("CAP-EMF-1 token count drifted from 256")
     return result
+
+
+def enable_tf32() -> dict:
+    """Turn on TF32 matmuls and record it.  Measured 1.23-1.30x on Ada.
+
+    TF32 is the right precision lever for this objective and BF16 is not.  The
+    EMF local difference computes ``(future - current) / 0.01`` from two
+    evaluations of the same network at nearby inputs -- a difference of nearly
+    equal quantities divided by a small number, which is the textbook setting
+    for catastrophic cancellation.  BF16 carries 2-3 significant decimal
+    digits, so in BF16 that quotient would be dominated by rounding noise.
+
+    TF32 reduces mantissa precision *inside* the matmul only: inputs, outputs
+    and accumulation stay FP32, so the subtraction happens at full precision
+    and the cancellation problem does not arise.
+    """
+    import torch
+
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+    return {
+        "matmul_tf32": True,
+        "cudnn_tf32": True,
+        "storage_dtype": "fp32",
+        "rationale": (
+            "TF32 keeps FP32 storage and accumulation, so the EMF local "
+            "difference is unaffected; BF16 would break it by cancellation"
+        ),
+    }
 
 
 def examples_seen(train: CAPTrainConfig) -> int:

@@ -45,31 +45,40 @@ def test_capability_profile_is_frozen():
     frozen = profile("capability")
     assert frozen.model.patch_size == 2
     assert frozen.model.tokens == 256
-    assert frozen.model.width == 512
+    assert frozen.model.width == 384
     assert frozen.model.depth == 12
-    assert frozen.train.updates == 320_000
+    assert frozen.train.updates == 750_000
     assert frozen.train.effective_batch == 64
-    assert frozen.train.checkpoint_updates[-1] == 320_000
+    assert frozen.train.checkpoint_updates[-1] == 750_000
     assert frozen.train.ema_decay == 0.9999
 
 
-def test_epoch_count_is_a_healthy_regime():
-    """410 epochs, not the 4,096 a 5,000-image class would have given.
+def test_parameters_sit_in_the_published_cifar10_band():
+    """35-56M is where every strong CIFAR-10 model lives; DDPM is 35.7M.
 
-    The single-class draft made memorization the likely route to coherent
-    samples; unconditional CIFAR-10 at this horizon does not.
+    Bigger is not better here: at a fixed GPU budget the extra parameters buy
+    themselves out of images seen, and images seen is what this run is short of.
     """
+    model = CAPPixelTransformer(profile("capability").model, 1)
+    count = model.parameter_count()
+    assert 30_000_000 < count < 56_000_000, count
+
+
+def test_budget_reaches_a_meaningful_fraction_of_ddpm():
+    """DDPM used 102M images on CIFAR-10 (800k x 128 = 2048 epochs)."""
     frozen = profile("capability")
-    epochs = examples_seen(frozen.train) / TRAIN_POOL_SIZE
-    assert 300 < epochs < 600, epochs
-    assert examples_seen(frozen.train) == 20_480_000
+    total = examples_seen(frozen.train)
+    assert total == 48_000_000
+    assert 0.4 < total / 102_400_000 < 0.6
+    epochs = total / TRAIN_POOL_SIZE
+    assert 900 < epochs < 1_000, epochs
 
 
 def test_matched_drifting_budget_is_stated_in_examples():
     """A drifting arm with a 256-cloud matches on examples, not updates."""
     frozen = profile("capability")
     total = examples_seen(frozen.train)
-    assert total // 256 == 80_000
+    assert total // 256 == 187_500
     # Matching updates instead would give drifting 4x the data exposure.
     assert frozen.train.updates * 256 == 4 * total
 
@@ -210,6 +219,82 @@ def test_emf_difference_converges_to_the_jvp_at_first_order():
     assert errors[-1] < 1e-2
 
 
+def test_active_row_gather_is_bit_identical_to_the_dense_path():
+    """The stopped evaluations skip inactive rows; that must change nothing.
+
+    Roughly half to sixty percent of every batch is inactive (diagonal rows
+    plus short intervals), and their quotient is multiplied by zero, so
+    evaluating them was pure waste. This asserts the optimization is exact.
+    """
+    model, small = _tiny()
+    model = wake_output_path(model.double().eval())
+    config = small.objective
+    state = torch.randn(8, 3, 8, 8, dtype=torch.float64)
+    t = torch.tensor([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2], dtype=torch.float64)
+    # A deliberate mix: four long intervals, four diagonal or sub-delta.
+    r = torch.tensor([0.1, 0.2, 0.1, 0.2, 0.5, 0.4, 0.3, 0.199], dtype=torch.float64)
+
+    def dense_reference():
+        interval = t - r
+        active = interval > config.emf_delta
+        advance = active.to(t.dtype) * config.emf_delta
+        current = model(state, t, interval)
+        with torch.no_grad():
+            boundary = model(state, t, torch.zeros_like(t))
+            divisor = t.clamp_min(config.emf_denominator_floor)[:, None, None, None]
+            future_state = (
+                state + advance[:, None, None, None] * (boundary - state) / divisor
+            )
+            future = model(future_state, t - advance, interval - advance)
+            quotient = (future - current.detach()) / config.emf_delta
+            quotient = quotient * active[:, None, None, None]
+        return current, quotient
+
+    dense_current, dense_quotient = dense_reference()
+    sparse_current, sparse_quotient = emf_local_difference(
+        model, state, t, r, config.emf_delta, config.emf_denominator_floor
+    )
+    active = (t - r) > config.emf_delta
+    # The fixture must exercise both branches or the test proves nothing.
+    assert 0 < int(active.sum()) < len(active)
+
+    # The graded evaluation runs on the full batch either way, so it *is*
+    # bitwise identical.
+    assert torch.equal(dense_current, sparse_current)
+
+    # Inactive rows are zeroed by both paths: exactly zero, no tolerance. This
+    # is the part that would break if the masking were wrong.
+    inactive = ~active
+    assert torch.equal(dense_quotient[inactive], sparse_quotient[inactive])
+    assert float(sparse_quotient[inactive].abs().max()) == 0.0
+
+    # Active rows agree to float64 rounding but NOT bitwise, and cannot: GEMM
+    # reduction order depends on batch shape, so evaluating four rows alone
+    # rounds differently from evaluating them inside a batch of eight. Measured
+    # directly, the same rows at batch 8 vs batch 4 differ by ~5e-16, which
+    # accumulates to ~1e-13 through twelve blocks. The optimization is
+    # mathematically exact; bitwise reproducibility across shapes never existed.
+    scale = float(dense_quotient.abs().max())
+    relative = float((dense_quotient - sparse_quotient).abs().max()) / scale
+    assert relative < 1e-11, relative
+
+
+def test_all_inactive_batch_needs_no_stopped_evaluations():
+    """An entirely diagonal batch must not call the model a second time."""
+    model, small = _tiny()
+    calls = {"n": 0}
+    handle = model.register_forward_pre_hook(
+        lambda module, args: calls.__setitem__("n", calls["n"] + 1)
+    )
+    t = torch.full((4,), 0.5)
+    emf_local_difference(
+        model, torch.randn(4, 3, 8, 8), t, t.clone(),
+        small.objective.emf_delta, small.objective.emf_denominator_floor,
+    )
+    handle.remove()
+    assert calls["n"] == 1, f"expected one evaluation, got {calls['n']}"
+
+
 def test_diagonal_rows_reduce_to_endpoint_regression():
     """When r == t the quotient is zero and the target is the clean image."""
     model, small = _tiny()
@@ -332,14 +417,14 @@ def test_training_runs_and_records_health():
     assert outcome.parameter_count > 0
     assert outcome.nonfinite_updates == 0
     assert 0.0 <= clip_fraction(outcome) <= 1.0
-    # Three model evaluations per microbatch example: one graded, two stopped.
-    expected = (
-        3
-        * small.train.updates
+    # batch + 2*active per microbatch, so strictly between the all-inactive
+    # floor (1x) and the old dense cost (3x). The saving is the point.
+    samples = (
+        small.train.updates
         * small.train.accumulation_steps
         * small.train.micro_batch
     )
-    assert outcome.model_forwards == expected
+    assert samples <= outcome.model_forwards < 3 * samples
 
 
 def test_restart_reproduces_an_uninterrupted_run():

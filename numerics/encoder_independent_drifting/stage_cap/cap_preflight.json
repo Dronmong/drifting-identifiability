@@ -6,22 +6,22 @@
           "dec_final": [
             2,
             256,
-            512
+            384
           ],
           "dec_mid": [
             2,
             256,
-            512
+            384
           ],
           "enc_final": [
             2,
             256,
-            512
+            384
           ],
           "enc_mid": [
             2,
             256,
-            512
+            384
           ]
         }
       },
@@ -32,18 +32,18 @@
     {
       "data": {
         "convergence_rates": [
-          9.908738421653739,
-          10.049033809996882
+          10.20847900658908,
+          10.090781220697844
         ],
-        "jvp_magnitude": 1.1203857382478444,
+        "jvp_magnitude": 0.9658841831951435,
         "note": "the production emf_delta of 0.01 is a stopped local difference by design, not an exact derivative; this check verifies the implementation converges to the right limit",
         "relative_errors": {
-          "0.0001": 0.01921480670328813,
-          "0.001": 0.19039449344552092,
-          "1e-05": 0.0019121048915342533
+          "0.0001": 0.026795069388425023,
+          "0.001": 0.27353690333183456,
+          "1e-05": 0.002655400885460082
         }
       },
-      "detail": "relative max error {'0.001': 0.19039449344552092, '0.0001': 0.01921480670328813, '1e-05': 0.0019121048915342533}, first-order rates [9.91, 10.05]",
+      "detail": "relative max error {'0.001': 0.27353690333183456, '0.0001': 0.026795069388425023, '1e-05': 0.002655400885460082}, first-order rates [10.21, 10.09]",
       "name": "EMF finite difference vs float64 JVP",
       "passed": true
     },
@@ -57,10 +57,10 @@
     },
     {
       "data": {
-        "resumed": 1.0272489190101624,
-        "uninterrupted": 1.0272489190101624
+        "resumed": 1.0507110953330994,
+        "uninterrupted": 1.0507110953330994
       },
-      "detail": "final raw_mse 1.02724891901 vs 1.02724891901",
+      "detail": "final raw_mse 1.05071109533 vs 1.05071109533",
       "name": "restart determinism",
       "passed": true
     },
@@ -68,9 +68,9 @@
       "data": {
         "half_life": 6931.125226233421,
         "mature_at": 34656,
-        "residual_initialization_weight": 1.2643917736964356e-14
+        "residual_initialization_weight": 2.6686102166661494e-33
       },
-      "detail": "half-life 6931 updates, mature by 34656, residual initialization weight at 320000 = 1.26e-14",
+      "detail": "half-life 6931 updates, mature by 34656, residual initialization weight at 750000 = 2.67e-33",
       "name": "EMA arithmetic and maturity",
       "passed": true
     },
@@ -90,22 +90,22 @@
           "dec_final": [
             2,
             256,
-            512
+            384
           ],
           "dec_mid": [
             2,
             256,
-            512
+            384
           ],
           "enc_final": [
             2,
             256,
-            512
+            384
           ],
           "enc_mid": [
             2,
             256,
-            512
+            384
           ]
         }
       },
@@ -116,9 +116,9 @@
     {
       "data": {
         "ceiling": 65000000,
-        "parameter_count": 63548687
+        "parameter_count": 37726863
       },
-      "detail": "63,548,687 parameters against a 65,000,000 ceiling (97.8%)",
+      "detail": "37,726,863 parameters against a 65,000,000 ceiling (58.0%)",
       "name": "parameter count",
       "passed": true
     },
@@ -127,10 +127,10 @@
         "attempts": [
           {
             "micro_batch": 16,
-            "peak_memory_reserved_bytes": 4674551808,
-            "projected_hours_this_device": 200.2519268459744,
-            "seconds_per_microbatch": 0.563208544254303,
-            "seconds_per_update": 2.252834177017212,
+            "peak_memory_reserved_bytes": 3487563776,
+            "projected_hours_this_device": 205.67901929219565,
+            "seconds_per_microbatch": 0.24681482315063477,
+            "seconds_per_update": 0.9872592926025391,
             "steps": 20,
             "warmup": 4
           }
@@ -138,17 +138,17 @@
         "caveat": "development hardware. The cloud benchmark replaces this with a measurement on the rented GPU and selects by dollars per update; this number only bounds the projection.",
         "chosen": {
           "micro_batch": 16,
-          "peak_memory_reserved_bytes": 4674551808,
-          "projected_hours_this_device": 200.2519268459744,
-          "seconds_per_microbatch": 0.563208544254303,
-          "seconds_per_update": 2.252834177017212,
+          "peak_memory_reserved_bytes": 3487563776,
+          "projected_hours_this_device": 205.67901929219565,
+          "seconds_per_microbatch": 0.24681482315063477,
+          "seconds_per_update": 0.9872592926025391,
           "steps": 20,
           "warmup": 4
         },
         "failures": [],
         "production_micro_batch_fits": true
       },
-      "detail": "micro_batch 16: 2.253 s/update, 4.35 GiB, 200.3 h on this device",
+      "detail": "micro_batch 16: 0.987 s/update, 3.25 GiB, 205.7 h on this device",
       "name": "throughput probe",
       "passed": true
     }
@@ -162,7 +162,14 @@
     "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
     "torch_version": "2.7.1+cu126"
   },
+  "examples_seen_target": 48000000,
   "parameter_ceiling_note": "Protocol 5.4: the port reports the exact count and it is frozen at that value. If the cloud benchmark exceeds budget, reduce width once - never the patch grid, the objective, or the training horizon.",
+  "precision": {
+    "cudnn_tf32": true,
+    "matmul_tf32": true,
+    "rationale": "TF32 keeps FP32 storage and accumulation, so the EMF local difference is unaffected; BF16 would break it by cancellation",
+    "storage_dtype": "fp32"
+  },
   "profile": {
     "gate": {
       "centered_variance_ratio": 0.8,
@@ -185,7 +192,7 @@
       "refiner_depth": 2,
       "refiner_width": 64,
       "time_embedding_dim": 256,
-      "width": 512
+      "width": 384
     },
     "name": "capability",
     "objective": {
@@ -204,11 +211,11 @@
       "beta1": 0.9,
       "beta2": 0.95,
       "checkpoint_updates": [
-        40000,
-        80000,
-        160000,
-        240000,
-        320000
+        100000,
+        200000,
+        400000,
+        600000,
+        750000
       ],
       "ema_decay": 0.9999,
       "gradient_clip": 10.0,
@@ -216,14 +223,14 @@
       "health_samples": 512,
       "horizontal_flip": true,
       "learning_rate": 0.0001,
-      "log_every": 200,
+      "log_every": 500,
       "micro_batch": 16,
       "recovery_every": 1000,
-      "updates": 320000,
+      "updates": 750000,
       "weight_decay": 0.0
     }
   },
-  "protocol_sha256": "8ed2340b3358023a93d4a29c79cae014a84d058dc575ea722e81bf9c34239ad6",
+  "protocol_sha256": "204f236fe76ebe2def42836818602db9b713675ddf2da07904e6a6f80cf0d335",
   "scope": "local mechanics only; no quality run and no test access",
   "source_sha256": {
     "numerics/encoder_independent_drifting/config.py": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
@@ -231,13 +238,13 @@
     "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
     "numerics/encoder_independent_drifting/stage_cap/__init__.py": "658132676062900a979112fec281bb9817a15c8382be12f1a127b5a34333f879",
     "numerics/encoder_independent_drifting/stage_cap/artifacts.py": "05558382799f0fddee45931a167763dd29755f171dbd6b39fca7f673c74884d2",
-    "numerics/encoder_independent_drifting/stage_cap/config.py": "3de74b5626e10bd0496bf419863784780bfc4b269f645e4ea5e644d4944c738f",
+    "numerics/encoder_independent_drifting/stage_cap/config.py": "9a5dd40336a79087c54b2ad45515ea6c715a8711b2de3d345a90d4ef96bd8acc",
     "numerics/encoder_independent_drifting/stage_cap/data.py": "e120dd818d3bda4991b4eaaeeb82cba9b6f2f60a60c1e6732da4acd571c1153c",
     "numerics/encoder_independent_drifting/stage_cap/diagnostics.py": "734d9770dc916a0a4054c87830975635c146132858ac7b6758c24a0179557fb5",
     "numerics/encoder_independent_drifting/stage_cap/model.py": "85334bbe0d58381c9ebf205ddf9c1de09d30ca7e4fcb8a8c87d3ac1ec842e188",
-    "numerics/encoder_independent_drifting/stage_cap/objective.py": "cbb3d775fe72f5f2bfcc7fa9cd58627a2f80a0c4a8297db5e439548325402ccd",
-    "numerics/encoder_independent_drifting/stage_cap/preflight.py": "fa784d13285b88d0c88d0d4dd1c9a5885865c27b0fecff5dc32aac250340e1ec",
-    "numerics/encoder_independent_drifting/stage_cap/training.py": "f5008094be81071def28bd5d713df9baa8ee58e53c14e37d393fc5733fabb39b"
+    "numerics/encoder_independent_drifting/stage_cap/objective.py": "95d8a7ca4ee5349b70ddf49752d23d3e74d6f9dd393683fa5ac26a62d8f284d0",
+    "numerics/encoder_independent_drifting/stage_cap/preflight.py": "aaa92f3e913a0f9fb97629800254869140d53a8f3a9a8cbafc9d28604804283d",
+    "numerics/encoder_independent_drifting/stage_cap/training.py": "873aef55aef8449ec34615cd7ed93fa2c348b0cd0b4883c85b309bef8bc79db9"
   },
   "status": "cap-emf1-preflight",
   "verdict": {
