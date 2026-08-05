@@ -547,6 +547,70 @@ def test_evaluation_is_hashed_into_the_manifest():
     assert any(name.endswith("stage_cap/evaluation.py") for name in manifest)
 
 
+def test_checkpoints_survive_a_resume():
+    """A caller keeping its own dict loses every pre-resume checkpoint.
+
+    The record now lives on the outcome, which the recovery file carries.
+    """
+    small = profile("smoke")
+    pool = torch.randn(32, 3, 8, 8)
+    with tempfile.TemporaryDirectory() as directory:
+        recovery = Path(directory) / "recovery.pt"
+        seen: list[int] = []
+
+        def record(step, raw_state, ema_state):
+            seen.append(step)
+            return {"raw": {"step": step}, "ema": {"step": step}}
+
+        half = replace(
+            small, train=replace(small.train, updates=2, checkpoint_updates=(2,))
+        )
+        first = train_cap_unit(
+            pool, half, "cpu", recovery_path=recovery, checkpoint=record
+        )
+        assert set(first.checkpoints) == {"2"}
+        resumed = train_cap_unit(
+            pool, small, "cpu", recovery_path=recovery, checkpoint=record
+        )
+    # The resumed outcome must still carry the checkpoint written before it.
+    assert set(resumed.checkpoints) == {"2", "4"}, resumed.checkpoints
+    assert seen == [2, 4]
+
+
+def test_checkpoint_parameter_count_is_taken_from_the_state():
+    """An earlier draft read a closure still zero at every checkpoint."""
+    model = CAPPixelTransformer(profile("smoke").model, 1)
+    state = model.state_dict()
+    counted = sum(value.numel() for value in state.values())
+    assert counted >= model.parameter_count() > 0
+
+
+def test_manifest_covers_every_module_the_stage_imports():
+    """Hashing the evaluator while leaving its arithmetic unhashed is not
+    freezing the evaluation."""
+    import ast
+
+    root = Path(__file__).resolve().parents[2]
+    manifest = {name.split("encoder_independent_drifting/")[-1] for name in source_manifest()}
+    stage = Path(__file__).resolve().parents[1]
+    unhashed: list[str] = []
+    for module in sorted(stage.glob("*.py")):
+        rel = f"stage_cap/{module.name}"
+        if rel not in manifest:
+            continue
+        tree = ast.parse(module.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ImportFrom) or node.level == 0:
+                continue
+            # level 1 == this package, level 2 == encoder_independent_drifting
+            target = node.module or ""
+            if node.level == 2 and target:
+                candidate = target.replace(".", "/") + ".py"
+                if (root / candidate).is_file() and candidate not in manifest:
+                    unhashed.append(f"{rel} imports {candidate}")
+    assert not unhashed, unhashed
+
+
 def test_source_manifest_is_an_explicit_list_not_a_glob():
     """A new module beside the stage must not invalidate a frozen preflight.
 

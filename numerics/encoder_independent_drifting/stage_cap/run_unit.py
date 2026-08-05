@@ -93,9 +93,12 @@ def main() -> int:
     pool = cifar10_train_pool(args.data_root)
     recovery = args.recovery or (args.checkpoint_dir / "cap_recovery.pt")
 
-    saved: dict[str, dict] = {}
-
-    def checkpoint(step: int, raw_state: dict, ema_state: dict) -> None:
+    def checkpoint(step: int, raw_state: dict, ema_state: dict) -> dict:
+        # The count comes from the state being written, not from a variable
+        # assigned after training returns -- an earlier draft read a closure
+        # that was still zero at every checkpoint, so every checkpoint recorded
+        # a parameter count of 0.
+        count = sum(value.numel() for value in raw_state.values())
         entry = {}
         for kind, state in (("raw", raw_state), ("ema", ema_state)):
             path = checkpoint_path(step, kind)
@@ -108,10 +111,14 @@ def main() -> int:
                     kind=kind,
                     profile=payload,
                     preflight_sha=preflight["artifact_sha256"],
-                    parameter_count=parameters["count"],
+                    parameter_count=count,
                 ),
             }
-        saved[str(step)] = entry
+        # Returned, not stored locally: the training loop keeps it on the
+        # outcome, which the recovery file restores. A local dict would be
+        # empty after a resume and the artifact would lose every checkpoint
+        # written before the interruption.
+        return entry
 
     snapshot_dir = args.checkpoint_dir / "posthoc_ema_snapshots"
 
@@ -139,7 +146,6 @@ def main() -> int:
             path,
         )
 
-    parameters = {"count": 0}
     started = time.time()
     outcome = train_cap_unit(
         pool,
@@ -150,7 +156,6 @@ def main() -> int:
         snapshot=snapshot,
         progress=lambda message: print(message, flush=True),
     )
-    parameters["count"] = outcome.parameter_count
 
     final = outcome.health[-1]
     gate = capability_gate(
@@ -189,7 +194,7 @@ def main() -> int:
             "nonfinite_updates": outcome.nonfinite_updates,
             "best_rank_ratio": outcome.best_rank_ratio,
         },
-        "checkpoints": saved,
+        "checkpoints": outcome.checkpoints,
         "posthoc_ema_snapshots": {
             "steps": outcome.snapshots,
             "directory": str(snapshot_dir.resolve()),

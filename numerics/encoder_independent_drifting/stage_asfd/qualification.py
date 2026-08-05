@@ -34,22 +34,29 @@ def _band_mask(size: int, band: str, device) -> torch.Tensor:
 
 
 def _inverse_haar(coefficients: torch.Tensor) -> torch.Tensor:
-    """Haar is orthonormal, so the inverse is the transpose of the analysis.
+    """Map Haar coefficients back to pixels.
 
-    Rather than write a second implementation to disagree with the first, the
-    perturbation is built in coefficient space and mapped back by exploiting
-    orthonormality: for an orthonormal map, ``H^-1 = H^T`` and one forward pass
-    over the basis recovers it. For a fixed-energy band probe we only need a
-    perturbation whose Haar support is the band, which a masked random
-    coefficient field already is; mapping it to pixels uses the adjoint.
+    Rather than write a second transform to disagree with the first, the
+    analysis matrix is recovered by pushing the standard basis through
+    ``haar_transform`` once.  Row ``i`` of that result is ``H e_i``, i.e. column
+    ``i`` of ``H``, so the assembled matrix is ``H^T``.  Haar is orthonormal, so
+    ``H^-1 = H^T`` and the synthesis of a coefficient row vector ``c`` is
+    ``c @ H`` -- which is ``c @ transformed.T``, **not** ``c @ transformed``.
+
+    Getting that transpose wrong is not a small error.  It leaves the operation
+    applying the forward transform a second time: measured round-trip error 4.31
+    instead of 5e-7, and band-masked perturbations leaking 71-74% of their
+    energy outside the band they were supposed to isolate -- which would have
+    made G7, the gate that decides whether this arm proceeds at all, report four
+    numbers that look like band sensitivities and are not.
     """
     size = coefficients.shape[-1]
     basis = torch.eye(size * size, device=coefficients.device).reshape(
         size * size, 1, size, size
     )
-    transformed = haar_transform(basis).reshape(size * size, size * size)
+    analysis = haar_transform(basis).reshape(size * size, size * size)
     flat = coefficients.reshape(len(coefficients), -1)
-    return (flat @ transformed).reshape(coefficients.shape)
+    return (flat @ analysis.T).reshape(coefficients.shape)
 
 
 def band_sensitivity(

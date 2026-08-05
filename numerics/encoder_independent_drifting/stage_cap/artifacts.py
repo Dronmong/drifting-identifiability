@@ -49,6 +49,15 @@ _DEPENDENCIES: tuple[str, ...] = (
     "config.py",
     "device.py",
     "diagnostics.py",
+    # The evaluator's own dependencies. Hashing evaluation.py while leaving the
+    # modules that compute FID, KID, precision/recall and the nearest-reference
+    # audit unhashed would mean the reported numbers could change without the
+    # preflight noticing -- the evaluator would be frozen and its arithmetic
+    # would not.
+    "appearance.py",
+    "fid.py",
+    "stage_b2/metrics.py",
+    "stage_b25/evaluation.py",
 )
 
 

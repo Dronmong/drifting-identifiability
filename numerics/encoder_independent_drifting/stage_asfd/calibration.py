@@ -59,13 +59,16 @@ def calibrate_normalization(
             work = work / channel_scale
 
         channels = work.shape[-1]
-        # Mean pairwise distance at matched locations, over distinct images.
-        left = work.unsqueeze(0)
-        right = work.unsqueeze(1)
-        distances = (left - right).square().sum(dim=-1).clamp_min(0).sqrt()
-        count = len(work)
+        # Mean pairwise distance **at matched locations**, over distinct images.
+        #
+        # Computed per location with cdist, not by broadcasting. The naive
+        # [N, N, L, C] difference is 12.4 GB in float64 at the production shape
+        # (256 images, 66 locations, 384 channels) and simply will not run; the
+        # per-location form is [L, N, N], 33 MB.
+        per_location = torch.cdist(work.transpose(0, 1), work.transpose(0, 1), p=2)
+        count = work.shape[0]
         mask = ~torch.eye(count, dtype=torch.bool, device=work.device)
-        level_scale = float(distances[mask].mean()) / (channels**0.5)
+        level_scale = float(per_location[:, mask].mean()) / (channels**0.5)
         if not (level_scale > 0) or not torch.isfinite(
             torch.tensor(level_scale)
         ):
@@ -80,8 +83,8 @@ def calibrate_normalization(
     return result
 
 
-def _off_diagonal_ess(distances: torch.Tensor, tau: float) -> torch.Tensor:
-    """Realized ESS fraction per row with the self-match removed.
+def _masked_weights(distances: torch.Tensor, tau: float) -> torch.Tensor:
+    """Row softmax with the self-match removed.
 
     The self-match matters: an earlier calibration in this program hit its
     nominal 0.05 target through the zero-distance diagonal while the realized
@@ -91,11 +94,39 @@ def _off_diagonal_ess(distances: torch.Tensor, tau: float) -> torch.Tensor:
     count = distances.shape[-1]
     if count < 3:
         raise ValueError("ESS calibration needs at least three targets")
-    logits = -distances / tau
     eye = torch.eye(count, dtype=torch.bool, device=distances.device)
-    logits = logits.masked_fill(eye.expand_as(logits), float("-inf"))
-    weights = torch.softmax(logits, dim=-1)
-    return weights.square().sum(dim=-1).reciprocal() / (count - 1)
+    logits = (-distances / tau).masked_fill(eye.expand_as(distances), float("-inf"))
+    return torch.softmax(logits, dim=-1)
+
+
+def _off_diagonal_ess(distances: torch.Tensor, tau: float) -> torch.Tensor:
+    weights = _masked_weights(distances, tau)
+    return weights.square().sum(dim=-1).reciprocal() / (distances.shape[-1] - 1)
+
+
+def _matched_location_distances(
+    values: torch.Tensor, samples: int
+) -> tuple[torch.Tensor, float]:
+    """Pairwise distances **within each location**, pooled across locations.
+
+    The field only ever compares location l of one image with location l of
+    another, so the distance distribution that sets the bandwidth is the
+    within-location one.  Flattening ``[N, L, C]`` to ``[N*L, C]`` and taking
+    the first rows -- as an earlier draft did -- calibrates on distances
+    *between* locations of the same few images, which is a different
+    distribution with a different scale, and it silently drops most images.
+    """
+    work = values.double()
+    if work.ndim == 2:
+        work = work.unsqueeze(1)
+    if work.ndim != 3:
+        raise ValueError("expected [images, locations, channels]")
+    sample = work[:samples].transpose(0, 1).contiguous()
+    distances = torch.cdist(sample, sample, p=2)
+    positive = distances[distances > 0]
+    if positive.numel() == 0:
+        raise ValueError("degenerate target cloud: all distances are zero")
+    return distances, float(positive.median())
 
 
 def calibrate_bandwidth(
@@ -103,19 +134,12 @@ def calibrate_bandwidth(
 ) -> dict:
     """Bisect tau to a target median off-diagonal ESS fraction.
 
-    ESS is scale-free, so a radius means the same neighbourhood size in every
+    ESS is scale-free, so a radius means the same neighbourhood size at every
     level regardless of that level's distance scale.  A raw tau would not.
     """
     if not 0 < target < 1:
         raise ValueError("the ESS target is a fraction in (0,1)")
-    work = values.double()
-    if work.ndim == 3:
-        work = work.reshape(-1, work.shape[-1])
-    sample = work[: config.ess_samples]
-    distances = torch.cdist(sample, sample, p=2)
-    base = float(distances[distances > 0].median())
-    if not base > 0:
-        raise ValueError("degenerate target cloud: all distances are zero")
+    distances, base = _matched_location_distances(values, config.ess_samples)
 
     low, high = 1e-4, 1e4
     for _ in range(config.ess_iterations):
@@ -127,13 +151,7 @@ def calibrate_bandwidth(
             high = middle
     tau = base * (low * high) ** 0.5
     ess = _off_diagonal_ess(distances, tau)
-    weights = torch.softmax(
-        (-distances / tau).masked_fill(
-            torch.eye(len(sample), dtype=torch.bool), float("-inf")
-        ),
-        dim=-1,
-    )
-    maximum = weights.max(dim=-1).values
+    maximum = _masked_weights(distances, tau).max(dim=-1).values
     return {
         "tau": tau,
         "target_ess": target,
@@ -142,7 +160,8 @@ def calibrate_bandwidth(
         "maximum_weight_p95": float(maximum.quantile(0.95)),
         "distance_median": base,
         "tau_over_distance_median": tau / base,
-        "samples": int(len(sample)),
+        "images": int(min(len(values), config.ess_samples)),
+        "locations": int(distances.shape[0]),
     }
 
 

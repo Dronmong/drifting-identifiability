@@ -1,12 +1,13 @@
-"""Component gradients: summed, capped per component, never projected.
+﻿"""Component gradients: summed, capped per component, never projected.
 
 The applied update is exactly
 
     g = g_EMF + w1*g_B1 + w_raw*g_raw + w_self*g_self
 
-which **is** the gradient of ``L_EMF + λ1 L_B1 + λ_raw E_raw + λ_self E_self``,
-so the identifiability implication attaches to the objective the optimizer
-actually descends.
+which **is** the gradient of
+``L_EMF + lambda_1 L_B1 + lambda_raw E_raw + lambda_self E_self``, so the
+identifiability implication attaches to the objective the optimizer actually
+descends.
 
 An earlier draft projected each auxiliary component away from opposing the
 primary gradient.  That is rejected twice over: a projected update is generally
@@ -137,7 +138,19 @@ class AbortMonitor:
         self.config = config
         self._cosines: dict[str, deque] = {}
         self._rank_failures: dict[str, int] = {}
+        self._seen: set[str] = set()
         self.reasons: list[str] = []
+
+    def _record(self, key: str, reason: str) -> None:
+        """One reason per distinct cause.
+
+        Without this a sustained condition appends on every event, and over
+        tens of thousands of correction events the artifact fills with copies
+        of one sentence.
+        """
+        if key not in self._seen:
+            self._seen.add(key)
+            self.reasons.append(reason)
 
     def observe_cosines(self, cosines: dict[str, float | None]) -> None:
         for name, value in cosines.items():
@@ -150,10 +163,11 @@ class AbortMonitor:
             if len(window) == window.maxlen:
                 mean = sum(window) / len(window)
                 if mean < self.config.anti_parallel_cosine:
-                    self.reasons.append(
+                    self._record(
+                        f"anti_parallel:{name}",
                         f"{name} sustained mean cosine {mean:.3f} below "
                         f"{self.config.anti_parallel_cosine}: the term is "
-                        "negating training rather than correcting it"
+                        "negating training rather than correcting it",
                     )
 
     def observe_rank(self, label: str, ratio: float) -> None:
@@ -161,9 +175,10 @@ class AbortMonitor:
         if ratio < self.config.rank_abort_fraction:
             self._rank_failures[label] = self._rank_failures.get(label, 0) + 1
             if self._rank_failures[label] >= 2:
-                self.reasons.append(
+                self._record(
+                    f"rank:{label}",
                     f"{label} effective rank ratio {ratio:.3f} below "
-                    f"{self.config.rank_abort_fraction} on two checkpoints"
+                    f"{self.config.rank_abort_fraction} on two checkpoints",
                 )
         else:
             self._rank_failures[label] = 0
@@ -177,9 +192,10 @@ class AbortMonitor:
         measures, which is the same event as the rank collapse.
         """
         if energy < floor:
-            self.reasons.append(
+            self._record(
+                "energy_floor",
                 f"raw energy {energy:.4f} below the real-real floor {floor:.4f}: "
-                "estimator exploitation, not distributional improvement"
+                "estimator exploitation, not distributional improvement",
             )
 
     def observe_negative_ess(self, label: str, median: float, ceiling: float) -> None:
@@ -191,14 +207,15 @@ class AbortMonitor:
         kernel. B2 logged this and gated only the target side.
         """
         if median > ceiling:
-            self.reasons.append(
+            self._record(
+                f"negative_ess:{label}",
                 f"{label} negative-side ESS {median:.3f} above {ceiling}: the "
-                "negative barycenter has degenerated toward a batch mean"
+                "negative barycenter has degenerated toward a batch mean",
             )
 
     def observe_finite(self, value: float, label: str) -> None:
         if value != value or value in (float("inf"), float("-inf")):
-            self.reasons.append(f"{label} is not finite")
+            self._record(f"nonfinite:{label}", f"{label} is not finite")
 
     @property
     def should_abort(self) -> bool:

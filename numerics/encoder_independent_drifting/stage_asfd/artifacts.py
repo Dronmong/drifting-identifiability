@@ -38,6 +38,7 @@ _DEPENDENCIES: tuple[str, ...] = (
     # The frozen trunk and its objective are part of ASFD's meaning: a
     # different trunk is a different feature geometry.
     "stage_cap/config.py",
+    "stage_cap/diagnostics.py",
     "stage_cap/model.py",
     "stage_cap/objective.py",
     "config.py",

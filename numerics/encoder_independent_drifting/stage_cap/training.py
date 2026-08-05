@@ -211,6 +211,7 @@ def train_cap_unit(
         outcome.history = payload["history"]
         outcome.health = payload["health"]
         outcome.checkpoints = payload["checkpoints"]
+        outcome.snapshots = payload.get("snapshots", [])
         outcome.wall_seconds = float(payload["wall_seconds"])
         outcome.optimizer_updates = int(payload["optimizer_updates"])
         outcome.examples_seen = int(payload["examples_seen"])
@@ -329,7 +330,11 @@ def train_cap_unit(
             )
 
         if step in train.checkpoint_updates and checkpoint is not None:
-            checkpoint(step, model.state_dict(), ema.state_dict())
+            record = checkpoint(step, model.state_dict(), ema.state_dict())
+            if record is not None:
+                # Held on the outcome so the recovery file carries it: a caller
+                # keeping its own dict would lose every pre-resume checkpoint.
+                outcome.checkpoints[str(step)] = record
 
         if snapshot is not None and step % train.snapshot_every == 0:
             # Raw weights for post-hoc EMA synthesis. Secondary by
@@ -357,6 +362,7 @@ def train_cap_unit(
                     "history": outcome.history,
                     "health": outcome.health,
                     "checkpoints": outcome.checkpoints,
+                    "snapshots": outcome.snapshots,
                     "wall_seconds": time.time() - started + outcome.wall_seconds,
                     "optimizer_updates": outcome.optimizer_updates,
                     "examples_seen": outcome.examples_seen,

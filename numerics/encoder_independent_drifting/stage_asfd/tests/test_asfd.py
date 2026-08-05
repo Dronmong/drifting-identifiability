@@ -433,6 +433,27 @@ def test_abort_tolerates_mild_opposition_but_not_negation():
     assert negating.should_abort
 
 
+def test_abort_reasons_are_deduplicated():
+    """A sustained condition fires on every event; the artifact must not fill
+    with tens of thousands of copies of one sentence."""
+    monitor = AbortMonitor(asfd_config().gradients)
+    for _ in range(50):
+        monitor.observe_energy_floor(13.933, 14.103)
+        monitor.observe_rank("feature", 0.4)
+    assert len(monitor.reasons) == 2, monitor.reasons
+
+
+def test_no_source_file_lost_its_encoding():
+    """A scripted rewrite once mangled this package's UTF-8."""
+    from .. import artifacts as asfd_artifacts
+
+    for name in asfd_artifacts._DEPENDENCIES:
+        if not name.startswith("stage_asfd/"):
+            continue
+        text = (asfd_artifacts.PACKAGE / name).read_text(encoding="utf-8")
+        assert "Ã" not in text, f"{name} shows mojibake"
+
+
 def test_abort_fires_on_degenerate_negative_ess():
     monitor = AbortMonitor(asfd_config().gradients)
     ceiling = asfd_config().field_config.negative_ess_ceiling
@@ -456,6 +477,78 @@ def test_snapshot_captures_and_detaches():
 
 
 # ---------------------------------------------------------------- qualification
+
+
+def test_inverse_haar_actually_inverts():
+    """A transposed synthesis matrix silently applies the forward transform.
+
+    Measured before the fix: round-trip error 4.31 instead of 5e-7.
+    """
+    from ...stage_cap.diagnostics import haar_transform
+    from ..qualification import _inverse_haar
+
+    x = torch.randn(3, 1, 8, 8)
+    recovered = _inverse_haar(haar_transform(x))
+    assert float((recovered - x).abs().max()) < 1e-5
+
+
+def test_band_probes_stay_inside_their_band():
+    """G7 is worthless if its perturbations are not band-limited.
+
+    Measured before the fix: 71-74% of the energy landed outside the band,
+    so the gate that decides whether this arm proceeds would have reported
+    four numbers that look like band sensitivities and are not.
+    """
+    from ...stage_cap.diagnostics import haar_transform
+    from ..qualification import BANDS, _band_mask, _inverse_haar
+
+    size = 8
+    for band in BANDS:
+        mask = _band_mask(size, band, torch.device("cpu"))
+        coefficients = haar_transform(torch.randn(4, 1, size, size)) * mask
+        back = haar_transform(_inverse_haar(coefficients))
+        inside = float((back * mask).square().sum())
+        outside = float((back * (1 - mask)).square().sum())
+        leak = outside / max(inside + outside, 1e-30)
+        assert leak < 0.01, f"{band} leaked {leak:.1%} outside its band"
+
+
+def test_normalization_does_not_allocate_a_quadratic_tensor():
+    """The naive [N, N, L, C] difference is 12.4 GB at the production shape.
+
+    Exercised at a shape whose broadcast form would be ~1.7 GB in float64 --
+    large enough that the old path would be obvious, small enough to run.
+    """
+    features = smoke_config().features
+    values = {"a": torch.randn(96, 66, 96)}
+    calibrated = calibrate_normalization(values, features)
+    assert calibrated["a"].level_scale > 0
+
+
+def test_bandwidth_uses_matched_location_distances():
+    """The field compares location l to location l; calibration must too.
+
+    Flattening [N, L, C] to [N*L, C] and slicing calibrates on distances
+    *between* locations of a few images -- a different distribution -- and
+    silently drops most of the images.
+    """
+    config = smoke_config().field_config
+    torch.manual_seed(0)
+    # Locations deliberately given very different offsets: pooling across them
+    # would inflate the distance scale far above the within-location one.
+    values = torch.randn(64, 8, 6)
+    values = values + torch.arange(8).reshape(1, 8, 1) * 25.0
+    record = calibrate_bandwidth(values, 0.5, config)
+    assert record["locations"] == 8
+    assert record["images"] == 64
+    within = float(torch.cdist(values[:, 0], values[:, 0])[
+        ~torch.eye(64, dtype=torch.bool)
+    ].median())
+    # The calibrated scale must track the within-location spread, not the
+    # between-location offsets.
+    assert record["distance_median"] < 3.0 * within, (
+        record["distance_median"], within
+    )
 
 
 def test_cka_is_one_for_identical_and_low_for_independent():
