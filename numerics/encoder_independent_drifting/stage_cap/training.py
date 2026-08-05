@@ -101,11 +101,24 @@ class EMAState:
             "buffers": self.buffers,
         }
 
-    def load_recovery_state(self, payload: dict) -> None:
+    def load_recovery_state(self, payload: dict, device=None) -> None:
+        """Restore the average, placing it on ``device``.
+
+        The device argument is not optional in practice.  Recovery files are
+        loaded with ``map_location="cpu"``, so on a GPU run the restored shadow
+        arrives on the CPU while the model is on CUDA, and the first
+        ``update`` then fails with a device mismatch.  ``model.load_state_dict``
+        and ``Optimizer.load_state_dict`` both re-place tensors themselves, so
+        the EMA was the only piece that needed this and the only piece that
+        broke -- on the first real resume.
+        """
         self.decay = float(payload["decay"])
         self.updates = int(payload["updates"])
-        self.shadow = {k: v.clone() for k, v in payload["shadow"].items()}
-        self.buffers = {k: v.clone() for k, v in payload["buffers"].items()}
+        move = (lambda t: t.clone().to(device)) if device is not None else (
+            lambda t: t.clone()
+        )
+        self.shadow = {name: move(value) for name, value in payload["shadow"].items()}
+        self.buffers = {name: move(value) for name, value in payload["buffers"].items()}
 
 
 #: Endpoint-weighted buckets.  The one-call sampler evaluates at t=1, and
@@ -203,7 +216,7 @@ def train_cap_unit(
             raise RuntimeError("not a CAP-EMF-1 recovery file")
         model.load_state_dict(payload["model"])
         optimizer.load_state_dict(payload["optimizer"])
-        ema.load_recovery_state(payload["ema"])
+        ema.load_recovery_state(payload["ema"], device)
         data_generator.set_state(payload["generators"]["data"])
         noise_generator.set_state(payload["generators"]["noise"])
         time_generator.set_state(payload["generators"]["time"])

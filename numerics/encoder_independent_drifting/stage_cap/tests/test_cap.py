@@ -458,6 +458,37 @@ def test_capability_gate_verdicts():
     assert capability_gate(healthy, 1.0, 0.01, 0, 2, frozen.gate)["verdict"] == "FAIL"
 
 
+def test_ema_recovery_lands_on_the_model_device():
+    """Recovery files load with map_location='cpu'; the EMA must not stay there.
+
+    A CPU-only restart test cannot see this -- the shadow and the model are
+    both on the CPU, so the mismatch never arises. It surfaced on the first
+    real GPU resume, mid-run. This exercises CUDA when present and still pins
+    the signature when it is not.
+    """
+    model, _ = _tiny()
+    ema = EMAState(model, 0.9)
+    ema.update(model)
+    # Emulate the load path: everything arrives on the CPU.
+    payload = {
+        "decay": ema.decay,
+        "updates": ema.updates,
+        "shadow": {k: v.cpu() for k, v in ema.shadow.items()},
+        "buffers": {k: v.cpu() for k, v in ema.buffers.items()},
+    }
+    targets = ["cpu"] + (["cuda"] if torch.cuda.is_available() else [])
+    for target in targets:
+        device = torch.device(target)
+        restored = EMAState(model, 0.9)
+        restored.load_recovery_state(payload, device)
+        for name, value in restored.shadow.items():
+            assert value.device.type == device.type, (name, value.device, device)
+        if target == "cuda":
+            # The failure mode: the first update after a restore.
+            restored.update(model.to(device))
+            model.to("cpu")
+
+
 def test_ema_arithmetic_and_recovery_round_trip():
     model, _ = _tiny()
     ema = EMAState(model, 0.9)
@@ -573,6 +604,42 @@ def test_microbatch_override_preserves_the_effective_batch():
         assert adjusted.objective == frozen.objective
     # A microbatch that does not divide the effective batch must be refused.
     assert effective % 48 != 0
+
+
+def test_recovery_cadence_is_measured_not_guessed():
+    """1,000 cost ~25% of throughput on the 4090: a 576 MB payload every
+    173 s of compute. 5,000 keeps crash granularity under half an hour."""
+    train = profile("capability").train
+    assert train.recovery_every == 5_000
+    seconds_per_update = 0.173
+    overhead_per_write = 56.0
+    assert overhead_per_write / train.recovery_every < 0.08 * seconds_per_update
+
+
+def test_existing_checkpoints_block_a_fresh_run_but_not_a_resume():
+    """The guard must not veto the resume that recovery exists to enable.
+
+    An earlier draft refused whenever a planned checkpoint existed, so the
+    recovery file could restore the run and this check would then stop it --
+    the same shape as the B2.5 blocker, and it fired on the first real
+    interruption.
+    """
+    import tempfile
+
+    frozen = profile("capability")
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        recovery = root / "cap_recovery.pt"
+        planned = root / "cap_emf1_step50000_raw.pt"
+        planned.write_bytes(b"x")
+
+        existing = [planned]
+        # No recovery file: a fresh run into a dirty directory must be refused.
+        assert existing and not recovery.exists()
+        # With a recovery file present, the same state must be permitted.
+        recovery.write_bytes(b"x")
+        assert existing and recovery.exists()
+    assert frozen.train.checkpoint_updates[0] == 50_000
 
 
 def test_checkpoints_survive_a_resume():

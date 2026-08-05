@@ -111,14 +111,29 @@ def main() -> int:
             flush=True,
         )
 
+    # A resume must not be blocked by the checkpoints the interrupted run
+    # already wrote. An earlier draft refused unconditionally, which meant the
+    # recovery machinery could restore the run and this guard would then stop
+    # it -- structurally the same failure that cost the B2.5 continuation, and
+    # it fired on the first real interruption.
+    recovery = args.recovery or (args.checkpoint_dir / "cap_recovery.pt")
+    resuming = recovery.exists()
     planned = [
         checkpoint_path(step, kind)
         for step in frozen.train.checkpoint_updates
         for kind in ("raw", "ema")
     ]
-    if any(path.exists() for path in planned):
+    existing = [path for path in planned if path.exists()]
+    if existing and not resuming:
         raise RuntimeError(
-            "a planned CAP checkpoint already exists; inspect before resuming"
+            f"{len(existing)} planned CAP checkpoint(s) exist with no recovery "
+            "file; this would be a fresh run into a dirty directory. Inspect "
+            f"{existing[0].parent} before starting."
+        )
+    if existing:
+        print(
+            f"resuming: {len(existing)} checkpoint(s) already on disk, kept",
+            flush=True,
         )
 
     torch.set_num_threads(4)
@@ -129,7 +144,6 @@ def main() -> int:
     device = resolve_device(args.device)
     settings = configure(device)
     pool = cifar10_train_pool(args.data_root)
-    recovery = args.recovery or (args.checkpoint_dir / "cap_recovery.pt")
 
     def checkpoint(step: int, raw_state: dict, ema_state: dict) -> dict:
         # The count comes from the state being written, not from a variable

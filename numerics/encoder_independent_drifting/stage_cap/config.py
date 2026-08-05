@@ -178,9 +178,16 @@ class CAPTrainConfig:
     health_samples: int = 512
     audit_samples: int = 2_048
     # B2.5 had no within-unit recovery, so an interrupted unit lost every
-    # completed hour and then blocked its own restart.  A 160k-update rented
-    # run must not repeat that.
-    recovery_every: int = 1_000
+    # completed hour and then blocked its own restart.  A rented run must not
+    # repeat that.
+    #
+    # 5,000 rather than 1,000, from measurement on the 4090: the recovery
+    # payload is 576 MB (model + Adam moments + EMA + four RNG streams +
+    # history) and takes ~56 s to serialize, so a 1,000-update cadence cost
+    # ~25% of throughput -- 0.2295 s/update measured against 0.173 benchmarked,
+    # which would have overrun both the wall clock and the budget. At 5,000 the
+    # overhead is ~0.011 s/update and a crash still loses under half an hour.
+    recovery_every: int = 5_000
 
     @property
     def effective_batch(self) -> int:
