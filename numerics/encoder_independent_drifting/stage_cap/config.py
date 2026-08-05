@@ -68,8 +68,20 @@ class CAPModelConfig:
             raise ValueError("heads must divide width")
         if self.mlp_ratio <= 1:
             raise ValueError("mlp ratio must exceed one")
-        if not 0 <= self.dropout < 1:
-            raise ValueError("dropout must lie in [0,1)")
+        if self.dropout != 0.0:
+            # DDPM uses 0.1 on CIFAR-10 and EDM 0.13, so this looks like an
+            # obvious win and is not one: dropout is **incompatible with the
+            # EMF local difference**.  The quotient is
+            # ``(future - current) / delta`` with delta = 0.01, and the three
+            # evaluations would draw independent masks, so the difference would
+            # carry mask noise rather than a derivative -- amplified a
+            # hundredfold by 1/delta.  Enabling it requires sharing one mask
+            # across all three evaluations, which is not implemented.
+            raise ValueError(
+                "dropout is incompatible with the EMF local difference; "
+                "independent masks across the three evaluations inject noise "
+                "amplified 100x by 1/delta. Share a mask first."
+            )
         if self.time_embedding_dim < 4 or self.time_embedding_dim % 2:
             raise ValueError("time embedding dimension must be even and >= 4")
         if self.condition_dim < 4:
@@ -132,6 +144,17 @@ class CAPTrainConfig:
     gradient_clip: float = 10.0
     ema_decay: float = 0.9999
     horizontal_flip: bool = True
+    # Linear warmup. S3R clipped on 4.99% of updates, essentially on its 5%
+    # limit, and the first updates are where a zero-initialized output path is
+    # moving fastest. Standard for this dataset: DDPM warms up over 5k.
+    warmup_updates: int = 5_000
+    # Raw parameter snapshots for post-hoc EMA (Karras et al.). EMA 0.9999 over
+    # 750k updates is a ~10k-update window, 1.3% of training, and the right
+    # horizon is not knowable in advance. Storing snapshots lets the profile be
+    # synthesized afterwards without retraining. 30 snapshots x 151 MB = 4.5 GB.
+    # Post-hoc variants are SECONDARY: the primary result is the declared
+    # 0.9999 EMA, so this cannot become checkpoint selection on a metric.
+    snapshot_every: int = 25_000
     log_every: int = 500
     checkpoint_updates: tuple[int, ...] = (
         100_000,
@@ -172,6 +195,10 @@ class CAPTrainConfig:
             raise ValueError("invalid clipping or EMA value")
         if self.log_every <= 0 or self.health_every <= 0:
             raise ValueError("logging cadences must be positive")
+        if self.warmup_updates < 0 or self.warmup_updates > self.updates:
+            raise ValueError("warmup must be nonnegative and no longer than the run")
+        if self.snapshot_every <= 0:
+            raise ValueError("snapshot cadence must be positive")
         if self.health_samples < 64 or self.audit_samples < self.health_samples:
             raise ValueError("health cloud sizes are too small to decide anything")
         if self.recovery_every <= 0:
@@ -257,6 +284,10 @@ def profile(name: str) -> CAPProfile:
                 health_samples=64,
                 audit_samples=64,
                 recovery_every=1,
+                # Short enough to exercise both branches of the schedule and
+                # the snapshot path within four updates.
+                warmup_updates=2,
+                snapshot_every=2,
                 ema_decay=0.9,
             ),
             gate=CAPGateConfig(),

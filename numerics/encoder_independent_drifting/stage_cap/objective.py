@@ -39,6 +39,11 @@ class ObjectiveOutcome:
     # two stopped evaluations run only on active rows, so this is
     # ``batch + 2 * active`` rather than ``3 * batch``.
     model_evaluations: int
+    # Sampled times, kept so training can bucket the error by t. The one-call
+    # sampler runs at t=1, and logit-normal(0.8, 0.8) puts only ~4% of rows
+    # above t=0.9 -- if the endpoint is undertrained this is where it shows.
+    t: torch.Tensor
+    interval: torch.Tensor
 
 
 def sample_time_triangle(
@@ -179,6 +184,8 @@ def emf_loss(
         diagonal_raw_mse=_masked_mean(per_sample, diagonal),
         interior_raw_mse=_masked_mean(per_sample, ~diagonal),
         model_evaluations=len(clean) + 2 * active,
+        t=t.detach(),
+        interval=(t - r).detach(),
     )
 
 

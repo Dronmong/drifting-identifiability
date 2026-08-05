@@ -39,6 +39,7 @@ class TrainOutcome:
     history: list[dict] = field(default_factory=list)
     health: list[dict] = field(default_factory=list)
     checkpoints: dict[str, dict] = field(default_factory=dict)
+    snapshots: list[int] = field(default_factory=list)
     wall_seconds: float = 0.0
     peak_memory_bytes: int = 0
     peak_memory_reserved_bytes: int = 0
@@ -107,6 +108,36 @@ class EMAState:
         self.buffers = {k: v.clone() for k, v in payload["buffers"].items()}
 
 
+#: Endpoint-weighted buckets.  The one-call sampler evaluates at t=1, and
+#: logit-normal(0.8, 0.8) puts only ~4% of rows above 0.9, so the top bucket is
+#: the one that decides whether the sampled configuration is trained at all.
+T_BUCKETS: tuple[float, ...] = (0.0, 0.3, 0.6, 0.8, 0.9, 0.95, 1.0)
+
+
+def bucket_by_time(
+    t: torch.Tensor, per_sample: torch.Tensor
+) -> dict[str, dict[str, float]]:
+    """Mean error and share of rows per time bucket."""
+    result: dict[str, dict[str, float]] = {}
+    total = max(len(t), 1)
+    for low, high in zip(T_BUCKETS, T_BUCKETS[1:]):
+        mask = (t >= low) & (t < high) if high < 1.0 else (t >= low) & (t <= high)
+        count = int(mask.sum())
+        result[f"{low:g}-{high:g}"] = {
+            "share": count / total,
+            "mean_raw_mse": float(per_sample[mask].mean()) if count else float("nan"),
+            "count": count,
+        }
+    return result
+
+
+def learning_rate_at(update: int, train) -> float:
+    """Linear warmup, then constant.  Standard for CIFAR-10 at this scale."""
+    if train.warmup_updates <= 0 or update >= train.warmup_updates:
+        return train.learning_rate
+    return train.learning_rate * (update + 1) / train.warmup_updates
+
+
 def _atomic_save(payload: dict, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".partial")
@@ -131,6 +162,7 @@ def train_cap_unit(
     *,
     recovery_path: Path | None = None,
     checkpoint: Callable[[int, dict, dict], None] | None = None,
+    snapshot: Callable[[int, dict], None] | None = None,
     progress: Callable[[str], None] | None = None,
 ) -> TrainOutcome:
     profile.validate()
@@ -195,8 +227,13 @@ def train_cap_unit(
     window_start = max(0, train.updates - profile.gate.clip_window_updates)
 
     for update in range(start_update, train.updates):
+        current_lr = learning_rate_at(update, train)
+        for group in optimizer.param_groups:
+            group["lr"] = current_lr
         optimizer.zero_grad(set_to_none=True)
         losses = []
+        times: list[torch.Tensor] = []
+        errors: list[torch.Tensor] = []
         for _ in range(train.accumulation_steps):
             order = torch.randint(
                 0, len(pool), (train.micro_batch,), generator=data_generator
@@ -218,6 +255,8 @@ def train_cap_unit(
             # Not a constant: the two stopped evaluations run on active rows
             # only, so this is batch + 2*active rather than 3*batch.
             outcome.model_forwards += result.model_evaluations
+            times.append(result.t.cpu())
+            errors.append(result.per_sample_raw_mse.cpu())
             losses.append(
                 (
                     float(result.loss.detach()),
@@ -254,8 +293,12 @@ def train_cap_unit(
                     "diagonal_raw_mse": mean[2],
                     "interior_raw_mse": mean[3],
                     "gradient_norm_before_clip": pre_clip,
+                    "learning_rate": current_lr,
                     "examples_seen": outcome.examples_seen,
                     "ema_updates": ema.updates,
+                    "time_buckets": bucket_by_time(
+                        torch.cat(times), torch.cat(errors)
+                    ),
                     "wall_seconds": time.time() - started + outcome.wall_seconds,
                 }
             )
@@ -287,6 +330,13 @@ def train_cap_unit(
 
         if step in train.checkpoint_updates and checkpoint is not None:
             checkpoint(step, model.state_dict(), ema.state_dict())
+
+        if snapshot is not None and step % train.snapshot_every == 0:
+            # Raw weights for post-hoc EMA synthesis. Secondary by
+            # construction: the declared 0.9999 EMA remains the primary result,
+            # so this cannot become checkpoint selection on a metric.
+            snapshot(step, model.state_dict())
+            outcome.snapshots.append(step)
 
         if recovery_path is not None and (
             step % train.recovery_every == 0 or step == train.updates

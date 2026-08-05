@@ -113,6 +113,32 @@ def main() -> int:
             }
         saved[str(step)] = entry
 
+    snapshot_dir = args.checkpoint_dir / "posthoc_ema_snapshots"
+
+    def snapshot(step: int, state: dict) -> None:
+        """Raw weights for post-hoc EMA synthesis (Karras et al.).
+
+        Secondary by construction: the declared 0.9999 EMA remains the primary
+        result, so synthesizing other horizons afterwards cannot become
+        checkpoint selection on a metric.
+        """
+        snapshot_dir.mkdir(parents=True, exist_ok=True)
+        path = snapshot_dir / f"cap_snapshot_step{step}.pt"
+        if path.exists():
+            return
+        torch.save(
+            {
+                "stage": "cap-emf-1-snapshot",
+                "step": step,
+                "state_dict": {
+                    name: value.detach().cpu()
+                    for name, value in state.items()
+                    if value.is_floating_point()
+                },
+            },
+            path,
+        )
+
     parameters = {"count": 0}
     started = time.time()
     outcome = train_cap_unit(
@@ -121,6 +147,7 @@ def main() -> int:
         device,
         recovery_path=recovery,
         checkpoint=checkpoint,
+        snapshot=snapshot,
         progress=lambda message: print(message, flush=True),
     )
     parameters["count"] = outcome.parameter_count
@@ -163,6 +190,15 @@ def main() -> int:
             "best_rank_ratio": outcome.best_rank_ratio,
         },
         "checkpoints": saved,
+        "posthoc_ema_snapshots": {
+            "steps": outcome.snapshots,
+            "directory": str(snapshot_dir.resolve()),
+            "scope": (
+                "secondary and exploratory; the declared 0.9999 EMA is the "
+                "primary result and no EMA horizon may be selected on a metric "
+                "computed from the sealed test split"
+            ),
+        },
         "train_only_gate": gate,
         "elapsed_seconds": time.time() - started,
         "limits": [

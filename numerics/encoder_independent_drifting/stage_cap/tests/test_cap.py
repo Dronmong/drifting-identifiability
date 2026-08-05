@@ -13,6 +13,7 @@ from ..config import (
     FEATURE_LEVELS,
     PARAMETER_CEILING,
     TRAIN_POOL_SIZE,
+    CAPModelConfig,
     examples_seen,
     profile,
 )
@@ -33,7 +34,23 @@ from ..objective import (
     sample_time_triangle,
 )
 from ..preflight import wake_output_path
-from ..training import EMAState, clip_fraction, train_cap_unit
+from ..training import (
+    EMAState,
+    bucket_by_time,
+    clip_fraction,
+    learning_rate_at,
+    train_cap_unit,
+)
+
+
+def pytest_approx(value: float, tolerance: float = 1e-12) -> object:
+    """Tiny local helper; this suite runs without pytest."""
+
+    class _Approx:
+        def __eq__(self, other: object) -> bool:
+            return abs(float(other) - value) <= tolerance
+
+    return _Approx()
 
 
 def _tiny(seed: int = 3):
@@ -72,6 +89,52 @@ def test_budget_reaches_a_meaningful_fraction_of_ddpm():
     assert 0.4 < total / 102_400_000 < 0.6
     epochs = total / TRAIN_POOL_SIZE
     assert 900 < epochs < 1_000, epochs
+
+
+def test_warmup_ramps_then_holds():
+    train = profile("capability").train
+    assert learning_rate_at(0, train) == pytest_approx(
+        train.learning_rate / train.warmup_updates
+    )
+    mid = learning_rate_at(train.warmup_updates // 2, train)
+    assert 0 < mid < train.learning_rate
+    assert learning_rate_at(train.warmup_updates, train) == train.learning_rate
+    assert learning_rate_at(train.updates - 1, train) == train.learning_rate
+
+
+def test_time_buckets_separate_the_endpoint():
+    """The one-call sampler runs at t=1; the top bucket must be visible."""
+    t = torch.tensor([0.1, 0.5, 0.7, 0.85, 0.93, 0.99])
+    errors = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+    buckets = bucket_by_time(t, errors)
+    assert buckets["0.95-1"]["count"] == 1
+    assert buckets["0.95-1"]["mean_raw_mse"] == 6.0
+    assert buckets["0.9-0.95"]["count"] == 1
+    assert abs(sum(b["share"] for b in buckets.values()) - 1.0) < 1e-9
+
+
+def test_logit_normal_undersamples_the_inference_point():
+    """Documents why the bucket diagnostic exists rather than a fix.
+
+    logit-normal(0.8, 0.8) puts only a few percent of rows near t=1, which is
+    exactly where the one-call sampler runs. Changing the distribution is a
+    change to an audited objective; measuring it is not.
+    """
+    small = profile("smoke")
+    generator = torch.Generator().manual_seed(11)
+    triangle = sample_time_triangle(20_000, small.objective, generator)
+    above_ninety = float((triangle.t > 0.9).double().mean())
+    assert 0.01 < above_ninety < 0.10, above_ninety
+
+
+def test_dropout_is_refused_with_the_reason():
+    """DDPM and EDM both use dropout on CIFAR-10; here it is a trap."""
+    try:
+        CAPModelConfig(dropout=0.1).validate()
+    except ValueError as error:
+        assert "local difference" in str(error)
+    else:  # pragma: no cover - the guard must fire
+        raise AssertionError("dropout was accepted")
 
 
 def test_matched_drifting_budget_is_stated_in_examples():
