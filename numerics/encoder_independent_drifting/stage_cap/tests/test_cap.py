@@ -18,6 +18,7 @@ from ..config import (
     profile,
 )
 from ..data import sealed_test_pool
+from ..evaluation import generate, save_grid
 from ..diagnostics import (
     capability_gate,
     effective_rank,
@@ -503,6 +504,35 @@ def test_restart_reproduces_an_uninterrupted_run():
         resumed = train_cap_unit(pool, small, "cpu", recovery_path=recovery)
     assert reference.optimizer_updates == resumed.optimizer_updates
     assert abs(reference.history[-1]["raw_mse"] - resumed.history[-1]["raw_mse"]) < 1e-9
+
+
+def test_sample_grid_is_uncurated_and_deterministic():
+    """The grid writer must select nothing; it takes the first N in order."""
+    import tempfile
+
+    images = torch.linspace(-1, 1, 8 * 16 * 3 * 8 * 8).reshape(8 * 16, 3, 8, 8)
+    with tempfile.TemporaryDirectory() as directory:
+        first = Path(directory) / "a.png"
+        second = Path(directory) / "b.png"
+        a = save_grid(images, first, 8, 16)
+        b = save_grid(images, second, 8, 16)
+        assert a == b, "grid writing is not deterministic"
+        # A permutation must change the output: it writes what it is given.
+        c = save_grid(images.flip(0), Path(directory) / "c.png", 8, 16)
+        assert c != a
+
+
+def test_generation_asserts_one_call_per_batch():
+    model, small = _tiny()
+    images, calls = generate(model, 12, small.model, seed=5, device=torch.device("cpu"), batch=4)
+    assert images.shape == (12, 3, 8, 8)
+    assert calls == 3
+
+
+def test_evaluation_is_hashed_into_the_manifest():
+    """Frozen before the run, so it cannot be tuned against training curves."""
+    manifest = source_manifest()
+    assert any(name.endswith("stage_cap/evaluation.py") for name in manifest)
 
 
 def test_source_manifest_is_an_explicit_list_not_a_glob():

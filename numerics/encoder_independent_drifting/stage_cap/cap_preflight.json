@@ -32,18 +32,18 @@
     {
       "data": {
         "convergence_rates": [
-          11.211509177006281,
-          10.189422863413531
+          9.811738095150078,
+          10.04750591322728
         ],
-        "jvp_magnitude": 1.0004485681464559,
+        "jvp_magnitude": 1.2017472997911174,
         "note": "the production emf_delta of 0.01 is a stopped local difference by design, not an exact derivative; this check verifies the implementation converges to the right limit",
         "relative_errors": {
-          "0.0001": 0.01573395190687774,
-          "0.001": 0.17640134619453524,
-          "1e-05": 0.0015441455436472826
+          "0.0001": 0.015701866312384714,
+          "0.001": 0.15406259986217877,
+          "1e-05": 0.0015627625848633356
         }
       },
-      "detail": "relative max error {'0.001': 0.17640134619453524, '0.0001': 0.01573395190687774, '1e-05': 0.0015441455436472826}, first-order rates [11.21, 10.19]",
+      "detail": "relative max error {'0.001': 0.15406259986217877, '0.0001': 0.015701866312384714, '1e-05': 0.0015627625848633356}, first-order rates [9.81, 10.05]",
       "name": "EMF finite difference vs float64 JVP",
       "passed": true
     },
@@ -57,10 +57,10 @@
     },
     {
       "data": {
-        "resumed": 1.048442006111145,
-        "uninterrupted": 1.048442006111145
+        "resumed": 0.9943138659000397,
+        "uninterrupted": 0.9943138659000397
       },
-      "detail": "final raw_mse 1.04844200611 vs 1.04844200611",
+      "detail": "final raw_mse 0.9943138659 vs 0.9943138659",
       "name": "restart determinism",
       "passed": true
     },
@@ -128,9 +128,9 @@
           {
             "micro_batch": 16,
             "peak_memory_reserved_bytes": 3487563776,
-            "projected_hours_this_device": 205.07297913233438,
-            "seconds_per_microbatch": 0.24608757495880126,
-            "seconds_per_update": 0.9843502998352051,
+            "projected_hours_this_device": 205.7042121887207,
+            "seconds_per_microbatch": 0.24684505462646483,
+            "seconds_per_update": 0.9873802185058593,
             "steps": 20,
             "warmup": 4
           }
@@ -139,16 +139,16 @@
         "chosen": {
           "micro_batch": 16,
           "peak_memory_reserved_bytes": 3487563776,
-          "projected_hours_this_device": 205.07297913233438,
-          "seconds_per_microbatch": 0.24608757495880126,
-          "seconds_per_update": 0.9843502998352051,
+          "projected_hours_this_device": 205.7042121887207,
+          "seconds_per_microbatch": 0.24684505462646483,
+          "seconds_per_update": 0.9873802185058593,
           "steps": 20,
           "warmup": 4
         },
         "failures": [],
         "production_micro_batch_fits": true
       },
-      "detail": "micro_batch 16: 0.984 s/update, 3.25 GiB, 205.1 h on this device",
+      "detail": "micro_batch 16: 0.987 s/update, 3.25 GiB, 205.7 h on this device",
       "name": "throughput probe",
       "passed": true
     }
@@ -239,10 +239,11 @@
     "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
     "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
     "numerics/encoder_independent_drifting/stage_cap/__init__.py": "658132676062900a979112fec281bb9817a15c8382be12f1a127b5a34333f879",
-    "numerics/encoder_independent_drifting/stage_cap/artifacts.py": "05558382799f0fddee45931a167763dd29755f171dbd6b39fca7f673c74884d2",
+    "numerics/encoder_independent_drifting/stage_cap/artifacts.py": "443582138cb9c77413c8962afbe4bbb08998f5027c8901122c214dd01c1403ea",
     "numerics/encoder_independent_drifting/stage_cap/config.py": "6ec4d702158c6a44bb2e015a681a264be25a06b49d2cdbafdca0c5369dfc59f9",
     "numerics/encoder_independent_drifting/stage_cap/data.py": "e120dd818d3bda4991b4eaaeeb82cba9b6f2f60a60c1e6732da4acd571c1153c",
     "numerics/encoder_independent_drifting/stage_cap/diagnostics.py": "734d9770dc916a0a4054c87830975635c146132858ac7b6758c24a0179557fb5",
+    "numerics/encoder_independent_drifting/stage_cap/evaluation.py": "436e876036fbd0008ec48315bade1325e82b86d4e2430473d5def04b6b655191",
     "numerics/encoder_independent_drifting/stage_cap/model.py": "85334bbe0d58381c9ebf205ddf9c1de09d30ca7e4fcb8a8c87d3ac1ec842e188",
     "numerics/encoder_independent_drifting/stage_cap/objective.py": "cab4a93ab2acae2ef3501ac104b877ead5eaf1a30e3f088d212db8105dbf4f1a",
     "numerics/encoder_independent_drifting/stage_cap/preflight.py": "aaa92f3e913a0f9fb97629800254869140d53a8f3a9a8cbafc9d28604804283d",

@@ -39,6 +39,9 @@ _DEPENDENCIES: tuple[str, ...] = (
     "stage_cap/config.py",
     "stage_cap/data.py",
     "stage_cap/diagnostics.py",
+    # Hashed deliberately: the sealed evaluation is written and frozen BEFORE
+    # the run, so it cannot be authored while looking at training curves.
+    "stage_cap/evaluation.py",
     "stage_cap/model.py",
     "stage_cap/objective.py",
     "stage_cap/preflight.py",
