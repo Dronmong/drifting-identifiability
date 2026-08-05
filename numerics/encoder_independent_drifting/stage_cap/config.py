@@ -88,6 +88,17 @@ class CAPModelConfig:
             raise ValueError("conditioning width must be at least four")
         if self.refiner_width <= 0 or self.refiner_depth < 1:
             raise ValueError("the local pixel refiner needs positive shape")
+        # A tap index past the end of its stack is silently dropped by the
+        # trunk -- the forward still works and the level simply never appears,
+        # which downstream code would only discover as a missing key. Catch it
+        # where the shape is declared instead.
+        half = self.depth // 2
+        for label, stack, index in FEATURE_LEVELS:
+            if index >= half:
+                raise ValueError(
+                    f"feature level {label!r} taps {stack} block {index}, but "
+                    f"depth {self.depth} gives only {half} blocks per stack"
+                )
 
 
 # Protocol section 10.  Feature levels are declared here, not in ASFD, so the
@@ -265,7 +276,11 @@ def profile(name: str) -> CAPProfile:
                 image_size=8,
                 patch_size=2,
                 width=64,
-                depth=4,
+                # Depth 12, not 4: the declared feature taps reach block 5 of
+                # each stack, and a shallower smoke trunk would simply not have
+                # them -- so the smoke profile would exercise a different
+                # architecture from the one being audited.
+                depth=12,
                 heads=4,
                 mlp_ratio=2.0,
                 time_embedding_dim=32,
