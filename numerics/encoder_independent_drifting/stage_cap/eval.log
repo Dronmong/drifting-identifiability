@@ -1,0 +1,7 @@
+WARNING: evaluating step 650000, not the primary 750000. This is legitimate only as a recorded budget stop.
+FID-50k vs train : 112.937
+FID vs sealed test: 113.898
+KID              : 0.10106
+precision/recall : {'precision': 0.372, 'recall': 0.2412, 'f1': 0.29264970645792565, 'k': 3, 'samples_generated': 10000, 'samples_real': 10000}
+nearest-train/real median ratio: 0.737
+wrote /workspace/drifting/numerics/encoder_independent_drifting/stage_cap/cap_evaluation.json sha256=92346a212c03054c6ba7a3c1b5309cb42457e1bb1acab6817db78371b38dbd6c

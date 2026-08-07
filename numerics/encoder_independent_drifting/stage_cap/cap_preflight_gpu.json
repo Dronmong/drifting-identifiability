@@ -1,0 +1,272 @@
+{
+  "checks": [
+    {
+      "data": {
+        "levels": {
+          "dec_final": [
+            2,
+            256,
+            384
+          ],
+          "dec_mid": [
+            2,
+            256,
+            384
+          ],
+          "enc_final": [
+            2,
+            256,
+            384
+          ],
+          "enc_mid": [
+            2,
+            256,
+            384
+          ]
+        }
+      },
+      "detail": "output (2, 3, 32, 32), 256 tokens",
+      "name": "shape identities",
+      "passed": true
+    },
+    {
+      "data": {
+        "convergence_rates": [
+          11.174353455170438,
+          10.193643051404218
+        ],
+        "jvp_magnitude": 1.2089588044278656,
+        "note": "the production emf_delta of 0.01 is a stopped local difference by design, not an exact derivative; this check verifies the implementation converges to the right limit",
+        "relative_errors": {
+          "0.0001": 0.01829041133143588,
+          "0.001": 0.20438352105791907,
+          "1e-05": 0.0017942958409669153
+        }
+      },
+      "detail": "relative max error {'0.001': 0.20438352105791907, '0.0001': 0.01829041133143588, '1e-05': 0.0017942958409669153}, first-order rates [11.17, 10.19]",
+      "name": "EMF finite difference vs float64 JVP",
+      "passed": true
+    },
+    {
+      "data": {
+        "forward_calls": 1
+      },
+      "detail": "1 model evaluation(s)",
+      "name": "one-call inference",
+      "passed": true
+    },
+    {
+      "data": {
+        "resumed": 0.9826125502586365,
+        "uninterrupted": 0.9826125502586365
+      },
+      "detail": "final raw_mse 0.982612550259 vs 0.982612550259",
+      "name": "restart determinism",
+      "passed": true
+    },
+    {
+      "data": {
+        "half_life": 6931.125226233421,
+        "mature_at": 34656,
+        "residual_initialization_weight": 2.6686102166661494e-33
+      },
+      "detail": "half-life 6931 updates, mature by 34656, residual initialization weight at 750000 = 2.67e-33",
+      "name": "EMA arithmetic and maturity",
+      "passed": true
+    },
+    {
+      "data": {
+        "accepts_emf_1661": true,
+        "rejects_pmf_0349": true
+      },
+      "detail": "energy conserved=True, accepts S3R EMF=True, rejects pMF=True",
+      "name": "Haar energy and corrected rank rule",
+      "passed": true
+    },
+    {
+      "data": {
+        "bit_identical": true,
+        "grids": {
+          "dec_final": [
+            2,
+            256,
+            384
+          ],
+          "dec_mid": [
+            2,
+            256,
+            384
+          ],
+          "enc_final": [
+            2,
+            256,
+            384
+          ],
+          "enc_mid": [
+            2,
+            256,
+            384
+          ]
+        }
+      },
+      "detail": "bit-identical=True, levels=['dec_final', 'dec_mid', 'enc_final', 'enc_mid']",
+      "name": "feature-tap parity and 16x16 grid",
+      "passed": true
+    },
+    {
+      "data": {
+        "ceiling": 65000000,
+        "parameter_count": 37726863
+      },
+      "detail": "37,726,863 parameters against a 65,000,000 ceiling (58.0%)",
+      "name": "parameter count",
+      "passed": true
+    },
+    {
+      "data": {
+        "attempts": [
+          {
+            "micro_batch": 64,
+            "peak_memory_reserved_bytes": 11706302464,
+            "projected_hours_this_device": 36.01897011200587,
+            "seconds_per_microbatch": 0.17289105653762818,
+            "seconds_per_update": 0.17289105653762818,
+            "steps": 20,
+            "warmup": 4
+          }
+        ],
+        "caveat": "development hardware. The cloud benchmark replaces this with a measurement on the rented GPU and selects by dollars per update; this number only bounds the projection.",
+        "chosen": {
+          "micro_batch": 64,
+          "peak_memory_reserved_bytes": 11706302464,
+          "projected_hours_this_device": 36.01897011200587,
+          "seconds_per_microbatch": 0.17289105653762818,
+          "seconds_per_update": 0.17289105653762818,
+          "steps": 20,
+          "warmup": 4
+        },
+        "failures": [],
+        "production_micro_batch_fits": false
+      },
+      "detail": "micro_batch 64 (production shape did not fit): 0.173 s/update, 10.90 GiB, 36.0 h on this device",
+      "name": "throughput probe",
+      "passed": true
+    }
+  ],
+  "device": {
+    "allow_tf32": false,
+    "capability": "sm_89",
+    "cuda_version": "12.8",
+    "device": "cuda",
+    "gpu_memory_gib": 23.52,
+    "gpu_name": "NVIDIA GeForce RTX 4090",
+    "torch_version": "2.8.0+cu128"
+  },
+  "examples_seen_target": 48000000,
+  "parameter_ceiling_note": "Protocol 5.4: the port reports the exact count and it is frozen at that value. If the cloud benchmark exceeds budget, reduce width once - never the patch grid, the objective, or the training horizon.",
+  "precision": {
+    "cudnn_tf32": true,
+    "matmul_tf32": true,
+    "rationale": "TF32 keeps FP32 storage and accumulation, so the EMF local difference is unaffected; BF16 would break it by cancellation",
+    "storage_dtype": "fp32"
+  },
+  "profile": {
+    "gate": {
+      "centered_variance_ratio": 0.8,
+      "clip_window_updates": 20000,
+      "haar_detail_ratio": 0.6,
+      "haar_hh_ratio": 0.5,
+      "maximum_clip_fraction": 0.05,
+      "rank_retention": 0.8,
+      "second_moment_ratio": 0.8
+    },
+    "model": {
+      "channels": 3,
+      "condition_dim": 256,
+      "depth": 12,
+      "dropout": 0.0,
+      "heads": 8,
+      "image_size": 32,
+      "mlp_ratio": 4.0,
+      "patch_size": 2,
+      "refiner_depth": 2,
+      "refiner_width": 64,
+      "time_embedding_dim": 256,
+      "width": 384
+    },
+    "name": "capability",
+    "objective": {
+      "adaptive_epsilon": 0.01,
+      "adaptive_power": 1.0,
+      "diagonal_fraction": 0.5,
+      "emf_delta": 0.01,
+      "emf_denominator_floor": 0.02,
+      "logit_mean": 0.8,
+      "logit_std": 0.8
+    },
+    "purpose": "one-call raw-pixel EMF capability foundation on unconditional CIFAR-10; no correction, no test access during training",
+    "train": {
+      "accumulation_steps": 4,
+      "audit_samples": 2048,
+      "beta1": 0.9,
+      "beta2": 0.95,
+      "checkpoint_updates": [
+        50000,
+        100000,
+        150000,
+        200000,
+        250000,
+        300000,
+        350000,
+        400000,
+        450000,
+        500000,
+        550000,
+        600000,
+        650000,
+        700000,
+        750000
+      ],
+      "ema_decay": 0.9999,
+      "gradient_clip": 10.0,
+      "health_every": 2000,
+      "health_samples": 512,
+      "horizontal_flip": true,
+      "learning_rate": 0.0001,
+      "log_every": 500,
+      "micro_batch": 16,
+      "recovery_every": 5000,
+      "snapshot_every": 25000,
+      "updates": 750000,
+      "warmup_updates": 5000,
+      "weight_decay": 0.0
+    }
+  },
+  "protocol_sha256": "af697452fdb6261b6032a4f7d206cd7c154d708b117bf15e726bc07aa7af2e7a",
+  "scope": "local mechanics only; no quality run and no test access",
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "1d1a707a522a184654f8c071f22ffbe976c6f7cdd010dd40804d29d038febf16",
+    "numerics/encoder_independent_drifting/config.py": "1a52ab9daad046c422059c28890cd4594adcd4c86fd14d37afb2e915a5ed37be",
+    "numerics/encoder_independent_drifting/device.py": "ade93ce519f5d4593c6e2aa2ef3d98cb6e31ba8151e1e60ba64c5a74c80e0ddd",
+    "numerics/encoder_independent_drifting/diagnostics.py": "217bf36933e1572299f54906072e7f2209a0459f145ec4395bf3f5677851197a",
+    "numerics/encoder_independent_drifting/fid.py": "03cb75eafee04a82add221e9c98c27d24c362d83459dd42933baab4e5d181f9d",
+    "numerics/encoder_independent_drifting/stage_b2/metrics.py": "3ce5e78b45f6d2691aae0b7e984dc2230ba08538ed4bf7ea4842a7e8a4e4c158",
+    "numerics/encoder_independent_drifting/stage_b25/evaluation.py": "01680edc759232c995f2328a11186e6194aa0165c84248e7679236fa385f0690",
+    "numerics/encoder_independent_drifting/stage_cap/__init__.py": "aca640ba65c8cbed6e37b57db237fd90bc05e3ce559845174371947652889391",
+    "numerics/encoder_independent_drifting/stage_cap/artifacts.py": "b0d83dff98da3bf70e776b8a40432291be08cd569f2906d56c6f600259584830",
+    "numerics/encoder_independent_drifting/stage_cap/config.py": "791e6999964a61253e02795886614ab2b5edf1a46863c6bff17dfbcc8832fcdb",
+    "numerics/encoder_independent_drifting/stage_cap/data.py": "cce22e9955b8e465a284601293b87ba4f09319da126173e041795e1fa688b8e4",
+    "numerics/encoder_independent_drifting/stage_cap/diagnostics.py": "0eaa9327615ec5249ced19dfd831cc147266d8cf8793843d607d17f294074931",
+    "numerics/encoder_independent_drifting/stage_cap/evaluation.py": "8db3973902ce61aa3a31b6f3b9bb4aaec7b82a46338013b020f930c70167c4c1",
+    "numerics/encoder_independent_drifting/stage_cap/model.py": "875b2fa440fc8be9bd54800f941868726a8cc725e2714c84fb57d0ca0bd10646",
+    "numerics/encoder_independent_drifting/stage_cap/objective.py": "69664d69dd97d620759942925d9fa866a5e5ccc26874309b074c056d76861e75",
+    "numerics/encoder_independent_drifting/stage_cap/preflight.py": "5a3a8c0cbfe1aa8ab65a28ad5484d19b79a9fddac54d24834b46ca1d2e19fef5",
+    "numerics/encoder_independent_drifting/stage_cap/training.py": "a5638e6c13b4ebb9ac7d2347bfea34974e425ba5dd5fe1d9c98d7fc7b58e3bad"
+  },
+  "status": "cap-emf1-preflight",
+  "verdict": {
+    "decision": "GO",
+    "failed": [],
+    "reading": "GO: mechanics, EMF derivative, one-call inference, restart determinism, EMA, rank rule and feature taps all verified. This authorizes the cloud benchmark, not the training run."
+  }
+}
