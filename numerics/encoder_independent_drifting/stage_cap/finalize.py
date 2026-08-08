@@ -28,7 +28,8 @@ from . import CAP_PHASE, CAP_UNIT
 from .artifacts import DEFAULT_RESULT, HERE, assert_result_path_unused, load_preflight
 from .config import examples_seen, profile
 from .diagnostics import capability_gate
-from .training import clip_fraction, TrainOutcome
+from .model import CAPPixelTransformer
+from .training import TrainOutcome, clip_fraction
 
 
 def main() -> int:
@@ -68,16 +69,32 @@ def main() -> int:
         examples_seen=int(payload["examples_seen"]),
         model_forwards=int(payload["model_forwards"]),
         clipped_updates=int(payload["clipped_updates"]),
+        clipped_updates_final_window=int(
+            payload.get("clipped_updates_final_window", 0)
+        ),
+        final_window_updates=int(payload.get("final_window_updates", 0)),
         nonfinite_updates=int(payload["nonfinite_updates"]),
         best_rank_ratio=float(payload["best_rank_ratio"]),
     )
-    # The clip window counters are not carried in recovery; report what is known
-    # rather than inventing a denominator.
+    counters_present = {
+        "clipped_updates_final_window",
+        "final_window_updates",
+    }.issubset(payload)
+    final_clip_fraction = clip_fraction(outcome) if counters_present else None
     final = outcome.health[-1]
+    gated_final = final.get("ema", final)
+    gated_records = (
+        [record["ema"] for record in outcome.health if "ema" in record]
+        if "ema" in final
+        else outcome.health
+    )
+    best_gated_rank = max(
+        float(record["effective_rank_ratio"]) for record in gated_records
+    )
     gate = capability_gate(
-        final,
-        outcome.best_rank_ratio,
-        0.0,
+        gated_final,
+        best_gated_rank,
+        final_clip_fraction,
         outcome.nonfinite_updates,
         1,
         frozen.gate,
@@ -107,7 +124,7 @@ def main() -> int:
         },
         "profile": None if preflight is None else preflight["profile"],
         "preflight_sha256": None if preflight is None else preflight["artifact_sha256"],
-        "parameter_count": 37_726_863,
+        "parameter_count": CAPPixelTransformer(frozen.model, 0).parameter_count(),
         "training": {
             "history": outcome.history,
             "health": outcome.health,
@@ -116,22 +133,37 @@ def main() -> int:
             "examples_seen": outcome.examples_seen,
             "model_forwards": outcome.model_forwards,
             "clipped_updates": outcome.clipped_updates,
-            "clip_fraction_final_window": clip_fraction(outcome),
+            "clipped_updates_final_window": (
+                outcome.clipped_updates_final_window if counters_present else None
+            ),
+            "final_window_updates": (
+                outcome.final_window_updates if counters_present else None
+            ),
+            "clip_fraction_final_window": final_clip_fraction,
             "nonfinite_updates": outcome.nonfinite_updates,
             "best_rank_ratio": outcome.best_rank_ratio,
+            "best_gated_rank_ratio": best_gated_rank,
         },
         "checkpoints": checkpoints,
         "train_only_gate": gate,
         "assembled_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "limits": [
-            "Assembled from a recovery file after a budget stop, not written by "
-            "a completed run.",
-            "Clip-window counters are not carried in recovery and read zero.",
+            (
+                "Assembled from a recovery file after a budget stop, not written by "
+                "a completed run."
+            ),
+            (
+                "Clip-window counters are present and audited."
+                if counters_present
+                else "Historical recovery lacks clip-window counters; H7 is unknown."
+            ),
             "One developmental unit; no replication claim.",
         ],
     }
     digest = write_json(args.out, result)
-    print(f"result checkpoint : {reached} ({100 * reached / frozen.train.updates:.0f}%)")
+    print(
+        f"result checkpoint : {reached} ({100 * reached / frozen.train.updates:.0f}%)"
+    )
     print(f"updates completed : {completed}")
     print(f"examples seen     : {outcome.examples_seen:,}")
     print(f"train-only verdict: {gate['verdict']}  failed={gate['failed']}")

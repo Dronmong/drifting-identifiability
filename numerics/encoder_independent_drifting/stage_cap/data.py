@@ -5,11 +5,11 @@ here rather than by convention: :func:`sealed_test_pool` refuses to run without
 an explicit acknowledgement argument, so an accidental import cannot open it,
 and the training module never calls it.
 
-**The reference set for FID is the 50,000 training images**, which is the
-standard CIFAR-10 convention and the reason this target was chosen over a
-single class: a 5,000-image class forces a small-sample-biased FID and, at 410+
-epochs, makes memorization the likely route to coherent-looking samples.  The
-test split is kept for an honest held-out check, not for the headline number.
+**The reference set for the historical in-repo feature metric is the 50,000
+training images.**  This avoids the especially severe small-sample problem of
+a 5,000-image class and makes memorization less attractive.  It does not make
+that feature metric numerically interchangeable with published CleanFID.  The
+test split is kept for an honest held-out check.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ def _pool(train: bool, root: str | None, expected: int) -> torch.Tensor:
 def cifar10_train_pool(root: str | None = None) -> torch.Tensor:
     """The 50,000 official training images, all classes, scaled to [-1, 1].
 
-    Also the FID reference set, following the standard CIFAR-10 protocol.
+    Also the reference set for the historical in-repo feature metric.
     """
     return _pool(True, root, TRAIN_POOL_SIZE)
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tempfile
 from dataclasses import replace
+from itertools import pairwise
 from pathlib import Path
 
 import torch
@@ -18,7 +19,6 @@ from ..config import (
     profile,
 )
 from ..data import sealed_test_pool
-from ..evaluation import generate, save_grid
 from ..diagnostics import (
     capability_gate,
     effective_rank,
@@ -27,8 +27,10 @@ from ..diagnostics import (
     haar_transform,
     rank_noncollapse,
 )
+from ..evaluation import generate, save_grid
 from ..model import CAPPixelTransformer, one_step_sample
 from ..objective import (
+    TriangleSample,
     directional_jvp_reference,
     emf_local_difference,
     emf_loss,
@@ -78,7 +80,7 @@ def test_checkpoints_are_dense_enough_for_a_budget_stop():
     is the expected case at pessimistic GPU scaling.
     """
     steps = profile("capability").train.checkpoint_updates
-    gaps = [b - a for a, b in zip(steps, steps[1:])]
+    gaps = [b - a for a, b in pairwise(steps)]
     assert max(gaps) <= 50_000, gaps
     assert steps[0] <= 50_000
 
@@ -197,8 +199,12 @@ def test_adaln_zero_starts_as_identity():
     """Zero modulation means zero residual gates, so blocks pass tokens through."""
     model, _ = _tiny()
     for block in list(model.encoder) + list(model.decoder):
-        assert torch.equal(block.modulation.weight, torch.zeros_like(block.modulation.weight))
-        assert torch.equal(block.modulation.bias, torch.zeros_like(block.modulation.bias))
+        assert torch.equal(
+            block.modulation.weight, torch.zeros_like(block.modulation.weight)
+        )
+        assert torch.equal(
+            block.modulation.bias, torch.zeros_like(block.modulation.bias)
+        )
         tokens = torch.randn(2, 5, model.config.width)
         conditioning = torch.randn(2, model.config.condition_dim)
         assert torch.allclose(block(tokens, conditioning), tokens, atol=1e-6)
@@ -268,7 +274,9 @@ def test_a_fresh_model_is_the_zero_function():
     model, _ = _tiny()
     model.eval()
     with torch.no_grad():
-        out = model(torch.randn(2, 3, 8, 8), torch.full((2,), 0.7), torch.full((2,), 0.3))
+        out = model(
+            torch.randn(2, 3, 8, 8), torch.full((2,), 0.7), torch.full((2,), 0.3)
+        )
     assert float(out.abs().max()) == 0.0
 
 
@@ -290,7 +298,7 @@ def test_emf_difference_converges_to_the_jvp_at_first_order():
             model, state, t, r, delta, small.objective.emf_denominator_floor
         )
         errors.append(float((quotient - exact).abs().max()) / magnitude)
-    for before, after in zip(errors, errors[1:]):
+    for before, after in pairwise(errors):
         assert 4.0 <= before / after <= 20.0, f"not first order: {errors}"
     assert errors[-1] < 1e-2
 
@@ -364,8 +372,12 @@ def test_all_inactive_batch_needs_no_stopped_evaluations():
     )
     t = torch.full((4,), 0.5)
     emf_local_difference(
-        model, torch.randn(4, 3, 8, 8), t, t.clone(),
-        small.objective.emf_delta, small.objective.emf_denominator_floor,
+        model,
+        torch.randn(4, 3, 8, 8),
+        t,
+        t.clone(),
+        small.objective.emf_delta,
+        small.objective.emf_denominator_floor,
     )
     handle.remove()
     assert calls["n"] == 1, f"expected one evaluation, got {calls['n']}"
@@ -377,10 +389,34 @@ def test_diagonal_rows_reduce_to_endpoint_regression():
     state = torch.randn(4, 3, 8, 8)
     t = torch.full((4,), 0.5)
     _, quotient = emf_local_difference(
-        model, state, t, t.clone(), small.objective.emf_delta,
+        model,
+        state,
+        t,
+        t.clone(),
+        small.objective.emf_delta,
         small.objective.emf_denominator_floor,
     )
     assert torch.equal(quotient, torch.zeros_like(quotient))
+
+
+def test_reversed_clock_coefficient_does_not_clamp_its_t_numerator():
+    """Eq. 18 clamps the r division, not the multiplicative t numerator."""
+    model, small = _tiny()
+    objective = replace(small.objective, emf_delta=0.001)
+    triangle = TriangleSample(
+        t=torch.full((2,), 0.01),
+        r=torch.zeros(2),
+        diagonal=torch.zeros(2, dtype=torch.bool),
+    )
+    outcome = emf_loss(
+        model,
+        torch.randn(2, 3, 8, 8),
+        torch.randn(2, 3, 8, 8),
+        triangle,
+        objective,
+    )
+    expected = (0.01 - 0.001) * 0.01 / objective.emf_denominator_floor
+    assert torch.allclose(outcome.coefficient, torch.full((2,), expected))
 
 
 def test_triangle_respects_its_invariants():
@@ -392,9 +428,7 @@ def test_triangle_respects_its_invariants():
     assert bool((triangle.t > 0).all())
     diagonal_share = float(triangle.diagonal.double().mean())
     assert 0.35 < diagonal_share < 0.65
-    assert torch.allclose(
-        triangle.r[triangle.diagonal], triangle.t[triangle.diagonal]
-    )
+    assert torch.allclose(triangle.r[triangle.diagonal], triangle.t[triangle.diagonal])
 
 
 def test_haar_is_orthonormal():
@@ -441,6 +475,7 @@ def test_capability_gate_verdicts():
         "second_moment_ratio": 0.9,
         "centered_variance_ratio": 0.9,
         "effective_rank_ratio": 0.95,
+        "haar_LL_ratio": 0.8,
         "haar_HH_ratio": 0.7,
         "haar_LH_ratio": 0.8,
         "haar_HL_ratio": 0.8,
@@ -456,6 +491,39 @@ def test_capability_gate_verdicts():
     assert capability_gate(weak, 1.0, 0.01, 0, 1, frozen.gate)["verdict"] == "FAIL"
     # Two calls at inference is never acceptable.
     assert capability_gate(healthy, 1.0, 0.01, 0, 2, frozen.gate)["verdict"] == "FAIL"
+
+
+def test_capability_gate_has_an_absolute_rank_floor_and_four_independent_bands():
+    frozen = profile("capability")
+    healthy = {
+        "second_moment_ratio": 1.0,
+        "centered_variance_ratio": 1.0,
+        "effective_rank_ratio": 1.0,
+        "haar_LL_ratio": 1.0,
+        "haar_LH_ratio": 1.0,
+        "haar_HL_ratio": 1.0,
+        "haar_HH_ratio": 1.0,
+    }
+    # Trajectory retention alone would accept a model that stayed at 0.5.
+    low_rank = dict(healthy, effective_rank_ratio=0.5)
+    verdict = capability_gate(low_rank, 0.5, 0.01, 0, 1, frozen.gate)
+    assert verdict["checks"]["H3b_rank_noncollapse"]
+    assert not verdict["checks"]["H3_rank_floor"]
+    for band, check in (
+        ("LL", "H4a_haar_LL_lower"),
+        ("LH", "H4c_haar_LH_lower"),
+        ("HL", "H4e_haar_HL_lower"),
+        ("HH", "H4g_haar_HH_lower"),
+    ):
+        failed = capability_gate(
+            {**healthy, f"haar_{band}_ratio": 0.1},
+            1.0,
+            0.01,
+            0,
+            1,
+            frozen.gate,
+        )
+        assert check in failed["failed"]
 
 
 def test_ema_recovery_lands_on_the_model_device():
@@ -527,9 +595,7 @@ def test_training_runs_and_records_health():
     # batch + 2*active per microbatch, so strictly between the all-inactive
     # floor (1x) and the old dense cost (3x). The saving is the point.
     samples = (
-        small.train.updates
-        * small.train.accumulation_steps
-        * small.train.micro_batch
+        small.train.updates * small.train.accumulation_steps * small.train.micro_batch
     )
     assert samples <= outcome.model_forwards < 3 * samples
 
@@ -567,7 +633,9 @@ def test_sample_grid_is_uncurated_and_deterministic():
 
 def test_generation_asserts_one_call_per_batch():
     model, small = _tiny()
-    images, calls = generate(model, 12, small.model, seed=5, device=torch.device("cpu"), batch=4)
+    images, calls = generate(
+        model, 12, small.model, seed=5, device=torch.device("cpu"), batch=4
+    )
     assert images.shape == (12, 3, 8, 8)
     assert calls == 3
 
@@ -672,12 +740,12 @@ def test_checkpoints_survive_a_resume():
     assert seen == [2, 4]
 
 
-def test_checkpoint_parameter_count_is_taken_from_the_state():
-    """An earlier draft read a closure still zero at every checkpoint."""
+def test_checkpoint_parameter_count_excludes_fixed_buffers():
+    """State dictionaries include buffers; reports must count parameters."""
     model = CAPPixelTransformer(profile("smoke").model, 1)
     state = model.state_dict()
     counted = sum(value.numel() for value in state.values())
-    assert counted >= model.parameter_count() > 0
+    assert counted > model.parameter_count() > 0
 
 
 def test_manifest_covers_every_module_the_stage_imports():
@@ -686,7 +754,9 @@ def test_manifest_covers_every_module_the_stage_imports():
     import ast
 
     root = Path(__file__).resolve().parents[2]
-    manifest = {name.split("encoder_independent_drifting/")[-1] for name in source_manifest()}
+    manifest = {
+        name.split("encoder_independent_drifting/")[-1] for name in source_manifest()
+    }
     stage = Path(__file__).resolve().parents[1]
     unhashed: list[str] = []
     for module in sorted(stage.glob("*.py")):
@@ -744,7 +814,7 @@ def test_test_split_is_sealed_by_construction():
 
 def test_no_correction_term_is_importable_from_this_stage():
     """CAP-EMF-1 trains the foundation alone; a correction here is a bug."""
-    import numerics.encoder_independent_drifting.stage_cap.training as training
+    from .. import training
 
     text = Path(training.__file__).read_text(encoding="utf-8").lower()
     for forbidden in ("laplace", "sinkhorn", "spectral_anchor", "drift_energy"):

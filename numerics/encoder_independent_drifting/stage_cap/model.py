@@ -32,8 +32,11 @@ from .config import FEATURE_LEVELS, CAPModelConfig
 class ScalarEmbedding(nn.Module):
     """Sinusoidal scalar features followed by a small MLP."""
 
-    def __init__(self, dimension: int, output: int) -> None:
+    def __init__(self, dimension: int, output: int, scale: float = 1_000.0) -> None:
         super().__init__()
+        if scale <= 0:
+            raise ValueError("scalar embedding scale must be positive")
+        self.scale = float(scale)
         half = dimension // 2
         frequencies = torch.exp(
             -math.log(10_000.0) * torch.arange(half) / max(half - 1, 1)
@@ -48,7 +51,7 @@ class ScalarEmbedding(nn.Module):
             value = value[:, 0]
         if value.ndim != 1:
             raise ValueError("scalar condition must have shape [batch]")
-        angles = value[:, None] * 1_000.0 * self.frequencies[None]
+        angles = value[:, None] * self.scale * self.frequencies[None]
         return self.mlp(torch.cat((angles.sin(), angles.cos()), dim=-1))
 
 
@@ -103,9 +106,7 @@ class AdaLNZeroBlock(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.modulation = nn.Linear(condition, 6 * width)
 
-    def forward(
-        self, tokens: torch.Tensor, conditioning: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, tokens: torch.Tensor, conditioning: torch.Tensor) -> torch.Tensor:
         parts = self.modulation(conditioning).chunk(6, dim=-1)
         shift1, scale1, gate1, shift2, scale2, gate2 = (p[:, None] for p in parts)
         hidden = self.norm1(tokens) * (1.0 + scale1) + shift1
@@ -148,9 +149,15 @@ class CAPPixelTransformer(nn.Module):
         )
         self.position = nn.Parameter(torch.zeros(1, self.patch_count, config.width))
 
-        self.time_embed = ScalarEmbedding(config.time_embedding_dim, config.condition_dim)
+        self.time_embed = ScalarEmbedding(
+            config.time_embedding_dim,
+            config.condition_dim,
+            config.scalar_embedding_scale,
+        )
         self.interval_embed = ScalarEmbedding(
-            config.time_embedding_dim, config.condition_dim
+            config.time_embedding_dim,
+            config.condition_dim,
+            config.scalar_embedding_scale,
         )
         self.condition_mlp = nn.Sequential(
             nn.SiLU(),
@@ -296,9 +303,22 @@ class CAPPixelTransformer(nn.Module):
     def forward(
         self, images: torch.Tensor, time_value: torch.Tensor, interval: torch.Tensor
     ) -> torch.Tensor:
+        return self.forward_components(images, time_value, interval)["final"]
+
+    def forward_components(
+        self, images: torch.Tensor, time_value: torch.Tensor, interval: torch.Tensor
+    ) -> dict[str, torch.Tensor]:
+        """Expose the patch head, residual correction, and final prediction.
+
+        CAP-EMF-1's final output depended on a large cancellation between the
+        patch head and convolutional refiner.  Returning all three tensors
+        makes that cancellation observable without changing ``forward`` or
+        adding an inference call.
+        """
         tokens, _ = self._trunk(images, time_value, interval, collect=False)
         base = self._unpatchify(self.pixel_head(self.final_norm(tokens)))
-        return self.refiner(base)
+        final = self.refiner(base)
+        return {"base": base, "refiner_residual": final - base, "final": final}
 
     def forward_with_features(
         self, images: torch.Tensor, time_value: torch.Tensor, interval: torch.Tensor
@@ -324,3 +344,13 @@ def one_step_sample(model: nn.Module, noise: torch.Tensor) -> torch.Tensor:
         raise ValueError("noise must be an image batch")
     ones = torch.ones(len(noise), device=noise.device, dtype=noise.dtype)
     return model(noise, ones, ones)
+
+
+def one_step_components(
+    model: CAPPixelTransformer, noise: torch.Tensor
+) -> dict[str, torch.Tensor]:
+    """One-call diagnostic decomposition at the exact inference condition."""
+    if noise.ndim != 4:
+        raise ValueError("noise must be an image batch")
+    ones = torch.ones(len(noise), device=noise.device, dtype=noise.dtype)
+    return model.forward_components(noise, ones, ones)

@@ -97,7 +97,7 @@ def check_shapes() -> Check:
     ok = out.shape == images.shape and frozen.model.tokens == 256
     detail = f"output {tuple(out.shape)}, {frozen.model.tokens} tokens"
     levels = {name: tuple(value.shape) for name, value in features.items()}
-    for name, shape in levels.items():
+    for shape in levels.values():
         ok = ok and shape == (batch, 256, frozen.model.width)
     return "shape identities", ok, detail, {"levels": levels}
 
@@ -137,8 +137,10 @@ def check_emf_against_jvp() -> Check:
     return (
         "EMF finite difference vs float64 JVP",
         bool(ok),
-        f"relative max error {errors}, first-order rates "
-        f"{[round(rate, 2) for rate in rates]}",
+        (
+            f"relative max error {errors}, first-order rates "
+            f"{[round(rate, 2) for rate in rates]}"
+        ),
         {
             "relative_errors": errors,
             "convergence_rates": rates,
@@ -202,7 +204,7 @@ def check_restart_determinism(tmp: Path) -> Check:
 
 def check_ema() -> Check:
     """5. EMA arithmetic and its maturity accounting."""
-    model, small = _tiny()
+    model, _small = _tiny()
     ema = EMAState(model, 0.9)
     reference = {
         name: value.detach().clone().float()
@@ -226,9 +228,11 @@ def check_ema() -> Check:
     return (
         "EMA arithmetic and maturity",
         ok,
-        f"half-life {frozen.ema_half_life:.0f} updates, mature by {mature}, "
-        f"residual initialization weight at {frozen.updates} = "
-        f"{frozen.ema_decay ** frozen.updates:.2e}",
+        (
+            f"half-life {frozen.ema_half_life:.0f} updates, mature by {mature}, "
+            f"residual initialization weight at {frozen.updates} = "
+            f"{frozen.ema_decay**frozen.updates:.2e}"
+        ),
         {
             "half_life": frozen.ema_half_life,
             "mature_at": mature,
@@ -241,9 +245,9 @@ def check_haar_and_rank_rule() -> Check:
     """6. Haar orthonormality and the corrected rank rule."""
     images = torch.randn(5, 3, 32, 32, dtype=torch.float64)
     coefficients = haar_transform(images)
-    conserved = abs(
-        float(coefficients.square().sum()) - float(images.square().sum())
-    ) < 1e-8
+    conserved = (
+        abs(float(coefficients.square().sum()) - float(images.square().sum())) < 1e-8
+    )
     # S3R's EMF arm: best ratio 4.056, final 1.661.  final/max = 0.410 failed
     # it; the corrected rule accepts it because approaching the target is not
     # collapse.  pMF's 0.349 must still fail.
@@ -253,8 +257,10 @@ def check_haar_and_rank_rule() -> Check:
     return (
         "Haar energy and corrected rank rule",
         ok,
-        f"energy conserved={conserved}, accepts S3R EMF={accepts_emf}, "
-        f"rejects pMF={rejects_pmf}",
+        (
+            f"energy conserved={conserved}, accepts S3R EMF={accepts_emf}, "
+            f"rejects pMF={rejects_pmf}"
+        ),
         {"accepts_emf_1661": accepts_emf, "rejects_pmf_0349": rejects_pmf},
     )
 
@@ -298,8 +304,10 @@ def check_parameter_count() -> Check:
     return (
         "parameter count",
         ok,
-        f"{count:,} parameters against a {PARAMETER_CEILING:,} ceiling "
-        f"({100 * count / PARAMETER_CEILING:.1f}%)",
+        (
+            f"{count:,} parameters against a {PARAMETER_CEILING:,} ceiling "
+            f"({100 * count / PARAMETER_CEILING:.1f}%)"
+        ),
         {"parameter_count": count, "ceiling": PARAMETER_CEILING},
     )
 
@@ -342,9 +350,7 @@ def _probe_once(
         "seconds_per_update": per_update,
         "projected_hours_this_device": per_update * frozen.train.updates / 3_600,
         "peak_memory_reserved_bytes": (
-            int(torch.cuda.max_memory_reserved(device))
-            if device.type == "cuda"
-            else 0
+            int(torch.cuda.max_memory_reserved(device)) if device.type == "cuda" else 0
         ),
     }
 
@@ -370,7 +376,7 @@ def check_throughput(device: torch.device, micro_batch: int, steps: int) -> Chec
             continue
         try:
             record = _probe_once(device, candidate, steps, warmup)
-        except (RuntimeError, torch.cuda.OutOfMemoryError) as error:  # noqa: PERF203
+        except (RuntimeError, torch.cuda.OutOfMemoryError) as error:
             failures.append({"micro_batch": candidate, "error": str(error)[:160]})
             continue
         attempts.append(record)
@@ -388,11 +394,13 @@ def check_throughput(device: torch.device, micro_batch: int, steps: int) -> Chec
     return (
         "throughput probe",
         True,
-        f"micro_batch {chosen['micro_batch']}"
-        f"{'' if fits_production else ' (production shape did not fit)'}: "
-        f"{chosen['seconds_per_update']:.3f} s/update, "
-        f"{chosen['peak_memory_reserved_bytes'] / 2**30:.2f} GiB, "
-        f"{chosen['projected_hours_this_device']:.1f} h on this device",
+        (
+            f"micro_batch {chosen['micro_batch']}"
+            f"{'' if fits_production else ' (production shape did not fit)'}: "
+            f"{chosen['seconds_per_update']:.3f} s/update, "
+            f"{chosen['peak_memory_reserved_bytes'] / 2**30:.2f} GiB, "
+            f"{chosen['projected_hours_this_device']:.1f} h on this device"
+        ),
         {
             "chosen": chosen,
             "attempts": attempts,

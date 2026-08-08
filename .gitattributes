@@ -1,0 +1,9 @@
+# CAP/CAP2 authorization records hash exact source and artifact bytes.  Keep
+# those files LF-stable across Windows and Unix checkouts so the recorded
+# source manifests and SHA sidecars remain portable.
+/.gitattributes text eol=lf
+numerics/encoder_independent_drifting/**/*.py text eol=lf
+numerics/encoder_independent_drifting/stage_cap2/*.json text eol=lf
+numerics/encoder_independent_drifting/stage_cap2/*.sha256 text eol=lf
+numerics/encoder_independent_drifting/stage_cap2/*.txt text eol=lf
+numerics/EncoderIndependentCAPEMF*.md text eol=lf

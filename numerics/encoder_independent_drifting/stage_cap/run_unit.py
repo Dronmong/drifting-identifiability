@@ -33,6 +33,7 @@ from .artifacts import (
 from .config import enable_tf32, examples_seen, profile
 from .data import cifar10_train_pool
 from .diagnostics import capability_gate
+from .model import CAPPixelTransformer
 from .training import clip_fraction, train_cap_unit
 
 
@@ -137,20 +138,19 @@ def main() -> int:
         )
 
     torch.set_num_threads(4)
-    precision = enable_tf32()
     if not args.nondeterministic:
         # Requires CUBLAS_WORKSPACE_CONFIG=:4096:8 in the environment.
         torch.use_deterministic_algorithms(True)
     device = resolve_device(args.device)
-    settings = configure(device)
+    settings = configure(device, allow_tf32=device.type == "cuda")
+    precision = enable_tf32()
     pool = cifar10_train_pool(args.data_root)
+    trainable_parameter_count = CAPPixelTransformer(frozen.model, 0).parameter_count()
 
     def checkpoint(step: int, raw_state: dict, ema_state: dict) -> dict:
-        # The count comes from the state being written, not from a variable
-        # assigned after training returns -- an earlier draft read a closure
-        # that was still zero at every checkpoint, so every checkpoint recorded
-        # a parameter count of 0.
-        count = sum(value.numel() for value in raw_state.values())
+        # Count trainable parameters, not state-dict values (which include the
+        # fixed sinusoidal-frequency buffers).  It is frozen before training,
+        # so the callback cannot observe an uninitialized post-run closure.
         entry = {}
         for kind, state in (("raw", raw_state), ("ema", ema_state)):
             path = checkpoint_path(step, kind)
@@ -163,7 +163,7 @@ def main() -> int:
                     kind=kind,
                     profile=payload,
                     preflight_sha=preflight["artifact_sha256"],
-                    parameter_count=count,
+                    parameter_count=trainable_parameter_count,
                 ),
             }
         # Returned, not stored locally: the training loop keeps it on the
@@ -210,9 +210,18 @@ def main() -> int:
     )
 
     final = outcome.health[-1]
+    gated_final = final.get("ema", final)
+    gated_records = (
+        [record["ema"] for record in outcome.health if "ema" in record]
+        if "ema" in final
+        else outcome.health
+    )
+    best_gated_rank = max(
+        float(record["effective_rank_ratio"]) for record in gated_records
+    )
     gate = capability_gate(
-        final,
-        outcome.best_rank_ratio,
+        gated_final,
+        best_gated_rank,
         clip_fraction(outcome),
         outcome.nonfinite_updates,
         1,
@@ -251,9 +260,12 @@ def main() -> int:
             "examples_seen": outcome.examples_seen,
             "model_forwards": outcome.model_forwards,
             "clipped_updates": outcome.clipped_updates,
+            "clipped_updates_final_window": outcome.clipped_updates_final_window,
+            "final_window_updates": outcome.final_window_updates,
             "clip_fraction_final_window": clip_fraction(outcome),
             "nonfinite_updates": outcome.nonfinite_updates,
             "best_rank_ratio": outcome.best_rank_ratio,
+            "best_gated_rank_ratio": best_gated_rank,
         },
         "checkpoints": outcome.checkpoints,
         "posthoc_ema_snapshots": {
@@ -269,10 +281,14 @@ def main() -> int:
         "elapsed_seconds": time.time() - started,
         "limits": [
             "One developmental capability unit; no replication claim.",
-            "The train-only gate uses no test image; the sealed evaluation is "
-            "a separate step run after this artifact is hashed.",
-            "Step 160000 is the result. No intermediate checkpoint may be "
-            "selected on any metric.",
+            (
+                "The train-only gate uses no test image; the sealed evaluation is "
+                "a separate step run after this artifact is hashed."
+            ),
+            (
+                f"Step {frozen.train.updates} is the declared result. No intermediate "
+                "checkpoint may be selected on any metric."
+            ),
         ],
     }
     digest = write_json(args.out, result)

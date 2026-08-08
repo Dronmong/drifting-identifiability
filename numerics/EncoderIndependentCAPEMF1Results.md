@@ -208,7 +208,14 @@ replace the primary result. That the remedy for high-frequency divergence is
 
 ---
 
-## 9. Root cause: the model is never trained where it is sampled
+## 9. Corrected diagnosis: sparse joint inference coverage and coefficient stress
+
+> **Post-run correction.** The table below is one logged 64-row batch, not a
+> run-wide occupancy table. The aggregate of all 1,300 logged batches is given
+> in `EncoderIndependentCAPEMF1ExtendedAnalysis.md`: about 0.38% of rows had
+> `t > .95`, consistent with the declared logit-normal law. The exact
+> `(t,h)=(1,1)` inference point remains measure-zero and its *joint
+> neighborhood* is extremely sparse, but “never trained” was too strong.
 
 The time-bucket diagnostic, added shortly before launch specifically to answer
 this question:
@@ -223,22 +230,25 @@ this question:
 
 Two findings:
 
-**The one-call sampler evaluates at `t = 1`, and the logit-normal(0.8, 0.8)
-time law places essentially no training mass there** — under half a percent,
-rounding to zero samples in a batch of 64. The configuration the model is
-*used* at is reached by extrapolation.
+**The one-call sampler evaluates at `(t,h)=(1,1)`, while the
+logit-normal(0.8, 0.8) law gives its neighborhood very little joint mass.**
+The endpoint bucket is sparse rather than empty, and the exact point still
+requires extrapolation from continuous-time samples.
 
 **A fifth of every batch sits in an ill-conditioned band.** Equation 18's
 coefficient is `(t − r − δ)·t / max(r, 0.02)`, which reaches ≈ 35 when `t ≈ 0.85`
 and `r` sits at its 0.01 floor. Those rows carry enormous targets — 30–120× the
 error of their neighbours. The adaptive weighting normalises them in the loss,
-which is why training never destabilised (zero non-finite updates in 650 000),
-but they still dominate raw gradient magnitude, and 15.3% of updates clipped.
+which is why training never destabilised (zero non-finite updates in 650 000).
+With adaptive power one, large residuals do **not** automatically dominate the
+output-gradient norm; the historical logs did not measure per-row parameter
+gradients. The 15.3% clipping rate is evidence of global optimization stress,
+not proof that these particular rows caused it.
 
-A fifth of each batch pushing hard with ill-conditioned targets while the
-sampled endpoint receives no direct supervision is a coherent mechanism for
-high-frequency divergence. It is not proven — that needs a controlled
-comparison — but it is the leading hypothesis and it is cheap to test.
+Ill-conditioned targets together with sparse inference-corner coverage remain
+a coherent mechanism for high-frequency divergence. They are hypotheses, not
+an identified root cause; CAP2 therefore logs aggregate occupancy and sampled
+actual parameter-gradient contributions and uses a controlled sampler screen.
 
 ---
 

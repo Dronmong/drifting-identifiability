@@ -12,10 +12,16 @@ No correction of any kind appears here.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import math
+import os
+import tempfile
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from copy import deepcopy
+from dataclasses import asdict, dataclass, field
+from itertools import pairwise
 from pathlib import Path
 
 import torch
@@ -25,13 +31,58 @@ from ..config import MASTER_SEED, derive_seed
 from . import CAP_PHASE, CAP_UNIT
 from .config import CAPProfile
 from .data import flip_batch
-from .diagnostics import endpoint_health
-from .model import CAPPixelTransformer, one_step_sample
+from .diagnostics import component_health
+from .model import CAPPixelTransformer, one_step_components
+from .monitoring import ObjectiveLedger
 from .objective import emf_loss, sample_time_triangle
 
 
 def cap_seed(role: str, index: int = 0) -> int:
     return derive_seed(MASTER_SEED + 141_000, CAP_PHASE, CAP_UNIT, role, index)
+
+
+def replicated_cap_seed(role: str, unit_seed: int = 0, index: int = 0) -> int:
+    """Preserve unit zero exactly while making later matched units possible."""
+    if unit_seed < 0:
+        raise ValueError("unit seed must be nonnegative")
+    if unit_seed == 0:
+        return cap_seed(role, index)
+    return derive_seed(
+        MASTER_SEED + 141_000,
+        CAP_PHASE,
+        CAP_UNIT,
+        "replicate",
+        unit_seed,
+        role,
+        index,
+    )
+
+
+def _recovery_identity(
+    profile: CAPProfile,
+    external: dict | None,
+    unit_seed: int,
+) -> dict:
+    """Canonical run identity, allowing only an explicit horizon extension.
+
+    ``updates`` and the checkpoint ladder are plans rather than scientific
+    state, so they are the only profile fields omitted.  Batch splitting,
+    objective/gate settings, seeds and all caller-supplied environment binding
+    remain part of the identity and therefore cannot change on resume.
+    """
+    profile_data = asdict(profile)
+    profile_data["train"].pop("updates")
+    profile_data["train"].pop("checkpoint_updates")
+    payload = {
+        "profile_horizon_neutral": profile_data,
+        "unit_seed": int(unit_seed),
+        "external": external or {},
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return {
+        "payload": payload,
+        "sha256": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
+    }
 
 
 @dataclass
@@ -45,7 +96,21 @@ class TrainOutcome:
     peak_memory_reserved_bytes: int = 0
     optimizer_updates: int = 0
     examples_seen: int = 0
+    # Historical name: this is a count of per-row sample evaluations, not
+    # Python/module forward invocations.  Retained for recovery compatibility.
     model_forwards: int = 0
+    objective_forward_calls: int = 0
+    # Wall time spent publishing recovery payloads during this process.  It is
+    # deliberately a runtime timing (not scientific state) and is used by the
+    # CAP2 benchmark to amortize rare recovery I/O at its real cadence.
+    recovery_io_seconds: float = 0.0
+    # Runtime-only instrumentation for CAP2's cadence-adjusted benchmark.
+    # These values are not scientific/recovery state and intentionally cover
+    # only health events executed in the current process.
+    ordinary_health_seconds: float = 0.0
+    checkpoint_health_seconds: float = 0.0
+    ordinary_health_events: int = 0
+    checkpoint_health_events: int = 0
     clipped_updates: int = 0
     clipped_updates_final_window: int = 0
     final_window_updates: int = 0
@@ -114,8 +179,10 @@ class EMAState:
         """
         self.decay = float(payload["decay"])
         self.updates = int(payload["updates"])
-        move = (lambda t: t.clone().to(device)) if device is not None else (
-            lambda t: t.clone()
+        move = (
+            (lambda t: t.clone().to(device))
+            if device is not None
+            else (lambda t: t.clone())
         )
         self.shadow = {name: move(value) for name, value in payload["shadow"].items()}
         self.buffers = {name: move(value) for name, value in payload["buffers"].items()}
@@ -133,7 +200,7 @@ def bucket_by_time(
     """Mean error and share of rows per time bucket."""
     result: dict[str, dict[str, float]] = {}
     total = max(len(t), 1)
-    for low, high in zip(T_BUCKETS, T_BUCKETS[1:]):
+    for low, high in pairwise(T_BUCKETS):
         mask = (t >= low) & (t < high) if high < 1.0 else (t >= low) & (t <= high)
         count = int(mask.sum())
         result[f"{low:g}-{high:g}"] = {
@@ -151,21 +218,478 @@ def learning_rate_at(update: int, train) -> float:
     return train.learning_rate * (update + 1) / train.warmup_updates
 
 
-def _atomic_save(payload: dict, path: Path) -> None:
+def recovery_sidecar(path: Path) -> Path:
+    """Return the authenticity companion for a rolling recovery file."""
+    return path.with_suffix(path.suffix + ".sha256")
+
+
+def _hash_handle(handle) -> str:
+    digest = hashlib.sha256()
+    while block := handle.read(1024 * 1024):
+        digest.update(block)
+    return digest.hexdigest()
+
+
+def _recorded_recovery_sha(path: Path, *, required: bool) -> str | None:
+    sidecar = recovery_sidecar(path)
+    if not sidecar.is_file():
+        if required:
+            raise RuntimeError(f"CAP recovery SHA sidecar is missing: {sidecar}")
+        return None
+    fields = sidecar.read_text(encoding="utf-8").split()
+    if not fields or len(fields[0]) != 64:
+        raise RuntimeError(f"CAP recovery SHA sidecar is malformed: {sidecar}")
+    if len(fields) != 2 or fields[1] != path.name:
+        raise RuntimeError(f"CAP recovery SHA sidecar names another file: {sidecar}")
+    try:
+        int(fields[0], 16)
+    except ValueError as error:
+        raise RuntimeError(
+            f"CAP recovery SHA sidecar is malformed: {sidecar}"
+        ) from error
+    return fields[0].lower()
+
+
+def verify_recovery_file(path: Path, *, require_sidecar: bool = False) -> str:
+    """Verify a recovery and return its SHA-256 digest.
+
+    CAP1 recoveries created before the sidecar protocol remain readable when
+    ``require_sidecar`` is false.  Every CAP2 caller sets it to true and thus
+    fails closed on a missing, stale, or malformed companion.
+    """
+    if not path.is_file():
+        raise RuntimeError(f"CAP recovery file is missing: {path}")
+    recorded = _recorded_recovery_sha(path, required=require_sidecar)
+    with path.open("rb") as handle:
+        actual = _hash_handle(handle)
+    if recorded is not None and actual != recorded:
+        raise RuntimeError(f"CAP recovery SHA mismatch: {path}")
+    return actual
+
+
+def _torch_load_handle(handle):
+    handle.seek(0)
+    try:
+        return torch.load(handle, map_location="cpu", weights_only=False)
+    except TypeError:  # pragma: no cover - older torch
+        handle.seek(0)
+        return torch.load(handle, map_location="cpu")
+
+
+def load_recovery_payload(
+    path: Path, *, require_sidecar: bool = False, validate_counters: bool = True
+) -> tuple[dict, str]:
+    """Hash and deserialize exactly the same open recovery file.
+
+    Loading through the verified file handle avoids a verify-then-open race if
+    another process atomically publishes a newer rolling recovery.
+    """
+    if not path.is_file():
+        raise RuntimeError(f"CAP recovery file is missing: {path}")
+    recorded = _recorded_recovery_sha(path, required=require_sidecar)
+    with path.open("rb") as handle:
+        actual = _hash_handle(handle)
+        if recorded is not None and actual != recorded:
+            raise RuntimeError(f"CAP recovery SHA mismatch: {path}")
+        payload = _torch_load_handle(handle)
+    if not isinstance(payload, dict) or payload.get("stage") != "cap-emf-1-recovery":
+        raise RuntimeError(f"not a CAP-EMF-1 recovery file: {path}")
+    if validate_counters:
+        validate_recovery_counters(payload, strict=require_sidecar)
+    return payload, actual
+
+
+def _integer(payload: dict, key: str) -> int:
+    value = payload.get(key)
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"CAP recovery counter {key!r} is not an integer")
+    return int(value)
+
+
+def _validate_step_sequence(payload: dict, key: str, completed: int) -> None:
+    records = payload.get(key)
+    if not isinstance(records, list):
+        raise TypeError(f"CAP recovery {key!r} is not a list")
+    previous = -1
+    for record in records:
+        if not isinstance(record, dict):
+            raise TypeError(f"CAP recovery {key!r} contains a non-record")
+        step = record.get("step")
+        if isinstance(step, bool) or not isinstance(step, int):
+            raise TypeError(f"CAP recovery {key!r} contains an invalid step")
+        if not previous < step <= completed:
+            raise RuntimeError(f"CAP recovery {key!r} steps are not strictly ordered")
+        previous = step
+
+
+def validate_recovery_counters(payload: dict, *, strict: bool = False) -> None:
+    """Validate the redundant accounting carried by a recovery payload.
+
+    The checks are intentionally algebraic.  They catch a self-consistently
+    hashed but truncated, spliced, or manually edited recovery before model or
+    optimizer state is trusted.  Strict mode is used for every CAP2 load.
+    """
+    if not strict and payload.get("recovery_identity") is None:
+        # The earliest CAP1 recovery schema predates horizon/identity/final-
+        # window metadata.  Retain only invariants that can be established
+        # from fields it actually carried; CAP2 never enters this branch.
+        completed = _integer(payload, "completed_updates")
+        updates = _integer(payload, "optimizer_updates")
+        examples = _integer(payload, "examples_seen")
+        model_evaluations = _integer(payload, "model_forwards")
+        nonfinite = _integer(payload, "nonfinite_updates")
+        clipped = _integer(payload, "clipped_updates")
+        if completed < 0 or updates != completed:
+            raise RuntimeError("legacy CAP recovery update counters disagree")
+        if examples < 0 or model_evaluations < examples:
+            raise RuntimeError("legacy CAP recovery sample counters are impossible")
+        if not 0 <= nonfinite <= completed or not 0 <= clipped <= completed:
+            raise RuntimeError("legacy CAP recovery health counters are impossible")
+        ema = payload.get("ema")
+        if not isinstance(ema, dict) or _integer(ema, "updates") != (
+            completed - nonfinite
+        ):
+            raise RuntimeError("legacy CAP recovery EMA maturity is inconsistent")
+        required = {"model", "optimizer", "generators"}
+        if not required.issubset(payload):
+            raise RuntimeError("legacy CAP recovery lacks resumable state")
+        return
+
+    planned = _integer(payload, "planned_updates")
+    completed = _integer(payload, "completed_updates")
+    updates = _integer(payload, "optimizer_updates")
+    nonfinite = _integer(payload, "nonfinite_updates")
+    clipped = _integer(payload, "clipped_updates")
+    clipped_final = _integer(payload, "clipped_updates_final_window")
+    final_window = _integer(payload, "final_window_updates")
+    if planned <= 0 or not 0 <= completed <= planned:
+        raise RuntimeError("CAP recovery completion lies outside its plan")
+    if updates != completed:
+        raise RuntimeError("CAP recovery optimizer/update counters disagree")
+    if not 0 <= nonfinite <= completed:
+        raise RuntimeError("CAP recovery nonfinite counter is impossible")
+    if not 0 <= clipped <= completed:
+        raise RuntimeError("CAP recovery clipping counter is impossible")
+    if not 0 <= clipped_final <= final_window <= completed:
+        raise RuntimeError("CAP recovery final-window counters are impossible")
+    if clipped_final > clipped:
+        raise RuntimeError("CAP recovery final-window clips exceed total clips")
+
+    ema = payload.get("ema")
+    if not isinstance(ema, dict):
+        raise TypeError("CAP recovery lacks EMA state")
+    ema_updates = _integer(ema, "updates")
+    if ema_updates != completed - nonfinite:
+        raise RuntimeError("CAP recovery EMA maturity disagrees with finite updates")
+
+    checkpoints = payload.get("checkpoints")
+    snapshots = payload.get("snapshots")
+    if not isinstance(checkpoints, dict) or not isinstance(snapshots, list):
+        raise TypeError("CAP recovery artifact ledger is malformed")
+    for raw_step, kinds in checkpoints.items():
+        try:
+            step = int(raw_step)
+        except (TypeError, ValueError) as error:
+            raise RuntimeError("CAP recovery checkpoint has an invalid step") from error
+        if str(step) != str(raw_step) or not 0 < step <= completed:
+            raise RuntimeError("CAP recovery checkpoint lies beyond completion")
+        if not isinstance(kinds, dict) or not set(kinds).issubset({"raw", "ema"}):
+            raise RuntimeError("CAP recovery checkpoint kinds are malformed")
+    if any(
+        isinstance(step, bool) or not isinstance(step, int) or not 0 < step <= completed
+        for step in snapshots
+    ) or snapshots != sorted(set(snapshots)):
+        raise RuntimeError("CAP recovery snapshot ledger is malformed")
+
+    _validate_step_sequence(payload, "history", completed)
+    _validate_step_sequence(payload, "health", completed)
+
+    identity = payload.get("recovery_identity")
+    if not strict and identity is None:
+        return
+    if not isinstance(identity, dict) or set(identity) != {"payload", "sha256"}:
+        raise RuntimeError("CAP recovery has no canonical strict identity")
+    canonical = json.dumps(
+        identity["payload"], sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    if hashlib.sha256(canonical).hexdigest() != identity["sha256"]:
+        raise RuntimeError("CAP recovery strict identity hash is inconsistent")
+    if not strict:
+        # Legacy CAP1 files may predate newer redundant accounting fields.
+        # Their existing identity is still checked, but only CAP2/replicated
+        # callers opt into the complete fail-closed schema below.
+        return
+    profile = identity["payload"].get("profile_horizon_neutral")
+    if not isinstance(profile, dict):
+        raise TypeError("CAP recovery strict identity lacks its profile")
+    train = profile.get("train")
+    objective = profile.get("objective")
+    gate = profile.get("gate")
+    if not all(isinstance(value, dict) for value in (train, objective, gate)):
+        raise RuntimeError("CAP recovery strict profile is malformed")
+    micro_batch = int(train.get("micro_batch", 0))
+    accumulation = int(train.get("accumulation_steps", 0))
+    if micro_batch <= 0 or accumulation <= 0:
+        raise RuntimeError("CAP recovery strict batch split is invalid")
+    examples = _integer(payload, "examples_seen")
+    expected_examples = completed * micro_batch * accumulation
+    if examples != expected_examples:
+        raise RuntimeError("CAP recovery example counter disagrees with its profile")
+    if not math.isclose(
+        float(ema.get("decay", math.nan)),
+        float(train.get("ema_decay", math.nan)),
+        rel_tol=0.0,
+        abs_tol=0.0,
+    ):
+        raise RuntimeError("CAP recovery EMA decay disagrees with its profile")
+
+    model_evaluations = _integer(payload, "model_forwards")
+    forward_calls = _integer(payload, "objective_forward_calls")
+    mode = objective.get("stopped_evaluation")
+    if mode == "fp32_dense":
+        evaluations_per_row, calls_per_batch = 4, 4
+    elif mode == "dense":
+        evaluations_per_row, calls_per_batch = 3, 3
+    elif mode == "legacy_sparse":
+        evaluations_per_row = calls_per_batch = None
+        if not examples <= model_evaluations <= 3 * examples:
+            raise RuntimeError(
+                "CAP recovery sparse model-evaluation count is impossible"
+            )
+        batches = completed * accumulation
+        if not batches <= forward_calls <= 3 * batches:
+            raise RuntimeError("CAP recovery sparse forward-call count is impossible")
+        if (model_evaluations - examples) % 2 or (forward_calls - batches) % 2:
+            raise RuntimeError(
+                "CAP recovery sparse evaluation counters have wrong parity"
+            )
+    else:
+        raise RuntimeError("CAP recovery has an unknown stopped-evaluation mode")
+    if evaluations_per_row is not None:
+        if model_evaluations != evaluations_per_row * examples:
+            raise RuntimeError("CAP recovery model-evaluation counter is inconsistent")
+        if forward_calls != calls_per_batch * completed * accumulation:
+            raise RuntimeError("CAP recovery forward-call counter is inconsistent")
+
+    clip_window = int(gate.get("clip_window_updates", 0))
+    if clip_window <= 0:
+        raise RuntimeError("CAP recovery strict clip window is invalid")
+    window_origin = _integer(payload, "final_window_origin")
+    if not 0 <= window_origin <= planned:
+        raise RuntimeError("CAP recovery final-window origin is impossible")
+    expected_window = max(0, completed - window_origin)
+    if final_window != expected_window:
+        raise RuntimeError("CAP recovery final-window length disagrees with its plan")
+
+    required = {"model", "optimizer", "generators", "objective_ledger"}
+    if missing := sorted(required - set(payload)):
+        raise RuntimeError(f"CAP recovery lacks resumable state {missing}")
+    if not isinstance(payload["model"], dict) or not isinstance(
+        payload["optimizer"], dict
+    ):
+        raise TypeError("CAP recovery model/optimizer state is malformed")
+    generators = payload["generators"]
+    expected_generators = {"data", "noise", "time", "flip"}
+    if objective.get("diagonal_sampling") == "fixed_count_first_draw":
+        expected_generators.add("diagonal")
+    if not isinstance(generators, dict) or not expected_generators.issubset(generators):
+        raise RuntimeError("CAP recovery RNG ledger is incomplete")
+
+    for key in ("wall_seconds", "best_rank_ratio"):
+        value = payload.get(key)
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            or float(value) < 0
+        ):
+            raise RuntimeError(f"CAP recovery scalar {key!r} is invalid")
+    for key in ("peak_memory_bytes", "peak_memory_reserved_bytes"):
+        if _integer(payload, key) < 0:
+            raise RuntimeError(f"CAP recovery counter {key!r} is negative")
+
+    authorization = payload.get("continuation_authorization")
+    external = identity["payload"].get("external")
+    cap2_bound = isinstance(external, dict) and external.get("status") == (
+        "cap-emf2-run-identity"
+    )
+    if cap2_bound and planned < 300_000 and authorization is not None:
+        raise RuntimeError(
+            "a pre-promotion CAP2 recovery carries continuation authority"
+        )
+    if cap2_bound and planned == 300_000 and not isinstance(authorization, dict):
+        raise RuntimeError("a promoted CAP2 recovery lacks continuation authority")
+    if authorization is not None:
+        if not isinstance(authorization, dict) or authorization.get("status") != (
+            "cap-emf2-300k-recovery-authorization"
+        ):
+            raise RuntimeError("CAP recovery continuation authority is malformed")
+        for key in (
+            "promotion_sha256",
+            "preflight_sha256",
+            "result_150k_sha256",
+            "checkpoint_150k_ema_sha256",
+            "checkpoint_150k_raw_sha256",
+            "readmission_sha256",
+            "development_evaluation_sha256",
+            "selection_sha256",
+        ):
+            value = authorization.get(key)
+            if not isinstance(value, str) or len(value) != 64:
+                raise RuntimeError("CAP recovery continuation hash is malformed")
+            try:
+                int(value, 16)
+            except ValueError as error:
+                raise RuntimeError(
+                    "CAP recovery continuation hash is malformed"
+                ) from error
+
+
+def _fsync_directory(path: Path) -> None:
+    """Durably publish renames where the host permits directory fsync."""
+    try:
+        descriptor = os.open(path, os.O_RDONLY)
+    except OSError:  # Windows commonly does not expose directory handles here.
+        return
+    try:
+        os.fsync(descriptor)
+    except OSError:
+        pass
+    finally:
+        os.close(descriptor)
+
+
+def _atomic_save(payload: dict, path: Path) -> str:
+    """Durably replace a rolling recovery and its SHA companion.
+
+    The payload is serialized and read back before publication.  Publishing
+    the data file before the sidecar makes every interrupted two-file update
+    fail closed: readers see either the old matching pair, the new matching
+    pair, or a mismatch they refuse to consume.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".partial")
-    torch.save(payload, temporary)
-    temporary.replace(path)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".partial", dir=path.parent
+    )
+    os.close(descriptor)
+    temporary = Path(temporary_name)
+    sidecar = recovery_sidecar(path)
+    side_descriptor, side_name = tempfile.mkstemp(
+        prefix=f".{sidecar.name}.", suffix=".partial", dir=path.parent
+    )
+    side_temporary = Path(side_name)
+    try:
+        torch.save(payload, temporary)
+        with temporary.open("rb+") as handle:
+            handle.flush()
+            os.fsync(handle.fileno())
+        with temporary.open("rb") as handle:
+            check = _torch_load_handle(handle)
+        if not isinstance(check, dict) or check.get("stage") != "cap-emf-1-recovery":
+            raise RuntimeError("refusing to publish an invalid CAP recovery payload")
+        with temporary.open("rb") as handle:
+            digest = _hash_handle(handle)
+        with os.fdopen(side_descriptor, "w", encoding="utf-8", newline="\n") as handle:
+            side_descriptor = -1
+            handle.write(f"{digest}  {path.name}\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+        os.replace(side_temporary, sidecar)
+        _fsync_directory(path.parent)
+        return digest
+    finally:
+        if side_descriptor >= 0:
+            os.close(side_descriptor)
+        temporary.unlink(missing_ok=True)
+        side_temporary.unlink(missing_ok=True)
 
 
-def _health_batch(
-    model: nn.Module, noise: torch.Tensor, batch: int
-) -> torch.Tensor:
-    chunks = []
+def _health_component_batch(
+    model: CAPPixelTransformer, noise: torch.Tensor, batch: int
+) -> dict[str, torch.Tensor]:
+    chunks: dict[str, list[torch.Tensor]] = {
+        "base": [],
+        "refiner_residual": [],
+        "final": [],
+    }
     with torch.no_grad():
         for start in range(0, len(noise), batch):
-            chunks.append(one_step_sample(model, noise[start : start + batch]).cpu())
-    return torch.cat(chunks)
+            block = one_step_components(model, noise[start : start + batch])
+            for name, value in block.items():
+                chunks[name].append(value.cpu())
+    return {name: torch.cat(values) for name, values in chunks.items()}
+
+
+def _parameter_gradient_norm(
+    model: nn.Module,
+    per_sample_objective: torch.Tensor,
+    index: int,
+    effective_batch: int,
+) -> float:
+    """Exact norm of one row's contribution to the effective-batch gradient."""
+    if effective_batch <= 0:
+        raise ValueError("effective batch must be positive")
+    parameters = [value for value in model.parameters() if value.requires_grad]
+    gradients = torch.autograd.grad(
+        per_sample_objective[index] / effective_batch,
+        parameters,
+        retain_graph=True,
+        allow_unused=True,
+    )
+    squared = torch.zeros((), device=per_sample_objective.device)
+    for gradient in gradients:
+        if gradient is not None:
+            squared = squared + gradient.detach().float().square().sum()
+    return float(squared.sqrt())
+
+
+def _sample_parameter_gradient_categories(
+    model: nn.Module,
+    result,
+    ledger: ObjectiveLedger,
+    effective_batch: int,
+    accumulation_steps: int,
+) -> None:
+    """Capture a sparse, stratified parameter-gradient audit.
+
+    At most one example per declared category is retained between log events.
+    The diagnostic is therefore inexpensive (a handful of extra backwards per
+    500 updates) while measuring a genuine parameter contribution rather than
+    inferring it from output residuals.
+    """
+    seen = {str(record["category"]) for record in ledger.parameter_gradient_samples}
+    corner = (result.t > 0.95) & (result.interval > 0.90)
+    masks = {
+        "diagonal": result.diagonal,
+        "ordinary_active": result.active & (result.coefficient <= 3) & ~corner,
+        "coefficient_tail": result.coefficient > 7,
+        "inference_corner": corner,
+    }
+    for category, mask in masks.items():
+        if category in seen:
+            continue
+        indices = mask.nonzero(as_tuple=True)[0]
+        if not indices.numel():
+            continue
+        index = int(indices[0])
+        norm = _parameter_gradient_norm(
+            model, result.per_sample_objective, index, effective_batch
+        )
+        ledger.add_parameter_gradient_sample(
+            {
+                "category": category,
+                "norm": norm,
+                "t": float(result.t[index]),
+                "r": float(result.r[index]),
+                "h": float(result.interval[index]),
+                "coefficient": float(result.coefficient[index]),
+                "target_rms": float(result.per_sample_target_rms[index]),
+                "output_gradient_norm": float(
+                    result.per_sample_output_gradient_norm[index] / accumulation_steps
+                ),
+            }
+        )
 
 
 def train_cap_unit(
@@ -177,13 +701,19 @@ def train_cap_unit(
     checkpoint: Callable[[int, dict, dict], None] | None = None,
     snapshot: Callable[[int, dict], None] | None = None,
     progress: Callable[[str], None] | None = None,
+    recovery_identity: dict | None = None,
+    recovery_authorization: dict | None = None,
+    unit_seed: int = 0,
 ) -> TrainOutcome:
     profile.validate()
     train = profile.train
     device = torch.device(device)
     announce = progress or (lambda message: None)
 
-    model = CAPPixelTransformer(profile.model, cap_seed("model-init")).to(device)
+    identity = _recovery_identity(profile, recovery_identity, unit_seed)
+    model = CAPPixelTransformer(
+        profile.model, replicated_cap_seed("model-init", unit_seed)
+    ).to(device)
     outcome = TrainOutcome(parameter_count=model.parameter_count())
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -193,14 +723,29 @@ def train_cap_unit(
     )
     ema = EMAState(model, train.ema_decay)
 
-    data_generator = torch.Generator().manual_seed(cap_seed("data-order"))
-    noise_generator = torch.Generator().manual_seed(cap_seed("endpoint-noise"))
-    time_generator = torch.Generator().manual_seed(cap_seed("time-triangle"))
-    flip_generator = torch.Generator().manual_seed(cap_seed("horizontal-flip"))
+    data_generator = torch.Generator().manual_seed(
+        replicated_cap_seed("data-order", unit_seed)
+    )
+    noise_generator = torch.Generator().manual_seed(
+        replicated_cap_seed("endpoint-noise", unit_seed)
+    )
+    time_generator = torch.Generator().manual_seed(
+        replicated_cap_seed("time-triangle", unit_seed)
+    )
+    diagonal_generator = (
+        torch.Generator().manual_seed(replicated_cap_seed("time-diagonal", unit_seed))
+        if profile.objective.diagonal_sampling == "fixed_count_first_draw"
+        else None
+    )
+    flip_generator = torch.Generator().manual_seed(
+        replicated_cap_seed("horizontal-flip", unit_seed)
+    )
 
     # Sealed train-only health noise: the same latents at every checkpoint, so
     # health movement is the model moving, not the sample moving.
-    health_generator = torch.Generator().manual_seed(cap_seed("health-noise"))
+    health_generator = torch.Generator().manual_seed(
+        replicated_cap_seed("health-noise", unit_seed)
+    )
     shape = (train.audit_samples, profile.model.channels) + (
         profile.model.image_size,
     ) * 2
@@ -209,68 +754,162 @@ def train_cap_unit(
         torch.randperm(len(pool), generator=health_generator)[: train.audit_samples]
     ]
 
+    objective_ledger = ObjectiveLedger()
     start_update = 0
+    planned_window_start = max(0, train.updates - profile.gate.clip_window_updates)
+    final_window_origin = planned_window_start
+    active_recovery_authorization: dict | None = None
+    strict_recovery = recovery_identity is not None or unit_seed != 0
+    if recovery_path is not None:
+        data_exists = recovery_path.exists()
+        sidecar_exists = recovery_sidecar(recovery_path).exists()
+        if sidecar_exists and not data_exists:
+            raise RuntimeError("CAP recovery has an orphan SHA sidecar")
+        if strict_recovery and data_exists != sidecar_exists:
+            raise RuntimeError("strict CAP recovery requires a matching SHA sidecar")
     if recovery_path is not None and recovery_path.exists():
-        payload = torch.load(recovery_path, map_location="cpu", weights_only=False)
-        if payload.get("stage") != "cap-emf-1-recovery":
-            raise RuntimeError("not a CAP-EMF-1 recovery file")
+        payload, _ = load_recovery_payload(
+            recovery_path,
+            require_sidecar=strict_recovery,
+            validate_counters=True,
+        )
+        recorded_identity = payload.get("recovery_identity")
+        if recorded_identity is None:
+            if recovery_identity is not None or unit_seed != 0:
+                raise RuntimeError(
+                    "recovery predates strict run identity and cannot resume a "
+                    "bound CAP2/replicated run"
+                )
+            announce("legacy recovery has no strict run identity")
+        elif recorded_identity != identity:
+            raise RuntimeError(
+                "recovery run identity differs from the requested configuration"
+            )
+        recorded_profile = payload.get("profile_name")
+        if recorded_profile is not None and recorded_profile != profile.name:
+            raise RuntimeError(
+                f"recovery belongs to profile {recorded_profile!r}, not {profile.name!r}"
+            )
         model.load_state_dict(payload["model"])
         optimizer.load_state_dict(payload["optimizer"])
         ema.load_recovery_state(payload["ema"], device)
         data_generator.set_state(payload["generators"]["data"])
         noise_generator.set_state(payload["generators"]["noise"])
         time_generator.set_state(payload["generators"]["time"])
+        if diagonal_generator is not None:
+            if "diagonal" not in payload["generators"]:
+                raise RuntimeError("fixed-count recovery lacks diagonal RNG state")
+            diagonal_generator.set_state(payload["generators"]["diagonal"])
         flip_generator.set_state(payload["generators"]["flip"])
         outcome.history = payload["history"]
         outcome.health = payload["health"]
         outcome.checkpoints = payload["checkpoints"]
         outcome.snapshots = payload.get("snapshots", [])
         outcome.wall_seconds = float(payload["wall_seconds"])
+        outcome.peak_memory_bytes = int(payload.get("peak_memory_bytes", 0))
+        outcome.peak_memory_reserved_bytes = int(
+            payload.get("peak_memory_reserved_bytes", 0)
+        )
         outcome.optimizer_updates = int(payload["optimizer_updates"])
         outcome.examples_seen = int(payload["examples_seen"])
         outcome.model_forwards = int(payload["model_forwards"])
+        outcome.objective_forward_calls = int(payload.get("objective_forward_calls", 0))
         outcome.clipped_updates = int(payload["clipped_updates"])
+        completed_updates = int(payload["completed_updates"])
+        previous_horizon = int(payload.get("planned_updates", train.updates))
+        promoted = previous_horizon != train.updates
+        recorded_authorization = payload.get("continuation_authorization")
+        cap2_bound = (
+            isinstance(recovery_identity, dict)
+            and recovery_identity.get("status") == "cap-emf2-run-identity"
+        )
+        if cap2_bound and train.updates == 300_000 and recovery_authorization is None:
+            raise RuntimeError("a promoted CAP2 recovery requires its authorization")
+        if promoted:
+            if previous_horizon >= train.updates or completed_updates >= train.updates:
+                raise RuntimeError(
+                    "recovery horizon may only be extended to a larger unfinished plan"
+                )
+            if recorded_authorization is not None:
+                raise RuntimeError(
+                    "a pre-promotion recovery unexpectedly carries continuation authority"
+                )
+            active_recovery_authorization = recovery_authorization
+            final_window_origin = max(completed_updates, planned_window_start)
+            # The promoted run has a new final-window interval.  Historical
+            # totals remain valid, but counters for the former horizon cannot
+            # be reused as if they belonged to the new final window.
+            outcome.clipped_updates_final_window = 0
+            outcome.final_window_updates = 0
+        else:
+            if recovery_authorization is not None:
+                if recorded_authorization != recovery_authorization:
+                    raise RuntimeError(
+                        "recovery is not bound to the requested continuation authority"
+                    )
+                active_recovery_authorization = recovery_authorization
+            elif recorded_authorization is not None:
+                # Non-CAP2 callers may resume an already-authorized recovery,
+                # but may not silently erase its provenance on the next save.
+                active_recovery_authorization = recorded_authorization
+            final_window_origin = int(
+                payload.get(
+                    "final_window_origin",
+                    max(0, previous_horizon - profile.gate.clip_window_updates),
+                )
+            )
+            outcome.clipped_updates_final_window = int(
+                payload.get("clipped_updates_final_window", 0)
+            )
+            outcome.final_window_updates = int(payload.get("final_window_updates", 0))
         outcome.nonfinite_updates = int(payload["nonfinite_updates"])
         outcome.best_rank_ratio = float(payload["best_rank_ratio"])
-        start_update = int(payload["completed_updates"])
+        objective_ledger.load_state_dict(payload.get("objective_ledger"))
+        start_update = completed_updates
         announce(f"resumed CAP-EMF-1 from update {start_update}")
 
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     started = time.time()
-    window_start = max(0, train.updates - profile.gate.clip_window_updates)
-
+    window_start = planned_window_start
     for update in range(start_update, train.updates):
         current_lr = learning_rate_at(update, train)
         for group in optimizer.param_groups:
             group["lr"] = current_lr
         optimizer.zero_grad(set_to_none=True)
         losses = []
-        times: list[torch.Tensor] = []
-        errors: list[torch.Tensor] = []
         for _ in range(train.accumulation_steps):
             order = torch.randint(
                 0, len(pool), (train.micro_batch,), generator=data_generator
             )
             clean = pool[order].to(device)
             if train.horizontal_flip:
-                flips = (
-                    torch.rand(train.micro_batch, generator=flip_generator) < 0.5
-                )
+                flips = torch.rand(train.micro_batch, generator=flip_generator) < 0.5
                 clean = flip_batch(clean, flips)
             noise = torch.randn(
                 clean.shape, generator=noise_generator, dtype=clean.dtype
             ).to(device)
             triangle = sample_time_triangle(
-                train.micro_batch, profile.objective, time_generator, device
+                train.micro_batch,
+                profile.objective,
+                time_generator,
+                device,
+                diagonal_generator=diagonal_generator,
             )
             result = emf_loss(model, clean, noise, triangle, profile.objective)
+            _sample_parameter_gradient_categories(
+                model,
+                result,
+                objective_ledger,
+                train.effective_batch,
+                train.accumulation_steps,
+            )
             (result.loss / train.accumulation_steps).backward()
             # Not a constant: the two stopped evaluations run on active rows
             # only, so this is batch + 2*active rather than 3*batch.
             outcome.model_forwards += result.model_evaluations
-            times.append(result.t.cpu())
-            errors.append(result.per_sample_raw_mse.cpu())
+            outcome.objective_forward_calls += result.model_forward_calls
+            objective_ledger.add(result, accumulation_steps=train.accumulation_steps)
             losses.append(
                 (
                     float(result.loss.detach()),
@@ -310,23 +949,44 @@ def train_cap_unit(
                     "learning_rate": current_lr,
                     "examples_seen": outcome.examples_seen,
                     "ema_updates": ema.updates,
-                    "time_buckets": bucket_by_time(
-                        torch.cat(times), torch.cat(errors)
-                    ),
+                    # Covers every row since the previous log, not one
+                    # arbitrarily selected microbatch.
+                    "objective_ledger": objective_ledger.summary(),
                     "wall_seconds": time.time() - started + outcome.wall_seconds,
                 }
             )
 
         if step % train.health_every == 0 or step in train.checkpoint_updates:
-            samples = train.audit_samples if step in train.checkpoint_updates else (
-                train.health_samples
+            if device.type == "cuda":
+                torch.cuda.synchronize(device)
+            health_started = time.time()
+            checkpoint_health = step in train.checkpoint_updates
+            samples = (
+                train.audit_samples
+                if checkpoint_health
+                else (train.health_samples)
             )
             model.eval()
-            generated = _health_batch(
+            raw_components = _health_component_batch(
                 model, health_noise[:samples], train.micro_batch * 2
             )
             model.train()
-            record = endpoint_health(generated, health_target[:samples])
+            raw_report = component_health(raw_components, health_target[:samples])
+            # Preserve the original flat final-output fields for compatibility
+            # while retaining the full source-attribution decomposition.
+            record = dict(raw_report["final"])
+            record["components"] = raw_report
+            if step in train.checkpoint_updates:
+                ema_model = deepcopy(model).to(device)
+                ema_model.load_state_dict(ema.state_dict())
+                ema_model.eval()
+                ema_components = _health_component_batch(
+                    ema_model, health_noise[:samples], train.micro_batch * 2
+                )
+                del ema_model
+                ema_report = component_health(ema_components, health_target[:samples])
+                record["ema"] = ema_report["final"]
+                record["ema_components"] = ema_report
             record["step"] = step
             record["ema_updates"] = ema.updates
             record["ema_initialization_weight"] = ema.initialization_weight()
@@ -341,6 +1001,15 @@ def train_cap_unit(
                 f"rank {record['effective_rank_ratio']:.3f} "
                 f"HH {record['haar_HH_ratio']:.3f}"
             )
+            if device.type == "cuda":
+                torch.cuda.synchronize(device)
+            health_seconds = time.time() - health_started
+            if checkpoint_health:
+                outcome.checkpoint_health_seconds += health_seconds
+                outcome.checkpoint_health_events += 1
+            else:
+                outcome.ordinary_health_seconds += health_seconds
+                outcome.ordinary_health_events += 1
 
         if step in train.checkpoint_updates and checkpoint is not None:
             record = checkpoint(step, model.state_dict(), ema.state_dict())
@@ -359,9 +1028,14 @@ def train_cap_unit(
         if recovery_path is not None and (
             step % train.recovery_every == 0 or step == train.updates
         ):
+            recovery_started = time.time()
             _atomic_save(
                 {
                     "stage": "cap-emf-1-recovery",
+                    "profile_name": profile.name,
+                    "recovery_identity": identity,
+                    "continuation_authorization": active_recovery_authorization,
+                    "planned_updates": train.updates,
                     "completed_updates": step,
                     "model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
@@ -370,6 +1044,11 @@ def train_cap_unit(
                         "data": data_generator.get_state(),
                         "noise": noise_generator.get_state(),
                         "time": time_generator.get_state(),
+                        **(
+                            {"diagonal": diagonal_generator.get_state()}
+                            if diagonal_generator is not None
+                            else {}
+                        ),
                         "flip": flip_generator.get_state(),
                     },
                     "history": outcome.history,
@@ -377,20 +1056,50 @@ def train_cap_unit(
                     "checkpoints": outcome.checkpoints,
                     "snapshots": outcome.snapshots,
                     "wall_seconds": time.time() - started + outcome.wall_seconds,
+                    "peak_memory_bytes": (
+                        max(
+                            outcome.peak_memory_bytes,
+                            int(torch.cuda.max_memory_allocated(device)),
+                        )
+                        if device.type == "cuda"
+                        else outcome.peak_memory_bytes
+                    ),
+                    "peak_memory_reserved_bytes": (
+                        max(
+                            outcome.peak_memory_reserved_bytes,
+                            int(torch.cuda.max_memory_reserved(device)),
+                        )
+                        if device.type == "cuda"
+                        else outcome.peak_memory_reserved_bytes
+                    ),
                     "optimizer_updates": outcome.optimizer_updates,
                     "examples_seen": outcome.examples_seen,
                     "model_forwards": outcome.model_forwards,
+                    "objective_forward_calls": outcome.objective_forward_calls,
                     "clipped_updates": outcome.clipped_updates,
+                    "clipped_updates_final_window": (
+                        outcome.clipped_updates_final_window
+                    ),
+                    "final_window_updates": outcome.final_window_updates,
+                    "final_window_origin": final_window_origin,
                     "nonfinite_updates": outcome.nonfinite_updates,
                     "best_rank_ratio": outcome.best_rank_ratio,
+                    "objective_ledger": objective_ledger.state_dict(),
                 },
                 recovery_path,
             )
+            outcome.recovery_io_seconds += time.time() - recovery_started
 
     outcome.wall_seconds += time.time() - started
     if device.type == "cuda":
-        outcome.peak_memory_bytes = int(torch.cuda.max_memory_allocated(device))
-        outcome.peak_memory_reserved_bytes = int(torch.cuda.max_memory_reserved(device))
+        outcome.peak_memory_bytes = max(
+            outcome.peak_memory_bytes,
+            int(torch.cuda.max_memory_allocated(device)),
+        )
+        outcome.peak_memory_reserved_bytes = max(
+            outcome.peak_memory_reserved_bytes,
+            int(torch.cuda.max_memory_reserved(device)),
+        )
     return outcome
 
 

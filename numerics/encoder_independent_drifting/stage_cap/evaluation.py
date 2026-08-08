@@ -4,11 +4,12 @@ Runs **once**, after the final checkpoint is frozen and hashed.  It is built and
 hashed into the preflight *before* the training run, so it cannot be written
 while looking at training curves and then tuned to flatter them.
 
-**FID follows the standard CIFAR-10 protocol**: 50 000 generated samples against
-the 50 000 training images.  That is the reason the target is unconditional
-CIFAR-10 rather than a single class — the headline number is comparable to
-published results instead of a small-sample-biased figure.  The 10 000 test
-images are opened only here, and only for the held-out cross-check.
+The historical evaluator compares 50 000 generated samples with the 50 000
+training images using this repository's feature extractor.  This is useful for
+internal comparisons but is **not** numerically comparable to published
+CleanFID.  ``stage_cap2.standard_metrics`` supplies the standardized CleanFID
+evaluation.  The 10 000 test images are opened only here, and only for the
+held-out cross-check.
 
 Every sample grid is written **beside its nearest-training-image grid**.  At
 960 epochs a model that memorizes produces beautiful samples, and the sample
@@ -117,7 +118,9 @@ def save_grid(images: torch.Tensor, path: Path, rows: int, columns: int) -> str:
     canvas = np.zeros((rows * height, columns * width, 3), dtype=np.uint8)
     for index in range(needed):
         r, c = divmod(index, columns)
-        canvas[r * height : (r + 1) * height, c * width : (c + 1) * width] = array[index]
+        canvas[r * height : (r + 1) * height, c * width : (c + 1) * width] = array[
+            index
+        ]
     path.parent.mkdir(parents=True, exist_ok=True)
     Image.fromarray(canvas).save(path)
     return file_sha256(path)
@@ -161,9 +164,7 @@ def evaluate(
     train = cifar10_train_pool(data_root)
     test = sealed_test_pool(data_root, acknowledge_sealed=True)
 
-    generated, _ = generate(
-        model, FID_SAMPLES, frozen.model, seeds.samples, device
-    )
+    generated, _ = generate(model, FID_SAMPLES, frozen.model, seeds.samples, device)
 
     generated_features = _features(generated, device)
     train_features = _features(train, device)
@@ -201,16 +202,16 @@ def evaluate(
         "memorization": memorization,
         "grids": grids,
         "counts": {
-            "generated": int(len(generated)),
-            "fid_reference_train": int(len(train)),
-            "sealed_test": int(len(test)),
+            "generated": len(generated),
+            "fid_reference_train": len(train),
+            "sealed_test": len(test),
             "manifold_subsample": MANIFOLD_SAMPLES,
         },
         "protocol_note": (
-            "FID uses the standard CIFAR-10 protocol: 50k generated against the "
-            "50k training images. Manifold statistics use a declared 10k "
-            "subsample because they are O(n^2) in memory. The sealed test set "
-            "is a held-out cross-check, not the headline reference."
+            "The historical in-repo feature distance uses 50k generated against "
+            "the 50k training images but is not published-comparable CleanFID. "
+            "Manifold statistics use a declared 10k subsample because they are "
+            "O(n^2) in memory. The opened test set is a report-only cross-check."
         ),
     }
 
@@ -258,7 +259,7 @@ def main() -> int:
     payload = load_checkpoint(Path(record["path"]), expected_sha=record["sha256"])
 
     device = resolve_device(args.device)
-    settings = configure(device)
+    settings = configure(device, allow_tf32=device.type == "cuda")
     precision = enable_tf32()
     model = CAPPixelTransformer(frozen.model, 0).to(device)
     model.load_state_dict(payload["state_dict"], strict=True)
@@ -290,10 +291,14 @@ def main() -> int:
         "results": results,
         "limits": [
             "One developmental unit; no replication claim.",
-            "FID is comparable to published CIFAR-10 numbers only with the "
-            "compute difference stated: 48M images seen against DDPM's 102M.",
-            "Manifold statistics condition on a 10k subsample and a fitted kNN "
-            "manifold.",
+            (
+                "The historical feature-distance called FID here is for internal "
+                "comparison only; use stage_cap2.standard_metrics for CleanFID."
+            ),
+            (
+                "Manifold statistics condition on a 10k subsample and a fitted kNN "
+                "manifold."
+            ),
             "This evaluation runs once. No metric here may select a checkpoint.",
         ],
     }
@@ -302,8 +307,10 @@ def main() -> int:
     print(f"FID vs sealed test: {results['fid_vs_sealed_test']:.3f}")
     print(f"KID              : {results['kid_vs_train']:.5f}")
     print(f"precision/recall : {results['precision_recall']}")
-    print(f"nearest-train/real median ratio: "
-          f"{results['memorization']['nearest_over_real_median']:.3f}")
+    print(
+        f"nearest-train/real median ratio: "
+        f"{results['memorization']['nearest_over_real_median']:.3f}"
+    )
     print(f"wrote {args.out} sha256={written}")
     return 0
 

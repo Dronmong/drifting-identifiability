@@ -1,0 +1,152 @@
+{
+  "calibration_kind": "single_real_real_reference_point",
+  "decision": "COMPLETE",
+  "left": {
+    "count": 25000,
+    "directory": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_cap2\\real_left_pngs",
+    "image_size": [
+      32,
+      32
+    ],
+    "mode": "RGB",
+    "png_manifest_sha256": "c905ca6440e2b7b63ee7146c78e92dffb73213f5fdff55820242b1fe80e90dfc",
+    "validation": "all files decoded; exact count, format, mode, and size checked"
+  },
+  "left_indices_sha256": "608243d4889e10037167a2c0bb9429bcd87eeeee4a2537c214fab363d0e115af",
+  "limits": [
+    "This is one observed real/real reference point, not an estimate of metric variance or a confidence interval.",
+    "The published train reference contains the same population as these subsets; matched-reference scores are sanity checks, not independent holdout scores.",
+    "Only CIFAR-10 train is used; the local test split remains closed."
+  ],
+  "metrics": {
+    "backend": "clean-fid",
+    "cleanfid_version": "0.1.35",
+    "comparison": "one pair of disjoint CIFAR-10 training subsets",
+    "direct_disjoint_pair": {
+      "clean_fid": 2.1362842548397794,
+      "clean_kid": 1.5583686186187152e-05
+    },
+    "feature_counts": {
+      "left": 25000,
+      "right": 25000
+    },
+    "kid_reference": {
+      "count": 50000,
+      "dimension": 2048,
+      "dtype": "float32",
+      "feature_sha256": "6d579b4f4586412b742c8f4f80e80958441e73c59decfec6310c87ac1c9cb806",
+      "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_cap2\\cifar10_train_clean_features.npz",
+      "population": "all 50,000 CIFAR-10 train images in dataset-index order",
+      "preprocessing": "clean-fid 0.1.35 clean Inception preprocessing",
+      "sha256": "621febf97915d384724e8bf464d3b44757b5167286c66d2d15273981f62706db"
+    },
+    "kid_seed": 20260831,
+    "matched_published_train_reference": {
+      "left": {
+        "clean_fid_cifar10_train": 0.5379875006746033,
+        "clean_kid_cifar10_train": -1.7939051551561535e-05
+      },
+      "right": {
+        "clean_fid_cifar10_train": 0.5420917103940042,
+        "clean_kid_cifar10_train": -3.414478728728681e-05
+      }
+    },
+    "mode": "clean",
+    "reference": "cifar10/train/32"
+  },
+  "provenance": {
+    "command": [
+      "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_cap2\\metric_calibration.py",
+      "--samples-per-side",
+      "25000",
+      "--left-dir",
+      "numerics/encoder_independent_drifting/stage_cap2/real_left_pngs",
+      "--right-dir",
+      "numerics/encoder_independent_drifting/stage_cap2/real_right_pngs",
+      "--kid-reference-features-out",
+      "numerics/encoder_independent_drifting/stage_cap2/cifar10_train_clean_features.npz",
+      "--metric-workers",
+      "0",
+      "--device",
+      "cuda",
+      "--out",
+      "numerics/encoder_independent_drifting/stage_cap2/metric_calibration.json"
+    ],
+    "cudnn_version": 90701,
+    "deterministic_algorithms": true,
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "image_quantization": "clip [-1,1], round 255*(x+1)/2 to uint8 RGB PNG",
+    "numerical_settings": {
+      "allow_tf32": false,
+      "capability": "sm_89",
+      "cuda_version": "12.6",
+      "device": "cuda",
+      "gpu_memory_gib": 6.0,
+      "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "torch_version": "2.7.1+cu126"
+    },
+    "packages": {
+      "Pillow": "12.2.0",
+      "clean-fid": "0.1.35",
+      "numpy": "1.26.4",
+      "torch": "2.7.1+cu126",
+      "torchvision": "0.22.1+cu126"
+    },
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.15",
+    "torch_cuda_version": "12.6"
+  },
+  "right": {
+    "count": 25000,
+    "directory": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_cap2\\real_right_pngs",
+    "image_size": [
+      32,
+      32
+    ],
+    "mode": "RGB",
+    "png_manifest_sha256": "28693e58a7ad83b914e60e26cce273565eca25ec3f00de9dc7295961b1477293",
+    "validation": "all files decoded; exact count, format, mode, and size checked"
+  },
+  "right_indices_sha256": "a9eec7faf588922da3277070281e80e36d4a9aa2db1a99dec7861a68b7d5d276",
+  "samples_per_side": 25000,
+  "seed": 20260806,
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+    "numerics/encoder_independent_drifting/config.py": "387ce4c8dbc27695daa07491218a2549da9a569d19fe8ca8fa8595ea25647f80",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+    "numerics/encoder_independent_drifting/stage_b2/metrics.py": "fe58e695a451842a8261cf014a74cd28071769295d1de8a510a9a00af47e0e54",
+    "numerics/encoder_independent_drifting/stage_cap/__init__.py": "658132676062900a979112fec281bb9817a15c8382be12f1a127b5a34333f879",
+    "numerics/encoder_independent_drifting/stage_cap/config.py": "15a65bef726daed8431eb5e46ee342d72e3b20daa325923dc1c37a6fdf5ab776",
+    "numerics/encoder_independent_drifting/stage_cap/data.py": "2b296064c2d3337a9f2af8dce7ee44a08d780eb12f93ad4a39b3ab6e746a9e66",
+    "numerics/encoder_independent_drifting/stage_cap/diagnostics.py": "8245951603159dab6c7ca0341969696322f2878c8108ead79aafea1707fa0995",
+    "numerics/encoder_independent_drifting/stage_cap/model.py": "afa3aae3b2db7825697f700ee22e0c32c0be99707cc4f37b6402914e3bb1b4f8",
+    "numerics/encoder_independent_drifting/stage_cap/monitoring.py": "858f0c70cca8a06e083e9c1b47905d5b60dbe166d403ce5ef41fa11d1cbd297e",
+    "numerics/encoder_independent_drifting/stage_cap/objective.py": "2581f014fb808b8202d873ecbf77b4440fcc48e8541de527ff9cd7ee1e153ffe",
+    "numerics/encoder_independent_drifting/stage_cap/training.py": "404647d6e3e383c033e4539ec617955c1aeeb541e52d59f4207b923105967b75",
+    "numerics/encoder_independent_drifting/stage_cap2/__init__.py": "25ff081070f7d4c7437282c0f6155e0e978dfd210d213efc85da8e94cb042aaa",
+    "numerics/encoder_independent_drifting/stage_cap2/artifacts.py": "3d298fb819e7e0a59b382629b938a111a993e622616d124d687ff5a5dc4dd40c",
+    "numerics/encoder_independent_drifting/stage_cap2/benchmark.py": "145e7ce8a5f4d173d6b68070e2d48310a761dd475c5777258181f63869c9aae7",
+    "numerics/encoder_independent_drifting/stage_cap2/checkpoint_forensics.py": "3f9a67b25e5ce5c9ad76210f307dc62c65b53d11783ed348c72eccb06d2fa7a1",
+    "numerics/encoder_independent_drifting/stage_cap2/config.py": "22b231696a7ef8af419338425348ae759632749a40517ca8699531e3bc11a5cb",
+    "numerics/encoder_independent_drifting/stage_cap2/development_evaluation.py": "e38d39aed6dec7c3600104ad729518031774fb54e6ea040b34cd167268f77d6a",
+    "numerics/encoder_independent_drifting/stage_cap2/early_admission.py": "d730d93553d8c4af3e7b73be5cf0e3770fb869dc3f67220c6dde722a0a900eda",
+    "numerics/encoder_independent_drifting/stage_cap2/gate_calibration.py": "de830f6859d88b563432c45d02c214b87d0a9d727a4aec0639b53e789c4b387b",
+    "numerics/encoder_independent_drifting/stage_cap2/hardware.py": "b39806c1ff735144dc8e3e74965196f07a694aa94b71806757e417588cafec4d",
+    "numerics/encoder_independent_drifting/stage_cap2/metric_calibration.py": "d47e74bc1500219d5eb96d6749009ca6d0c8d0a35a780fe0be514ad35340ee80",
+    "numerics/encoder_independent_drifting/stage_cap2/numerical_admission.py": "cb58df468f5075a90924d747e0e7b8743979ba4a40f32d041471a598abc56e82",
+    "numerics/encoder_independent_drifting/stage_cap2/positive_control.py": "abf003d05dbc1b0eafb9599bea7a533a8405ebdd838ce84e6613ed5a0b91186f",
+    "numerics/encoder_independent_drifting/stage_cap2/preflight.py": "cb4636a6845229446c2558f3cb7ad5aabc63bc80a2903cad20408e03602ba738",
+    "numerics/encoder_independent_drifting/stage_cap2/production_readiness.py": "acd902f766870a011c321d0759b720b8b4022e4ba5a391705378640bcbd128f1",
+    "numerics/encoder_independent_drifting/stage_cap2/promotion.py": "e31e313010af84f221938b505974461b404598d6d53fc0c6ef6319c6521ba2bd",
+    "numerics/encoder_independent_drifting/stage_cap2/requirements-eval.txt": "164cf6f05f18bfab33ce52c294acfee74c5aedc825c274e2cd01cd899573648e",
+    "numerics/encoder_independent_drifting/stage_cap2/requirements-positive-control.txt": "8ef08d0b943b7c893d2c8fe0808c6ad52ba09e0613d251f80b723c51958068f7",
+    "numerics/encoder_independent_drifting/stage_cap2/run_screen.py": "c81083ed15af5bf7df161b8cbaea52bdc39c9cb835f632f364efcb1addcea1c8",
+    "numerics/encoder_independent_drifting/stage_cap2/sampler_audit.py": "9b29099c380c40fa955f8ea9b7d8279284ebb52500c33e69f5fbbdb76cb55714",
+    "numerics/encoder_independent_drifting/stage_cap2/selection.py": "5d1d6df7532fc61f4e6dc811f3ea8eeb5cfb5eaae75f58d487427ca588b366e9",
+    "numerics/encoder_independent_drifting/stage_cap2/standard_metrics.py": "b28760bdc389a79a3f9d76dc37f07455fd80fc894575249af5396f24fd0bfa0e"
+  },
+  "status": "cap-emf2-real-real-calibration"
+}

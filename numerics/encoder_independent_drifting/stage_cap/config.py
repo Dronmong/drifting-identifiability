@@ -13,8 +13,9 @@ from dataclasses import dataclass
 # 5,000 automobile images, which at this horizon is 4,096 epochs: memorization
 # becomes the likely route to coherent-looking samples, and FID against a
 # 1,000-image reference is small-sample biased beyond rescue.  The full training
-# set gives 410 epochs and makes the standard 50k-sample FID protocol available,
-# so the headline number is comparable to published CIFAR-10 results.
+# set gives 410 epochs and makes a 50k-sample evaluation possible.  CAP-EMF-1's
+# historical in-repo feature metric is not a published-comparable CleanFID;
+# stage_cap2.standard_metrics provides that separately.
 TRAIN_POOL_SIZE = 50_000
 SEALED_TEST_POOL_SIZE = 10_000
 
@@ -41,6 +42,11 @@ class CAPModelConfig:
     mlp_ratio: float = 4.0
     dropout: float = 0.0
     time_embedding_dim: int = 256
+    # CAP-EMF-1 used 1000.0.  This is now explicit because its production
+    # finite-difference step of 0.01 advances the highest sinusoid by ten
+    # radians, so a successor must audit the pair (scale, delta) rather than
+    # treating either value as an isolated knob.
+    scalar_embedding_scale: float = 1_000.0
     # Protocol 5.4: per-block Linear(width, 6*width) modulation would cost
     # 18.9M parameters and push the model past the 65M ceiling.  A shared
     # conditioning trunk projected to this width, then per-block
@@ -84,6 +90,8 @@ class CAPModelConfig:
             )
         if self.time_embedding_dim < 4 or self.time_embedding_dim % 2:
             raise ValueError("time embedding dimension must be even and >= 4")
+        if self.scalar_embedding_scale <= 0:
+            raise ValueError("scalar embedding scale must be positive")
         if self.condition_dim < 4:
             raise ValueError("conditioning width must be at least four")
         if self.refiner_width <= 0 or self.refiner_depth < 1:
@@ -121,9 +129,30 @@ class CAPObjectiveConfig:
     adaptive_power: float = 1.0
     adaptive_epsilon: float = 0.01
     emf_delta: float = 0.01
-    # The EMF paper clamps its (1-t_paper) and (1-r_paper) denominators at
-    # 0.02.  Under this repository's data-at-zero clock those are t and r.
+    # The EMF paper uses 0.02 for singular divisions. Under this repository's
+    # data-at-zero clock, t is a divisor in the state update and loss weight,
+    # while r is the divisor in the correction coefficient. The multiplicative
+    # t in that coefficient is a numerator and must not be clamped.
     emf_denominator_floor: float = 0.02
+    # Historical CAP-EMF-1 default.  Successor arms use one of the two ordered
+    # iid modes below.  Keeping the legacy value as the default preserves the
+    # original run's exact scientific configuration as a matched control.
+    sampler_mode: str = "cap_conditional_logitnormal"
+    # CAP-EMF-1 clamped the sampled endpoint itself to 0.01.  Ordered successor
+    # arms set this to zero and clamp only the numerical denominator.
+    sampled_r_floor: float = 0.01
+    # CAP-EMF-1 used an independent Bernoulli mask after constructing its
+    # conditional endpoint.  CAP2 uses the released MeanFlow convention:
+    # choose an exact rounded number of diagonal rows from a separate RNG
+    # stream and set both endpoints to the *first unsorted draw*.  The latter
+    # matters for ordered samplers -- setting r=t after sorting would put
+    # diagonal rows at max(draw1, draw2) and bias half the batch toward noise.
+    diagonal_sampling: str = "legacy_bernoulli"
+    # How stopped evaluations are formed.  ``legacy_sparse`` is the historical
+    # active-row gather.  ``dense`` keeps current/future batch shapes matched;
+    # ``fp32_dense`` additionally disables TF32 for the stopped path and
+    # evaluates a separate stopped current so subtraction uses one precision.
+    stopped_evaluation: str = "legacy_sparse"
 
     def validate(self) -> None:
         if self.logit_std <= 0:
@@ -136,6 +165,28 @@ class CAPObjectiveConfig:
             raise ValueError("EMF local step must lie in (0, 0.5)")
         if not 0 < self.emf_denominator_floor <= 1:
             raise ValueError("EMF denominator floor must lie in (0, 1]")
+        allowed_samplers = {
+            "cap_conditional_logitnormal",
+            "ordered_logitnormal",
+            "ordered_uniform",
+        }
+        if self.sampler_mode not in allowed_samplers:
+            raise ValueError(f"unknown time sampler {self.sampler_mode!r}")
+        if not 0 <= self.sampled_r_floor < 1:
+            raise ValueError("sampled r floor must lie in [0, 1)")
+        if self.diagonal_sampling not in {
+            "legacy_bernoulli",
+            "fixed_count_first_draw",
+        }:
+            raise ValueError(f"unknown diagonal sampler {self.diagonal_sampling!r}")
+        if self.stopped_evaluation not in {
+            "legacy_sparse",
+            "dense",
+            "fp32_dense",
+        }:
+            raise ValueError(
+                f"unknown stopped evaluation mode {self.stopped_evaluation!r}"
+            )
 
 
 @dataclass(frozen=True)
@@ -200,7 +251,7 @@ class CAPTrainConfig:
         return math.log(0.5) / math.log(self.ema_decay)
 
     def ema_mature_at(self, half_lives: float = 5.0) -> int:
-        return int(round(half_lives * self.ema_half_life))
+        return round(half_lives * self.ema_half_life)
 
     def validate(self) -> None:
         if self.updates <= 0 or self.micro_batch <= 0 or self.accumulation_steps <= 0:
@@ -235,19 +286,40 @@ class CAPGateConfig:
 
     second_moment_ratio: float = 0.80
     centered_variance_ratio: float = 0.80
+    # Absolute real-data-calibrated lower rank.  This is distinct from the
+    # trajectory-retention rule below: a model that stays at rank ratio .5
+    # must not pass merely because it never deteriorated from .5.
+    minimum_effective_rank_ratio: float = 0.80
     rank_retention: float = 0.80
-    haar_hh_ratio: float = 0.50
-    haar_detail_ratio: float = 0.60
+    minimum_haar_LL_ratio: float = 0.60
+    minimum_haar_LH_ratio: float = 0.60
+    minimum_haar_HL_ratio: float = 0.60
+    minimum_haar_HH_ratio: float = 0.50
     maximum_clip_fraction: float = 0.05
     clip_window_updates: int = 20_000
+    # CAP-EMF-1's original gate only had lower bounds, so a cloud with 8.4x
+    # target rank and 6.4x target HH energy passed.  Successor gates are
+    # explicitly two-sided.  These broad defaults are mechanical safety
+    # limits; CAP2 calibrates tighter intervals from independent real subsets.
+    maximum_second_moment_ratio: float = 1.25
+    maximum_centered_variance_ratio: float = 1.25
+    maximum_effective_rank_ratio: float = 1.50
+    maximum_haar_LL_ratio: float = 1.75
+    maximum_haar_LH_ratio: float = 1.75
+    maximum_haar_HL_ratio: float = 1.75
+    maximum_haar_HH_ratio: float = 1.75
+    maximum_saturation_fraction: float = 0.02
 
     def validate(self) -> None:
         values = (
             self.second_moment_ratio,
             self.centered_variance_ratio,
+            self.minimum_effective_rank_ratio,
             self.rank_retention,
-            self.haar_hh_ratio,
-            self.haar_detail_ratio,
+            self.minimum_haar_LL_ratio,
+            self.minimum_haar_LH_ratio,
+            self.minimum_haar_HL_ratio,
+            self.minimum_haar_HH_ratio,
         )
         if any(not 0 < value <= 1 for value in values):
             raise ValueError("capability thresholds must lie in (0,1]")
@@ -255,6 +327,33 @@ class CAPGateConfig:
             raise ValueError("clip fraction limit must lie in (0,1)")
         if self.clip_window_updates <= 0:
             raise ValueError("clip window must be positive")
+        upper_values = (
+            self.maximum_second_moment_ratio,
+            self.maximum_centered_variance_ratio,
+            self.maximum_effective_rank_ratio,
+            self.maximum_haar_LL_ratio,
+            self.maximum_haar_LH_ratio,
+            self.maximum_haar_HL_ratio,
+            self.maximum_haar_HH_ratio,
+        )
+        if any(value < 1 for value in upper_values):
+            raise ValueError("two-sided upper capability limits must be >= 1")
+        lower_upper = (
+            (self.second_moment_ratio, self.maximum_second_moment_ratio),
+            (self.centered_variance_ratio, self.maximum_centered_variance_ratio),
+            (
+                self.minimum_effective_rank_ratio,
+                self.maximum_effective_rank_ratio,
+            ),
+            (self.minimum_haar_LL_ratio, self.maximum_haar_LL_ratio),
+            (self.minimum_haar_LH_ratio, self.maximum_haar_LH_ratio),
+            (self.minimum_haar_HL_ratio, self.maximum_haar_HL_ratio),
+            (self.minimum_haar_HH_ratio, self.maximum_haar_HH_ratio),
+        )
+        if any(lower > upper for lower, upper in lower_upper):
+            raise ValueError("a capability lower bound exceeds its upper bound")
+        if not 0 <= self.maximum_saturation_fraction < 1:
+            raise ValueError("saturation limit must lie in [0,1)")
 
 
 @dataclass(frozen=True)
@@ -342,18 +441,12 @@ def profile(name: str) -> CAPProfile:
 
 
 def enable_tf32() -> dict:
-    """Turn on TF32 matmuls and record it.  Measured 1.23-1.30x on Ada.
+    """Enable TF32 for ordinary model work and record the exact boundary.
 
-    TF32 is the right precision lever for this objective and BF16 is not.  The
-    EMF local difference computes ``(future - current) / 0.01`` from two
-    evaluations of the same network at nearby inputs -- a difference of nearly
-    equal quantities divided by a small number, which is the textbook setting
-    for catastrophic cancellation.  BF16 carries 2-3 significant decimal
-    digits, so in BF16 that quotient would be dominated by rounding noise.
-
-    TF32 reduces mantissa precision *inside* the matmul only: inputs, outputs
-    and accumulation stay FP32, so the subtraction happens at full precision
-    and the cancellation problem does not arise.
+    CAP-EMF-1 incorrectly claimed FP32 output storage made its stopped quotient
+    immune to TF32 input rounding.  It does not.  Successor objectives may
+    disable TF32 inside a matched stopped path while retaining it for the
+    graded prediction; the selected objective mode records that distinction.
     """
     import torch
 
@@ -364,8 +457,9 @@ def enable_tf32() -> dict:
         "cudnn_tf32": True,
         "storage_dtype": "fp32",
         "rationale": (
-            "TF32 keeps FP32 storage and accumulation, so the EMF local "
-            "difference is unaffected; BF16 would break it by cancellation"
+            "TF32 is enabled globally for throughput, but its safety is not "
+            "assumed for a finite-difference subtraction; fp32_dense objective "
+            "mode disables it around all stopped evaluations"
         ),
     }
 

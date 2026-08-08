@@ -237,11 +237,17 @@ on a completion marker.
 
 Ordered by expected value.
 
+> **Superseded design note.** The later extended audit rejected bundling a
+> higher sampled-`r` floor with endpoint changes: it moves training away from
+> the `r=0` inference boundary and does not isolate the sampler. The table is
+> retained as the original retrospective, while CAP2 follows the corrected
+> matched three-arm design in `EncoderIndependentCAPEMF2ScreenProtocol.md`.
+
 | # | change | why | cost |
 |---|---|---|---|
 | 1 | **Benchmark the real training loop** — 300 updates of `train_cap_unit`, read its own wall clock | the 32% error that cascaded through everything | trivial |
 | 2 | **Raise the EMF `r` floor** from 0.01 to ~0.05 | cuts the worst Equation-18 coefficient from ≈35 to ≈7; a fifth of every batch is currently ill-conditioned | one constant |
-| 3 | **Add a `t → 1` boundary fraction** — reserve ~10% of rows near the sampled configuration | the model is never trained where it is used | small objective change, needs its own audit |
+| 3 | **Audit inference-corner coverage** before any boundary mixture | the exact `(t,h)=(1,1)` point is unsampled and its joint neighborhood is sparse, although the endpoint bucket is not empty | small diagnostic first; any objective change needs its own audit |
 | 4 | **Ceilings in the capability gate** — rank ratio ≤ ~2, HH ratio ≤ ~2 | the gate cannot currently fail on divergence | trivial |
 | 5 | **Automatic sample grid every 50 k**, written beside the checkpoint | scalars misled me three times; images corrected me three times | trivial |
 | 6 | **Sync snapshots and checkpoints to local disk as written** | §3.8 — the best secondary result is now unreproducible | bandwidth only |

@@ -18,6 +18,8 @@ from . import (
     test_fixed_features,
     test_kernel_gradients,
     test_phase2,
+    test_pmf_s3,
+    test_pmf_s3r,
     test_positive_kernel_mixture,
     test_reforms,
     test_reproducibility,
@@ -37,6 +39,8 @@ MODULES = (
     ("F1 K=200 confirmation gate", test_f1_k200),
     ("F3B prescribed bridge", test_f3b),
     ("B1 paired spectral anchor", test_b1),
+    ("S3 one-step pixel MeanFlow foundation", test_pmf_s3),
+    ("S3R repaired one-step mechanisms", test_pmf_s3r),
 )
 
 

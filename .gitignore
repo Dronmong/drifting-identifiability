@@ -10,3 +10,5 @@
 *.pyc
 __pycache__/
 numerics/encoder_independent_drifting/f3b_checkpoints/
+numerics/encoder_independent_drifting/stage_cap2/*_pngs/
+numerics/encoder_independent_drifting/stage_cap2/*.npz.sha256

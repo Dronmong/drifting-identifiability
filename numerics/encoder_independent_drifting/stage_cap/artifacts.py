@@ -43,8 +43,13 @@ _DEPENDENCIES: tuple[str, ...] = (
     # the run, so it cannot be authored while looking at training curves.
     "stage_cap/evaluation.py",
     "stage_cap/model.py",
+    "stage_cap/monitoring.py",
     "stage_cap/objective.py",
     "stage_cap/preflight.py",
+    # The executable entry point is part of the scientific procedure.  The
+    # original manifest omitted it, allowing runtime overrides and artifact
+    # assembly to change without invalidating preflight.
+    "stage_cap/run_unit.py",
     "stage_cap/training.py",
     "config.py",
     "device.py",
