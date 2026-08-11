@@ -62,10 +62,22 @@ apt-get install -y --no-install-recommends \
   build-essential ca-certificates curl git libgl1 libglib2.0-0 tmux
 rm -rf /var/lib/apt/lists/*
 
-if ! command -v uv >/dev/null 2>&1; then
+# Install the pin whenever the visible uv is not already it -- not merely when
+# uv is absent.  The RunPod PyTorch image ships uv at /usr/bin/uv (0.9.0 as of
+# this template), so an "install only if missing" guard skipped the pinned
+# install and the check below then failed with no way to recover: the bootstrap
+# could never succeed on an image that preinstalls a different version.
+#
+# /usr/local/bin precedes /usr/bin in PATH, so the pinned binary shadows the
+# image's copy rather than fighting it. `hash -r` clears bash's command cache
+# so the freshly installed binary is the one re-checked.
+current_uv="$( { command -v uv >/dev/null 2>&1 && uv --version 2>/dev/null \
+  | awk '{print $2}'; } || true )"
+if [[ "$current_uv" != "$UV_VERSION" ]]; then
   curl --proto '=https' --tlsv1.2 -LsSf \
     "https://astral.sh/uv/${UV_VERSION}/install.sh" | \
     env UV_INSTALL_DIR=/usr/local/bin sh
+  hash -r
 fi
 
 installed_uv="$(uv --version | awk '{print $2}')"
