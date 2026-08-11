@@ -264,3 +264,207 @@ What remains:
 None of the above argues against building the mechanism. It argues for
 establishing the correction's value on an existing foundation first, at roughly
 a tenth the cost and against three baselines that already exist.
+
+---
+
+## 13. Reconciled decision and chronological build order
+
+This section records the final recommendation after cross-checking the review
+against `meanflowdrifting.md`, the B0/B1/B2/B3 artifacts, the partial B2.5
+artifact, and the cited Sinkhorn/WGF literature. It supersedes any reading of
+Section 12 as an authorization to launch the full pMF experiment immediately.
+
+### 13.1 Decision
+
+Proceed with the MeanFlow--Sinkhorn direction, but separate its two untested
+components:
+
+1. first establish that a fully balanced Sinkhorn correction improves the
+   already validated B0 generator;
+2. only after that correction passes, replace the multi-step B0 foundation
+   with a one-call pixel MeanFlow foundation;
+3. introduce nonuniform Haar geometry only after identity-pixel Sinkhorn has
+   established the value of balancing itself.
+
+This sequence minimizes attribution ambiguity. A direct pMF + Haar + Sinkhorn
+run changes the generator, time objective, discrepancy, estimator, geometry,
+and compute profile simultaneously. A failure would be scientifically weak
+because no component could be isolated.
+
+The B0 experiment is a mechanism screen, not the final one-step result. B0
+still uses its existing multi-step bridge. Its purpose is to determine whether
+the new distribution correction is worth carrying into the expensive pMF
+build.
+
+### 13.2 Corrections that must travel with the decision
+
+The following qualifications are part of the protocol, not editorial details:
+
+- Standard entropic cross-transport is biased, but its pathology must not be
+  universally described as variance inflation. Barycentric averaging commonly
+  creates shrinkage, blur, or collapse. The cross-minus-self construction is
+  retained because it debiases the chosen Sinkhorn functional.
+- An independent second generated batch is mandatory for the proposed
+  one-sided detached-target estimator. At finite epsilon a same-support self
+  plan is not literally always the identity, so the rationale is avoidance of
+  a diagonal-shortcut/degenerate empirical estimator, not the claim that the
+  mathematical self term ceases to exist.
+- The population Laplace field is identifying in the theorem's stated scope.
+  B2's rank risk comes from finite probes, finite batches, and stochastic
+  optimization; it must not be described as a failure of the population
+  converse.
+- B3 rules out the repository's matched-capacity raw-pixel smooth-Laplace
+  proxy, not every possible drifting or WGF generator.
+- Finite epsilon defines the exact regularized Sinkhorn objective. The
+  approximation errors relevant here are finite sampling, use of empirical
+  independent supports, and finite solver convergence. Calling epsilon itself
+  “estimator bias” is only meaningful relative to unregularized OT.
+- If `A = D H` includes unequal frozen subband normalization, equal nominal
+  Haar weights do not reproduce raw pixel L2. The exact raw-identity fallback
+  requires `D = c I` (or a separately implemented identity cost).
+- A one-class failure is strong evidence against this configuration, not a
+  universal impossibility theorem. A success is likewise a focused proof of
+  concept and does not extrapolate to ten classes or ImageNet.
+- ArXiv `1810.02733` is Genevay, Chizat, Bach, Cuturi, and Peyre's *Sample
+  Complexity of Sinkhorn Divergences*. It is not a Sanjabi et al. citation.
+
+### 13.3 Stage S0: identity-pixel Sinkhorn implementation
+
+Build the correction without changing B0's generator or raw-pixel geometry.
+For a primary generated endpoint batch `x`, an independent no-gradient
+generated batch `x_self`, and an independent real batch `y`:
+
+1. compute quadratic raw-pixel costs `C_qp(x,y)` and `C_qq(x,x_self)`;
+2. solve both rectangular entropic OT problems in the log domain with uniform
+   row and column marginals;
+3. require a frozen maximum *relative* marginal residual and an iteration cap;
+4. form conditional barycenters from `B * pi_qp` and `B * pi_qq`;
+5. set `V = T_p - T_q`;
+6. regress `x` toward the detached target `x + eta * V`;
+7. permit gradients only through the primary `x` branch.
+
+No diagonal mask is allowed. The two generated noise tensors, outputs, and
+roles must be independently sampled. Plans, real samples, self samples,
+velocity, and target must be detached.
+
+Before integration, test:
+
+- row and column marginal residuals on square and rectangular matrices;
+- agreement with analytically trivial constant/symmetric cases;
+- conditional barycentric rows summing to one;
+- finite-difference agreement between the detached-target parameter gradient
+  and the corresponding finite-sample Sinkhorn-energy direction on a tiny
+  deterministic system, under exactly the same entropic convention;
+- absence of gradients through the self and real branches;
+- deterministic replay and artifact serialization.
+
+### 13.4 Stage S1: cheapest decisive matched screen
+
+Clone the validated B0 state and compare, on the same data cursor, random
+states, optimizer state, update count, and evaluation allocations:
+
+| arm | continuation |
+|---|---|
+| `B0-control` | existing B0 objective only |
+| `B0-Laplace` | existing B0 + frozen B2 correction |
+| `B0-Sinkhorn-I` | existing B0 + identity-pixel balanced Sinkhorn correction |
+
+The primary causal comparison is `B0-Sinkhorn-I` versus `B0-control`.
+`B0-Laplace` is the mechanism incumbent and must use the already frozen B2
+configuration rather than a retuned version.
+
+Freeze Sinkhorn cost scaling, epsilon, solver tolerance, velocity step, event
+cadence, and gradient-ratio coefficient before the confirmatory units. Select
+epsilon using numerical transport diagnostics only: marginal convergence,
+normalized plan entropy, maximum conditional weight, velocity scale, and
+finite-value rate. Do not select it using FID, recall, or sample grids.
+
+The screen promotes Sinkhorn only if it:
+
+- decreases held-out Sinkhorn discrepancy or its preregistered finite-sample
+  proxy;
+- retains B0 coverage, effective rank, and memorization vetoes;
+- improves at least one quality/coverage axis over the matched control with a
+  consistent direction across the frozen units;
+- has valid two-batch and solver diagnostics throughout;
+- is competitive with B2 on mechanism improvement without reproducing B2's
+  rank loss.
+
+Lower training Sinkhorn loss alone is insufficient.
+
+### 13.5 Stage S2: geometry attribution
+
+Only if identity-pixel Sinkhorn passes, add a complete invertible Haar basis.
+Compare:
+
+- identity-pixel Sinkhorn;
+- orthonormal Haar with exact identity scaling `D = cI` as a code-equivalence
+  control;
+- positively reweighted/scaled complete Haar.
+
+The first two must agree numerically up to floating-point and solver tolerance.
+That equivalence test is required before interpreting the nonuniform arm.
+Every Haar subband remains present with a strictly positive weight. Subband
+statistics are estimated from the training split and frozen outcome-blind.
+
+This stage asks whether fixed multiscale conditioning helps. It must not be
+mixed into Stage S1, where the scientific question is whether two-sided
+balancing itself helps.
+
+### 13.6 Stage S3: one-step pMF foundation
+
+Implement and preflight pixel MeanFlow separately:
+
+- direct pixel prediction;
+- complete `(r,t)` triangle sampling;
+- validated JVP and stop-gradient placement;
+- one-call endpoint identity;
+- no VAE, learned feature encoder, perceptual training loss, or teacher;
+- a fixed one-class train/test split and memorization audit.
+
+Do not attach Sinkhorn until the pMF-only foundation produces recognizable,
+diverse samples. This gate prevents a failed foundation from being
+misdiagnosed as a failed correction.
+
+### 13.7 Stage S4: final one-step matched fork
+
+Clone a successful pMF foundation exactly and run:
+
+| arm | continuation |
+|---|---|
+| `pMF-control` | pMF only |
+| `pMF-Sinkhorn-I` | pMF + the frozen identity Sinkhorn mechanism from S1 |
+| `pMF-Sinkhorn-H` | optional, only if nonuniform Haar passed S2 |
+
+Log endpoint-correction versus pMF gradient cosine and norm ratio. Shared
+parameters couple the endpoint correction to the whole MeanFlow triangle.
+Persistent negative cosine is an early warning, but an abort requires a frozen
+combination of sustained conflict and degradation/instability; a negative
+cosine by itself is not proof of harmful optimization.
+
+The final success claim requires improved matched quality or coverage, valid
+diversity and memorization checks, and an exported sampler whose forward
+counter is exactly one. Sinkhorn, Haar, JVPs, reference samples, and the second
+generated batch remain training-only.
+
+### 13.8 B2.5's role
+
+Complete B2.5 if its remaining frozen units are affordable, but do not let it
+block S0--S1. Unit 500's apparent rank recovery is encouraging but not a
+confirmation. If all units confirm, the conclusion is that the Laplace term's
+finite-sample rank side effect can be protected by an anchor. That would make
+`B1+B2` a stronger incumbent; it would not remove the conservative scalar-flow
+and global-balancing reasons for testing Sinkhorn.
+
+### 13.9 Final claim boundary
+
+Before S4 succeeds, the project has a proposed one-step hybrid and a sequence
+of component tests. After S4 succeeds, the strongest honest claim is:
+
+> On a preregistered one-class pixel task, a fully balanced distributional
+> drift improved a matched one-call pixel MeanFlow generator without a VAE,
+> learned feature encoder, perceptual training loss, or extra inference call.
+
+It remains a MeanFlow--Drifting hybrid while the pMF loss is active. A short
+distribution-only takeover may later test the stronger “pure Sinkhorn
+drifting” claim, but it is not part of the initial promotion gate.

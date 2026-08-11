@@ -134,6 +134,21 @@ class CAPObjectiveConfig:
     # while r is the divisor in the correction coefficient. The multiplicative
     # t in that coefficient is a numerator and must not be clamped.
     emf_denominator_floor: float = 0.02
+    # Separate floor for the *coefficient* denominator only, i.e. the r in
+    # (t-r-delta)*t/r.  ``None`` resolves to ``emf_denominator_floor``, which
+    # preserves CAP-EMF-1 exactly.
+    #
+    # This exists because one constant was serving three unrelated roles: the
+    # Euler state divisor (clamps t), the 1/t^2 loss weight (clamps t), and the
+    # coefficient denominator (clamps r).  Only the last one needs raising.
+    # Measured over 2,000,000 ordered-uniform draws, raising the shared
+    # constant to 0.10 would also have quartered the loss weight on the ~1% of
+    # rows with t < 0.10 -- an unintended change to the objective.
+    #
+    # r -> 0 is simultaneously the inference corner the sampler must train and
+    # the singularity of Equation 18, so the two cannot be separated in the
+    # time law; they separate here instead.
+    coefficient_denominator_floor: float | None = None
     # Historical CAP-EMF-1 default.  Successor arms use one of the two ordered
     # iid modes below.  Keeping the legacy value as the default preserves the
     # original run's exact scientific configuration as a matched control.
@@ -154,6 +169,13 @@ class CAPObjectiveConfig:
     # evaluates a separate stopped current so subtraction uses one precision.
     stopped_evaluation: str = "legacy_sparse"
 
+    @property
+    def resolved_coefficient_floor(self) -> float:
+        """The r-clamp actually applied in the correction coefficient."""
+        if self.coefficient_denominator_floor is None:
+            return self.emf_denominator_floor
+        return self.coefficient_denominator_floor
+
     def validate(self) -> None:
         if self.logit_std <= 0:
             raise ValueError("logit standard deviation must be positive")
@@ -165,6 +187,10 @@ class CAPObjectiveConfig:
             raise ValueError("EMF local step must lie in (0, 0.5)")
         if not 0 < self.emf_denominator_floor <= 1:
             raise ValueError("EMF denominator floor must lie in (0, 1]")
+        if self.coefficient_denominator_floor is not None and not (
+            0 < self.coefficient_denominator_floor <= 1
+        ):
+            raise ValueError("coefficient denominator floor must lie in (0, 1]")
         allowed_samplers = {
             "cap_conditional_logitnormal",
             "ordered_logitnormal",

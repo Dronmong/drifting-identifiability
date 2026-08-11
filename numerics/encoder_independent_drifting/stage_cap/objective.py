@@ -284,7 +284,7 @@ def emf_loss(
         # overweight the correction on the below-floor rows that already carry
         # the largest 1/t^2 regression weight.
         * t
-        / r.clamp_min(config.emf_denominator_floor)
+        / r.clamp_min(config.resolved_coefficient_floor)
     )
     target = clean + coefficient[:, None, None, None] * quotient
     residual = current - target.detach()

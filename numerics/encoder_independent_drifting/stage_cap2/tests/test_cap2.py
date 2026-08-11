@@ -522,3 +522,44 @@ def _run_all() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(1 if _run_all() else 0)
+
+
+def test_legacy_arm_reproduces_cap1_coefficient_floor():
+    """The matched control must stay byte-identical to CAP-EMF-1."""
+    legacy = screen_profile("legacy", "local_1000_d0002_fp32", smoke=True)
+    assert legacy.objective.coefficient_denominator_floor is None
+    assert legacy.objective.resolved_coefficient_floor == (
+        legacy.objective.emf_denominator_floor
+    )
+    assert legacy.objective.sampled_r_floor == 0.01
+
+
+def test_ordered_arms_raise_only_the_coefficient_floor():
+    """The Euler divisor and the 1/t^2 weight must not move with it.
+
+    One constant served three roles. Raising the shared value to 0.10 would
+    also have quartered the loss weight on rows with t < 0.10.
+    """
+    ordered = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
+    assert ordered.objective.resolved_coefficient_floor == 0.10
+    assert ordered.objective.emf_denominator_floor == 0.02
+    assert ordered.objective.sampled_r_floor == 0.0
+
+
+def test_production_arm_coefficient_tail_is_gated_and_passes():
+    """ordered_uniform is the production arm; its tail must be enforced.
+
+    At the inherited 0.02 floor it carried CAP-EMF-1's ill-conditioning
+    (P(coefficient > 7) = 4.05%, q99.9 = 44.9) and the gate skipped it.
+    """
+    from ..sampler_audit import audit_sampler
+
+    report = audit_sampler(
+        arm="ordered_uniform", numerical="local_1000_d0002_fp32", count=200_000
+    )
+    assert "coefficient_tail_control" in report["checks"]
+    assert "coefficient_extreme_tail_control" in report["checks"]
+    assert report["failed"] == []
+    assert report["coefficient_tail_fraction"]["gt_15"] == 0.0
+    # The corner the sampler exists to train must survive the clamp.
+    assert abs(report["inference_corner_fraction_t95_h90"] - 0.00375) < 0.0006

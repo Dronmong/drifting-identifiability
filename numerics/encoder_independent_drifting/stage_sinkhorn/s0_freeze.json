@@ -1,0 +1,68 @@
+{
+  "b0_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f3b_confirmatory.json",
+  "b0_sha256": "cd60e98a773fd4c575817cd03dffbaee605e3085402a2ae318c439c2c647f636",
+  "claim_scope": "Identity-pixel balanced cross-minus-independent-self correction for the matched S1 component screen; not yet a model result.",
+  "config": {
+    "check_every": 1,
+    "correction_every": 10,
+    "correction_nfe": 8,
+    "epsilon": 0.1,
+    "eta": 0.05,
+    "event_gradient_ratio": 0.25,
+    "max_iterations": 100,
+    "min_iterations": 2,
+    "primary_batch": 64,
+    "real_batch": 128,
+    "relative_tolerance": 0.001,
+    "self_batch": 64
+  },
+  "cost_scale_indices_sha256": "afca646f9f1732fee30d54761d483cbd2c99c25f6fdd14d27b4578fdfe243c4a",
+  "cost_scale_samples": 256,
+  "decision": "GO-S1",
+  "epsilon": 0.1,
+  "lambda_event": 0.0006913055808885343,
+  "mechanical_summary": {
+    "all_mechanical_gates_pass": true,
+    "cap_hits": 0,
+    "conditional_max_weight_maximum": 0.2753645181655884,
+    "cross_entropy_mean": 0.8732308944066366,
+    "flow_correction_gradient_cosine_range": [
+      0.6478372410243077,
+      0.7648812395176866
+    ],
+    "frozen_lambda_ratio_range": [
+      0.1461444123270556,
+      0.4276591831655641
+    ],
+    "gradient_ratio_passes": true,
+    "maximum_iterations": 9,
+    "maximum_relative_marginal_error": 0.0007345676422119141,
+    "mean_event_seconds": 1.4222746333301377,
+    "memory_passes": true,
+    "peak_allocated_memory_fraction": 0.8750960579350215,
+    "peak_memory_allocated_bytes": 5634551808,
+    "peak_memory_reserved_bytes": 5739905024,
+    "self_entropy_mean": 0.9547248681386312,
+    "solver_passes": true,
+    "update_to_sample_rms_mean": 0.031592242419719696
+  },
+  "preflight_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_sinkhorn\\s0_preflight_v3.json",
+  "preflight_sha256": "ba5016db3acc7dfc60de1cc519660eceab896a781938bccd1048f4fddfff83ae",
+  "protocol": "numerics/EncoderIndependentSinkhornProtocol.md",
+  "protocol_sha256": "3f57f77917dc449bfd0316dc5297d3ac9bb1d3cbc4995ec55dfd4e4b35377907",
+  "selection_reading": "The selected coupling is the less concentrated and faster of the eligible candidates; this is a numerical freeze, not evidence of better generated samples.",
+  "selection_rule": "Among candidates passing every mechanical gate, minimize maximum conditional coupling weight; then maximum iterations, event time, and epsilon. No model-quality metric or sample image is read.",
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/b1.py": "324ee2d31b6beb1db928c7b333e23576fe511391e4d3c813f87c5791bda283d0",
+    "numerics/encoder_independent_drifting/cifar.py": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/f3b.py": "bc56e4132cc50e1f92cd689ac0bba55ec25492f38fe886a1a737a2d02d0bca19",
+    "numerics/encoder_independent_drifting/f3b_freeze.py": "aed3c96c8671dc94b498d65cb1018a21b2b9bfc6df46c745585602638ac009c3",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/core.py": "7b6231f87a73aa0aa828c6f864865afa56b70d3a4cd5aa6d058ea79ccd4f6d2a",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/preflight.py": "38a1704701b0536401add74d7e62b16dccdeabc923592ee34a73cb0fd9b5fb8f",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/training.py": "da5c0a23ffc397861ca930f946892a794fc1326125a207591852429f76cb03b9"
+  },
+  "status": "sinkhorn-s0-freeze",
+  "target_cost_scale": 693.6276245117188
+}

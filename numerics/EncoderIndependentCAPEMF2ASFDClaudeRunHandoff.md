@@ -61,9 +61,11 @@ Required provider layout:
 - no second GPU or autoscaling worker.
 
 `/workspace/runpod_operator.env` must contain the exact release commit, Network
-Volume ID and console-displayed Pod hourly price. The default campaign ceiling
-is USD 75 with USD 25 reserved for ASFD. This is a fail-closed ceiling, not a
-spending target. The user has said additional budget may be considered, but you
+Volume ID and console-displayed Pod hourly price. The campaign ceiling is
+**USD 95** with USD 25 reserved for ASFD. This is a fail-closed ceiling, not a
+spending target; the measured realistic cost is USD 42–45. The earlier USD 75
+default would have failed closed at admission — see the protocol's "Why the
+ceiling is 95" note. The user has said additional budget may be considered, but you
 must never raise the ceiling silently. Once `prepare` seals this file, any
 change invalidates the campaign and requires a deliberately fresh setup.
 

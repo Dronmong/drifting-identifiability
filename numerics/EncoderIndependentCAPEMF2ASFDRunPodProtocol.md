@@ -83,7 +83,7 @@ export RUNPOD_EXPECTED_GPU="RTX 4090"
 export RUNPOD_NETWORK_VOLUME_GIB="200"
 export RUNPOD_STORAGE_USD_PER_GIB_MONTH="0.07"
 export CAP_ASFD_MICRO_BATCH="16"
-export CAP_ASFD_MAX_TOTAL_COST="75"
+export CAP_ASFD_MAX_TOTAL_COST="95"
 export CAP_ASFD_ASFD_RESERVE="25"
 EOF
 chmod 600 /workspace/runpod_operator.env
@@ -94,6 +94,17 @@ The `prepare` phase seals this file's SHA-256. Changing the price, release,
 volume identity, batch split or budget after evidence begins fails closed. If
 the production benchmark rejects the envelope, abandon this fresh campaign and
 deliberately create a new one; do not edit a consumed authorization.
+
+**Why the ceiling is 95 and not 75.** The gate is
+`conservative_training * 1.15 + 10 + ASFD_RESERVE <= MAX_TOTAL_COST`, and
+`conservative_raw_loop_upper_cost` deliberately projects the 2,000-update
+benchmark rate — which crams one recovery, one snapshot, one checkpoint pair
+and two health evaluations into those 2,000 updates — across all 750,000. At
+CAP-EMF-1's measured 0.2289 s/update that lands near 0.31 s/update, giving
+about USD 49 conservative and an authorized upper near USD 91. A ceiling of 75
+would fail closed on a run whose realistic cost is USD 42–45. The ceiling is a
+fail-closed bound, not a forecast; the measured projection at admission remains
+authoritative and the reserve still protects ASFD.
 
 ## 4. Bootstrap without training
 

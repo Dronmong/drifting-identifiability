@@ -42,7 +42,7 @@ def audit_sampler(
     coefficient = (
         (h - delta).clamp_min(0)
         * t
-        / r.clamp_min(frozen.objective.emf_denominator_floor)
+        / r.clamp_min(frozen.objective.resolved_coefficient_floor)
     )
     qs = torch.tensor([0.5, 0.9, 0.95, 0.99, 0.999], dtype=torch.float64)
     values = torch.quantile(coefficient, qs)
@@ -66,9 +66,20 @@ def audit_sampler(
     if arm == "ordered_uniform":
         # P(t>.95, h>.90) = .0075 before the 50% diagonal replacement.
         checks["uniform_corner_probability"] = abs(corner - 0.00375) < 0.00035
-    if arm == "ordered_logitnormal":
-        checks["coefficient_tail_control"] = (
-            float((coefficient > 7).double().mean()) < 1e-3
+    if arm != "legacy":
+        # Applied to every successor arm, not just ordered_logitnormal.  Gating
+        # only the arm whose tail was already clean left the production arm --
+        # ordered_uniform -- measured but unenforced at CAP-EMF-1's level of
+        # ill-conditioning.  ordered_uniform cannot reach zero here because its
+        # corner mass is real, so the bound is the tail that actually damaged
+        # CAP-EMF-1: no more than 2% of rows above a coefficient of 7, and
+        # nothing beyond 15.
+        share_above_7 = float((coefficient > 7).double().mean())
+        checks["coefficient_tail_control"] = share_above_7 < (
+            1e-3 if arm == "ordered_logitnormal" else 2e-2
+        )
+        checks["coefficient_extreme_tail_control"] = (
+            float((coefficient > 15).double().mean()) < 1e-4
         )
     if arm != "legacy":
         checks["no_sampled_r_floor"] = frozen.objective.sampled_r_floor == 0.0

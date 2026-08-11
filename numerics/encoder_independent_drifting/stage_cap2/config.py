@@ -70,10 +70,23 @@ NUMERICAL_CANDIDATES: dict[str, NumericalCandidate] = {
 }
 
 
+#: ``arm -> (sampler_mode, sampled_r_floor, coefficient_denominator_floor)``.
+#:
+#: ``legacy`` carries ``None`` so it reproduces CAP-EMF-1 byte for byte and
+#: remains a valid matched control.
+#:
+#: The ordered arms raise the coefficient floor to 0.10.  Measured over
+#: 2,000,000 draws, ``ordered_uniform`` at the inherited 0.02 floor has
+#: essentially CAP-EMF-1's ill-conditioning -- P(coefficient > 7) = 4.05%
+#: against legacy's 4.22%, and a worse extreme tail (q99.9 44.9 vs 37.4).  That
+#: is not incidental: r -> 0 is both the inference corner the sampler exists to
+#: train and the singularity of Equation 18.  Raising the floor decouples them,
+#: cutting the worst coefficient from 49.96 to 9.99 and P(>7) from 4.05% to
+#: 1.51%, while leaving the corner mass P(t>0.95, h>0.90) unchanged at 0.00374.
 SAMPLER_ARMS = {
-    "legacy": ("cap_conditional_logitnormal", 0.01),
-    "ordered_logitnormal": ("ordered_logitnormal", 0.0),
-    "ordered_uniform": ("ordered_uniform", 0.0),
+    "legacy": ("cap_conditional_logitnormal", 0.01, None),
+    "ordered_logitnormal": ("ordered_logitnormal", 0.0, 0.10),
+    "ordered_uniform": ("ordered_uniform", 0.0, 0.10),
 }
 
 
@@ -98,7 +111,7 @@ def screen_profile(
         raise ValueError(f"unknown CAP2 sampler arm {arm!r}")
     candidate = numerical_candidate(numerical)
     base = cap1_profile("smoke" if smoke else "capability")
-    sampler_mode, sampled_r_floor = SAMPLER_ARMS[arm]
+    sampler_mode, sampled_r_floor, coefficient_floor = SAMPLER_ARMS[arm]
 
     if smoke:
         updates = 4
@@ -137,6 +150,7 @@ def screen_profile(
             base.objective,
             sampler_mode=sampler_mode,
             sampled_r_floor=sampled_r_floor,
+            coefficient_denominator_floor=coefficient_floor,
             diagonal_sampling="fixed_count_first_draw",
             emf_delta=candidate.delta,
             stopped_evaluation=candidate.stopped_evaluation,

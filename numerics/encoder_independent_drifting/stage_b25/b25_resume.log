@@ -1,0 +1,37 @@
+=== B2.5 resume verification ===
+  [PASS] preflight artifact          b25_preflight.json 9eedf9580a730455
+  [PASS] preflight verdict           GO
+  [PASS] source manifest equality    27 files, manifest identical
+  [PASS] stage configuration         B25Config matches preflight
+  [PASS] protocol document           EncoderIndependentB25Protocol.md
+  [PASS] B1 freeze                   b1_freeze.json
+  [PASS] B2 freeze                   b2_freeze.json
+  [PASS] shifted data pool           cinic10-imagenet-only-b25-disjoint-balanced-600-seed-20260801
+  [PASS] unit 500 artifact           b25_unit_500.json 229dff09ddba1753
+  [PASS] unit 500 preflight binding  bound to this preflight
+  [PASS] unit 500 factorial          B0/B1/B1B2/B2
+  [PASS] units pending               completed [500]; pending [501, 502]
+  [PASS] orphaned checkpoints        none
+  [PASS] aggregate not yet written   b25_development.json
+  [PASS] disk headroom               186.6 GiB free (need >= 5)
+  [PASS] cuda device                 NVIDIA GeForce RTX 4050 Laptop GPU, 6.00 GiB total, unit 500 peaked at 4.97 GiB
+
+  planned work: units [501, 502] (~11.0 h at unit 500's measured rate), then aggregate
+
+  GO: every hashed input matches what unit 500 ran against.
+Skipping completed B2.5 unit 500
+=== B2.5 unit 501 === (started 2026-08-04 00:10:50)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\stage_b25\run_unit.py", line 493, in <module>
+    main()
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\stage_b25\run_unit.py", line 285, in main
+    frozen = load_frozen_inputs(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\stage_b25\artifacts.py", line 92, in load_frozen_inputs
+    b1 = load_b1_freeze(b1_path)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dronm\Documents\drifting_identifiability\numerics\encoder_independent_drifting\b1_freeze.py", line 175, in load_freeze
+    raise RuntimeError("B1 executable sources changed after freeze")
+RuntimeError: B1 executable sources changed after freeze

@@ -1,0 +1,47 @@
+{
+  "arms": {
+    "alpha": {
+      "clipping_fraction": 0.0,
+      "ema_effective_rank_ratio": 3.880707992670303,
+      "ema_second_moment_ratio": 0.218462226609976,
+      "ema_variance_ratio": 0.19915510605141654,
+      "gate_passes": false,
+      "peak_memory_bytes": 1398998528,
+      "raw_effective_rank_ratio": 1.240252520413117,
+      "raw_second_moment_ratio": 0.42537587505674623,
+      "raw_variance_ratio": 0.42412058668409125,
+      "wall_seconds": 3931.853212594986
+    },
+    "emf": {
+      "clipping_fraction": 0.04992,
+      "ema_effective_rank_ratio": 5.118958128548183,
+      "ema_second_moment_ratio": 0.4244165871675217,
+      "ema_variance_ratio": 0.44939641779708733,
+      "gate_passes": false,
+      "peak_memory_bytes": 1398999552,
+      "raw_effective_rank_ratio": 1.6612467911729618,
+      "raw_second_moment_ratio": 0.49493654667264636,
+      "raw_variance_ratio": 0.5043632163940885,
+      "wall_seconds": 4815.313533067703
+    },
+    "pmf": {
+      "clipping_fraction": 0.0,
+      "ema_effective_rank_ratio": 2.72295419979554,
+      "ema_second_moment_ratio": 0.22269020316450247,
+      "ema_variance_ratio": 0.15508548801319244,
+      "gate_passes": false,
+      "peak_memory_bytes": 3132258304,
+      "raw_effective_rank_ratio": 0.34917579950816485,
+      "raw_second_moment_ratio": 0.5122432580082448,
+      "raw_variance_ratio": 0.4389485534342734,
+      "wall_seconds": 9052.92743396759
+    }
+  },
+  "claim_boundary": "one developmental unit can detect whether collapse repairs worked; it cannot establish image quality, reproducibility, or superiority",
+  "examples_per_arm": 800000,
+  "mechanical_conclusion": "no repair cleared the predeclared train-only collapse gate",
+  "passing_arms": [],
+  "source_sha256": "13c7066c9cadc075ee8422819a2d4f0f0d5bc1c50a67a1a4e34152a2f9a2d7b9",
+  "status": "s3r-one-unit-train-only-summary",
+  "unit": 800
+}

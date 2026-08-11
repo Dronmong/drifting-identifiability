@@ -866,3 +866,19 @@ Still intentionally blocked, and necessarily production-specific:
 No paid or long training run has been launched. The single
 `stage_cap2.production_readiness` entry point performs only the four remaining
 gates and has no route to training. All must return `GO` before a screen starts.
+
+### Checkpoint correction (2026-08-08)
+
+The implementation-status text above is a historical snapshot, not a current
+authorization. A later release-readiness audit changed the source manifest and
+protocol to repair the exact endpoint gate, genuine disk resume, durable
+off-instance recovery commits, aggregate budget ceiling, metric-margin policy,
+legacy-control continuation, measured inference call, portable evaluation
+references, preserved CleanFID features, and the terminal 300k verifier.
+
+Consequently, the numeric values above remain useful observations but their old
+artifacts are **source-stale** for the next run. Regenerate every source-bound
+local artifact under a fresh filename before production readiness. The live
+repair ledger and chronological gate are in
+`EncoderIndependentCAPEMF2CheckpointAudit.md`; the frozen execution commands
+are in `EncoderIndependentCAPEMF2ScreenProtocol.md`.

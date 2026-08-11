@@ -1,0 +1,163 @@
+{
+  "allocation_digests": {
+    "audit_0_floor_negatives": "31719cb3e9c8adbf",
+    "audit_0_positives": "4bc10af75ae0c249",
+    "audit_0_probe_centres": "89cf3e9427e9baca",
+    "audit_1_floor_negatives": "ef7bfa1cabbc954d",
+    "audit_1_positives": "746592abf60d92f2",
+    "audit_1_probe_centres": "14e11bb8a5593788",
+    "audit_2_floor_negatives": "dafedae22153b98d",
+    "audit_2_positives": "3af0004ca9f93f45",
+    "audit_2_probe_centres": "1bcb053fb9bb8453",
+    "audit_3_floor_negatives": "c75bd31c4f09fa7f",
+    "audit_3_positives": "eade846981e22f18",
+    "audit_3_probe_centres": "5ed484fec8a0656e",
+    "audit_4_floor_negatives": "3c1f13a67c9e7a0f",
+    "audit_4_positives": "08204592e5ec0e5c",
+    "audit_4_probe_centres": "5c79ae3a56e7ad50",
+    "audit_5_floor_negatives": "1b37aa5f8d1ebf0d",
+    "audit_5_positives": "6f78675526a5bdf2",
+    "audit_5_probe_centres": "f3d32facd80c1a38",
+    "control_0": "db5c6c3a14f8caa4",
+    "control_1": "d6e938674bed22ed",
+    "control_2": "bc5e07698ed5b00a",
+    "reference": "cb6a06d91b59a8ab",
+    "source_id": "81652f4082643a27",
+    "unused": "748c6ccf1d5ccfbb"
+  },
+  "audit_config": {
+    "batch": 128,
+    "effective_rank_retention": 0.8,
+    "nfe": 32,
+    "paired_wins_required": 3,
+    "recall_noninferiority_margin": 0.025,
+    "reduction_fraction": 0.25,
+    "replicates": 4
+  },
+  "b0_artifact": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\f3b_confirmatory.json",
+  "b0_sha256": "cd60e98a773fd4c575817cd03dffbaee605e3085402a2ae318c439c2c647f636",
+  "b2_baseline": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_baseline.json",
+  "b2_baseline_sha256": "745cd302ad270ad0aa8c2ef35a1f3ff9234835c8c46c7b391418385880a142b0",
+  "b2_freeze": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_freeze.json",
+  "b2_freeze_sha256": "4345e6e22dd950211d4ce9d56aa87e266569b02cb0f7e82be1ce02ead4d10c45",
+  "b2_result": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\b2_confirmatory.json",
+  "b2_result_sha256": "b962baa01245a16de112493c3943d6010b0e2795249e79223dd2e2496e6b59af",
+  "claim_scope": "two-unit developmental identity-Sinkhorn component screen on a reused B2 evaluation source; not a confirmation",
+  "cost_scale": 693.6276245117188,
+  "decision": "GO-INITIAL-TWO",
+  "fresh_data": {
+    "applied_encoding": "integer-zero-255-to-minus-one-one",
+    "input_dtype": "uint8",
+    "normalized_range": [
+      -1.0,
+      1.0
+    ],
+    "operator_attested_unused": true,
+    "path": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_b2\\data\\cinic10_imagenet_only_b2_seed20260731.npz",
+    "requested_float_encoding": "auto",
+    "reuse_attestation_required": "operator must attest this source was not used for B0/B1 selection, B2 design, training, calibration, or threshold choice",
+    "samples": 6000,
+    "sha256": "89cb9f8157f053f6343de4690379cbf32d815482a1b45f0ac69906c98a0d8728",
+    "shape": [
+      6000,
+      3,
+      32,
+      32
+    ],
+    "source_id": "cinic10-imagenet-only-balanced-600-per-class-seed-20260731"
+  },
+  "initial_units": [
+    300,
+    301
+  ],
+  "lambda_event": 0.0006913055808885343,
+  "profile": {
+    "evaluation": {
+      "generated_samples": 512,
+      "nfe_ladder": [
+        32
+      ],
+      "reference_samples": 2048
+    },
+    "model": {
+      "attention_resolutions": [
+        8
+      ],
+      "base_channels": 64,
+      "channel_multipliers": [
+        1,
+        2,
+        2,
+        2
+      ],
+      "channels": 3,
+      "dropout": 0.0,
+      "image_size": 32,
+      "residual_blocks": 1,
+      "time_embedding_dim": 256
+    },
+    "name": "compact",
+    "purpose": "resource-realistic B0 reachability development",
+    "train": {
+      "batch": 64,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "checkpoint_steps": [
+        30000
+      ],
+      "ema_decay": 0.9999,
+      "gradient_clip": 1.0,
+      "horizontal_flip": true,
+      "learning_rate": 0.0002,
+      "log_every": 100,
+      "steps": 30000,
+      "weight_decay": 0.0
+    }
+  },
+  "protocol": "numerics/EncoderIndependentSinkhornS1Protocol.md",
+  "protocol_sha256": "0e6a0cb23661d3114a77dbf435d8ba5bbcf7a55d0e0a0ed7cdf5ecdf3191404f",
+  "s0_freeze": "C:\\Users\\Dronm\\Documents\\drifting_identifiability\\numerics\\encoder_independent_drifting\\stage_sinkhorn\\s0_freeze.json",
+  "s0_freeze_sha256": "34a3bd0b8b70e9a119645e8826077852b20ea850dcdb9ede4613c0d1e51285d8",
+  "sinkhorn_config": {
+    "check_every": 1,
+    "correction_every": 10,
+    "correction_nfe": 8,
+    "epsilon": 0.1,
+    "eta": 0.05,
+    "event_gradient_ratio": 0.25,
+    "max_iterations": 100,
+    "min_iterations": 2,
+    "primary_batch": 64,
+    "real_batch": 128,
+    "relative_tolerance": 0.001,
+    "self_batch": 64
+  },
+  "source_sha256": {
+    "numerics/encoder_independent_drifting/appearance.py": "ec9ab4b801e5f272d35ac1b00880e154ddb869227e9746e2714e8e2fe45aa0f8",
+    "numerics/encoder_independent_drifting/b1.py": "324ee2d31b6beb1db928c7b333e23576fe511391e4d3c813f87c5791bda283d0",
+    "numerics/encoder_independent_drifting/cifar.py": "75284507c2b02a3cc961b098fa1e5149e9d5e3877d7565da6940bbd497fde6ba",
+    "numerics/encoder_independent_drifting/device.py": "ea1e7802963b4355082af2068a9114654562a73a67116ccf4f49e38d18f50439",
+    "numerics/encoder_independent_drifting/diagnostics.py": "96a745d5f4c94b57ca84374d4915c76244af76165311da52478ce22bd4ba5cfd",
+    "numerics/encoder_independent_drifting/f3b.py": "bc56e4132cc50e1f92cd689ac0bba55ec25492f38fe886a1a737a2d02d0bca19",
+    "numerics/encoder_independent_drifting/f3b_freeze.py": "aed3c96c8671dc94b498d65cb1018a21b2b9bfc6df46c745585602638ac009c3",
+    "numerics/encoder_independent_drifting/fid.py": "31526fdc69fd6d58fccff671b4a7d65bffb70419c189ab6d521b9500efc823bf",
+    "numerics/encoder_independent_drifting/stage_b2/artifacts.py": "486a52fd58a864d9b7aad7ff6d459930da3b05e889ade3341108f6899028c66b",
+    "numerics/encoder_independent_drifting/stage_b2/core.py": "5616a4905d1ca599c0e21ec6e1b6063ea8ff3b0cabbba974ebdf7aa3e8e18fac",
+    "numerics/encoder_independent_drifting/stage_b2/evaluation.py": "b2611eca619a0eb202c920f1bfd6b141e1575ed1dfebcb9659f8fadd5d471362",
+    "numerics/encoder_independent_drifting/stage_b2/fresh_data.py": "0d4b65a13735c36800224eb30a5fa549d5bc48ff28e225a95b743d6afaa844d1",
+    "numerics/encoder_independent_drifting/stage_b2/metrics.py": "fe58e695a451842a8261cf014a74cd28071769295d1de8a510a9a00af47e0e54",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/core.py": "7b6231f87a73aa0aa828c6f864865afa56b70d3a4cd5aa6d058ea79ccd4f6d2a",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/freeze.py": "580e25a858a1db86f029420d7ec320c95c72515d68dec808b031763e681d0634",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/s1.py": "8b6837384a0e83f33cca896d19a144d418962550a77b739b5fb08779b2c1dfb4",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/s1_evaluation.py": "cf462779c24640eae15c9e54000d4c5451a596bf786589d7e247664ae28beb7f",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/s1_freeze.py": "04b647d28b96c590c981455c0c2fc37b0f5b0b23d725c0f6f6f0bb37c95c3d4a",
+    "numerics/encoder_independent_drifting/stage_sinkhorn/training.py": "da5c0a23ffc397861ca930f946892a794fc1326125a207591852429f76cb03b9"
+  },
+  "staging_rule": {
+    "one_pass": "RUN-TIEBREAKER-302",
+    "two_pass": "PROVISIONAL-GO",
+    "zero_pass": "STOP"
+  },
+  "status": "sinkhorn-s1-freeze",
+  "tiebreaker_unit": 302
+}
