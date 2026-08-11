@@ -10,3 +10,8 @@ clean-fid==0.1.35
 setuptools==83.0.0
 ninja==1.13.0
 pyspng==0.1.4
+# Imported at the top of the vendored StyleGAN2-ADA legacy.py, which the
+# positive control loads through legacy.load_network_pkl. A CLI argument
+# parser with no role in training, metrics or the model; pinned here because
+# the positive control cannot import without it.
+click==8.4.2
