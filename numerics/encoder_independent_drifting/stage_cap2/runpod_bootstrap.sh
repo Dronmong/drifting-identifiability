@@ -59,7 +59,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
-  build-essential ca-certificates curl git libgl1 libglib2.0-0
+  build-essential ca-certificates curl git libgl1 libglib2.0-0 tmux
 rm -rf /var/lib/apt/lists/*
 
 if ! command -v uv >/dev/null 2>&1; then

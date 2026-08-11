@@ -67,5 +67,6 @@ def test_runpod_bootstrap_pins_the_release_environment() -> None:
         '"pillow": "12.2.0"',
         "torch.cuda.is_available()",
         "CUBLAS_WORKSPACE_CONFIG",
+        "tmux",
     ):
         assert token in text
