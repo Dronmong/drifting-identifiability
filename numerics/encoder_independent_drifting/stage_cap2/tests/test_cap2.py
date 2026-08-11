@@ -563,3 +563,51 @@ def test_production_arm_coefficient_tail_is_gated_and_passes():
     assert report["coefficient_tail_fraction"]["gt_15"] == 0.0
     # The corner the sampler exists to train must survive the clamp.
     assert abs(report["inference_corner_fraction_t95_h90"] - 0.00375) < 0.0006
+
+
+def test_calibrated_gate_rejects_the_cap1_divergence():
+    """The decisive regression: the gate must catch what CAP-EMF-1 hid.
+
+    CAP-EMF-1's gate returned PASS with zero failures on a model carrying 8.4x
+    the target effective rank and 6.4x the target diagonal high-frequency
+    energy, because every threshold was a floor -- and H7 passed on a
+    fabricated 0.0 because the recovery file did not carry the windowed clip
+    counters. Both are fixed; this pins them so a refactor cannot revert the
+    two-sidedness silently.
+    """
+    import json
+    from pathlib import Path
+
+    from ...stage_cap.config import CAPGateConfig
+    from ...stage_cap.diagnostics import capability_gate
+
+    root = Path(__file__).resolve().parents[1]
+    calibration = json.loads((root / "gate_calibration.json").read_text())
+    gate = CAPGateConfig(**calibration["gate"])
+    gate.validate()
+
+    # Measured CAP-EMF-1 endpoint health at its sealed 650k EMA checkpoint.
+    cap1 = {
+        "second_moment_ratio": 1.1230,
+        "centered_variance_ratio": 1.1342,
+        "effective_rank_ratio": 8.4417,
+        "haar_LL_ratio": 0.9314,
+        "haar_LH_ratio": 3.8456,
+        "haar_HL_ratio": 3.4975,
+        "haar_HH_ratio": 6.3709,
+    }
+    verdict = capability_gate(
+        cap1,
+        best_rank_ratio=cap1["effective_rank_ratio"],
+        clip_fraction=0.153,  # the real run-wide rate, not the fabricated 0.0
+        nonfinite_updates=0,
+        inference_forwards=1,
+        gate=gate,
+    )
+    assert verdict["verdict"] == "FAIL", verdict
+    for name in (
+        "H3c_rank_upper",
+        "H4h_haar_HH_upper",
+        "H7_clip_fraction",
+    ):
+        assert name in verdict["failed"], (name, verdict["failed"])
