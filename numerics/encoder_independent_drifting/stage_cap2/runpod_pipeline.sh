@@ -80,6 +80,7 @@ Single-model foundation commands:
   foundation-phase-b      exact recovery updates 50,001..750k
   foundation-evaluate     fixed 650k/750k evaluations and raw readmission
   foundation-review       record human PASS/FAIL and build capability gate
+  posthoc-ema             SECONDARY: declared long-EMA windows; selects nothing
 
 ASFD and final commands:
   asfd-prepare             qualify frozen features, build banks, measured smoke
@@ -411,6 +412,23 @@ foundation_phase_b() {
     --i-have-authorized-the-screen-run
 }
 
+posthoc_ema() {
+  # Secondary and exploratory, and deliberately its own command rather than a
+  # step inside foundation-evaluate: it must never be able to influence the
+  # foundation gate.  Every declared window is reported and none is selected.
+  # In CAP-EMF-1 a 200,000-update average moved FID-50k from 112.94 to 83.65
+  # for no extra GPU time, and the snapshots were then lost with the Pod.
+  assert_provider
+  assert_release_tree
+  local result750="$FOUNDATION_RUN/result_750000.json"
+  require_file "$result750"
+  "$PYTHON" -m numerics.encoder_independent_drifting.stage_cap2.posthoc_ema \
+    --unit "$result750" --device cuda --data-root "$DATA_ROOT" \
+    --work-dir "$EVIDENCE/posthoc_ema" \
+    --kid-reference-features "$KID_REFERENCE" \
+    --out "$EVIDENCE/posthoc_ema.json"
+}
+
 foundation_evaluate() {
   assert_provider
   assert_release_tree
@@ -579,6 +597,7 @@ case "$command_name" in
   foundation-admit-50k) foundation_admit_50k ;;
   foundation-phase-b) foundation_phase_b ;;
   foundation-evaluate) foundation_evaluate ;;
+  posthoc-ema) posthoc_ema ;;
   foundation-review) foundation_review ;;
   asfd-prepare) asfd_prepare ;;
   asfd-run) asfd_run ;;

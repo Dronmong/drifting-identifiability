@@ -198,6 +198,21 @@ A subjective pass cannot rescue a quantitative, integrity, coverage,
 memorization or noncollapse failure. If the foundation gate is not `GO`, stop;
 ASFD is not authorized for an incapable foundation.
 
+### 8.1 Optional secondary: declared long-EMA windows
+
+```bash
+bash numerics/encoder_independent_drifting/stage_cap2/runpod_pipeline.sh posthoc-ema
+```
+
+Reports FID/KID for three predeclared trailing-snapshot windows (100k, 200k and
+400k updates) against the training reference. In CAP-EMF-1 the 200k window was
+worth 26% of FID for no extra GPU time.
+
+Report every window. Never present one as the result, never use these numbers
+to choose a checkpoint or an EMA horizon, and never treat a better number here
+as a foundation pass. The declared 0.9999 EMA remains the result. The command
+cannot open the sealed test split.
+
 ### 9. ASFD qualification and measured preflight
 
 ```bash

@@ -220,6 +220,35 @@ bash numerics/encoder_independent_drifting/stage_cap2/runpod_pipeline.sh foundat
 A visual `PASS` cannot override quantitative capability, integrity, coverage or
 memorization failures. A `FAIL` writes the review and leaves the gate closed.
 
+## 8.1 Secondary: declared long-EMA windows
+
+Optional, and deliberately a separate command so it cannot reach the foundation
+gate:
+
+```bash
+bash numerics/encoder_independent_drifting/stage_cap2/runpod_pipeline.sh posthoc-ema
+```
+
+The declared 0.9999 EMA spans about 10,000 updates, roughly 1.3% of the run,
+and the right horizon is not knowable in advance. In CAP-EMF-1 a 200,000-update
+uniform average of raw snapshots moved FID-50k from 112.94 to 83.65 — a 26%
+improvement for no additional GPU time — and the snapshots were then lost with
+the Pod, so the finding could not be reproduced. Here they are durably mirrored.
+
+Three properties keep this from becoming a post-hoc selection on the primary
+metric:
+
+- the windows are **predeclared** (4, 8 and 16 trailing snapshots, i.e. 100k,
+  200k and 400k updates) and **all** are reported; there is no best-window
+  search and the command cannot request a different set;
+- metrics use the **training** reference, the same one the headline FID uses;
+  this module has no code path that can open the sealed test split;
+- the artifact records `eligible_for_selection: false` alongside the primary
+  checkpoint it must not displace.
+
+The declared 0.9999 EMA remains the result of the experiment. Run this after
+`foundation-evaluate`, or after `final-evaluate`, or not at all.
+
 ## 9. Frozen-feature qualification and ASFD
 
 Only a complete foundation `GO` can enter this stage:
