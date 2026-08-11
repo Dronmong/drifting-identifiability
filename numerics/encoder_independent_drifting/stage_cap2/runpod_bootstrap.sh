@@ -99,7 +99,21 @@ if [[ "$actual_python" != "$PYTHON_VERSION" ]]; then
   exit 2
 fi
 
-uv pip install --python "$VENV/bin/python" --requirement "$REQUIREMENTS"
+# --index-strategy unsafe-best-match is required, not a relaxation of the pin.
+# The requirements add download.pytorch.org as an extra index so a provider
+# cannot silently install CPU-only torch.  Under uv's default first-index
+# policy, a package found on that index is then resolved *only* there, and it
+# carries setuptools at a version below the pinned 83.0.0, so the install fails
+# with "no version of setuptools==83.0.0" while PyPI has it.
+#
+# The flag's name refers to dependency confusion: a secondary index shadowing a
+# primary one.  That risk is bounded here because every requirement is pinned to
+# an exact version, so the resolver cannot be steered to a different release --
+# only to a different index serving the version already named, and both indexes
+# are trusted.  Verified on the pod: the full set resolves, including
+# torch==2.7.1+cu126 and torchvision==0.22.1+cu126 from the CUDA index.
+uv pip install --python "$VENV/bin/python" --requirement "$REQUIREMENTS" \
+  --index-strategy unsafe-best-match
 
 export PYTHONPATH="$REPO_ROOT"
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
