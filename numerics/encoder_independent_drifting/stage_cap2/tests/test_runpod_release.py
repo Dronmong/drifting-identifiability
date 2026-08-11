@@ -59,7 +59,7 @@ def test_runpod_bootstrap_pins_the_release_environment() -> None:
     bootstrap = Path(__file__).resolve().parents[1] / "runpod_bootstrap.sh"
     text = bootstrap.read_text(encoding="utf-8")
     for token in (
-        'PYTHON_VERSION="3.11.15"',
+        'PYTHON_VERSION="3.11.13"',
         'UV_VERSION="0.8.14"',
         '"torch": "2.7.1+cu126"',
         '"torchvision": "0.22.1+cu126"',

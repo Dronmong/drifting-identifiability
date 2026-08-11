@@ -16,7 +16,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(cd -- "$SCRIPT_DIR/../../.." && pwd -P)"
 VOLUME_ROOT="${RUNPOD_VOLUME_ROOT:-/workspace}"
 VENV="${RUNPOD_VENV:-$VOLUME_ROOT/cap_asfd_venv}"
-PYTHON_VERSION="3.11.15"
+PYTHON_VERSION="3.11.13"
 UV_VERSION="0.8.14"
 REQUIREMENTS="$SCRIPT_DIR/requirements-production-cu126.txt"
 
@@ -113,7 +113,7 @@ import torch
 import torchvision
 
 expected = {
-    "python": "3.11.15",
+    "python": "3.11.13",
     "torch": "2.7.1+cu126",
     "torchvision": "0.22.1+cu126",
     "numpy": "1.26.4",

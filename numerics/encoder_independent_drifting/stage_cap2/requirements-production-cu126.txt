@@ -1,5 +1,5 @@
 # Frozen CAP2/ASFD production and evaluation environment.
-# Use CPython 3.11.15. The CUDA build is explicit so a provider cannot silently
+# Use CPython 3.11.13 (the newest 3.11 the pinned uv 0.8.14 can provide). The CUDA build is explicit so a provider cannot silently
 # install CPU-only torch from PyPI.
 --extra-index-url https://download.pytorch.org/whl/cu126
 torch==2.7.1+cu126

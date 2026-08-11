@@ -43,7 +43,7 @@ Deploy one on-demand RTX 4090 Pod with:
 - no additional GPU and no autoscaling worker.
 
 The template's bundled Python and Torch are not trusted. The bootstrap creates
-a separate CPython 3.11.15 environment containing the pinned CUDA 12.6 wheels.
+a separate CPython 3.11.13 environment containing the pinned CUDA 12.6 wheels.
 The production gate records the live driver, CUDA, cuDNN, cuBLAS and GPU.
 
 Connect over SSH and confirm:
@@ -113,7 +113,7 @@ cd /workspace/drifting-identifiability || exit 1
 bash numerics/encoder_independent_drifting/stage_cap2/runpod_bootstrap.sh
 ```
 
-Expected result: CPython 3.11.15, Torch 2.7.1+cu126, torchvision
+Expected result: CPython 3.11.13, Torch 2.7.1+cu126, torchvision
 0.22.1+cu126, NumPy 1.26.4, Pillow 12.2.0 and a visible CUDA RTX 4090.
 Bootstrap never invokes a training entry point.
 

@@ -105,7 +105,7 @@ $asfdReserve = 25.00   # protected continuation allocation; not a model-size kno
 New-Item -ItemType Directory -Force -Path $evidence, "$evidence\checkpoints", $gates | Out-Null
 ```
 
-Provision CPython 3.11.15, then install the single frozen production/evaluation
+Provision CPython 3.11.13, then install the single frozen production/evaluation
 environment before generating any evidence:
 
 ```powershell
