@@ -14,7 +14,7 @@ from ..diagnostics import ROOT
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
-PROTOCOL = ROOT / "numerics" / "EncoderIndependentCAPEMF2ScreenProtocol.md"
+PROTOCOL = ROOT / "numerics" / "EncoderIndependentCAPEMF2ASFDProtocol.md"
 DEFAULT_PREFLIGHT = HERE / "cap2_preflight.json"
 
 _DEPENDENCIES = (
@@ -29,25 +29,53 @@ _DEPENDENCIES = (
     "stage_cap2/__init__.py",
     "stage_cap2/artifacts.py",
     "stage_cap2/benchmark.py",
+    "stage_cap2/budget.py",
     "stage_cap2/checkpoint_forensics.py",
     "stage_cap2/config.py",
     "stage_cap2/development_evaluation.py",
+    "stage_cap2/durable_mirror.py",
     "stage_cap2/early_admission.py",
+    "stage_cap2/final_verdict.py",
+    "stage_cap2/foundation_gate.py",
+    "stage_cap2/foundation_visual_review.py",
     "stage_cap2/gate_calibration.py",
     "stage_cap2/hardware.py",
     "stage_cap2/metric_calibration.py",
     "stage_cap2/numerical_admission.py",
     "stage_cap2/preflight.py",
     "stage_cap2/positive_control.py",
+    "stage_cap2/preview.py",
     "stage_cap2/promotion.py",
     "stage_cap2/production_readiness.py",
     "stage_cap2/requirements-eval.txt",
     "stage_cap2/requirements-positive-control.txt",
+    "stage_cap2/requirements-production-cu126.txt",
     "stage_cap2/run_screen.py",
     "stage_cap2/sampler_audit.py",
     "stage_cap2/selection.py",
     "stage_cap2/standard_metrics.py",
+    # The paid campaign authorizes one foundation *and* its prospectively
+    # frozen ASFD continuation.  Binding only CAP2 would allow the correction
+    # mechanism to be edited after seeing the 750k foundation.
+    "stage_asfd/__init__.py",
+    "stage_asfd/artifacts.py",
+    "stage_asfd/calibration.py",
+    "stage_asfd/config.py",
+    "stage_asfd/continuation.py",
+    "stage_asfd/correction.py",
+    "stage_asfd/evaluation.py",
+    "stage_asfd/feature_bank.py",
+    "stage_asfd/features.py",
+    "stage_asfd/field.py",
+    "stage_asfd/final_report.py",
+    "stage_asfd/final_visual_review.py",
+    "stage_asfd/gradients.py",
+    "stage_asfd/preflight.py",
+    "stage_asfd/qualification.py",
+    "stage_asfd/qualify.py",
+    "stage_asfd/recovery.py",
     "stage_b2/metrics.py",
+    "spectral_anchor.py",
     "appearance.py",
     "config.py",
     "device.py",
@@ -156,6 +184,27 @@ def write_npz_atomic(path: Path, **arrays) -> str:
         temporary.unlink(missing_ok=True)
 
 
+def write_sha256_sidecar_atomic(path: Path, expected_sha: str | None = None) -> str:
+    """Seal an already-published immutable file with the standard sidecar.
+
+    Image writers cannot use :func:`write_json_atomic`, but preview grids need
+    the same hash-verification and durable-mirror path as every other paid-run
+    artifact.  The payload must already exist and the sidecar must not; callers
+    therefore cannot silently bless an overwritten file.
+    """
+
+    if not path.is_file():
+        raise RuntimeError(f"cannot seal missing artifact: {path}")
+    sidecar = _sidecar(path)
+    if sidecar.exists():
+        raise RuntimeError(f"refusing to overwrite consumed SHA sidecar {sidecar}")
+    digest = file_sha256(path)
+    if expected_sha is not None and digest != expected_sha:
+        raise RuntimeError(f"unexpected SHA for {path}: {digest} != {expected_sha}")
+    _atomic_replace_bytes(sidecar, f"{digest}  {path.name}\n".encode())
+    return digest
+
+
 def verify_file(path: Path, expected_sha: str | None = None) -> str:
     sidecar = _sidecar(path)
     if not path.is_file() or not sidecar.is_file():
@@ -214,6 +263,7 @@ def load_preflight(path: Path = DEFAULT_PREFLIGHT) -> dict:
             if live[name] != payload["source_sha256"][name]
         )
         raise RuntimeError(f"CAP2 sources changed after preflight: {changed}")
+    from .budget import revalidate_budget_plan, revalidate_storage_plan
     from .config import SAMPLER_ARMS, apply_calibrated_gate, screen_profile
     from .preflight import _smoke_all_arms, validate_preflight_inputs
 
@@ -251,7 +301,28 @@ def load_preflight(path: Path = DEFAULT_PREFLIGHT) -> dict:
     smoke = _smoke_all_arms(candidate, inputs["gate_calibration"])
     smoke_ok = all(record.get("verdict") == "PASS" for record in smoke.values())
     checks["all_arm_smoke"] = smoke_ok
-    decision = "GO" if decision == "GO" and smoke_ok else "NO_GO"
+    budget = revalidate_budget_plan(payload.get("budget"), inputs["benchmark"])
+    checks["aggregate_budget_within_ceiling"] = budget["within_ceiling"] is True
+    storage = revalidate_storage_plan(payload.get("storage"), inputs["benchmark"])
+    checks["durable_storage_capacity"] = storage["decision"] == "GO"
+    retained = payload.get("retained_metric_evidence")
+    checks["retained_metric_leaves_recomputed"] = (
+        isinstance(retained, dict)
+        and set(retained) == {"baseline", "positive_control", "metric_calibration"}
+        and all(
+            isinstance(record, dict) and record.get("valid") is True
+            for record in retained.values()
+        )
+    )
+    decision = (
+        "GO"
+        if decision == "GO"
+        and smoke_ok
+        and checks["aggregate_budget_within_ceiling"]
+        and checks["durable_storage_capacity"]
+        and checks["retained_metric_leaves_recomputed"]
+        else "NO_GO"
+    )
     expected_profiles = {
         arm: profile_payload(
             apply_calibrated_gate(
@@ -261,6 +332,12 @@ def load_preflight(path: Path = DEFAULT_PREFLIGHT) -> dict:
         )
         for arm in SAMPLER_ARMS
     }
+    expected_foundation = profile_payload(
+        apply_calibrated_gate(
+            screen_profile("ordered_uniform", candidate, updates=750_000),
+            inputs["gate_calibration"],
+        )
+    )
     failures = []
     if payload.get("decision") != decision or decision != "GO":
         failures.append("decision")
@@ -270,6 +347,10 @@ def load_preflight(path: Path = DEFAULT_PREFLIGHT) -> dict:
         failures.append("smoke")
     if payload.get("profiles_150k") != expected_profiles:
         failures.append("profiles_150k")
+    if payload.get("foundation_profile_750k") != expected_foundation:
+        failures.append("foundation_profile_750k")
+    if payload.get("storage") != storage:
+        failures.append("storage")
     if failures:
         raise RuntimeError(f"CAP2 preflight failed revalidation: {failures}")
     payload["revalidated"] = True

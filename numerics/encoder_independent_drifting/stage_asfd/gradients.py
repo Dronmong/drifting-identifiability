@@ -1,13 +1,11 @@
-﻿"""Component gradients: summed, capped per component, never projected.
+"""Component gradients: summed, capped per component, never projected.
 
-The applied update is exactly
-
-    g = g_EMF + w1*g_B1 + w_raw*g_raw + w_self*g_self
-
-which **is** the gradient of
-``L_EMF + lambda_1 L_B1 + lambda_raw E_raw + lambda_self E_self``, so the
-identifiability implication attaches to the objective the optimizer actually
-descends.
+Before safety caps, the auxiliary gradients come from the frozen scalar losses
+``lambda_1 L_B1 + lambda_raw E_raw + lambda_self E_self``.  The realized
+per-event cap multipliers depend on the current primary/component norms,
+however, so the final vector field is **not in general the gradient of one
+fixed scalar objective**.  The caps are a practical multi-loss stabilization
+device, not an identifiability theorem.  Every realized multiplier is logged.
 
 An earlier draft projected each auxiliary component away from opposing the
 primary gradient.  That is rejected twice over: a projected update is generally
@@ -18,6 +16,7 @@ so projection deletes the only component that does any work.
 
 from __future__ import annotations
 
+import math
 from collections import deque
 from dataclasses import dataclass, field
 
@@ -83,7 +82,9 @@ def combine(
 ) -> CorrectionOutcome:
     """Write ``primary + sum(scaled components)`` into each parameter's ``.grad``.
 
-    ``components`` maps a name to ``(gradient, cap)``.  Caps are independent, so
+    ``components`` maps a name to ``(gradient, cap)``.  Because each cap is
+    computed from live gradient norms, the realized sum need not be a
+    conservative vector field.  Caps are independent, so
     the realized total may exceed any single cap -- that is the defined joint
     treatment, not a confound, exactly as B2.5's factorial argued for full-dose
     combined cells.
@@ -214,8 +215,34 @@ class AbortMonitor:
             )
 
     def observe_finite(self, value: float, label: str) -> None:
-        if value != value or value in (float("inf"), float("-inf")):
+        if not math.isfinite(value):
             self._record(f"nonfinite:{label}", f"{label} is not finite")
+
+    def state_dict(self) -> dict:
+        return {
+            "cosines": {name: list(values) for name, values in self._cosines.items()},
+            "rank_failures": dict(self._rank_failures),
+            "seen": sorted(self._seen),
+            "reasons": list(self.reasons),
+        }
+
+    def load_state_dict(self, payload: dict) -> None:
+        if not isinstance(payload, dict):
+            raise TypeError("ASFD abort-monitor state must be a mapping")
+        cosines = payload.get("cosines", {})
+        self._cosines = {
+            str(name): deque(
+                (float(value) for value in values),
+                maxlen=self.config.anti_parallel_window,
+            )
+            for name, values in cosines.items()
+        }
+        self._rank_failures = {
+            str(name): int(value)
+            for name, value in payload.get("rank_failures", {}).items()
+        }
+        self._seen = {str(value) for value in payload.get("seen", [])}
+        self.reasons = [str(value) for value in payload.get("reasons", [])]
 
     @property
     def should_abort(self) -> bool:

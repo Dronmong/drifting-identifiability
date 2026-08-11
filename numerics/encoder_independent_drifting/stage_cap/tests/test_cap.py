@@ -7,6 +7,7 @@ from dataclasses import replace
 from itertools import pairwise
 from pathlib import Path
 
+import pytest
 import torch
 
 from ..artifacts import _DEPENDENCIES, manifest_difference, source_manifest
@@ -39,6 +40,7 @@ from ..objective import (
 from ..preflight import wake_output_path
 from ..training import (
     EMAState,
+    _fixed_exact_inference_corner_summary,
     bucket_by_time,
     clip_fraction,
     learning_rate_at,
@@ -480,7 +482,11 @@ def test_capability_gate_verdicts():
         "haar_LH_ratio": 0.8,
         "haar_HL_ratio": 0.8,
     }
-    assert capability_gate(healthy, 1.0, 0.01, 0, 1, frozen.gate)["verdict"] == "PASS"
+    passing = capability_gate(healthy, 1.0, 0.01, 0, 1, frozen.gate)
+    assert passing["verdict"] == "PASS"
+    assert (
+        passing["thresholds"]["clip_window_updates"] == frozen.gate.clip_window_updates
+    )
     detail_poor = dict(healthy, haar_HH_ratio=0.2)
     assert (
         capability_gate(detail_poor, 1.0, 0.01, 0, 1, frozen.gate)["verdict"]
@@ -589,7 +595,21 @@ def test_training_runs_and_records_health():
     assert outcome.optimizer_updates == small.train.updates
     assert outcome.examples_seen == small.train.updates * small.train.effective_batch
     assert outcome.health, "no health record was produced"
+    checkpoint_health = [
+        record for record in outcome.health if "fixed_exact_inference_corner" in record
+    ]
+    assert len(checkpoint_health) == len(small.train.checkpoint_updates)
+    for record in checkpoint_health:
+        fixed = record["fixed_exact_inference_corner"]
+        assert fixed["condition"] == {"t": 1.0, "r": 0.0, "h": 1.0}
+        assert fixed["sealed_train_only"] is True
+        assert fixed["sample_count"] == small.train.audit_samples
+        assert fixed["raw"]["count"] == small.train.audit_samples
+        assert fixed["ema"]["count"] == small.train.audit_samples
+        assert fixed["raw"]["nonfinite_rows"] == 0
+        assert fixed["ema"]["nonfinite_rows"] == 0
     assert outcome.parameter_count > 0
+    assert outcome.inference_forward_calls == 1
     assert outcome.nonfinite_updates == 0
     assert 0.0 <= clip_fraction(outcome) <= 1.0
     # batch + 2*active per microbatch, so strictly between the all-inactive
@@ -598,6 +618,126 @@ def test_training_runs_and_records_health():
         small.train.updates * small.train.accumulation_steps * small.train.micro_batch
     )
     assert samples <= outcome.model_forwards < 3 * samples
+
+
+def test_fixed_exact_corner_is_literal_deterministic_and_state_preserving():
+    """The common probe is exactly (1,0,1), not a near-corner sample."""
+    from .. import training as training_module
+
+    model, small = _tiny(17)
+    generator = torch.Generator().manual_seed(9182)
+    clean = torch.randn((10, 3, 8, 8), generator=generator)
+    noise = torch.randn((10, 3, 8, 8), generator=generator)
+    model.train()
+    first_parameter = next(model.parameters())
+    first_parameter.grad = torch.full_like(first_parameter, 0.125)
+    state_before = {name: value.clone() for name, value in model.state_dict().items()}
+    gradients_before = {
+        name: None if value.grad is None else value.grad.clone()
+        for name, value in model.named_parameters()
+    }
+    rng_before = torch.random.get_rng_state().clone()
+
+    observed: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]] = []
+    original = training_module.emf_loss
+
+    def audited_loss(model, clean, noise, triangle, objective):
+        observed.append(
+            (
+                triangle.t.detach().cpu(),
+                triangle.r.detach().cpu(),
+                triangle.diagonal.cpu(),
+            )
+        )
+        return original(model, clean, noise, triangle, objective)
+
+    training_module.emf_loss = audited_loss
+    try:
+        first = _fixed_exact_inference_corner_summary(
+            model, clean, noise, small.objective, batch=3
+        )
+        second = _fixed_exact_inference_corner_summary(
+            model, clean, noise, small.objective, batch=3
+        )
+    finally:
+        training_module.emf_loss = original
+
+    assert first == second
+    assert first["count"] == len(clean)
+    assert first["nonfinite_rows"] == 0
+    expected_coefficient = (
+        1.0 - small.objective.emf_delta
+    ) / small.objective.emf_denominator_floor
+    assert abs(first["coefficient"]["mean"] - expected_coefficient) < 1e-5
+    assert observed
+    for t, r, diagonal in observed:
+        assert torch.equal(t, torch.ones_like(t))
+        assert torch.equal(r, torch.zeros_like(r))
+        assert torch.equal(t - r, torch.ones_like(t))
+        assert not bool(diagonal.any())
+    assert model.training
+    assert torch.equal(torch.random.get_rng_state(), rng_before)
+    for name, value in model.state_dict().items():
+        assert torch.equal(value, state_before[name]), name
+    for name, value in model.named_parameters():
+        expected = gradients_before[name]
+        if expected is None:
+            assert value.grad is None, name
+        else:
+            assert torch.equal(value.grad, expected), name
+
+
+def test_checkpoint_health_and_recovery_callbacks_are_ordered_and_recorded():
+    small = profile("smoke")
+    short = replace(
+        small,
+        train=replace(
+            small.train,
+            updates=2,
+            checkpoint_updates=(2,),
+            warmup_updates=2,
+            snapshot_every=2,
+        ),
+    )
+    pool = torch.randn(64, 3, 8, 8)
+    observations: list[int] = []
+    publications: list[tuple[int, bool, bool]] = []
+
+    def observe(step, raw_components, ema_components):
+        observations.append(step)
+        assert set(raw_components) == {"base", "refiner_residual", "final"}
+        assert set(ema_components) == set(raw_components)
+        assert all(
+            len(value) == short.train.audit_samples for value in raw_components.values()
+        )
+        assert all(
+            len(value) == short.train.audit_samples for value in ema_components.values()
+        )
+        return {"status": "test-observation", "step": step}
+
+    def published(step, path):
+        sidecar = path.with_suffix(path.suffix + ".sha256")
+        publications.append((step, path.is_file(), sidecar.is_file()))
+
+    with tempfile.TemporaryDirectory() as directory:
+        recovery = Path(directory) / "recovery.pt"
+        outcome = train_cap_unit(
+            pool,
+            short,
+            "cpu",
+            recovery_path=recovery,
+            checkpoint_health_observer=observe,
+            recovery_saved=published,
+        )
+    # Step one is an ordinary health event: only checkpoint health is exposed
+    # to the observer. Recovery publication still occurs at both frozen steps.
+    assert observations == [2]
+    assert publications == [(1, True, True), (2, True, True)]
+    checkpoint_record = next(record for record in outcome.health if record["step"] == 2)
+    assert checkpoint_record["checkpoint_health_observation"] == {
+        "status": "test-observation",
+        "step": 2,
+    }
 
 
 def test_restart_reproduces_an_uninterrupted_run():
@@ -738,6 +878,62 @@ def test_checkpoints_survive_a_resume():
     # The resumed outcome must still carry the checkpoint written before it.
     assert set(resumed.checkpoints) == {"2", "4"}, resumed.checkpoints
     assert seen == [2, 4]
+
+
+def test_training_extension_is_replayed_exactly_across_recovery():
+    class CountingExtension:
+        def __init__(self) -> None:
+            self.count = 0
+
+        def identity(self) -> dict:
+            return {"status": "counting-extension", "version": 1}
+
+        def state_dict(self) -> dict:
+            return {"count": self.count}
+
+        def load_state_dict(self, payload: dict) -> None:
+            self.count = int(payload["count"])
+
+        def apply(self, step: int, model: torch.nn.Module) -> dict:
+            del model
+            self.count += 1
+            return {"step": step, "extension_count": self.count}
+
+    small = profile("smoke")
+    half = replace(
+        small, train=replace(small.train, updates=2, checkpoint_updates=(2,))
+    )
+    pool = torch.randn(32, 3, 8, 8)
+    with tempfile.TemporaryDirectory() as directory:
+        recovery = Path(directory) / "extended_recovery.pt"
+        first_extension = CountingExtension()
+        first = train_cap_unit(
+            pool,
+            half,
+            "cpu",
+            recovery_path=recovery,
+            training_extension=first_extension,
+        )
+        assert first_extension.count == 2
+        assert len(first.auxiliary_history) == 2
+
+        resumed_extension = CountingExtension()
+        resumed = train_cap_unit(
+            pool,
+            small,
+            "cpu",
+            recovery_path=recovery,
+            training_extension=resumed_extension,
+        )
+        assert resumed_extension.count == 4
+        assert [row["extension_count"] for row in resumed.auxiliary_history] == [
+            1,
+            2,
+            3,
+            4,
+        ]
+        with pytest.raises(RuntimeError, match="extension"):
+            train_cap_unit(pool, small, "cpu", recovery_path=recovery)
 
 
 def test_checkpoint_parameter_count_excludes_fixed_buffers():

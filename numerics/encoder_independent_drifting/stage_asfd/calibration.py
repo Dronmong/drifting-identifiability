@@ -69,9 +69,7 @@ def calibrate_normalization(
         count = work.shape[0]
         mask = ~torch.eye(count, dtype=torch.bool, device=work.device)
         level_scale = float(per_location[:, mask].mean()) / (channels**0.5)
-        if not (level_scale > 0) or not torch.isfinite(
-            torch.tensor(level_scale)
-        ):
+        if not (level_scale > 0) or not torch.isfinite(torch.tensor(level_scale)):
             raise ValueError(f"degenerate level scale for {name}: {level_scale}")
 
         result[name] = LevelNormalization(
@@ -225,7 +223,9 @@ def calibrate_level_bandwidths(
     return result
 
 
-def taus_from_records(records: dict[str, dict[float, dict]]) -> dict[str, dict[float, float]]:
+def taus_from_records(
+    records: dict[str, dict[float, dict]],
+) -> dict[str, dict[float, float]]:
     return {
         level: {radius: record["tau"] for radius, record in per_level.items()}
         for level, per_level in records.items()

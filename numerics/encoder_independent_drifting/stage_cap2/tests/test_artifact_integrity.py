@@ -13,6 +13,8 @@ import torch
 
 from ...stage_cap.config import CAPGateConfig
 from ...stage_cap.model import CAPPixelTransformer
+from .. import early_admission as early_admission_module
+from .. import promotion as promotion_module
 from ..artifacts import (
     PROTOCOL,
     _state_counts,
@@ -24,12 +26,16 @@ from ..artifacts import (
     verify_file,
     write_json_atomic,
     write_npz_atomic,
+    write_sha256_sidecar_atomic,
 )
+from ..budget import GIB, build_budget_plan, build_storage_plan
 from ..config import SAMPLER_ARMS, apply_calibrated_gate, screen_profile
 from ..early_admission import build_early_admission
 from ..preflight import _smoke_all_arms, validate_preflight_inputs
 from ..promotion import build_promotion, load_promotion
 from ..run_screen import (
+    _ensure_foundation_continuation_authority,
+    _foundation_execution_stop,
     _validate_existing_artifacts,
     _validate_recovery_request,
 )
@@ -158,6 +164,7 @@ def test_300k_requires_completed_150k_or_promoted_recovery():
         None,
         requested=300_000,
         expected_profile_name=profile_name,
+        campaign="matched_screen",
     )
     jump = {
         "profile_name": profile_name,
@@ -170,6 +177,7 @@ def test_300k_requires_completed_150k_or_promoted_recovery():
         jump,
         requested=300_000,
         expected_profile_name=profile_name,
+        campaign="matched_screen",
     )
     valid = {
         "profile_name": profile_name,
@@ -177,24 +185,266 @@ def test_300k_requires_completed_150k_or_promoted_recovery():
         "completed_updates": 150_000,
     }
     _validate_recovery_request(
-        valid, requested=300_000, expected_profile_name=profile_name
+        valid,
+        requested=300_000,
+        expected_profile_name=profile_name,
+        campaign="matched_screen",
+    )
+    completed = {
+        "profile_name": profile_name,
+        "planned_updates": 300_000,
+        "completed_updates": 300_000,
+    }
+    # A crash after the terminal recovery commit but before result publication
+    # must be able to re-enter for finalization without another optimizer step.
+    _validate_recovery_request(
+        completed,
+        requested=300_000,
+        expected_profile_name=profile_name,
+        campaign="matched_screen",
     )
 
 
-def test_promotion_roundtrip_revalidates_every_bound_artifact():
+def test_ordered_foundation_is_one_fresh_750k_plan_or_exact_resume():
+    profile_name = _profile(750_000).name
+    _validate_recovery_request(
+        None,
+        requested=750_000,
+        expected_profile_name=profile_name,
+        campaign="ordered_750_foundation",
+    )
+    _raises(
+        "one 750k horizon",
+        _validate_recovery_request,
+        None,
+        requested=300_000,
+        expected_profile_name=profile_name,
+        campaign="ordered_750_foundation",
+    )
+    recovery = {
+        "profile_name": profile_name,
+        "planned_updates": 750_000,
+        "completed_updates": 425_000,
+    }
+    _validate_recovery_request(
+        recovery,
+        requested=750_000,
+        expected_profile_name=profile_name,
+        campaign="ordered_750_foundation",
+    )
+    bad = {**recovery, "planned_updates": 300_000}
+    _raises(
+        "750k plan",
+        _validate_recovery_request,
+        bad,
+        requested=750_000,
+        expected_profile_name=profile_name,
+        campaign="ordered_750_foundation",
+    )
+
+
+def test_ordered_foundation_cannot_cross_50k_without_bound_go():
+    _raises(
+        "must first pause",
+        _foundation_execution_stop,
+        None,
+        pause_for_early_admission=False,
+        has_early_admission=False,
+    )
+    assert (
+        _foundation_execution_stop(
+            None,
+            pause_for_early_admission=True,
+            has_early_admission=False,
+        )
+        == 50_000
+    )
+    paused = {
+        "planned_updates": 750_000,
+        "completed_updates": 50_000,
+    }
+    _raises(
+        "requires the bound GO",
+        _foundation_execution_stop,
+        paused,
+        pause_for_early_admission=False,
+        has_early_admission=False,
+    )
+    assert (
+        _foundation_execution_stop(
+            paused,
+            pause_for_early_admission=False,
+            has_early_admission=True,
+        )
+        == 750_000
+    )
+    resumed = {**paused, "completed_updates": 425_000}
+    assert (
+        _foundation_execution_stop(
+            resumed,
+            pause_for_early_admission=False,
+            has_early_admission=True,
+        )
+        == 750_000
+    )
+
+
+def test_foundation_early_admission_binds_the_750k_profile_and_50k_pause(
+    monkeypatch,
+):
+    calibration = _preflight_fixture()["calibration"]
+    declared = profile_payload(
+        apply_calibrated_gate(
+            screen_profile(ARM, CANDIDATE, updates=750_000), calibration
+        )
+    )
+    hardware = {
+        "matches": True,
+        "actual_gpu_name": "Test GPU",
+        "compute_capability": "8.9",
+        "torch_version": "2.7.1",
+        "cuda_runtime": "12.6",
+        "cudnn_version": 90501,
+        "cublas_workspace_config": ":4096:8",
+    }
+    preflight = {
+        "artifact_sha256": "a" * 64,
+        "source_sha256": "b" * 64,
+        "candidate": CANDIDATE,
+        "budget": {"campaign": "ordered_750_foundation"},
+        "inputs": {
+            "gate_calibration": calibration,
+            "numerical_admission": {
+                "hardware": hardware,
+                "production_numerical_mode": {"mode": "test"},
+            },
+            "benchmark": {
+                "micro_batch": declared["train"]["micro_batch"],
+                "accumulation_steps": declared["train"]["accumulation_steps"],
+                "hardware": hardware,
+            },
+        },
+    }
+    result = {
+        "artifact_sha256": "c" * 64,
+        "arm": ARM,
+        "numerical_candidate": CANDIDATE,
+        "preflight_sha256": "a" * 64,
+        "development_only": True,
+        "declared_profile": declared,
+        "realized_profile": declared,
+        "hardware": hardware,
+        "training": {"optimizer_updates": 50_000, "nonfinite_updates": 0},
+        "checkpoints": {
+            "50000": {
+                "raw": {"sha256": "d" * 64},
+                "ema": {"sha256": "e" * 64},
+            }
+        },
+        "recovery": {
+            "planned_updates": 750_000,
+            "completed_updates": 50_000,
+            "sha256": "f" * 64,
+        },
+        "foundation_pause": {
+            "planned_updates": 750_000,
+            "paused_at": 50_000,
+            "purpose": "raw-state numerical admission before continuation",
+        },
+    }
+    readmission = {
+        "artifact_sha256": "1" * 64,
+        "checkpoint_sha256": "d" * 64,
+        "checkpoint_step": 50_000,
+        "checkpoint_identity": {
+            "valid": True,
+            "stage": "cap-emf-2-screen",
+            "kind": "raw",
+            "arm": ARM,
+        },
+        "candidate": {"name": CANDIDATE},
+        "source_sha256": "b" * 64,
+        "hardware": hardware,
+        "production_numerical_mode": {"mode": "test"},
+    }
+    monkeypatch.setattr(early_admission_module, "load_preflight", lambda _: preflight)
+    monkeypatch.setattr(
+        early_admission_module,
+        "verify_json",
+        lambda path, status: result if "result" in str(path) else readmission,
+    )
+    monkeypatch.setattr(
+        early_admission_module,
+        "load_checkpoint",
+        lambda *args, **kwargs: {"artifact_sha256": "d" * 64},
+    )
+    monkeypatch.setattr(
+        early_admission_module, "admission_matrix_complete", lambda _: True
+    )
+    inputs = early_admission_module._inputs(
+        preflight_path=Path("preflight.json"),
+        result_path=Path("result_50000.json"),
+        raw_checkpoint_path=Path("raw.pt"),
+        readmission_path=Path("readmission.json"),
+    )
+    assert inputs["campaign"] == "ordered_750_foundation"
+    assert inputs["planned_horizon"] == 750_000
+    assert all(inputs["checks"].values()), inputs["checks"]
+
+    result["foundation_pause"] = None
+    failed = early_admission_module._inputs(
+        preflight_path=Path("preflight.json"),
+        result_path=Path("result_50000.json"),
+        raw_checkpoint_path=Path("raw.pt"),
+        readmission_path=Path("readmission.json"),
+    )
+    assert failed["checks"]["foundation_same_horizon_pause"] is False
+
+
+def test_foundation_continuation_authority_is_immutable():
+    with TemporaryDirectory() as directory:
+        path = Path(directory) / "foundation_continuation_authority.json"
+        payload = {
+            "status": "cap-emf2-foundation-continuation-authority",
+            "early_admission_sha256": "a" * 64,
+        }
+        first = _ensure_foundation_continuation_authority(path, payload)
+        assert _ensure_foundation_continuation_authority(path, payload) == first
+        _raises(
+            "different 50k continuation authority",
+            _ensure_foundation_continuation_authority,
+            path,
+            {**payload, "early_admission_sha256": "b" * 64},
+        )
+
+
+def test_promotion_roundtrip_revalidates_every_bound_artifact(monkeypatch):
+    # The production boundary decodes 50k PNGs and loads two 50k x 2048
+    # archives.  Keep this artifact-wiring test small; the evidence helper has
+    # focused tests below and is not bypassable by the production CLI.
+    monkeypatch.setattr(
+        promotion_module,
+        "revalidate_clean_evaluation_evidence",
+        lambda evaluation, *, anchor: {
+            "valid": True,
+            "recomputed": {
+                key: evaluation["standard_train_reference_metrics"][key]
+                for key in (
+                    "clean_fid_cifar10_train",
+                    "clean_kid_cifar10_train",
+                )
+            },
+        },
+    )
     with TemporaryDirectory() as directory:
         root = Path(directory)
         preflight_path = root / "preflight.json"
         result_50k_path = root / "result_50000.json"
-        raw_checkpoint_50k_path = (
-            root / "checkpoints" / f"cap2_{ARM}_step50000_raw.pt"
-        )
+        raw_checkpoint_50k_path = root / "checkpoints" / f"cap2_{ARM}_step50000_raw.pt"
         readmission_50k_path = root / "readmission_50000_raw.json"
         early_admission_path = root / "early_admission_50000.json"
         result_path = root / "result_150000.json"
-        raw_checkpoint_path = (
-            root / "checkpoints" / f"cap2_{ARM}_step150000_raw.pt"
-        )
+        raw_checkpoint_path = root / "checkpoints" / f"cap2_{ARM}_step150000_raw.pt"
         checkpoint_path = root / "checkpoints" / f"cap2_{ARM}_step150000_ema.pt"
         admission_path = root / "readmission.json"
         evaluation_path = root / "development_evaluation.json"
@@ -210,6 +460,31 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                 fixture["calibration"],
             )
         )
+
+        def fixed_corner(error: float) -> dict:
+            summary = {
+                "count": 2_048,
+                "mean_raw_mse": error,
+                "mean_target_rms": 1.0,
+                "mean_quotient_rms": 1.0,
+                "coefficient": {"minimum": 0.0, "mean": 1.0, "maximum": 99.0},
+                "nonfinite_rows": 0,
+            }
+            return {
+                "condition": {"t": 1.0, "r": 0.0, "h": 1.0},
+                "sealed_train_only": True,
+                "sample_count": 2_048,
+                "objective_numerics": {
+                    "stopped_evaluation": declared["objective"]["stopped_evaluation"],
+                    "emf_delta": declared["objective"]["emf_delta"],
+                    "emf_denominator_floor": declared["objective"][
+                        "emf_denominator_floor"
+                    ],
+                },
+                "raw": copy.deepcopy(summary),
+                "ema": copy.deepcopy(summary),
+            }
+
         inputs = {
             "numerical_admission": fixture["numerical"],
             "sampler_audit": fixture["samplers"],
@@ -257,8 +532,8 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
         baseline["provenance"] = copy.deepcopy(environment)
         positive_control["provenance"] = copy.deepcopy(environment)
         metric_calibration["provenance"] = copy.deepcopy(environment)
-        baseline["samples"]["batch"] = 500
-        baseline["metrics"].update({"metric_batch": 128, "metric_workers": 4})
+        baseline["samples"]["batch"] = 128
+        baseline["metrics"].update({"metric_batch": 128, "metric_workers": 0})
         baseline_feature["feature_batch"] = 128
         decision, preflight_checks = validate_preflight_inputs(
             numerical=inputs["numerical_admission"],
@@ -277,6 +552,30 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
         preflight_checks["all_arm_smoke"] = all(
             record["verdict"] == "PASS" for record in smoke.values()
         )
+        budget = build_budget_plan(
+            inputs["benchmark"],
+            max_total_cost=1_000.0,
+            nontraining_reserve=1.0,
+            contingency_fraction=0.15,
+        )
+        assert budget["within_ceiling"] is True
+        preflight_checks["aggregate_budget_within_ceiling"] = True
+        storage = build_storage_plan(
+            inputs["benchmark"],
+            storage_root="X:/",
+            total_bytes=200 * GIB,
+            free_bytes=190 * GIB,
+            artifact_reserve_gib=20.0,
+            contingency_fraction=0.20,
+        )
+        assert storage["decision"] == "GO"
+        preflight_checks["durable_storage_capacity"] = True
+        retained_metric_evidence = {
+            "baseline": {"valid": True},
+            "positive_control": {"valid": True},
+            "metric_calibration": {"valid": True},
+        }
+        preflight_checks["retained_metric_leaves_recomputed"] = True
         preflight_payload = {
             "status": "cap-emf2-preflight",
             "decision": "GO",
@@ -292,6 +591,15 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                 )
                 for arm in SAMPLER_ARMS
             },
+            "foundation_profile_750k": profile_payload(
+                apply_calibrated_gate(
+                    screen_profile(ARM, CANDIDATE, updates=750_000),
+                    inputs["gate_calibration"],
+                )
+            ),
+            "budget": budget,
+            "storage": storage,
+            "retained_metric_evidence": retained_metric_evidence,
             "protocol_sha256": file_sha256(PROTOCOL),
             "source_sha256": sources,
             "inputs": inputs,
@@ -392,6 +700,37 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
             run_identity_sha256="a" * 64,
             unit_seed=0,
         )
+
+        def checkpoint_preview(step: int) -> dict:
+            records = {}
+            for kind in ("raw", "ema"):
+                path = root / "previews" / f"cap2_{ARM}_step{step}_{kind}.png"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(f"fixed-{step}-{kind}".encode())
+                digest = write_sha256_sidecar_atomic(path)
+                relative = path.relative_to(root).as_posix()
+                records[kind] = {
+                    "path": relative,
+                    "sha256": digest,
+                    "rows": 8,
+                    "columns": 16,
+                    "samples": 128,
+                    "selection": (
+                        "first fixed sealed train-only health-noise rows; no curation"
+                    ),
+                    "durable_mirror": {
+                        "relative_path": relative,
+                        "sha256": digest,
+                        "bytes": path.stat().st_size,
+                    },
+                }
+            return {
+                "status": "cap-emf2-fixed-checkpoint-previews",
+                "step": step,
+                "raw_and_ema": records,
+                "quantitative_role": ("report/veto only; never rescues a failed gate"),
+            }
+
         write_json_atomic(
             result_path,
             {
@@ -429,7 +768,20 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                     ],
                     "health": [
                         {
+                            "step": 50_000,
+                            "checkpoint_health_observation": checkpoint_preview(50_000),
+                            "ema_components": {
+                                "base": {"haar_HH_ratio": 0.35},
+                                "final": {"haar_HH_ratio": 0.45},
+                                "refiner_residual": {"haar_HH_variance": 0.09},
+                            },
+                        },
+                        {
                             "step": 100_000,
+                            "fixed_exact_inference_corner": fixed_corner(1.0),
+                            "checkpoint_health_observation": checkpoint_preview(
+                                100_000
+                            ),
                             "ema_components": {
                                 "base": {"haar_HH_ratio": 0.4},
                                 "final": {"haar_HH_ratio": 0.5},
@@ -438,6 +790,10 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                         },
                         {
                             "step": 150_000,
+                            "fixed_exact_inference_corner": fixed_corner(1.2),
+                            "checkpoint_health_observation": checkpoint_preview(
+                                150_000
+                            ),
                             "ema_components": {
                                 "base": {"haar_HH_ratio": 0.5},
                                 "final": {"haar_HH_ratio": 0.6},
@@ -519,10 +875,12 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                 "arm": ARM,
                 "step": 150_000,
                 "unit": {
+                    "path": result_path.name,
                     "sha256": file_sha256(result_path),
                     "preflight_sha256": preflight_sha,
                 },
                 "checkpoint": {
+                    "path": checkpoint_path.relative_to(root).as_posix(),
                     "sha256": checkpoint_sha,
                     "step": 150_000,
                     "kind": "ema",
@@ -533,9 +891,10 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                     "clean_kid_seed": 20_260_831,
                 },
                 "samples": {
+                    "directory": "eval_pngs",
                     "count": 50_000,
                     "seed": 20_260_804,
-                    "batch": 500,
+                    "batch": 128,
                     "one_model_call_per_batch": True,
                     "png_manifest_sha256": "f" * 64,
                     "image_size": [32, 32],
@@ -551,7 +910,26 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
                     "clean_fid_cifar10_train": 8.0,
                     "clean_kid_cifar10_train": 0.01,
                     "metric_batch": 128,
-                    "metric_workers": 4,
+                    "metric_workers": 0,
+                    "kid_reference": copy.deepcopy(
+                        baseline["metrics"]["kid_reference"]
+                    ),
+                    "generated_features": {
+                        "path": "development_evaluation_clean_features.npz",
+                        "sha256": "d" * 64,
+                        "feature_sha256": "e" * 64,
+                        "count": 50_000,
+                        "dimension": 2_048,
+                        "dtype": "float32",
+                        "source_png_manifest_sha256": "f" * 64,
+                        "generation_seed": 20_260_804,
+                        "population": (
+                            "all fixed-seed generated images in sequential PNG order"
+                        ),
+                        "preprocessing": (
+                            "clean-fid 0.1.35 clean Inception preprocessing"
+                        ),
+                    },
                 },
                 "repository_feature_metrics": candidate_feature,
                 "memorization": candidate_memorization,
@@ -593,16 +971,8 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
         weaker_evaluation = json.loads(evaluation_path.read_text(encoding="utf-8"))
         weaker_evaluation["standard_train_reference_metrics"][
             "clean_fid_cifar10_train"
-        ] = (
-            baseline["metrics"]["clean_fid_cifar10_train"]
-            - abs(
-                metric_calibration["metrics"]["matched_published_train_reference"][
-                    "left"
-                ]["clean_fid_cifar10_train"]
-                - metric_calibration["metrics"][
-                    "matched_published_train_reference"
-                ]["right"]["clean_fid_cifar10_train"]
-            )
+        ] = baseline["metrics"]["clean_fid_cifar10_train"] - abs(
+            metric_calibration["metrics"]["direct_disjoint_pair"]["clean_fid"]
         )
         write_json_atomic(weaker_evaluation_path, weaker_evaluation)
         rejected = build_promotion(
@@ -616,23 +986,99 @@ def test_promotion_roundtrip_revalidates_every_bound_artifact():
         )
         assert rejected["decision"] == "NO_GO"
         assert "candidate_fid_improves_beyond_calibration" in rejected["failed"]
+        # A concurrent legacy control may intentionally fail only the two
+        # historical-quality checks.  The loader must still revalidate and
+        # return that immutable NO_GO record when the runner explicitly asks
+        # for control eligibility rather than individual scientific success.
+        loaded_control = load_promotion(
+            weaker_promotion_path,
+            preflight_path=preflight_path,
+            result_path=result_path,
+            raw_checkpoint_path=raw_checkpoint_path,
+            checkpoint_path=checkpoint_path,
+            arm=ARM,
+            candidate=CANDIDATE,
+            require_go=False,
+        )
+        assert loaded_control["revalidated"] is True
+        assert loaded_control["control_continuation"]["decision"] == "GO"
 
-        worse_repository_path = root / "worse_repository_evaluation.json"
-        worse_repository_promotion = root / "worse_repository_promotion.json"
-        worse_repository = json.loads(evaluation_path.read_text(encoding="utf-8"))
-        worse_repository["repository_feature_metrics"]["unbiased_kid"] = 0.04
-        write_json_atomic(worse_repository_path, worse_repository)
+        auxiliary_regression_path = root / "auxiliary_regression_evaluation.json"
+        auxiliary_regression_promotion = root / "auxiliary_regression_promotion.json"
+        auxiliary_regression = json.loads(evaluation_path.read_text(encoding="utf-8"))
+        regressed_feature = auxiliary_regression["repository_feature_metrics"]
+        regressed_feature.update(
+            {
+                "unbiased_kid": 0.04,
+                "precision": 0.44,
+                "recall": 0.34,
+                "pr_f1": 2 * 0.44 * 0.34 / (0.44 + 0.34),
+            }
+        )
+        auxiliary_regression["repository_auxiliary"]["repository_feature_metrics"] = (
+            copy.deepcopy(regressed_feature)
+        )
+        write_json_atomic(auxiliary_regression_path, auxiliary_regression)
+        accepted = build_promotion(
+            preflight_path=preflight_path,
+            result_path=result_path,
+            raw_checkpoint_path=raw_checkpoint_path,
+            checkpoint_path=checkpoint_path,
+            admission_path=admission_path,
+            evaluation_path=auxiliary_regression_path,
+            out=auxiliary_regression_promotion,
+        )
+        assert accepted["decision"] == "GO", accepted["failed"]
+        diagnostics = accepted["comparison"]["auxiliary_relative_diagnostics"]
+        assert diagnostics["repository_kid_lower_than_baseline"] is False
+        assert diagnostics["does_not_lose_both_precision_and_recall"] is False
+
+        invalid_auxiliary_path = root / "invalid_auxiliary_evaluation.json"
+        invalid_auxiliary_promotion = root / "invalid_auxiliary_promotion.json"
+        invalid_auxiliary = json.loads(evaluation_path.read_text(encoding="utf-8"))
+        invalid_auxiliary["repository_feature_metrics"]["unbiased_kid"] = float("nan")
+        invalid_auxiliary["repository_auxiliary"]["repository_feature_metrics"] = (
+            copy.deepcopy(invalid_auxiliary["repository_feature_metrics"])
+        )
+        write_json_atomic(invalid_auxiliary_path, invalid_auxiliary)
         rejected = build_promotion(
             preflight_path=preflight_path,
             result_path=result_path,
             raw_checkpoint_path=raw_checkpoint_path,
             checkpoint_path=checkpoint_path,
             admission_path=admission_path,
-            evaluation_path=worse_repository_path,
-            out=worse_repository_promotion,
+            evaluation_path=invalid_auxiliary_path,
+            out=invalid_auxiliary_promotion,
         )
         assert rejected["decision"] == "NO_GO"
-        assert "candidate_repository_kid_improves" in rejected["failed"]
+        assert "evaluation_auxiliary_metrics_finite" in rejected["failed"]
+
+        collapsed_path = root / "collapsed_evaluation.json"
+        collapsed_promotion = root / "collapsed_promotion.json"
+        collapsed = json.loads(evaluation_path.read_text(encoding="utf-8"))
+        collapsed_feature = collapsed["repository_feature_metrics"]
+        collapsed_feature.update(
+            {
+                "precision": 0.04,
+                "recall": 0.40,
+                "pr_f1": 2 * 0.04 * 0.40 / (0.04 + 0.40),
+            }
+        )
+        collapsed["repository_auxiliary"]["repository_feature_metrics"] = copy.deepcopy(
+            collapsed_feature
+        )
+        write_json_atomic(collapsed_path, collapsed)
+        rejected = build_promotion(
+            preflight_path=preflight_path,
+            result_path=result_path,
+            raw_checkpoint_path=raw_checkpoint_path,
+            checkpoint_path=checkpoint_path,
+            admission_path=admission_path,
+            evaluation_path=collapsed_path,
+            out=collapsed_promotion,
+        )
+        assert rejected["decision"] == "NO_GO"
+        assert "evaluation_precision_recall_noncollapse" in rejected["failed"]
 
 
 def _run_all() -> int:

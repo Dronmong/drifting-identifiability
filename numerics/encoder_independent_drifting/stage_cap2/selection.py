@@ -17,7 +17,7 @@ from pathlib import Path
 
 from .artifacts import assert_unused, verify_json, write_json_atomic
 from .config import SAMPLER_ARMS
-from .promotion import revalidate_promotion
+from .promotion import CALIBRATION_MARGIN_KIND, revalidate_promotion
 
 SELECTION_STATUS = "cap-emf2-cross-arm-selection"
 LEGACY_ARM = "legacy"
@@ -73,6 +73,10 @@ def _policy(promotions: dict[str, dict]) -> dict:
     margin = legacy.get("comparison", {}).get("calibration_margin", {})
     fid_margin = _finite_metric(margin, "clean_fid")
     kid_margin = _finite_metric(margin, "clean_kid")
+    if margin.get("kind") != CALIBRATION_MARGIN_KIND:
+        raise RuntimeError(
+            "selection calibration margin is not the direct real/real discrepancy"
+        )
     if fid_margin < 0 or kid_margin < 0:
         raise RuntimeError("selection calibration margins must be nonnegative")
     for arm, record in promotions.items():
@@ -83,16 +87,11 @@ def _policy(promotions: dict[str, dict]) -> dict:
 
     legacy_fid = _finite_metric(legacy_metrics, "clean_fid")
     legacy_kid = _finite_metric(legacy_metrics, "clean_kid")
-    legacy_repo_kid = _finite_metric(legacy_metrics, "repository_kid")
-    legacy_precision = _finite_metric(legacy_metrics, "precision")
-    legacy_recall = _finite_metric(legacy_metrics, "recall")
 
     eligibility: dict[str, dict[str, bool]] = {}
     for arm in ORDERED_ARMS:
         record = promotions[arm]
         metrics = record.get("comparison", {}).get("candidate", {})
-        precision = _finite_metric(metrics, "precision")
-        recall = _finite_metric(metrics, "recall")
         checks = {
             "individual_promotion_go": record.get("decision") == "GO",
             "fid_beats_concurrent_legacy_beyond_margin": (
@@ -100,12 +99,6 @@ def _policy(promotions: dict[str, dict]) -> dict:
             ),
             "kid_beats_concurrent_legacy_beyond_margin": (
                 _finite_metric(metrics, "clean_kid") < legacy_kid - kid_margin
-            ),
-            "repository_kid_beats_concurrent_legacy": (
-                _finite_metric(metrics, "repository_kid") < legacy_repo_kid
-            ),
-            "does_not_lose_both_precision_and_recall": not (
-                precision < legacy_precision and recall < legacy_recall
             ),
         }
         eligibility[arm] = checks
@@ -139,7 +132,9 @@ def _policy(promotions: dict[str, dict]) -> dict:
         "all_three_promotions_revalidated": all(
             record.get("revalidated") is True for record in promotions.values()
         ),
-        "legacy_individual_promotion_go": legacy.get("decision") == "GO",
+        "legacy_control_continuation_go": (
+            legacy.get("control_continuation", {}).get("decision") == "GO"
+        ),
         "exactly_one_ordered_winner": winner in ORDERED_ARMS,
     }
     selected = [LEGACY_ARM, winner] if all(checks.values()) else []
@@ -155,10 +150,13 @@ def _policy(promotions: dict[str, dict]) -> dict:
         "checks": checks,
         "tie_reason": tie_reason,
         "policy": (
-            "retain concurrent legacy; ordered arm must clear individual gate, "
-            "beat legacy on CleanFID and CleanKID beyond calibration, lower "
-            "repository KID, and not lose both precision and recall; resolve "
-            "two eligible arms by margin-aware FID then KID"
+            "retain a numerically and mechanically valid concurrent legacy "
+            "control without requiring it to beat the 650k historical model; "
+            "ordered arm must clear its individual gate, "
+            "and beat legacy on 50k CleanFID and 50k CleanKID beyond the direct "
+            "real/real calibration margins; resolve two eligible arms by "
+            "margin-aware 50k CleanFID then 50k CleanKID; auxiliary metrics "
+            "are reported but never select or break a tie"
         ),
     }
 
@@ -198,7 +196,9 @@ def revalidate_selection(path: Path) -> dict:
     references = selection.get("references")
     if not isinstance(references, dict) or set(references) != set(SAMPLER_ARMS):
         raise RuntimeError("CAP2 selection has an incomplete promotion ledger")
-    paths = {arm: _resolve(reference, path.parent) for arm, reference in references.items()}
+    paths = {
+        arm: _resolve(reference, path.parent) for arm, reference in references.items()
+    }
     records = _validated_promotions(paths)
     policy = _policy(records)
     bindings = {
@@ -224,25 +224,64 @@ def load_selection(
     if selection.get("candidate") != candidate:
         raise RuntimeError("CAP2 selection uses a different numerical candidate")
     promotion = verify_json(promotion_path, "cap-emf2-promotion")
-    if selection.get("promotion_sha256", {}).get(arm) != promotion[
-        "artifact_sha256"
-    ]:
+    if selection.get("promotion_sha256", {}).get(arm) != promotion["artifact_sha256"]:
         raise RuntimeError("CAP2 selection is not bound to this arm promotion")
     return selection
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--revalidate",
+        type=Path,
+        help="recompute an existing selection and print its verified winner",
+    )
     for arm in SAMPLER_ARMS:
-        parser.add_argument(
-            f"--{arm.replace('_', '-')}-promotion", type=Path, required=True
-        )
-    parser.add_argument("--out", type=Path, required=True)
+        parser.add_argument(f"--{arm.replace('_', '-')}-promotion", type=Path)
+    parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    paths = {
-        arm: getattr(args, f"{arm}_promotion")
-        for arm in SAMPLER_ARMS
-    }
+
+    build_values = [
+        *(getattr(args, f"{arm}_promotion") for arm in SAMPLER_ARMS),
+        args.out,
+    ]
+    if args.revalidate is not None:
+        if any(value is not None for value in build_values):
+            parser.error(
+                "--revalidate is mutually exclusive with promotion inputs and --out"
+            )
+        result = revalidate_selection(args.revalidate)
+        print(
+            json.dumps(
+                {
+                    "decision": result["decision"],
+                    "ordered_winner": result["ordered_winner"],
+                    "selected_arms": result["selected_arms"],
+                    "revalidated": result["revalidated"],
+                }
+            )
+        )
+        return 0 if result["decision"] == "GO" else 1
+
+    missing = [
+        flag
+        for flag, value in (
+            *(
+                (
+                    f"--{arm.replace('_', '-')}-promotion",
+                    getattr(args, f"{arm}_promotion"),
+                )
+                for arm in SAMPLER_ARMS
+            ),
+            ("--out", args.out),
+        )
+        if value is None
+    ]
+    if missing:
+        parser.error(f"build mode requires {', '.join(missing)}")
+    paths = {arm: getattr(args, f"{arm}_promotion") for arm in SAMPLER_ARMS}
+    assert all(isinstance(path, Path) for path in paths.values())
+    assert args.out is not None
     result = build_selection(promotion_paths=paths, out=args.out)
     print(
         json.dumps(

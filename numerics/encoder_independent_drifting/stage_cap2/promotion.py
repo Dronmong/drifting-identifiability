@@ -20,6 +20,7 @@ from .artifacts import (
     file_sha256,
     load_checkpoint,
     load_preflight,
+    verify_file,
     verify_json,
     write_json_atomic,
 )
@@ -32,11 +33,13 @@ from .numerical_admission import (
     PRODUCTION_MICROBATCH,
     admission_matrix_complete,
 )
+from .preflight import _same_kid_reference
 from .standard_metrics import (
     REPOSITORY_AUXILIARY_PROTOCOL,
     REPOSITORY_FEATURE_SAMPLES,
     REPOSITORY_MEMORIZATION_SAMPLES,
     REPOSITORY_REFERENCE_SEED,
+    revalidate_clean_evaluation_evidence,
 )
 
 PROMOTION_STATUS = "cap-emf2-promotion"
@@ -54,11 +57,48 @@ MAX_GENERATED_DUPLICATE_FRACTION = 0.05
 MAX_LATE_HH_MULTIPLICATIVE_CHANGE = 4.0
 INFERENCE_CORNER_WINDOW_START = 100_000
 INFERENCE_CORNER_WINDOW_MIDPOINT = 125_000
-MIN_INFERENCE_CORNER_ROWS_PER_WINDOW = 1_024
+FIXED_INFERENCE_CORNER_SAMPLES = 2_048
 MAX_LATE_INFERENCE_CORNER_ERROR_GROWTH = 4.0
 
 FID_KEY = "clean_fid_cifar10_train"
 KID_KEY = "clean_kid_cifar10_train"
+DIRECT_CALIBRATION_KEYS = {
+    FID_KEY: "clean_fid",
+    KID_KEY: "clean_kid",
+}
+CALIBRATION_MARGIN_KIND = "absolute direct disjoint real/real discrepancy"
+CONTROL_EXEMPT_SCIENTIFIC_CHECKS = frozenset(
+    {
+        "candidate_fid_improves_beyond_calibration",
+        "candidate_kid_improves_beyond_calibration",
+    }
+)
+
+
+def _control_continuation(checks: dict[str, bool]) -> dict[str, object]:
+    """Separate control validity from success against a historical model.
+
+    A freshly trained legacy arm is the concurrent baseline.  Requiring that
+    baseline to beat a 650k historical checkpoint at 150k made the causal
+    comparison contingent on the control itself being a scientific success.
+    It may continue when every integrity, numerical, health, noncollapse and
+    evaluation check passes; only its two historical-improvement checks are
+    irrelevant to its role as a valid control.
+    """
+
+    required = {
+        name: value
+        for name, value in checks.items()
+        if name not in CONTROL_EXEMPT_SCIENTIFIC_CHECKS
+    }
+    failed = sorted(name for name, ok in required.items() if ok is not True)
+    return {
+        "decision": "GO" if not failed else "NO_GO",
+        "checks": required,
+        "failed": failed,
+        "exempt_scientific_checks": sorted(CONTROL_EXEMPT_SCIENTIFIC_CHECKS),
+        "role": "concurrent legacy control validity; not a quality claim",
+    }
 
 
 def _reference(path: Path, anchor: Path) -> str:
@@ -124,6 +164,8 @@ def _hash64(value: object) -> bool:
 def _development_evaluation_schema(evaluation: dict) -> bool:
     samples = evaluation.get("samples", {})
     metrics = evaluation.get("standard_train_reference_metrics", {})
+    generated_features = metrics.get("generated_features", {})
+    kid_reference = metrics.get("kid_reference", {})
     auxiliary = evaluation.get("repository_auxiliary", {})
     feature = auxiliary.get("repository_feature_metrics", {})
     memorization = auxiliary.get("memorization", {})
@@ -132,6 +174,8 @@ def _development_evaluation_schema(evaluation: dict) -> bool:
     provenance = evaluation.get("provenance", {})
     return (
         int(samples.get("count", -1)) == DEVELOPMENT_SAMPLES
+        and isinstance(samples.get("directory"), str)
+        and bool(samples["directory"].strip())
         and list(samples.get("image_size", [])) == [32, 32]
         and samples.get("mode") == "RGB"
         and _hash64(samples.get("png_manifest_sha256"))
@@ -140,6 +184,24 @@ def _development_evaluation_schema(evaluation: dict) -> bool:
         and metrics.get("reference") == "cifar10/train/32"
         and metrics.get("mode") == "clean"
         and int(metrics.get("feature_count", -1)) == DEVELOPMENT_SAMPLES
+        and isinstance(generated_features.get("path"), str)
+        and bool(generated_features["path"].strip())
+        and _hash64(generated_features.get("sha256"))
+        and _hash64(generated_features.get("feature_sha256"))
+        and int(generated_features.get("count", -1)) == DEVELOPMENT_SAMPLES
+        and int(generated_features.get("dimension", -1)) == 2_048
+        and generated_features.get("dtype") in {"float32", "float64"}
+        and generated_features.get("source_png_manifest_sha256")
+        == samples.get("png_manifest_sha256")
+        and int(generated_features.get("generation_seed", -1))
+        == DEVELOPMENT_GENERATION_SEED
+        and isinstance(kid_reference.get("path"), str)
+        and bool(kid_reference["path"].strip())
+        and _hash64(kid_reference.get("sha256"))
+        and _hash64(kid_reference.get("feature_sha256"))
+        and int(kid_reference.get("count", -1)) == DEVELOPMENT_SAMPLES
+        and int(kid_reference.get("dimension", -1)) == 2_048
+        and kid_reference.get("dtype") in {"float32", "float64"}
         and auxiliary.get("protocol") == REPOSITORY_AUXILIARY_PROTOCOL
         and auxiliary.get("png_manifest_sha256") == samples.get("png_manifest_sha256")
         and int(generated_subset.get("count", -1)) == REPOSITORY_FEATURE_SAMPLES
@@ -210,30 +272,34 @@ def _reference_binding(payload: dict) -> dict:
 
 
 def _calibration_tolerance(calibration: dict, key: str) -> float:
-    """Observed left/right discrepancy against the common train reference.
+    """Return the observed direct real-vs-real discrepancy for ``key``.
 
     This is a deterministic promotion margin, not a confidence interval.  The
     calibration artifact itself explicitly disclaims variance estimation, so
     the certificate does not give this finite-sample discrepancy a stronger
-    statistical interpretation.
+    statistical interpretation.  In particular, this must not be replaced by
+    the difference between two scores against the shared full-train reference:
+    those highly correlated scores are only sanity checks and can nearly
+    cancel even when the direct real/real discrepancy is material.
     """
-    matched = calibration.get("metrics", {}).get(
-        "matched_published_train_reference", {}
-    )
-    left = _metric(matched.get("left", {}), key)
-    right = _metric(matched.get("right", {}), key)
-    return (
-        abs(left - right) if math.isfinite(left) and math.isfinite(right) else math.nan
-    )
+    direct_key = DIRECT_CALIBRATION_KEYS.get(key)
+    if direct_key is None:
+        return math.nan
+    direct = calibration.get("metrics", {}).get("direct_disjoint_pair", {})
+    observed = _metric(direct, direct_key)
+    # CleanKID is an unbiased finite-sample estimate and can be negative.  A
+    # margin is a magnitude, so preserve the observation through abs rather
+    # than allowing a negative estimate to weaken the gate.
+    return abs(observed) if math.isfinite(observed) else math.nan
 
 
-def _grid_integrity(evaluation: dict) -> bool:
+def _grid_integrity(evaluation: dict, *, anchor: Path) -> bool:
     grid = evaluation.get("uncurated_grid", {})
     path_value = grid.get("path")
     expected = grid.get("sha256")
     if not isinstance(path_value, str) or not isinstance(expected, str):
         return False
-    path = Path(path_value)
+    path = _resolve(path_value, anchor)
     return (
         path.is_file()
         and file_sha256(path) == expected
@@ -241,6 +307,69 @@ def _grid_integrity(evaluation: dict) -> bool:
         and int(grid.get("columns", 0)) == 16
         and "no curation" in str(grid.get("selection", "")).lower()
     )
+
+
+def _checkpoint_previews_valid(result: dict, *, anchor: Path) -> bool:
+    """Verify every fixed checkpoint preview and its durable-mirror ledger."""
+
+    try:
+        expected_steps = {
+            int(step)
+            for step in result["declared_profile"]["train"]["checkpoint_updates"]
+        }
+    except (KeyError, TypeError, ValueError):
+        return False
+    found: set[int] = set()
+    for health in result.get("training", {}).get("health", []):
+        if not isinstance(health, dict):
+            return False
+        observation = health.get("checkpoint_health_observation")
+        if observation is None:
+            continue
+        try:
+            step = int(health["step"])
+        except (KeyError, TypeError, ValueError):
+            return False
+        if (
+            step not in expected_steps
+            or step in found
+            or observation.get("status") != "cap-emf2-fixed-checkpoint-previews"
+            or int(observation.get("step", -1)) != step
+            or observation.get("quantitative_role")
+            != "report/veto only; never rescues a failed gate"
+        ):
+            return False
+        records = observation.get("raw_and_ema")
+        if not isinstance(records, dict) or set(records) != {"raw", "ema"}:
+            return False
+        for record in records.values():
+            if not isinstance(record, dict):
+                return False
+            path_value = record.get("path")
+            expected_sha = record.get("sha256")
+            mirror = record.get("durable_mirror")
+            if (
+                not isinstance(path_value, str)
+                or not path_value.strip()
+                or not _hash64(expected_sha)
+                or int(record.get("rows", -1)) != 8
+                or int(record.get("columns", -1)) != 16
+                or int(record.get("samples", -1)) != 128
+                or "no curation" not in str(record.get("selection", "")).lower()
+                or not isinstance(mirror, dict)
+                or mirror.get("relative_path") != Path(path_value).as_posix()
+                or mirror.get("sha256") != expected_sha
+                or int(mirror.get("bytes", -1)) <= 0
+            ):
+                return False
+            path = _resolve(path_value, anchor)
+            try:
+                if verify_file(path, expected_sha) != expected_sha:
+                    return False
+            except (OSError, RuntimeError, ValueError):
+                return False
+        found.add(step)
+    return found == expected_steps
 
 
 def _late_ema_hh_trajectory(result: dict) -> dict[str, object]:
@@ -304,19 +433,21 @@ def _late_ema_hh_trajectory(result: dict) -> dict[str, object]:
 
 
 def _late_inference_corner_trajectory(result: dict) -> dict[str, object]:
-    """Audit late all-row prediction error near the one-call inference corner.
+    """Audit every arm on one common, literal one-step endpoint probe.
 
-    The two fixed 25k-update windows were chosen before the screen.  The check
-    is deliberately one-sided: a large improvement is accepted, while a more
-    than four-fold late increase is treated as an instability.  Counts are
-    mandatory so a sampler cannot pass merely by avoiding the corner.
+    Natural occupancy near ``(t,h)=(1,1)`` is scientifically useful but varies
+    by sampler construction: making a shared minimum row count a performance
+    gate made the legacy and ordered-logitnormal arms nearly impossible to
+    promote.  Checkpoint health now evaluates the same 2,048 sealed rows at
+    exactly ``(t,r,h)=(1,0,1)`` for raw and EMA weights.  The sampled windows
+    remain below as support diagnostics only.
     """
 
     windows = (
         (INFERENCE_CORNER_WINDOW_START, INFERENCE_CORNER_WINDOW_MIDPOINT),
         (INFERENCE_CORNER_WINDOW_MIDPOINT, FROM_UPDATES),
     )
-    summaries: list[dict[str, float | int]] = []
+    sampled_summaries: list[dict[str, float | int | None | bool]] = []
     history = result.get("training", {}).get("history", [])
     try:
         log_every = int(result["declared_profile"]["train"]["log_every"])
@@ -352,8 +483,8 @@ def _late_inference_corner_trajectory(result: dict) -> dict[str, object]:
             count += row_count
             weighted_error += row_count * mean_error
             records += 1
-        mean_error = weighted_error / count if count else math.nan
-        summaries.append(
+        mean_error = weighted_error / count if count else None
+        sampled_summaries.append(
             {
                 "start_exclusive": low,
                 "end_inclusive": high,
@@ -367,34 +498,118 @@ def _late_inference_corner_trajectory(result: dict) -> dict[str, object]:
             }
         )
 
-    first_error = float(summaries[0]["mean_raw_mse"])
-    second_error = float(summaries[1]["mean_raw_mse"])
-    coverage = all(
-        int(summary["rows"]) >= MIN_INFERENCE_CORNER_ROWS_PER_WINDOW
-        and int(summary["records"]) == int(summary["expected_records"])
+    sampled_complete = all(
+        int(summary["records"]) == int(summary["expected_records"])
         and int(summary["expected_records"]) > 0
         and summary["malformed"] is False
-        for summary in summaries
+        for summary in sampled_summaries
     )
-    finite_nonnegative = all(
-        math.isfinite(value) and value >= 0.0 for value in (first_error, second_error)
-    )
-    growth = (
-        second_error / max(first_error, 1e-12)
-        if finite_nonnegative
-        else math.nan
-    )
-    stable = (
-        coverage
-        and finite_nonnegative
-        and growth <= MAX_LATE_INFERENCE_CORNER_ERROR_GROWTH
+
+    try:
+        declared_samples = int(result["declared_profile"]["train"]["audit_samples"])
+        declared_objective = result["declared_profile"]["objective"]
+    except (KeyError, TypeError, ValueError):
+        declared_samples = -1
+        declared_objective = {}
+    if not isinstance(declared_objective, dict):
+        declared_objective = {}
+    health = result.get("training", {}).get("health", [])
+    points: list[dict[str, object]] = []
+    for wanted_step in (INFERENCE_CORNER_WINDOW_START, FROM_UPDATES):
+        matches = [
+            record
+            for record in health
+            if isinstance(record, dict) and record.get("step") == wanted_step
+        ]
+        if len(matches) != 1:
+            points.append({"step": wanted_step, "valid": False})
+            continue
+        probe = matches[0].get("fixed_exact_inference_corner")
+        if not isinstance(probe, dict):
+            points.append({"step": wanted_step, "valid": False})
+            continue
+        kinds: dict[str, dict[str, float | int | bool]] = {}
+        for kind in ("raw", "ema"):
+            summary = probe.get(kind)
+            coefficient = (
+                summary.get("coefficient") if isinstance(summary, dict) else None
+            )
+            values = (
+                (
+                    summary.get("mean_raw_mse"),
+                    summary.get("mean_target_rms"),
+                    summary.get("mean_quotient_rms"),
+                    coefficient.get("minimum")
+                    if isinstance(coefficient, dict)
+                    else None,
+                    coefficient.get("mean") if isinstance(coefficient, dict) else None,
+                    coefficient.get("maximum")
+                    if isinstance(coefficient, dict)
+                    else None,
+                )
+                if isinstance(summary, dict)
+                else ()
+            )
+            valid = (
+                isinstance(summary, dict)
+                and summary.get("count") == declared_samples
+                and summary.get("nonfinite_rows") == 0
+                and len(values) == 6
+                and all(_finite(value) and float(value) >= 0.0 for value in values)
+            )
+            kinds[kind] = {
+                "count": summary.get("count", -1) if isinstance(summary, dict) else -1,
+                "mean_raw_mse": (float(summary["mean_raw_mse"]) if valid else math.nan),
+                "valid": valid,
+            }
+        point_valid = (
+            probe.get("condition") == {"t": 1.0, "r": 0.0, "h": 1.0}
+            and probe.get("sealed_train_only") is True
+            and probe.get("sample_count") == declared_samples
+            and declared_samples == FIXED_INFERENCE_CORNER_SAMPLES
+            and probe.get("objective_numerics")
+            == {
+                "stopped_evaluation": declared_objective.get("stopped_evaluation"),
+                "emf_delta": declared_objective.get("emf_delta"),
+                "emf_denominator_floor": declared_objective.get(
+                    "emf_denominator_floor"
+                ),
+            }
+            and all(record["valid"] is True for record in kinds.values())
+        )
+        points.append(
+            {
+                "step": wanted_step,
+                "condition": probe.get("condition"),
+                "sample_count": probe.get("sample_count"),
+                "raw": kinds["raw"],
+                "ema": kinds["ema"],
+                "valid": point_valid,
+            }
+        )
+
+    growth: dict[str, float] = {}
+    if len(points) == 2 and all(point.get("valid") is True for point in points):
+        for kind in ("raw", "ema"):
+            first = float(points[0][kind]["mean_raw_mse"])
+            second = float(points[1][kind]["mean_raw_mse"])
+            growth[kind] = second / max(first, 1e-12)
+    stable = len(growth) == 2 and all(
+        math.isfinite(value) and value <= MAX_LATE_INFERENCE_CORNER_ERROR_GROWTH
+        for value in growth.values()
     )
     return {
-        "definition": "t > 0.95 and h = t - r > 0.90",
-        "windows": summaries,
-        "minimum_rows_per_window": MIN_INFERENCE_CORNER_ROWS_PER_WINDOW,
+        "definition": "fixed exact t=1, r=0, h=1 on sealed train-only rows",
+        "fixed_probe_points": points,
+        "fixed_samples": FIXED_INFERENCE_CORNER_SAMPLES,
         "maximum_late_error_growth": MAX_LATE_INFERENCE_CORNER_ERROR_GROWTH,
         "late_error_growth": growth,
+        "natural_sampled_support": {
+            "definition": "t > 0.95 and h = t - r > 0.90",
+            "windows": sampled_summaries,
+            "complete": sampled_complete,
+            "role": "sampler-support diagnostic only; no common minimum occupancy",
+        },
         "stable": stable,
     }
 
@@ -414,6 +629,9 @@ def _promotion_inputs(
     result = verify_json(result_path, "cap-emf2-screen-unit")
     admission = verify_json(admission_path, "cap-emf2-numerical-admission")
     evaluation = verify_json(evaluation_path, "cap-emf2-development-evaluation")
+    evaluation_evidence = revalidate_clean_evaluation_evidence(
+        evaluation, anchor=evaluation_path.parent
+    )
 
     selected_arm = arm or result.get("arm")
     selected_candidate = candidate or result.get("numerical_candidate")
@@ -469,7 +687,12 @@ def _promotion_inputs(
         unit_seed=int(result.get("unit_seed", -1)),
     )
 
-    candidate_metrics = evaluation.get("standard_train_reference_metrics", {})
+    # The recorded values must agree with this reconstruction, but promotion
+    # is decided from the independently recomputed archive values themselves.
+    candidate_metrics = {
+        **evaluation.get("standard_train_reference_metrics", {}),
+        **evaluation_evidence["recomputed"],
+    }
     baseline_metrics = baseline.get("metrics", {})
     control_metrics = positive_control.get("metrics", {})
     candidate_fid = _metric(candidate_metrics, FID_KEY)
@@ -579,7 +802,7 @@ def _promotion_inputs(
             "clean_kid": control_kid,
         },
         "calibration_margin": {
-            "kind": "absolute left/right matched-reference discrepancy",
+            "kind": CALIBRATION_MARGIN_KIND,
             "clean_fid": fid_tolerance,
             "clean_kid": kid_tolerance,
             "statistical_scope": (
@@ -590,6 +813,26 @@ def _promotion_inputs(
             "precision": MIN_PRECISION,
             "recall": MIN_RECALL,
             "pr_f1": MIN_PR_F1,
+        },
+        "auxiliary_relative_diagnostics": {
+            "policy_role": "reported only; not a promotion requirement",
+            "repository_kid_lower_than_baseline": (
+                math.isfinite(repository_kid)
+                and math.isfinite(baseline_repository_kid)
+                and repository_kid < baseline_repository_kid
+            ),
+            "does_not_lose_both_precision_and_recall": (
+                all(
+                    math.isfinite(value)
+                    for value in (
+                        precision,
+                        recall,
+                        baseline_precision,
+                        baseline_recall,
+                    )
+                )
+                and not (precision < baseline_precision and recall < baseline_recall)
+            ),
         },
         "late_ema_hh": late_hh,
         "late_inference_corner": late_corner,
@@ -648,6 +891,9 @@ def _promotion_inputs(
                 for step in expected_checkpoint_steps
             )
         ),
+        "checkpoint_previews_complete": _checkpoint_previews_valid(
+            result, anchor=result_path.parent
+        ),
         "checkpoint_record": checkpoint_sha == checkpoint["artifact_sha256"],
         "raw_checkpoint_record": (
             raw_checkpoint_sha == raw_checkpoint["artifact_sha256"]
@@ -657,13 +903,11 @@ def _promotion_inputs(
             and early_admission.get("decision") == "GO"
             and early_admission.get("arm") == selected_arm
             and early_admission.get("candidate") == selected_candidate
-            and early_admission.get("preflight_sha256")
-            == preflight["artifact_sha256"]
+            and early_admission.get("preflight_sha256") == preflight["artifact_sha256"]
         ),
         "readmission_go": admission.get("decision") == "GO",
         "readmission_checkpoint": (
-            admission.get("checkpoint_sha256")
-            == raw_checkpoint["artifact_sha256"]
+            admission.get("checkpoint_sha256") == raw_checkpoint["artifact_sha256"]
             and int(admission.get("checkpoint_step", -1)) == FROM_UPDATES
         ),
         "readmission_candidate": (
@@ -781,6 +1025,17 @@ def _promotion_inputs(
             and int(baseline_feature_metrics.get("samples_generated", -1)) == 2_048
             and int(baseline_feature_metrics.get("samples_reference", -1)) == 2_048
         ),
+        "evaluation_auxiliary_metrics_finite": all(
+            math.isfinite(value)
+            for value in (
+                repository_kid,
+                baseline_repository_kid,
+                precision,
+                recall,
+                baseline_precision,
+                baseline_recall,
+            )
+        ),
         "same_auxiliary_reference": (
             _reference_binding(evaluation) == _reference_binding(baseline)
             and _reference_binding(evaluation).get("seed") == REPOSITORY_REFERENCE_SEED
@@ -796,23 +1051,6 @@ def _promotion_inputs(
                 value is not None
                 for value in _evaluation_environment(evaluation).values()
             )
-        ),
-        "candidate_repository_kid_improves": (
-            math.isfinite(repository_kid)
-            and math.isfinite(baseline_repository_kid)
-            and repository_kid < baseline_repository_kid
-        ),
-        "candidate_does_not_lose_both_precision_and_recall": (
-            all(
-                math.isfinite(value)
-                for value in (
-                    precision,
-                    recall,
-                    baseline_precision,
-                    baseline_recall,
-                )
-            )
-            and not (precision < baseline_precision and recall < baseline_recall)
         ),
         "evaluation_development_only": evaluation.get("development_only") is True,
         "evaluation_arm": evaluation.get("arm") == selected_arm,
@@ -868,7 +1106,14 @@ def _promotion_inputs(
             )
             == DEVELOPMENT_KID_SEED
         ),
+        "evaluation_exact_kid_reference": _same_kid_reference(
+            evaluation.get("standard_train_reference_metrics", {}).get("kid_reference"),
+            baseline_metrics.get("kid_reference"),
+        ),
         "evaluation_shared_auxiliary": _development_evaluation_schema(evaluation),
+        "evaluation_leaf_evidence_recomputed": (
+            evaluation_evidence.get("valid") is True
+        ),
         "evaluation_provenance": (
             evaluation_provenance.get("deterministic_algorithms") is True
             and evaluation_provenance.get("packages", {}).get("clean-fid")
@@ -894,7 +1139,9 @@ def _promotion_inputs(
             and 0.0 <= exact_copy <= MAX_EXACT_COPY_FRACTION
             and 0.0 <= duplicate_fraction <= MAX_GENERATED_DUPLICATE_FRACTION
         ),
-        "evaluation_uncurated_grid": _grid_integrity(evaluation),
+        "evaluation_uncurated_grid": _grid_integrity(
+            evaluation, anchor=evaluation_path.parent
+        ),
         "evaluation_sources": (
             evaluation.get("source_sha256") == preflight.get("source_sha256")
         ),
@@ -936,6 +1183,7 @@ def build_promotion(
         evaluation_path=evaluation_path,
     )
     failed = sorted(name for name, ok in inputs["checks"].items() if not ok)
+    control_continuation = _control_continuation(inputs["checks"])
     anchor = out.parent
     payload = {
         "status": PROMOTION_STATUS,
@@ -953,6 +1201,7 @@ def build_promotion(
         "comparison": inputs["comparison"],
         "checks": inputs["checks"],
         "failed": failed,
+        "control_continuation": control_continuation,
         "references": {
             "preflight": _reference(preflight_path, anchor),
             "result_150k": _reference(result_path, anchor),
@@ -979,10 +1228,9 @@ def load_promotion(
     checkpoint_path: Path,
     arm: str,
     candidate: str,
+    require_go: bool = True,
 ) -> dict:
     promotion = verify_json(path, PROMOTION_STATUS)
-    if promotion.get("decision") != "GO":
-        raise RuntimeError("CAP2 promotion did not return GO")
     references = promotion.get("references", {})
     admission_path = _resolve(references.get("readmission", ""), path.parent)
     evaluation_path = _resolve(
@@ -998,8 +1246,12 @@ def load_promotion(
         arm=arm,
         candidate=candidate,
     )
-    failed = sorted(name for name, ok in inputs["checks"].items() if not ok)
+    policy_failed = sorted(name for name, ok in inputs["checks"].items() if not ok)
+    decision = "GO" if not policy_failed else "NO_GO"
+    control_continuation = _control_continuation(inputs["checks"])
     bindings = {
+        "decision": promotion.get("decision") == decision,
+        "failed": promotion.get("failed") == policy_failed,
         "from_updates": promotion.get("from_updates") == FROM_UPDATES,
         "to_updates": promotion.get("to_updates") == TO_UPDATES,
         "arm": promotion.get("arm") == arm,
@@ -1026,10 +1278,15 @@ def load_promotion(
         ),
         "comparison_unchanged": promotion.get("comparison") == inputs["comparison"],
         "checks_unchanged": promotion.get("checks") == inputs["checks"],
+        "control_continuation_unchanged": (
+            promotion.get("control_continuation") == control_continuation
+        ),
     }
-    failed.extend(name for name, ok in bindings.items() if not ok)
-    if failed:
-        raise RuntimeError(f"CAP2 promotion binding failed: {sorted(set(failed))}")
+    binding_failed = sorted(name for name, ok in bindings.items() if not ok)
+    if binding_failed:
+        raise RuntimeError(f"CAP2 promotion binding failed: {binding_failed}")
+    if require_go and decision != "GO":
+        raise RuntimeError("CAP2 promotion did not return GO")
     promotion["revalidated"] = True
     return promotion
 
@@ -1058,19 +1315,16 @@ def revalidate_promotion(path: Path, *, require_go: bool = False) -> dict:
     inputs = _promotion_inputs(
         preflight_path=_resolve(references["preflight"], path.parent),
         result_path=_resolve(references["result_150k"], path.parent),
-        raw_checkpoint_path=_resolve(
-            references["checkpoint_150k_raw"], path.parent
-        ),
+        raw_checkpoint_path=_resolve(references["checkpoint_150k_raw"], path.parent),
         checkpoint_path=_resolve(references["checkpoint_150k_ema"], path.parent),
         admission_path=_resolve(references["readmission"], path.parent),
-        evaluation_path=_resolve(
-            references["development_evaluation"], path.parent
-        ),
+        evaluation_path=_resolve(references["development_evaluation"], path.parent),
         arm=promotion.get("arm"),
         candidate=promotion.get("candidate"),
     )
     failed = sorted(name for name, ok in inputs["checks"].items() if not ok)
     decision = "GO" if not failed else "NO_GO"
+    control_continuation = _control_continuation(inputs["checks"])
     bindings = {
         "decision": promotion.get("decision") == decision,
         "failed": promotion.get("failed") == failed,
@@ -1079,12 +1333,10 @@ def revalidate_promotion(path: Path, *, require_go: bool = False) -> dict:
         "arm": promotion.get("arm") == inputs["arm"],
         "candidate": promotion.get("candidate") == inputs["candidate"],
         "preflight": (
-            promotion.get("preflight_sha256")
-            == inputs["preflight"]["artifact_sha256"]
+            promotion.get("preflight_sha256") == inputs["preflight"]["artifact_sha256"]
         ),
         "result": (
-            promotion.get("result_sha256")
-            == inputs["result"]["artifact_sha256"]
+            promotion.get("result_sha256") == inputs["result"]["artifact_sha256"]
         ),
         "checkpoint": (
             promotion.get("checkpoint_sha256")
@@ -1104,6 +1356,9 @@ def revalidate_promotion(path: Path, *, require_go: bool = False) -> dict:
         ),
         "comparison": promotion.get("comparison") == inputs["comparison"],
         "checks": promotion.get("checks") == inputs["checks"],
+        "control_continuation": (
+            promotion.get("control_continuation") == control_continuation
+        ),
     }
     invalid = sorted(name for name, ok in bindings.items() if not ok)
     if invalid:
@@ -1123,6 +1378,14 @@ def main() -> int:
     parser.add_argument("--readmission", type=Path, required=True)
     parser.add_argument("--development-evaluation", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument(
+        "--allow-valid-legacy-control",
+        action="store_true",
+        help=(
+            "return success for a legacy quality NO_GO only when its separately "
+            "recomputed control-continuation certificate is GO"
+        ),
+    )
     args = parser.parse_args()
     result = build_promotion(
         preflight_path=args.preflight,
@@ -1135,7 +1398,14 @@ def main() -> int:
     )
     print(json.dumps({key: result[key] for key in ("decision", "failed")}, indent=2))
     print(f"wrote {args.out} sha256={result['artifact_sha256']}")
-    return 0 if result["decision"] == "GO" else 1
+    allowed_control = (
+        args.allow_valid_legacy_control
+        and result.get("arm") == "legacy"
+        and result.get("control_continuation", {}).get("decision") == "GO"
+    )
+    if args.allow_valid_legacy_control and result.get("arm") != "legacy":
+        raise RuntimeError("--allow-valid-legacy-control is valid only for legacy")
+    return 0 if result["decision"] == "GO" or allowed_control else 1
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from ..stage_cap.diagnostics import haar_transform
 from .calibration import _token_pc1_share
 from .config import FeatureConfig, QualificationConfig
 from .features import encode
+from .field import descriptor_energy, multi_radius_energy
 
 Gate = tuple[str, bool, str, dict]
 
@@ -68,7 +69,7 @@ def band_sensitivity(
     *,
     energy: float = 0.5,
     seed: int = 41,
-) -> dict:
+) -> dict[str, dict[str, float]]:
     """G7: feature response per Haar band, relative to a raw-pixel control.
 
     The upper bound rejects the hypersensitivity of the Phases 17-18 pretrained
@@ -79,7 +80,7 @@ def band_sensitivity(
     """
     generator = torch.Generator().manual_seed(seed)
     size = images.shape[-1]
-    result: dict[str, float] = {}
+    result: dict[str, dict[str, float]] = {name: {} for name in config.levels}
     base = encode(trunk, images, t_f, config, normalization, generator=generator)
     for band in BANDS:
         mask = _band_mask(size, band, images.device)
@@ -100,33 +101,198 @@ def band_sensitivity(
             normalization,
             generator=probe_generator,
         )
-        feature_delta = sum(
-            float((shifted[name] - base[name]).norm()) for name in base
-        ) / len(base)
-        raw_delta = float(perturbation.norm())
-        result[f"rho_{band}"] = feature_delta / max(raw_delta, 1e-12)
-    smallest = min(result.values())
-    if smallest > 0:
-        for band in BANDS:
-            result[f"relative_{band}"] = result[f"rho_{band}"] / smallest
+        raw_delta = float(perturbation.square().mean().sqrt())
+        for name in base:
+            feature_delta = float((shifted[name] - base[name]).square().mean().sqrt())
+            result[name][f"rho_{band}"] = feature_delta / max(raw_delta, 1e-12)
     return result
 
 
 def gate_band_sensitivity(profile: dict, config: QualificationConfig) -> Gate:
-    values = {band: profile[f"rho_{band}"] for band in BANDS}
-    reference = sum(values.values()) / len(values)
-    ratios = {band: value / reference for band, value in values.items()}
-    ok = all(
-        config.band_sensitivity_low <= ratio <= config.band_sensitivity_high
-        for ratio in ratios.values()
+    values = {
+        level: {band: record[f"rho_{band}"] for band in BANDS}
+        for level, record in profile.items()
+    }
+    ok = bool(values) and all(
+        config.band_sensitivity_low <= value <= config.band_sensitivity_high
+        for per_level in values.values()
+        for value in per_level.values()
     )
-    detail = ", ".join(f"{band}={ratios[band]:.2f}" for band in BANDS)
+    detail = "; ".join(
+        f"{level}: " + ", ".join(f"{band}={value:.2f}" for band, value in row.items())
+        for level, row in values.items()
+    )
     return (
         "G7 per-band sensitivity",
         ok,
-        f"band/mean response {detail} (need "
-        f"[{config.band_sensitivity_low}, {config.band_sensitivity_high}])",
-        {"rho": values, "band_over_mean": ratios},
+        (
+            f"absolute feature/raw response {detail} (each needs "
+            f"[{config.band_sensitivity_low}, {config.band_sensitivity_high}])"
+        ),
+        {"rho": values},
+    )
+
+
+def _effective_rank_and_pc1(values: torch.Tensor) -> tuple[float, float]:
+    flat = values.reshape(len(values), -1).double()
+    centred = flat - flat.mean(dim=0, keepdim=True)
+    spectrum = torch.linalg.svdvals(centred).square()
+    total = float(spectrum.sum())
+    if total <= 0:
+        return 0.0, 1.0
+    return total**2 / float(spectrum.square().sum()), float(spectrum[0]) / total
+
+
+def gate_global_rank(
+    descriptor_map: dict[str, torch.Tensor], config: QualificationConfig
+) -> Gate:
+    """G3: rank/concentration on the invariant global mean/std descriptor."""
+    report = {}
+    ok = True
+    for name, values in descriptor_map.items():
+        rank, pc1 = _effective_rank_and_pc1(values[:, -2:])
+        report[name] = {"effective_rank": rank, "pc1_share": pc1}
+        ok = ok and rank >= config.rank_floor and pc1 <= config.pc1_ceiling
+    return (
+        "G3 global rank and concentration",
+        ok,
+        ", ".join(
+            f"{name}: rank {row['effective_rank']:.1f}, PC1 {row['pc1_share']:.2f}"
+            for name, row in report.items()
+        ),
+        report,
+    )
+
+
+def _local_inverse_transform(
+    values: torch.Tensor, flips: torch.Tensor, shifts: torch.Tensor
+) -> torch.Tensor:
+    """Undo known image flips/translations on the 8x8 local descriptor grid."""
+    local = values[:, :-2]
+    side = round(local.shape[1] ** 0.5)
+    if side * side != local.shape[1]:
+        raise ValueError("local descriptor is not a square grid")
+    grid = local.reshape(len(local), side, side, local.shape[-1])
+    restored = []
+    for index, row in enumerate(grid):
+        row = torch.roll(row, shifts=(0, -int(shifts[index])), dims=(0, 1))
+        if bool(flips[index]):
+            row = torch.flip(row, dims=(1,))
+        restored.append(row)
+    return torch.stack(restored).reshape_as(local)
+
+
+def gate_benign_auc(
+    trunk,
+    images: torch.Tensor,
+    t_f: float,
+    features: FeatureConfig,
+    normalization,
+    config: QualificationConfig,
+    *,
+    seed: int = 39,
+) -> Gate:
+    """G1 on globals and registered local tokens, never unregistered tokens."""
+    if len(images) < 8:
+        raise ValueError("benign AUC needs at least eight images")
+    generator = torch.Generator().manual_seed(seed)
+    noise = torch.randn(images.shape, generator=generator, dtype=images.dtype).to(
+        images.device
+    )
+    base_noised = (1.0 - t_f) * images + t_f * noise
+    base = encode(trunk, images, t_f, features, normalization, noised=base_noised)
+    flips = torch.arange(len(images), device=images.device) % 2 == 0
+    shifts = torch.where(flips, 1, -1)
+    benign_noised = torch.where(
+        flips[:, None, None, None],
+        torch.flip(base_noised, dims=(-1,)),
+        base_noised,
+    )
+    # Four pixels correspond to one cell of the 8x8 pooled descriptor grid.
+    benign_noised = torch.stack(
+        [
+            torch.roll(row, shifts=int(shift) * 4, dims=-1)
+            for row, shift in zip(benign_noised, shifts)
+        ]
+    )
+    benign = encode(trunk, images, t_f, features, normalization, noised=benign_noised)
+    permutation = torch.roll(torch.arange(len(images), device=images.device), 1)
+    report = {}
+    ok = True
+    for name in base:
+        global_benign = (
+            (benign[name][:, -2:] - base[name][:, -2:]).flatten(1).norm(dim=1)
+        )
+        global_random = (
+            (base[name][permutation, -2:] - base[name][:, -2:]).flatten(1).norm(dim=1)
+        )
+        local_registered = _local_inverse_transform(benign[name], flips, shifts)
+        local_benign = (local_registered - base[name][:, :-2]).flatten(1).norm(dim=1)
+        local_random = (
+            (base[name][permutation, :-2] - base[name][:, :-2]).flatten(1).norm(dim=1)
+        )
+        global_auc = float((global_benign < global_random).double().mean())
+        local_auc = float((local_benign < local_random).double().mean())
+        report[name] = {"global_auc": global_auc, "registered_local_auc": local_auc}
+        ok = ok and min(global_auc, local_auc) >= config.benign_auc_floor
+    return (
+        "G1 benign below random distance",
+        ok,
+        "; ".join(
+            f"{name}: global {row['global_auc']:.2f}, local {row['registered_local_auc']:.2f}"
+            for name, row in report.items()
+        ),
+        report,
+    )
+
+
+def gate_induced_gradient_distinctness(
+    raw_roles: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
+    feature_roles: tuple[
+        dict[str, torch.Tensor], dict[str, torch.Tensor], dict[str, torch.Tensor]
+    ],
+    raw_taus: dict[float, float],
+    feature_taus: dict[str, dict[float, float]],
+    config: QualificationConfig,
+) -> Gate:
+    """G6 in a common space: gradients induced on the negative images.
+
+    Raw and feature fields themselves live in R^3072 and R^C respectively, so
+    their cosine is undefined.  Their gradients with respect to the same
+    generated/negative image tensor are the operational directions actually
+    delivered to the online model and are therefore the valid comparison.
+    """
+    raw_probes, raw_positives, raw_negatives = raw_roles
+    feature_probes, feature_positives, feature_negatives = feature_roles
+    if not raw_negatives.requires_grad:
+        raise ValueError("G6 negatives must retain their image-space graph")
+    raw_value, _ = multi_radius_energy(
+        raw_probes,
+        raw_positives,
+        raw_negatives.flatten(1),
+        raw_taus,
+        diagnostics=False,
+    )
+    feature_value, _ = descriptor_energy(
+        feature_probes,
+        feature_positives,
+        feature_negatives,
+        feature_taus,
+        diagnostics=False,
+    )
+    raw_gradient = torch.autograd.grad(raw_value, raw_negatives, retain_graph=True)[0]
+    feature_gradient = torch.autograd.grad(feature_value, raw_negatives)[0]
+    left, right = raw_gradient.flatten(), feature_gradient.flatten()
+    cosine = float(
+        (left.double() @ right.double())
+        / (left.double().norm() * right.double().norm()).clamp_min(1e-30)
+    )
+    ok = abs(cosine) < config.raw_field_cosine_ceiling
+    return (
+        "G6 raw/self induced-gradient distinctness",
+        ok,
+        f"absolute image-gradient cosine {abs(cosine):.3f} (need < {config.raw_field_cosine_ceiling})",
+        {"cosine": cosine, "comparison_space": "negative-image input gradient"},
     )
 
 
@@ -167,6 +333,31 @@ def gate_inter_level(
         ok,
         f"max pairwise CKA {worst:.3f} (need < {config.inter_level_cka_ceiling})",
         {"cka": pairs},
+    )
+
+
+def gate_inter_level_field_cosine(
+    fields: dict[str, torch.Tensor], config: QualificationConfig
+) -> Gate:
+    """G8's operational half: feature fields must not all point the same way."""
+    names = sorted(fields)
+    pairs = {}
+    ok = len(names) >= 2
+    for index, left_name in enumerate(names):
+        for right_name in names[index + 1 :]:
+            left = fields[left_name].detach().reshape(-1).double()
+            right = fields[right_name].detach().reshape(-1).double()
+            cosine = float(
+                (left @ right) / (left.norm() * right.norm()).clamp_min(1e-30)
+            )
+            pairs[f"{left_name}_vs_{right_name}"] = cosine
+            ok = ok and abs(cosine) < config.inter_level_cosine_ceiling
+    worst = max((abs(value) for value in pairs.values()), default=1.0)
+    return (
+        "G8 inter-level field non-redundancy",
+        ok,
+        f"max absolute field cosine {worst:.3f} (need < {config.inter_level_cosine_ceiling})",
+        {"cosine": pairs},
     )
 
 
@@ -277,8 +468,10 @@ def gate_scramble(
     return (
         "G2 structure over colour statistics",
         ok,
-        f"scramble farther than benign in {fraction:.1%} of pairs "
-        f"(need >= {config.scramble_fraction_floor:.0%})",
+        (
+            f"scramble farther than benign in {fraction:.1%} of pairs "
+            f"(need >= {config.scramble_fraction_floor:.0%})"
+        ),
         {"per_level_fraction": dict(zip(sorted(base), wins))},
     )
 
@@ -311,11 +504,11 @@ def run_gate(
     if all(ok for _, ok, _, _ in gates):
         gates.extend(
             [
+                gate_benign_auc(trunk, images, t_f, features, normalization, config),
+                gate_global_rank(descriptor_map, config),
                 gate_local_token_rank(descriptor_map, config),
                 gate_distance_spread(descriptor_map, config),
-                gate_scramble(
-                    trunk, images, t_f, features, normalization, config
-                ),
+                gate_scramble(trunk, images, t_f, features, normalization, config),
             ]
         )
     failed = [name for name, ok, _, _ in gates if not ok]

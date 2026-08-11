@@ -5,9 +5,11 @@ from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 
 import torch
 
+from ...stage_cap.diagnostics import capability_gate
 from ...stage_cap.training import (
     _atomic_save,
     _recovery_identity,
@@ -15,12 +17,15 @@ from ...stage_cap.training import (
     recovery_sidecar,
     validate_recovery_counters,
 )
+from ..artifacts import write_json_atomic
 from ..config import screen_profile
 from ..run_screen import (
     _assert_recovery_authorization,
     _assert_recovery_matches_150k_checkpoints,
     _assert_result_binds_recovery,
     _promotion_recovery_authorization,
+    _quarantine_incomplete_terminal_result,
+    _verify_completed_terminal_result,
 )
 
 
@@ -51,6 +56,285 @@ def _authorization(character: str = "a") -> dict:
     )
 
 
+class _TerminalMirror:
+    def __init__(self, record: dict) -> None:
+        self.record = record
+
+    def verify_recovery(self, _path: Path, *, recovery_step: int) -> dict:
+        assert recovery_step == 300_000
+        return self.record
+
+
+def test_completed_terminal_result_is_idempotently_revalidated() -> None:
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        result_path = root / "result_300000.json"
+        recovery_path = root / "checkpoints" / "recovery.pt"
+        mirror_record = {
+            "relative_path": "checkpoints/recovery.pt",
+            "sha256": "r" * 64,
+            "bytes": 123,
+            "recovery_step": 300_000,
+            "version_relative_path": "versions/recovery.pt",
+            "commit_relative_path": "commits/recovery.json",
+        }
+        authorization = _authorization()
+        health_final = {
+            "second_moment_ratio": 1.0,
+            "centered_variance_ratio": 1.0,
+            "effective_rank_ratio": 1.0,
+            "haar_LL_ratio": 1.0,
+            "haar_LH_ratio": 1.0,
+            "haar_HL_ratio": 1.0,
+            "haar_HH_ratio": 1.0,
+            "raw_saturation_fraction": 0.0,
+        }
+        health = [{"step": 300_000, "ema": health_final}]
+        recovery = {
+            "artifact_sha256": "r" * 64,
+            "planned_updates": 300_000,
+            "completed_updates": 300_000,
+            "continuation_authorization": authorization,
+            "history": [{"step": 300_000}],
+            "health": health,
+            "checkpoints": {},
+            "snapshots": [],
+            "wall_seconds": 10.0,
+            "peak_memory_bytes": 100,
+            "peak_memory_reserved_bytes": 200,
+            "optimizer_updates": 300_000,
+            "examples_seen": 9_600_000,
+            "model_forwards": 28_800_000,
+            "objective_forward_calls": 900_000,
+            "clipped_updates": 2,
+            "clipped_updates_final_window": 1,
+            "final_window_updates": 100,
+            "nonfinite_updates": 0,
+        }
+        workspace = {
+            "root": str(root.resolve()),
+            "attestation": {"status": "durable-root-attestation"},
+            "live_roundtrip_probe": {"roundtrip_verified": True},
+        }
+        profile = screen_profile("ordered_uniform", "local_1000_d0002_fp32")
+        declared_profile = {
+            "name": "declared",
+            "train": {
+                "micro_batch": 4,
+                "accumulation_steps": 8,
+                "effective_batch": 32,
+                "checkpoint_updates": [],
+            },
+        }
+        realized_profile = deepcopy(declared_profile)
+        gate = capability_gate(health_final, 1.0, 0.01, 0, 1, profile.gate)
+        run_identity_mirror = {
+            "relative_path": "run_identity.json",
+            "sha256": "i" * 64,
+            "bytes": 10,
+        }
+        hard_wall_policy = {
+            "hard_cumulative_wall_hours": 12.0,
+            "recovery_interval_updates": 1_000,
+            "maximum_detection_overshoot_updates": 1_000,
+            "conservative_projected_maximum_detection_overshoot_hours": 0.1,
+            "conservative_projected_maximum_detected_wall_hours": 12.1,
+        }
+        storage_plan = {
+            "storage_root": str(root.resolve()),
+            "measured_unit_bytes": {
+                "recovery": 10,
+                "checkpoint_raw": 10,
+                "checkpoint_ema": 10,
+                "snapshot": 10,
+            },
+            "projected_bytes": {"required_with_contingency": 1_000},
+        }
+        payload = {
+            "status": "cap-emf2-screen-unit",
+            "arm": "ordered_uniform",
+            "numerical_candidate": "local_1000_d0002_fp32",
+            "preflight_sha256": "p" * 64,
+            "run_identity_sha256": "i" * 64,
+            "unit_seed": 0,
+            "declared_profile": declared_profile,
+            "realized_profile": realized_profile,
+            "realized_batch_split": {
+                "micro_batch": 4,
+                "accumulation_steps": 8,
+                "effective_batch": 32,
+                "overridden": False,
+            },
+            "precision": {"allow_tf32": False},
+            "deterministic_algorithms": True,
+            "device": {"gpu_name": "test"},
+            "hardware": {"status": "test-hardware"},
+            "training": {
+                "history": recovery["history"],
+                "health": health,
+                "optimizer_updates": 300_000,
+                "examples_seen": 9_600_000,
+                "examples_seen_target": 9_600_000,
+                "objective_sample_evaluations": 28_800_000,
+                "objective_forward_calls": 900_000,
+                "inference_forward_calls": 1,
+                "clipped_updates": 2,
+                "clipped_updates_final_window": 1,
+                "final_window_updates": 100,
+                "clip_fraction_final_window": 0.01,
+                "nonfinite_updates": 0,
+                "wall_seconds": 10.1,
+                "peak_memory_bytes": 100,
+                "peak_memory_reserved_bytes": 200,
+            },
+            "checkpoints": {},
+            "raw_snapshots": [],
+            "recovery": {
+                "path": "checkpoints/recovery.pt",
+                "sha256": "r" * 64,
+                "planned_updates": 300_000,
+                "completed_updates": 300_000,
+                "continuation_authorization": authorization,
+                "durable_mirror": mirror_record,
+            },
+            "durability": {
+                "required": True,
+                "synchronous": True,
+                "authorization_workspace": workspace,
+                "mirror_root": str((root / "mirror").resolve()),
+                "run_identity": run_identity_mirror,
+                "live_roundtrip_probe": {"roundtrip_verified": True},
+                "preexisting_sealed_artifacts_synced": 0,
+                "live_storage_capacity": {
+                    "storage_root": str(root.resolve()),
+                    "total_bytes": 2_000,
+                    "free_bytes": 1_500,
+                    "required_campaign_bytes": 1_000,
+                    "minimum_transaction_headroom_bytes": 80,
+                },
+                "hard_cumulative_wall_hours": 12.0,
+                "hard_wall_policy": {
+                    **hard_wall_policy,
+                    "prior_committed_wall_hours": 0.0,
+                    "last_verified_recovery_step": 300_000,
+                    "semantics": "test",
+                },
+            },
+            "train_only_gate": deepcopy(gate),
+            "elapsed_seconds": 10.2,
+        }
+        write_json_atomic(result_path, payload)
+        verified = _verify_completed_terminal_result(
+            result_path,
+            arm="ordered_uniform",
+            candidate="local_1000_d0002_fp32",
+            updates=300_000,
+            planned_updates=300_000,
+            preflight_sha256="p" * 64,
+            run_identity_sha256="i" * 64,
+            unit_seed=0,
+            declared_profile=declared_profile,
+            realized_profile=realized_profile,
+            expected_examples=9_600_000,
+            gate_config=profile.gate,
+            deterministic_algorithms=True,
+            precision={"allow_tf32": False},
+            device={"gpu_name": "test"},
+            hardware={"status": "test-hardware"},
+            recovery=recovery,
+            recovery_path=recovery_path,
+            root=root,
+            mirror=_TerminalMirror(mirror_record),
+            workspace_record=workspace,
+            mirror_root=root / "mirror",
+            run_identity_mirror=run_identity_mirror,
+            hard_wall_policy=hard_wall_policy,
+            storage_plan=storage_plan,
+        )
+        assert verified["artifact_sha256"]
+
+        def republish() -> None:
+            result_path.unlink()
+            result_path.with_suffix(result_path.suffix + ".sha256").unlink()
+            write_json_atomic(result_path, payload)
+
+        common = {
+            "arm": "ordered_uniform",
+            "candidate": "local_1000_d0002_fp32",
+            "updates": 300_000,
+            "planned_updates": 300_000,
+            "preflight_sha256": "p" * 64,
+            "run_identity_sha256": "i" * 64,
+            "unit_seed": 0,
+            "declared_profile": declared_profile,
+            "realized_profile": realized_profile,
+            "expected_examples": 9_600_000,
+            "gate_config": profile.gate,
+            "deterministic_algorithms": True,
+            "precision": {"allow_tf32": False},
+            "device": {"gpu_name": "test"},
+            "hardware": {"status": "test-hardware"},
+            "recovery": recovery,
+            "recovery_path": recovery_path,
+            "root": root,
+            "mirror": _TerminalMirror(mirror_record),
+            "workspace_record": workspace,
+            "mirror_root": root / "mirror",
+            "run_identity_mirror": run_identity_mirror,
+            "hard_wall_policy": hard_wall_policy,
+            "storage_plan": storage_plan,
+        }
+        payload["training"]["optimizer_updates"] = 299_999
+        republish()
+        _raises(
+            "inconsistent training counters",
+            _verify_completed_terminal_result,
+            result_path,
+            **common,
+        )
+        payload["training"]["optimizer_updates"] = 300_000
+
+        payload["train_only_gate"]["verdict"] = "FORGED_PASS"
+        republish()
+        _raises(
+            "recomputed train-only gate",
+            _verify_completed_terminal_result,
+            result_path,
+            **common,
+        )
+        payload["train_only_gate"] = deepcopy(gate)
+
+        payload["training"]["history"] = [{"step": 299_999}]
+        republish()
+        _raises(
+            "recovery ledger",
+            _verify_completed_terminal_result,
+            result_path,
+            **common,
+        )
+        payload["training"]["history"] = recovery["history"]
+
+        payload["durability"]["hard_cumulative_wall_hours"] = 99.0
+        republish()
+        _raises(
+            "durability bindings",
+            _verify_completed_terminal_result,
+            result_path,
+            **common,
+        )
+
+
+def test_incomplete_terminal_result_is_quarantined() -> None:
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        result_path = root / "result_300000.json"
+        result_path.write_text("partial", encoding="utf-8")
+        record = _quarantine_incomplete_terminal_result(result_path)
+        assert record is not None and "payload" in record
+        assert not result_path.exists()
+        assert Path(record["payload"]).read_text(encoding="utf-8") == "partial"
+
+
 def _strict_payload(
     *,
     planned: int = 4,
@@ -59,9 +343,7 @@ def _strict_payload(
     authorization: dict | None = None,
     nonfinite: int = 0,
 ) -> dict:
-    profile = screen_profile(
-        "ordered_uniform", "local_1000_d0002_fp32", smoke=True
-    )
+    profile = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
     identity = _recovery_identity(profile, external or {"test": True}, 0)
     train = profile.train
     examples = completed * train.effective_batch
@@ -244,6 +526,19 @@ def test_immutable_150k_result_binds_full_recovery_sha() -> None:
         "planned_updates": 150_000,
         "completed_updates": 150_000,
     }
+    durable = {
+        "relative_path": "checkpoints/recovery.pt",
+        "sha256": "c" * 64,
+        "bytes": 123,
+        "recovery_step": 150_000,
+        "version_relative_path": "versions/recovery.pt",
+        "commit_relative_path": "commits/150000.json",
+    }
+    mirror = SimpleNamespace(
+        verify_recovery=lambda _path, *, recovery_step: (
+            durable if recovery_step == 150_000 else None
+        )
+    )
     result = {
         "recovery": {
             "path": "checkpoints/recovery.pt",
@@ -251,9 +546,12 @@ def test_immutable_150k_result_binds_full_recovery_sha() -> None:
             "planned_updates": 150_000,
             "completed_updates": 150_000,
             "continuation_authorization": None,
+            "durable_mirror": durable,
         }
     }
-    _assert_result_binds_recovery(result, recovery, recovery_path=path, root=root)
+    _assert_result_binds_recovery(
+        result, recovery, recovery_path=path, root=root, mirror=mirror
+    )
     bad = deepcopy(result)
     bad["recovery"]["sha256"] = "d" * 64
     _raises(
@@ -263,4 +561,5 @@ def test_immutable_150k_result_binds_full_recovery_sha() -> None:
         recovery,
         recovery_path=path,
         root=root,
+        mirror=mirror,
     )

@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 
+import pytest
 import torch
 
 from ...stage_cap.diagnostics import capability_gate
@@ -14,7 +15,7 @@ from ...stage_cap.model import CAPPixelTransformer
 from ...stage_cap.monitoring import ObjectiveLedger
 from ...stage_cap.objective import sample_time_triangle
 from ...stage_cap.preflight import wake_output_path
-from ...stage_cap.training import train_cap_unit
+from ...stage_cap.training import load_recovery_payload, train_cap_unit
 from ..artifacts import source_manifest
 from ..checkpoint_forensics import patch_phase_report
 from ..config import SAMPLER_ARMS, numerical_candidate, screen_profile
@@ -26,6 +27,7 @@ from ..positive_control import (
     balanced_class_indices,
     source_citation,
 )
+from ..preview import save_fixed_grid
 from ..production_readiness import production_commands
 from ..promotion import _late_inference_corner_trajectory
 from ..sampler_audit import audit_sampler
@@ -38,6 +40,23 @@ def test_positive_control_allocation_and_citation_are_frozen():
     assert UPSTREAM_COMMIT in citation
     assert NETWORK_SHA256 in citation
     assert "class=seed mod 10" in citation
+
+
+def test_fixed_preview_grid_is_deterministic_and_uncurated():
+    with TemporaryDirectory() as directory:
+        path = Path(directory) / "grid.png"
+        images = torch.linspace(-1.0, 1.0, 12 * 3 * 4 * 4).reshape(12, 3, 4, 4)
+        digest = save_fixed_grid(images, path, rows=3, columns=4)
+        assert path.is_file()
+        assert len(digest) == 64
+        first = path.read_bytes()
+        second_path = Path(directory) / "grid-copy.png"
+        assert save_fixed_grid(images, second_path, rows=3, columns=4) == digest
+        assert second_path.read_bytes() == first
+        with pytest.raises(ValueError, match="not enough images"):
+            save_fixed_grid(
+                images, Path(directory) / "too-large.png", rows=4, columns=4
+            )
 
 
 def test_production_readiness_can_only_build_the_four_pretraining_gates():
@@ -55,6 +74,13 @@ def test_production_readiness_can_only_build_the_four_pretraining_gates():
         baseline_standard=Path("baseline.json"),
         positive_control_standard=Path("control.json"),
         metric_calibration=Path("calibration.json"),
+        max_total_cost=25.0,
+        nontraining_reserve=3.0,
+        contingency_fraction=0.15,
+        durable_mirror_dir=Path("durable-benchmark"),
+        durable_storage_root=Path("durable-root"),
+        artifact_storage_reserve_gib=20.0,
+        storage_contingency_fraction=0.20,
     )
     modules = [command[2] for command in commands]
     assert modules == [
@@ -66,6 +92,17 @@ def test_production_readiness_can_only_build_the_four_pretraining_gates():
     assert all("run_screen" not in token for command in commands for token in command)
     assert "--hourly-rate" in commands[2]
     assert commands[2][commands[2].index("--hourly-rate") + 1] == "0.75"
+    assert commands[3][commands[3].index("--max-total-cost") + 1] == "25.0"
+    assert commands[3][commands[3].index("--nontraining-reserve") + 1] == "3.0"
+    assert (
+        commands[3][commands[3].index("--post-foundation-training-reserve") + 1]
+        == "10.0"
+    )
+    assert "--durable-mirror-dir" in commands[2]
+    assert "--i-confirm-durable-mirror" in commands[2]
+    assert commands[3][commands[3].index("--durable-storage-root") + 1] == (
+        "durable-root"
+    )
 
 
 def test_historical_numerical_control_is_explicitly_nonlocal():
@@ -116,6 +153,38 @@ def test_promotion_resumes_and_restarts_the_new_final_window():
     assert initial.optimizer_updates == 4
     assert resumed.optimizer_updates == 6
     assert resumed.final_window_updates == 2
+
+
+def test_same_horizon_pause_resumes_exact_recovery_without_a_second_model():
+    frozen = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
+    pool = torch.randn(32, 3, 8, 8)
+    with TemporaryDirectory() as directory:
+        recovery = Path(directory) / "recovery.pt"
+        paused = train_cap_unit(
+            pool,
+            frozen,
+            "cpu",
+            recovery_path=recovery,
+            stop_after_updates=2,
+            unit_seed=7,
+        )
+        pause_payload, _ = load_recovery_payload(recovery)
+        resumed = train_cap_unit(
+            pool,
+            frozen,
+            "cpu",
+            recovery_path=recovery,
+            stop_after_updates=4,
+            unit_seed=7,
+        )
+        final_payload, _ = load_recovery_payload(recovery)
+    assert paused.optimizer_updates == 2
+    assert pause_payload["planned_updates"] == 4
+    assert pause_payload["completed_updates"] == 2
+    assert resumed.optimizer_updates == 4
+    assert final_payload["planned_updates"] == 4
+    assert final_payload["completed_updates"] == 4
+    assert final_payload["recovery_identity"] == pause_payload["recovery_identity"]
 
 
 def test_ordered_arms_sort_two_endpoints_and_do_not_floor_the_condition():
@@ -207,13 +276,42 @@ def test_objective_ledger_survives_recovery_before_a_log_boundary():
 
 
 def test_late_inference_corner_gate_is_all_row_one_sided_and_complete():
+    objective = screen_profile(
+        "ordered_uniform", "local_1000_d0002_fp32", updates=150_000
+    ).objective
+
+    def probe(error: float) -> dict:
+        summary = {
+            "count": 2_048,
+            "mean_raw_mse": error,
+            "mean_target_rms": 1.0,
+            "mean_quotient_rms": 1.0,
+            "coefficient": {"minimum": 0.0, "mean": 1.0, "maximum": 99.0},
+            "nonfinite_rows": 0,
+        }
+        return {
+            "condition": {"t": 1.0, "r": 0.0, "h": 1.0},
+            "sealed_train_only": True,
+            "sample_count": 2_048,
+            "objective_numerics": {
+                "stopped_evaluation": objective.stopped_evaluation,
+                "emf_delta": objective.emf_delta,
+                "emf_denominator_floor": objective.emf_denominator_floor,
+            },
+            "raw": dict(summary),
+            "ema": dict(summary),
+        }
+
     history = [
         {
             "step": step,
             "objective_ledger": {
                 "named_regions": {
                     "inference_corner": {
-                        "count": 64,
+                        # Natural occupancy may legitimately be zero for an
+                        # arm; it describes sampler support, not endpoint
+                        # performance.
+                        "count": 0,
                         # Improvement in the second window must not fail a
                         # one-sided explosion guard.
                         "mean_raw_mse": 2.0 if step <= 125_000 else 0.5,
@@ -224,18 +322,32 @@ def test_late_inference_corner_gate_is_all_row_one_sided_and_complete():
         for step in range(100_500, 150_001, 500)
     ]
     result = {
-        "declared_profile": {"train": {"log_every": 500}},
-        "training": {"history": history},
+        "declared_profile": {
+            "train": {"log_every": 500, "audit_samples": 2_048},
+            "objective": {
+                "stopped_evaluation": objective.stopped_evaluation,
+                "emf_delta": objective.emf_delta,
+                "emf_denominator_floor": objective.emf_denominator_floor,
+            },
+        },
+        "training": {
+            "history": history,
+            "health": [
+                {"step": 100_000, "fixed_exact_inference_corner": probe(2.0)},
+                {"step": 150_000, "fixed_exact_inference_corner": probe(0.5)},
+            ],
+        },
     }
     report = _late_inference_corner_trajectory(result)
     assert report["stable"] is True
-    assert [window["rows"] for window in report["windows"]] == [3_200, 3_200]
+    assert [
+        window["rows"] for window in report["natural_sampled_support"]["windows"]
+    ] == [0, 0]
+    assert report["late_error_growth"] == {"raw": 0.25, "ema": 0.25}
 
-    result["training"]["history"][-1]["objective_ledger"]["named_regions"][
-        "inference_corner"
-    ]["mean_raw_mse"] = 1_000.0
+    result["training"]["health"][-1]["fixed_exact_inference_corner"] = probe(10.0)
     assert _late_inference_corner_trajectory(result)["stable"] is False
-    result["training"]["history"].pop()
+    result["training"]["health"].pop()
     assert _late_inference_corner_trajectory(result)["stable"] is False
 
 
@@ -316,14 +428,62 @@ def test_cap2_manifest_includes_every_executable_entry_point():
     manifest = source_manifest()
     for suffix in (
         "stage_cap2/benchmark.py",
+        "stage_cap2/budget.py",
         "stage_cap2/checkpoint_forensics.py",
+        "stage_cap2/development_evaluation.py",
+        "stage_cap2/durable_mirror.py",
+        "stage_cap2/final_verdict.py",
         "stage_cap2/metric_calibration.py",
         "stage_cap2/numerical_admission.py",
         "stage_cap2/preflight.py",
+        "stage_cap2/preview.py",
+        "stage_cap2/production_readiness.py",
+        "stage_cap2/promotion.py",
         "stage_cap2/run_screen.py",
+        "stage_cap2/selection.py",
         "stage_cap2/standard_metrics.py",
     ):
         assert any(name.endswith(suffix) for name in manifest), suffix
+
+
+def test_cap2_manifest_closes_over_local_python_imports():
+    """No unhashed local module may affect a source-bound CAP2 artifact."""
+
+    import ast
+
+    package_root = Path(__file__).resolve().parents[2]
+    manifest = {
+        name.split("encoder_independent_drifting/")[-1] for name in source_manifest()
+    }
+    missing: list[str] = []
+    for relative in sorted(manifest):
+        if not relative.endswith(".py"):
+            continue
+        module = package_root / relative
+        if not module.is_file():
+            continue
+        current_package = list(Path(relative).parent.parts)
+        tree = ast.parse(module.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ImportFrom) or node.level == 0:
+                continue
+            keep = len(current_package) - (node.level - 1)
+            if keep < 0:
+                continue
+            target_parts = current_package[:keep]
+            if node.module:
+                target_parts.extend(node.module.split("."))
+            candidate = "/".join(target_parts) + ".py"
+            init_candidate = "/".join(target_parts + ["__init__"]) + ".py"
+            if (package_root / candidate).is_file() and candidate not in manifest:
+                missing.append(f"{relative} imports {candidate}")
+            elif (
+                not (package_root / candidate).is_file()
+                and (package_root / init_candidate).is_file()
+                and init_candidate not in manifest
+            ):
+                missing.append(f"{relative} imports {init_candidate}")
+    assert not missing, missing
 
 
 def test_patch_phase_report_detects_a_checkerboard():

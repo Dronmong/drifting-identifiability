@@ -6,6 +6,7 @@ import argparse
 import importlib.metadata
 import json
 import math
+import shutil
 from pathlib import Path
 
 import torch
@@ -21,9 +22,11 @@ from .artifacts import (
     verify_json,
     write_json_atomic,
 )
-from .benchmark import project_runtime
+from .benchmark import project_runtime, resume_rehearsal_consistent
+from .budget import CAMPAIGNS, build_budget_plan, build_storage_plan
 from .config import SAMPLER_ARMS, apply_calibrated_gate, screen_profile
 from .gate_calibration import gate_calibration_consistent
+from .metric_calibration import revalidate_metric_calibration_evidence
 from .numerical_admission import (
     AUDIT_BATCH,
     AUDIT_SOURCES,
@@ -40,6 +43,7 @@ from .standard_metrics import (
     REPOSITORY_FEATURE_SAMPLES,
     REPOSITORY_MEMORIZATION_SAMPLES,
     REPOSITORY_REFERENCE_SEED,
+    revalidate_clean_evaluation_evidence,
 )
 
 CLEANFID_VERSION = "0.1.35"
@@ -48,9 +52,7 @@ GATE_SAMPLES_PER_SUBSET = 2_048
 GATE_REPEATS = 12
 SAMPLER_DRAWS_PER_ARM = 2_000_000
 BASELINE_CHECKPOINT_STEP = 650_000
-KID_REFERENCE_POPULATION = (
-    "all 50,000 CIFAR-10 train images in dataset-index order"
-)
+KID_REFERENCE_POPULATION = "all 50,000 CIFAR-10 train images in dataset-index order"
 KID_REFERENCE_PREPROCESSING = "clean-fid 0.1.35 clean Inception preprocessing"
 
 
@@ -182,11 +184,19 @@ def _same_metric_environment(*artifacts: object) -> bool:
             "image_quantization": provenance.get("image_quantization"),
             "numerical_settings": provenance.get("numerical_settings"),
             "deterministic_algorithms": provenance.get("deterministic_algorithms"),
+            "metric_batch": artifact.get("metrics", {}).get("metric_batch"),
+            "metric_workers": artifact.get("metrics", {}).get("metric_workers"),
         }
         if (
             record["deterministic_algorithms"] is not True
             or not isinstance(record["image_quantization"], str)
             or not record["image_quantization"]
+            or isinstance(record["metric_batch"], bool)
+            or not isinstance(record["metric_batch"], int)
+            or record["metric_batch"] <= 0
+            or isinstance(record["metric_workers"], bool)
+            or not isinstance(record["metric_workers"], int)
+            or record["metric_workers"] < 0
         ):
             return False
         records.append(record)
@@ -268,6 +278,20 @@ def _standard_evaluation_valid(payload: object, *, external: bool) -> bool:
         )
     )
     provenance = payload.get("provenance", {})
+    generated = payload.get("metrics", {}).get("generated_features", {})
+    generated_features_valid = (
+        isinstance(generated, dict)
+        and isinstance(generated.get("path"), str)
+        and bool(generated["path"].strip())
+        and _hash64(generated.get("sha256"))
+        and _hash64(generated.get("feature_sha256"))
+        and int(generated.get("count", -1)) == DEFAULT_SAMPLE_COUNT
+        and int(generated.get("dimension", -1)) == 2_048
+        and generated.get("dtype") in {"float32", "float64"}
+        and generated.get("source_png_manifest_sha256")
+        == samples.get("png_manifest_sha256")
+        and generated.get("generation_seed") == samples.get("seed")
+    )
     return (
         payload.get("status") == "cap-emf-standard-evaluation"
         and checkpoint_ok
@@ -276,6 +300,7 @@ def _standard_evaluation_valid(payload: object, *, external: bool) -> bool:
         and samples.get("mode") == "RGB"
         and _hash64(samples.get("png_manifest_sha256"))
         and _clean_metrics_valid(payload.get("metrics"))
+        and generated_features_valid
         and _auxiliary_valid(auxiliary, samples)
         and payload.get("repository_feature_metrics")
         == auxiliary.get("repository_feature_metrics")
@@ -305,15 +330,20 @@ def _benchmark_projection_consistent(payload: object) -> bool:
                 recovery_event_seconds=float(payload["recovery_io_seconds"]),
                 snapshot_event_seconds=float(payload["snapshot_io_seconds"]),
                 checkpoint_pair_seconds=float(payload["checkpoint_io_seconds"]),
-                ordinary_health_event_seconds=float(
-                    payload["ordinary_health_seconds"]
-                ),
+                ordinary_health_event_seconds=float(payload["ordinary_health_seconds"]),
                 checkpoint_health_event_seconds=float(
                     payload["checkpoint_health_seconds"]
                 ),
                 hourly_rate=float(payload["hourly_rate"]),
             )
-            for updates in (50_000, 150_000, 300_000)
+            for updates in (
+                50_000,
+                150_000,
+                300_000,
+                500_000,
+                650_000,
+                750_000,
+            )
         }
     except (KeyError, TypeError, ValueError, RuntimeError):
         return False
@@ -449,6 +479,34 @@ def validate_preflight_inputs(
         if isinstance(allocation, dict)
         for side in ("left_sha256", "right_sha256")
     ]
+    durable = benchmark.get("durable_mirror", {})
+    durable_attestation = durable.get("attestation", {})
+    durable_probe = durable.get("live_roundtrip_probe", {})
+    durable_commits = durable.get("recovery_commits", [])
+    rehearsal = benchmark.get("resume_rehearsal", {})
+    durable_mirror_complete = (
+        isinstance(durable_attestation, dict)
+        and durable_attestation.get("instance_independent") is True
+        and isinstance(durable_attestation.get("storage_id"), str)
+        and bool(durable_attestation["storage_id"].strip())
+        and _hash64(durable_attestation.get("artifact_sha256"))
+        and isinstance(durable_probe, dict)
+        and durable_probe.get("roundtrip_verified") is True
+        and durable_probe.get("probe_removed") is True
+        and durable_probe.get("storage_id") == durable_attestation.get("storage_id")
+        and durable_probe.get("attestation_sha256")
+        == durable_attestation.get("artifact_sha256")
+        and isinstance(durable_commits, list)
+        and len(durable_commits) == 2
+        and [record.get("recovery_step") for record in durable_commits]
+        == [rehearsal.get("split_step"), rehearsal.get("final_step")]
+        and [record.get("sha256") for record in durable_commits]
+        == [
+            rehearsal.get("before_recovery_sha256"),
+            rehearsal.get("after_recovery_sha256"),
+        ]
+        and durable.get("synchronous_event_costs_included") is True
+    )
     checks = {
         "numerical_go": numerical.get("decision") == "GO",
         "numerical_candidate_named": isinstance(candidate, str) and bool(candidate),
@@ -465,8 +523,7 @@ def validate_preflight_inputs(
         ),
         "numerical_full_matrix": (
             admission_matrix_complete(numerical)
-            and
-            int(numerical.get("batch_per_stratum", -1)) == AUDIT_BATCH
+            and int(numerical.get("batch_per_stratum", -1)) == AUDIT_BATCH
             and int(numerical.get("repeats", -1)) >= MINIMUM_REPEATS
             and numerical.get("design", {}).get("sources") == list(AUDIT_SOURCES)
             and numerical.get("design", {}).get("strata") == expected_strata
@@ -476,9 +533,7 @@ def validate_preflight_inputs(
             and len(numerical_results) == expected_batches
             and actual_result_keys == expected_result_keys
             and numerical_rows_valid
-            and mixed_valid(
-                mixed_results, expected_batch=AUDIT_BATCH, gradient=True
-            )
+            and mixed_valid(mixed_results, expected_batch=AUDIT_BATCH, gradient=True)
             and mixed_valid(
                 production_shape_results,
                 expected_batch=PRODUCTION_MICROBATCH,
@@ -525,8 +580,7 @@ def validate_preflight_inputs(
         ),
         "gate_calibration_complete": (
             gate_calibration_consistent(calibration)
-            and
-            calibration.get("decision") == "GO"
+            and calibration.get("decision") == "GO"
             and int(calibration.get("samples_per_subset", -1))
             == GATE_SAMPLES_PER_SUBSET
             and int(calibration.get("repeats", -1)) == GATE_REPEATS
@@ -545,8 +599,12 @@ def validate_preflight_inputs(
         ),
         "benchmark_go_and_complete": (
             _benchmark_projection_consistent(benchmark)
-            and
-            benchmark.get("decision") == "GO"
+            and benchmark.get("decision") == "GO"
+            and durable_mirror_complete
+            and resume_rehearsal_consistent(
+                benchmark.get("resume_rehearsal"),
+                expected_steps=int(benchmark.get("steps", -1)),
+            )
             and benchmark.get("numerical") == candidate
             and int(benchmark.get("steps", 0)) >= 2_000
             and benchmark.get("deterministic_algorithms") is True
@@ -568,11 +626,20 @@ def validate_preflight_inputs(
                     "checkpoint_written",
                     "snapshot_written",
                     "recovery_written",
+                    "resume_rehearsed",
+                    "durable_mirror_roundtrip",
+                    "durable_recoveries_committed",
                     "parameter_ceiling",
                 ),
             )
             and int(benchmark.get("parameter_count", -1)) > 0
             and int(benchmark.get("peak_memory_bytes", -1)) > 0
+            and int(benchmark.get("recovery_bytes", -1)) > 0
+            and int(benchmark.get("snapshot", {}).get("bytes", -1)) > 0
+            and all(
+                int(benchmark.get("checkpoint_artifact_bytes", {}).get(kind, -1)) > 0
+                for kind in ("raw", "ema")
+            )
             and int(benchmark.get("objective_sample_evaluations", -1)) > 0
             and int(benchmark.get("objective_forward_calls", -1)) > 0
             and isinstance(benchmark.get("projection_method"), str)
@@ -596,7 +663,15 @@ def validate_preflight_inputs(
                 >= float(projection["hours"])
                 for projection in benchmark.get("projections", {}).values()
             )
-            and set(benchmark.get("projections", {})) == {"50000", "150000", "300000"}
+            and set(benchmark.get("projections", {}))
+            == {
+                "50000",
+                "150000",
+                "300000",
+                "500000",
+                "650000",
+                "750000",
+            }
         ),
         "admission_benchmark_same_environment": _same_hardware(
             numerical.get("hardware"), benchmark.get("hardware")
@@ -705,6 +780,22 @@ def main() -> int:
     parser.add_argument("--positive-control-standard", type=Path, required=True)
     parser.add_argument("--metric-calibration", type=Path, required=True)
     parser.add_argument("--checkpoint-forensics", type=Path, required=True)
+    parser.add_argument("--max-total-cost", type=float, required=True)
+    parser.add_argument("--nontraining-reserve", type=float, required=True)
+    parser.add_argument("--contingency-fraction", type=float, default=0.15)
+    parser.add_argument("--campaign", choices=CAMPAIGNS, default="matched_screen")
+    parser.add_argument(
+        "--post-foundation-training-reserve",
+        type=float,
+        default=10.0,
+        help=(
+            "dollars reserved for a measured post-foundation continuation; "
+            "used only by ordered_750_foundation"
+        ),
+    )
+    parser.add_argument("--durable-storage-root", type=Path, required=True)
+    parser.add_argument("--artifact-storage-reserve-gib", type=float, default=20.0)
+    parser.add_argument("--storage-contingency-fraction", type=float, default=0.20)
     parser.add_argument("--out", type=Path, default=DEFAULT_PREFLIGHT)
     args = parser.parse_args()
     assert_unused(args.out)
@@ -742,7 +833,56 @@ def main() -> int:
     smoke = _smoke_all_arms(candidate, calibration)
     smoke_ok = all(result["verdict"] == "PASS" for result in smoke.values())
     admission_checks["all_arm_smoke"] = smoke_ok
-    decision = "GO" if decision == "GO" and smoke_ok else "NO_GO"
+    budget = build_budget_plan(
+        benchmark,
+        max_total_cost=args.max_total_cost,
+        nontraining_reserve=args.nontraining_reserve,
+        contingency_fraction=args.contingency_fraction,
+        campaign=args.campaign,
+        post_foundation_training_reserve=args.post_foundation_training_reserve,
+    )
+    admission_checks["aggregate_budget_within_ceiling"] = (
+        budget["within_ceiling"] is True
+    )
+    storage_root = args.durable_storage_root.resolve()
+    if not storage_root.is_dir():
+        raise RuntimeError(
+            f"durable storage root is not a mounted directory: {storage_root}"
+        )
+    usage = shutil.disk_usage(storage_root)
+    storage = build_storage_plan(
+        benchmark,
+        campaign=args.campaign,
+        storage_root=str(storage_root),
+        total_bytes=int(usage.total),
+        free_bytes=int(usage.free),
+        artifact_reserve_gib=args.artifact_storage_reserve_gib,
+        contingency_fraction=args.storage_contingency_fraction,
+    )
+    admission_checks["durable_storage_capacity"] = storage["decision"] == "GO"
+    retained_evidence = {
+        "baseline": revalidate_clean_evaluation_evidence(
+            baseline, anchor=args.baseline_standard.parent
+        ),
+        "positive_control": revalidate_clean_evaluation_evidence(
+            positive_control, anchor=args.positive_control_standard.parent
+        ),
+        "metric_calibration": revalidate_metric_calibration_evidence(
+            metric_calibration, anchor=args.metric_calibration.parent
+        ),
+    }
+    admission_checks["retained_metric_leaves_recomputed"] = all(
+        record.get("valid") is True for record in retained_evidence.values()
+    )
+    decision = (
+        "GO"
+        if decision == "GO"
+        and smoke_ok
+        and admission_checks["aggregate_budget_within_ceiling"]
+        and admission_checks["durable_storage_capacity"]
+        and admission_checks["retained_metric_leaves_recomputed"]
+        else "NO_GO"
+    )
 
     profiles = {
         arm: profile_payload(
@@ -759,6 +899,15 @@ def main() -> int:
         "checks": admission_checks,
         "smoke": smoke,
         "profiles_150k": profiles,
+        "foundation_profile_750k": profile_payload(
+            apply_calibrated_gate(
+                screen_profile("ordered_uniform", candidate, updates=750_000),
+                calibration,
+            )
+        ),
+        "budget": budget,
+        "storage": storage,
+        "retained_metric_evidence": retained_evidence,
         "inputs": {
             "numerical_admission": numerical,
             "sampler_audit": samplers,
@@ -773,10 +922,16 @@ def main() -> int:
         "protocol_sha256": file_sha256(PROTOCOL),
         "source_sha256": live_sources,
         "limits": [
-            "This preflight authorizes developmental screens up to 150k only.",
-            "A 300k continuation needs an explicit promotion flag and fixed interim report.",
-            "It never authorizes a 600k-scale confirmation or ASFD training.",
+            (
+                "This preflight authorizes one ordered-uniform foundation to "
+                "750k; it does not authorize ASFD."
+                if args.campaign == "ordered_750_foundation"
+                else "This preflight authorizes the matched developmental screen."
+            ),
+            "The campaign recorded in the budget is immutable after preflight.",
             "CleanFID may execute in a separate evaluation environment, but its version is recorded.",
+            "The storage projection assumes the workspace and per-arm mirrors share the declared filesystem.",
+            "Provider storage and egress charges must fit inside the nontraining dollar reserve.",
         ],
     }
     digest = write_json_atomic(args.out, result)

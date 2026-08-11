@@ -37,8 +37,7 @@ def _derive_gate(records: list[dict]) -> tuple[dict, dict, CAPGateConfig]:
         raise ValueError("gate calibration needs at least four records")
     for record in records:
         values = [
-            record.get(name)
-            for name in (*GATE_RATIO_FIELDS, "raw_saturation_fraction")
+            record.get(name) for name in (*GATE_RATIO_FIELDS, "raw_saturation_fraction")
         ]
         if not all(
             isinstance(value, (int, float))
@@ -60,9 +59,7 @@ def _derive_gate(records: list[dict]) -> tuple[dict, dict, CAPGateConfig]:
         name: min(1.0, max(1e-6, 0.9 * _quantile(values(name), 0.01)))
         for name in GATE_RATIO_FIELDS
     }
-    upper = {
-        name: max(1.0, 1.1 * _quantile(values(name), 0.99)) for name in lower
-    }
+    upper = {name: max(1.0, 1.1 * _quantile(values(name), 0.99)) for name in lower}
     saturation_upper = min(
         0.10,
         _quantile(values("raw_saturation_fraction"), 0.99) + 0.01,

@@ -66,8 +66,12 @@ def _inputs(
     selected_arm = arm or result.get("arm")
     selected_candidate = candidate or result.get("numerical_candidate")
     calibration = preflight.get("inputs", {}).get("gate_calibration", {})
+    campaign = preflight.get("budget", {}).get("campaign")
+    foundation_pause = campaign == "ordered_750_foundation"
+    expected_horizon = 750_000 if foundation_pause else STEP
     expected_declared = apply_calibrated_gate(
-        screen_profile(selected_arm, selected_candidate, updates=STEP), calibration
+        screen_profile(selected_arm, selected_candidate, updates=expected_horizon),
+        calibration,
     )
     declared = result.get("declared_profile")
     realized = result.get("realized_profile")
@@ -101,7 +105,7 @@ def _inputs(
         "result_declared_profile": declared == profile_payload(expected_declared),
         "result_realized_batch": (
             isinstance(realized, dict)
-            and int(realized_train.get("updates", -1)) == STEP
+            and int(realized_train.get("updates", -1)) == expected_horizon
             and int(realized_train.get("micro_batch", -1))
             == int(benchmark.get("micro_batch", -2))
             and int(realized_train.get("accumulation_steps", -1))
@@ -109,8 +113,7 @@ def _inputs(
         ),
         "result_checkpoint_ladder": (
             set(result.get("checkpoints", {})) == {str(STEP)}
-            and set(result.get("checkpoints", {}).get(str(STEP), {}))
-            == {"raw", "ema"}
+            and set(result.get("checkpoints", {}).get(str(STEP), {})) == {"raw", "ema"}
             and raw_record.get("sha256") == checkpoint["artifact_sha256"]
         ),
         "readmission_complete": admission_matrix_complete(readmission),
@@ -136,6 +139,20 @@ def _inputs(
             and readmission.get("production_numerical_mode")
             == initial.get("production_numerical_mode")
         ),
+        "foundation_same_horizon_pause": (
+            not foundation_pause
+            or (
+                result.get("foundation_pause")
+                == {
+                    "planned_updates": 750_000,
+                    "paused_at": STEP,
+                    "purpose": "raw-state numerical admission before continuation",
+                }
+                and result.get("recovery", {}).get("planned_updates") == 750_000
+                and result.get("recovery", {}).get("completed_updates") == STEP
+                and isinstance(result.get("recovery", {}).get("sha256"), str)
+            )
+        ),
     }
     return {
         "preflight": preflight,
@@ -144,6 +161,8 @@ def _inputs(
         "readmission": readmission,
         "arm": selected_arm,
         "candidate": selected_candidate,
+        "campaign": campaign,
+        "planned_horizon": expected_horizon,
         "checks": checks,
     }
 
@@ -170,6 +189,8 @@ def build_early_admission(
         "step": STEP,
         "arm": inputs["arm"],
         "candidate": inputs["candidate"],
+        "campaign": inputs["campaign"],
+        "planned_horizon": inputs["planned_horizon"],
         "preflight_sha256": inputs["preflight"]["artifact_sha256"],
         "result_sha256": inputs["result"]["artifact_sha256"],
         "raw_checkpoint_sha256": inputs["checkpoint"]["artifact_sha256"],
@@ -183,7 +204,13 @@ def build_early_admission(
             "readmission_50k_raw": _reference(readmission_path, out.parent),
         },
         "limits": [
-            "This authorizes only continuation of the exact bound arm from 50k to at most 150k.",
+            (
+                "This authorizes continuation of only the exact bound ordered model "
+                "from its 50k pause toward the predeclared 750k horizon."
+                if inputs["campaign"] == "ordered_750_foundation"
+                else "This authorizes only continuation of the exact bound arm from "
+                "50k to at most 150k."
+            ),
             "It is a numerical/mechanical gate, not an image-quality result.",
         ],
     }
@@ -216,10 +243,18 @@ def revalidate_early_admission(path: Path) -> dict:
         "decision": record.get("decision") == decision,
         "failed": record.get("failed") == failed,
         "step": record.get("step") == STEP,
+        "campaign": record.get("campaign")
+        == inputs["preflight"].get("budget", {}).get("campaign"),
+        "planned_horizon": record.get("planned_horizon")
+        == (
+            750_000
+            if inputs["preflight"].get("budget", {}).get("campaign")
+            == "ordered_750_foundation"
+            else STEP
+        ),
         "preflight": record.get("preflight_sha256")
         == inputs["preflight"]["artifact_sha256"],
-        "result": record.get("result_sha256")
-        == inputs["result"]["artifact_sha256"],
+        "result": record.get("result_sha256") == inputs["result"]["artifact_sha256"],
         "checkpoint": record.get("raw_checkpoint_sha256")
         == inputs["checkpoint"]["artifact_sha256"],
         "readmission": record.get("readmission_sha256")
@@ -257,7 +292,11 @@ def main() -> int:
         readmission_path=args.readmission_50k_raw,
         out=args.out,
     )
-    print(json.dumps({"decision": result["decision"], "failed": result["failed"]}, indent=2))
+    print(
+        json.dumps(
+            {"decision": result["decision"], "failed": result["failed"]}, indent=2
+        )
+    )
     print(f"wrote {args.out} sha256={result['artifact_sha256']}")
     return 0 if result["decision"] == "GO" else 1
 

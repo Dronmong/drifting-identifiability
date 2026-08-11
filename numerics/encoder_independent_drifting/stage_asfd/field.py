@@ -28,9 +28,15 @@ def _validate(probes: torch.Tensor, positives: torch.Tensor, negatives: torch.Te
         raise ValueError("field roles must share a rank")
     if probes.ndim < 2:
         raise ValueError("field roles need at least [count, dimension]")
-    if probes.shape[:-2] != positives.shape[:-2] or probes.shape[:-2] != negatives.shape[:-2]:
+    if (
+        probes.shape[:-2] != positives.shape[:-2]
+        or probes.shape[:-2] != negatives.shape[:-2]
+    ):
         raise ValueError("field roles must share their leading location dimensions")
-    if probes.shape[-1] != positives.shape[-1] or probes.shape[-1] != negatives.shape[-1]:
+    if (
+        probes.shape[-1] != positives.shape[-1]
+        or probes.shape[-1] != negatives.shape[-1]
+    ):
         raise ValueError("field roles must share a feature dimension")
     if min(probes.shape[-2], positives.shape[-2], negatives.shape[-2]) < 1:
         raise ValueError("field roles must be nonempty")
@@ -196,9 +202,7 @@ def descriptor_energy(
     if diagnostics:
         stats["energy"] = float(energy.detach())
         stats["levels"] = sorted(probes)
-        stats["location_split"] = _location_split(
-            probes, positives, negatives, taus
-        )
+        stats["location_split"] = _location_split(probes, positives, negatives, taus)
     return energy, stats
 
 

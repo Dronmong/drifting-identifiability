@@ -134,6 +134,18 @@ def _standard(*, external: bool) -> dict:
             "kid_seed": 20_260_831,
             "clean_fid_cifar10_train": 2.0 if external else 100.0,
             "clean_kid_cifar10_train": 0.01 if external else 0.10,
+            "metric_batch": 128,
+            "metric_workers": 0,
+            "generated_features": {
+                "path": "/fixed/generated_features.npz",
+                "sha256": "d" * 64,
+                "feature_sha256": "e" * 64,
+                "count": 50_000,
+                "dimension": 2_048,
+                "dtype": "float32",
+                "source_png_manifest_sha256": samples["png_manifest_sha256"],
+                "generation_seed": samples.get("seed"),
+            },
             "kid_reference": copy.deepcopy(KID_REFERENCE),
         },
         "repository_auxiliary": auxiliary,
@@ -375,6 +387,9 @@ def _fixture() -> dict:
         "checkpoint_written": True,
         "snapshot_written": True,
         "recovery_written": True,
+        "resume_rehearsed": True,
+        "durable_mirror_roundtrip": True,
+        "durable_recoveries_committed": True,
         "parameter_ceiling": True,
     }
     benchmark_timing = {
@@ -385,6 +400,30 @@ def _fixture() -> dict:
         "snapshot_io_seconds": 0.1,
         "ordinary_health_seconds": 0.1,
         "checkpoint_health_seconds": 0.2,
+    }
+    resume_rehearsal = {
+        "split_step": 1_999,
+        "final_step": 2_000,
+        "resumed_updates": 1,
+        "first_device": "cuda:0",
+        "second_device": "cuda:0",
+        "resume_message": "resumed CAP-EMF-1 from update 1999",
+        "before_recovery_sha256": "1" * 64,
+        "after_recovery_sha256": "2" * 64,
+        "before_resume": {
+            "completed_updates": 1_999,
+            "optimizer_updates": 1_999,
+            "ema_updates": 1_999,
+            "nonfinite_updates": 0,
+            "optimizer_steps": {"count": 10, "minimum": 1_999, "maximum": 1_999},
+        },
+        "after_resume": {
+            "completed_updates": 2_000,
+            "optimizer_updates": 2_000,
+            "ema_updates": 2_000,
+            "nonfinite_updates": 0,
+            "optimizer_steps": {"count": 10, "minimum": 2_000, "maximum": 2_000},
+        },
     }
     benchmark = {
         "decision": "GO",
@@ -402,12 +441,43 @@ def _fixture() -> dict:
         "checks": benchmark_checks,
         "parameter_count": 37_000_000,
         "peak_memory_bytes": 1,
+        "recovery_bytes": 600 * 1024**2,
+        "checkpoint_artifact_bytes": {
+            "raw": 150 * 1024**2,
+            "ema": 150 * 1024**2,
+        },
+        "snapshot": {"bytes": 150 * 1024**2},
         "objective_sample_evaluations": 1,
         "objective_forward_calls": 1,
         "projection_method": "cadence-adjusted measured event costs",
         **benchmark_timing,
         "ordinary_health_samples": 512,
         "checkpoint_health_samples": 2_048,
+        "resume_rehearsal": resume_rehearsal,
+        "durable_mirror": {
+            "attestation": {
+                "instance_independent": True,
+                "storage_id": "test-persistent-volume",
+                "artifact_sha256": "3" * 64,
+            },
+            "live_roundtrip_probe": {
+                "roundtrip_verified": True,
+                "probe_removed": True,
+                "storage_id": "test-persistent-volume",
+                "attestation_sha256": "3" * 64,
+            },
+            "recovery_commits": [
+                {
+                    "recovery_step": 1_999,
+                    "sha256": resume_rehearsal["before_recovery_sha256"],
+                },
+                {
+                    "recovery_step": 2_000,
+                    "sha256": resume_rehearsal["after_recovery_sha256"],
+                },
+            ],
+            "synchronous_event_costs_included": True,
+        },
         "projections": {
             str(updates): project_runtime(
                 updates=updates,
@@ -424,14 +494,19 @@ def _fixture() -> dict:
                     "checkpoint_health_seconds"
                 ],
                 hourly_rate=1.0,
-                non_io_seconds_per_update=benchmark_timing[
-                    "non_io_seconds_per_update"
-                ],
+                non_io_seconds_per_update=benchmark_timing["non_io_seconds_per_update"],
                 raw_upper_seconds_per_update=benchmark_timing[
                     "raw_full_loop_seconds_per_update"
                 ],
             )
-            for updates in (50_000, 150_000, 300_000)
+            for updates in (
+                50_000,
+                150_000,
+                300_000,
+                500_000,
+                650_000,
+                750_000,
+            )
         },
         "hardware": _hardware(),
         "source_sha256": SOURCE,
@@ -448,6 +523,8 @@ def _fixture() -> dict:
             "backend": "clean-fid",
             "cleanfid_version": "0.1.35",
             "kid_seed": 20_260_831,
+            "metric_batch": 128,
+            "metric_workers": 0,
             "kid_reference": copy.deepcopy(KID_REFERENCE),
             "direct_disjoint_pair": {"clean_fid": 1.0, "clean_kid": 0.001},
             "matched_published_train_reference": {
@@ -549,6 +626,24 @@ def test_environment_or_dependency_drift_is_rejected() -> None:
     assert checks["installed_cleanfid_pinned"] is False
 
 
+def test_missing_post_reload_ema_update_is_rejected() -> None:
+    fixture = _fixture()
+    fixture["benchmark"]["resume_rehearsal"]["after_resume"]["ema_updates"] = 1_999
+    decision, checks = _validate(fixture)
+    assert decision == "NO_GO"
+    assert checks["benchmark_go_and_complete"] is False
+
+
+def test_missing_or_unattested_durable_mirror_is_rejected() -> None:
+    fixture = _fixture()
+    fixture["benchmark"]["durable_mirror"]["attestation"]["instance_independent"] = (
+        False
+    )
+    decision, checks = _validate(fixture)
+    assert decision == "NO_GO"
+    assert checks["benchmark_go_and_complete"] is False
+
+
 def test_mismatched_kid_reference_population_is_rejected() -> None:
     fixture = _fixture()
     fixture["positive_control"]["metrics"]["kid_reference"]["sha256"] = "1" * 64
@@ -560,6 +655,12 @@ def test_mismatched_kid_reference_population_is_rejected() -> None:
 def test_mismatched_metric_environment_is_rejected() -> None:
     fixture = _fixture()
     fixture["positive_control"]["provenance"]["packages"]["torch"] = "2.8.0"
+    decision, checks = _validate(fixture)
+    assert decision == "NO_GO"
+    assert checks["shared_metric_environment"] is False
+
+    fixture = _fixture()
+    fixture["metric_calibration"]["metrics"]["metric_workers"] = 4
     decision, checks = _validate(fixture)
     assert decision == "NO_GO"
     assert checks["shared_metric_environment"] is False

@@ -13,7 +13,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import torch
-from torch import nn
 
 from ..stage_cap.model import CAPPixelTransformer
 from .config import FeatureConfig
@@ -69,7 +68,7 @@ def descriptors(tokens: torch.Tensor, pool: int) -> torch.Tensor:
     if tokens.ndim != 3:
         raise ValueError("tokens must be [batch, count, channels]")
     batch, count, channels = tokens.shape
-    side = int(round(count**0.5))
+    side = round(count**0.5)
     if side * side != count:
         raise ValueError(f"{count} tokens is not a square grid")
     if side % pool:
@@ -133,9 +132,7 @@ def encode(
             raise ValueError("encode needs either a noise generator or noised images")
         noised = noise_images(images, t_f, generator)
     tokens = extract_tokens(trunk, noised, t_f, config.levels)
-    result = {
-        name: descriptors(value, config.pool) for name, value in tokens.items()
-    }
+    result = {name: descriptors(value, config.pool) for name, value in tokens.items()}
     if normalization is not None:
         result = apply_normalization(result, normalization)
     return result

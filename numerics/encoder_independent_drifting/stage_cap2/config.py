@@ -104,9 +104,18 @@ def screen_profile(
         updates = 4
         checkpoints = (2, 4)
     else:
-        if updates not in {50_000, 100_000, 150_000, 300_000}:
+        if updates not in {
+            50_000,
+            100_000,
+            150_000,
+            300_000,
+            500_000,
+            650_000,
+            750_000,
+        }:
             raise ValueError(
-                "CAP2 is a staged screen; updates must be 50k, 100k, 150k, or 300k"
+                "CAP2 updates must be a declared 50k/100k/150k/300k/500k/"
+                "650k/750k foundation checkpoint"
             )
         checkpoints = tuple(range(50_000, updates + 1, 50_000))
 
@@ -117,8 +126,11 @@ def screen_profile(
         # is already recorded separately in ``train.updates``.
         name=f"cap2-{arm}-{candidate.name}{'-smoke' if smoke else ''}",
         purpose=(
-            "matched CAP-EMF-2 developmental sampler screen; no ASFD and no "
-            "sealed-test selection"
+            "ordered-uniform CAP-EMF-2 one-call foundation for a separately "
+            "gated ASFD continuation; no sealed-test selection"
+            if not smoke and updates > 300_000
+            else "matched CAP-EMF-2 developmental sampler screen; no ASFD and "
+            "no sealed-test selection"
         ),
         model=replace(base.model, scalar_embedding_scale=candidate.embedding_scale),
         objective=replace(

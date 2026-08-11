@@ -141,12 +141,9 @@ def admission_matrix_complete(record: object) -> bool:
             GRADIENT_NORM_RATIO_MAX,
         ],
     }
-    stratum_values = {
-        name: (t, r, t - r) for name, t, r in AUDIT_STRATA
-    }
+    stratum_values = {name: (t, r, t - r) for name, t, r in AUDIT_STRATA}
     expected_strata = [
-        {"name": name, "t": t, "r": r, "h": t - r}
-        for name, t, r in AUDIT_STRATA
+        {"name": name, "t": t, "r": r, "h": t - r} for name, t, r in AUDIT_STRATA
     ]
     expected_row_keys = {
         (repeat, source, name)
@@ -185,15 +182,15 @@ def admission_matrix_complete(record: object) -> bool:
             and row.get("evaluation_mode") == candidate.stopped_evaluation
             and _passing_input_batch(
                 input_batch,
-                source=input_batch.get("source") if isinstance(input_batch, dict) else "",
+                source=input_batch.get("source")
+                if isinstance(input_batch, dict)
+                else "",
                 batch=AUDIT_BATCH,
             )
         )
 
     expected_mixed_keys = {
-        (repeat, source)
-        for repeat in range(repeats)
-        for source in AUDIT_SOURCES
+        (repeat, source) for repeat in range(repeats) for source in AUDIT_SOURCES
     }
 
     def mixed_valid(rows: object, *, batch: int) -> bool:
@@ -249,9 +246,7 @@ def admission_matrix_complete(record: object) -> bool:
         and record.get("thresholds") == expected_thresholds
         and record.get("checkpoint_identity", {}).get("valid") is True
         and record.get("hardware", {}).get("matches") is True
-        and record.get("production_numerical_mode", {}).get(
-            "deterministic_algorithms"
-        )
+        and record.get("production_numerical_mode", {}).get("deterministic_algorithms")
         is True
         and int(record.get("batch_per_stratum", -1)) == AUDIT_BATCH
         and repeats >= MINIMUM_REPEATS
@@ -265,9 +260,7 @@ def admission_matrix_complete(record: object) -> bool:
         and actual_row_keys == expected_row_keys
         and all(row_valid(row) for row in strata)
         and mixed_valid(record.get("mixed_gradient"), batch=AUDIT_BATCH)
-        and mixed_valid(
-            record.get("production_shape"), batch=PRODUCTION_MICROBATCH
-        )
+        and mixed_valid(record.get("production_shape"), batch=PRODUCTION_MICROBATCH)
         and isinstance(protocol, dict)
         and set(protocol) == required_protocol
         and all(value is True for value in protocol.values())

@@ -24,6 +24,7 @@ import hashlib
 import importlib.metadata
 import io
 import json
+import math
 import platform
 import sys
 from pathlib import Path
@@ -46,6 +47,7 @@ from .artifacts import (
     verify_file,
     verify_json,
     write_json_atomic,
+    write_npz_atomic,
 )
 
 CIFAR_IMAGE_SIZE = (32, 32)
@@ -306,14 +308,16 @@ def bind_positive_control_provenance(
         raise RuntimeError("positive-control source generation is incomplete")
     if provenance.get("source_sha256") != source_manifest():
         raise RuntimeError("positive-control source was generated from stale CAP2 code")
-    if Path(str(images.get("directory", ""))).resolve() != Path(
-        str(samples.get("directory", ""))
-    ).resolve():
-        raise RuntimeError("positive-control source record names a different PNG folder")
     if (
-        images.get("count") != samples.get("count")
-        or images.get("png_manifest_sha256") != samples.get("png_manifest_sha256")
+        Path(str(images.get("directory", ""))).resolve()
+        != Path(str(samples.get("directory", ""))).resolve()
     ):
+        raise RuntimeError(
+            "positive-control source record names a different PNG folder"
+        )
+    if images.get("count") != samples.get("count") or images.get(
+        "png_manifest_sha256"
+    ) != samples.get("png_manifest_sha256"):
         raise RuntimeError("positive-control PNGs differ from their source record")
     citation = provenance.get("citation")
     if not isinstance(citation, str) or citation.strip() != samples.get(
@@ -670,9 +674,10 @@ def extract_clean_features(
             "CleanFID feature extraction returned shape "
             f"{features.shape}, expected ({expected_count}, feature_dimension)"
         )
-    if features.dtype not in (np.float32, np.float64) or not np.isfinite(
-        features
-    ).all():
+    if (
+        features.dtype not in (np.float32, np.float64)
+        or not np.isfinite(features).all()
+    ):
         raise RuntimeError("CleanFID returned non-finite or non-floating features")
     return fid_module, features
 
@@ -693,23 +698,28 @@ def unique_png_files(folder: Path, *, expected_count: int) -> list[str]:
     return files
 
 
-def load_kid_reference_features(path: Path) -> tuple[np.ndarray, dict[str, object]]:
-    """Load the exact full-train CleanFID feature population used for KID."""
-
+def load_clean_feature_archive(
+    path: Path,
+    *,
+    expected_count: int = DEFAULT_SAMPLE_COUNT,
+    expected_dimension: int = 2_048,
+) -> tuple[np.ndarray, dict[str, object]]:
+    """Load and content-hash one immutable clean-Inception population."""
     digest = verify_file(path)
     with np.load(path, allow_pickle=False) as archive:
         if archive.files != ["features"]:
-            raise RuntimeError("KID reference archive must contain only 'features'")
+            raise RuntimeError("feature archive must contain only 'features'")
         features = np.asarray(archive["features"])
-    if features.shape != (DEFAULT_SAMPLE_COUNT, 2_048):
+    if features.shape != (expected_count, expected_dimension):
         raise RuntimeError(
-            "KID reference must have shape "
-            f"({DEFAULT_SAMPLE_COUNT}, 2048), found {features.shape}"
+            "feature archive must have shape "
+            f"({expected_count}, {expected_dimension}), found {features.shape}"
         )
-    if features.dtype not in (np.float32, np.float64) or not np.isfinite(
-        features
-    ).all():
-        raise RuntimeError("KID reference features must be finite float32/float64")
+    if (
+        features.dtype not in (np.float32, np.float64)
+        or not np.isfinite(features).all()
+    ):
+        raise RuntimeError("feature archive must be finite float32/float64")
     return features, {
         "path": str(path.resolve()),
         "sha256": digest,
@@ -717,8 +727,143 @@ def load_kid_reference_features(path: Path) -> tuple[np.ndarray, dict[str, objec
         "count": len(features),
         "dimension": features.shape[1],
         "dtype": str(features.dtype),
+    }
+
+
+def load_kid_reference_features(path: Path) -> tuple[np.ndarray, dict[str, object]]:
+    """Load the exact full-train CleanFID feature population used for KID."""
+
+    features, metadata = load_clean_feature_archive(path)
+    return features, {
+        **metadata,
         "population": "all 50,000 CIFAR-10 train images in dataset-index order",
         "preprocessing": "clean-fid 0.1.35 clean Inception preprocessing",
+    }
+
+
+def revalidate_clean_evaluation_evidence(
+    evaluation: dict,
+    *,
+    anchor: Path,
+    expected_count: int = DEFAULT_SAMPLE_COUNT,
+    expected_dimension: int = 2_048,
+) -> dict[str, object]:
+    """Revalidate the retained population and recompute its standard metrics.
+
+    The evaluation JSON is not treated as evidence by itself.  This routine
+    resolves its portable references, decodes and re-hashes every generated
+    PNG, strict-loads both full clean-Inception archives (including their SHA
+    sidecars), and recomputes FID/KID from the retained feature arrays.  It does
+    not re-extract clean-Inception features from the PNGs; the immutable JSON
+    instead binds the generated archive to the exact PNG manifest and fixed
+    generation seed produced in the same source-bound evaluation call.
+    """
+
+    if not isinstance(evaluation, dict):
+        raise TypeError("clean evaluation evidence must be a dictionary")
+
+    def resolve(reference: object, *, label: str) -> Path:
+        if not isinstance(reference, str) or not reference.strip():
+            raise RuntimeError(f"clean evaluation has no {label} reference")
+        path = Path(reference)
+        return path.resolve() if path.is_absolute() else (anchor / path).resolve()
+
+    samples = evaluation.get("samples", {})
+    metrics = evaluation.get("standard_train_reference_metrics") or evaluation.get(
+        "metrics", {}
+    )
+    generated_record = metrics.get("generated_features", {})
+    kid_record = metrics.get("kid_reference", {})
+    if not all(
+        isinstance(record, dict)
+        for record in (samples, metrics, generated_record, kid_record)
+    ):
+        raise TypeError("clean evaluation evidence has malformed records")
+
+    sample_path = resolve(samples.get("directory"), label="PNG population")
+    generated_path = resolve(
+        generated_record.get("path"), label="generated feature archive"
+    )
+    kid_path = resolve(kid_record.get("path"), label="KID reference archive")
+    png_actual = validate_png_folder(
+        sample_path,
+        expected_count=expected_count,
+        expected_size=CIFAR_IMAGE_SIZE,
+        require_sequential_names=True,
+    )
+    generated_features, generated_actual = load_clean_feature_archive(
+        generated_path,
+        expected_count=expected_count,
+        expected_dimension=expected_dimension,
+    )
+    kid_features, kid_actual = load_clean_feature_archive(
+        kid_path,
+        expected_count=expected_count,
+        expected_dimension=expected_dimension,
+    )
+
+    kid_seed = metrics.get("kid_seed")
+    if isinstance(kid_seed, bool) or not isinstance(kid_seed, int):
+        raise TypeError("clean evaluation KID seed must be an integer")
+    recomputed = clean_metrics_from_features(
+        _require_cleanfid(),
+        generated_features,
+        kid_reference_features=kid_features,
+        kid_seed=kid_seed,
+    )
+    bound_fields = ("sha256", "feature_sha256", "count", "dimension", "dtype")
+
+    def metric_matches(key: str) -> bool:
+        recorded = metrics.get(key)
+        actual = recomputed.get(key)
+        return (
+            isinstance(recorded, (int, float))
+            and not isinstance(recorded, bool)
+            and isinstance(actual, (int, float))
+            and math.isfinite(float(recorded))
+            and math.isfinite(float(actual))
+            and math.isclose(
+                float(recorded), float(actual), rel_tol=1e-12, abs_tol=1e-12
+            )
+        )
+
+    checks = {
+        "exact_generated_png_population": all(
+            samples.get(key) == png_actual.get(key)
+            for key in ("count", "image_size", "mode", "png_manifest_sha256")
+        ),
+        "generated_feature_archive": all(
+            generated_record.get(key) == generated_actual.get(key)
+            for key in bound_fields
+        )
+        and generated_record.get("population")
+        == "all fixed-seed generated images in sequential PNG order"
+        and generated_record.get("preprocessing")
+        == "clean-fid 0.1.35 clean Inception preprocessing"
+        and generated_record.get("source_png_manifest_sha256")
+        == png_actual.get("png_manifest_sha256")
+        and generated_record.get("generation_seed") == samples.get("seed"),
+        "kid_reference_feature_archive": all(
+            kid_record.get(key) == kid_actual.get(key) for key in bound_fields
+        )
+        and kid_record.get("population")
+        == "all 50,000 CIFAR-10 train images in dataset-index order"
+        and kid_record.get("preprocessing")
+        == "clean-fid 0.1.35 clean Inception preprocessing",
+        "clean_fid_recomputed": metric_matches("clean_fid_cifar10_train"),
+        "clean_kid_recomputed": metric_matches("clean_kid_cifar10_train"),
+    }
+    return {
+        "valid": all(checks.values()),
+        "checks": checks,
+        "recomputed": recomputed,
+        "generated_archive": generated_actual,
+        "kid_reference_archive": kid_actual,
+        "png_population": png_actual,
+        "limit": (
+            "feature archive is source-bound to the PNG manifest; this pass "
+            "does not rerun clean-Inception feature extraction from PNG bytes"
+        ),
     }
 
 
@@ -726,6 +871,7 @@ def compute_clean_metrics(
     folder: Path,
     *,
     kid_reference_path: Path,
+    generated_feature_path: Path | None = None,
     device: torch.device,
     batch: int = 128,
     workers: int = DEFAULT_METRIC_WORKERS,
@@ -749,6 +895,18 @@ def compute_clean_metrics(
         kid_reference_features=kid_reference_features,
         kid_seed=kid_seed,
     )
+    if generated_feature_path is not None:
+        archive_sha = write_npz_atomic(generated_feature_path, features=features)
+        metrics["generated_features"] = {
+            "path": str(generated_feature_path.resolve()),
+            "sha256": archive_sha,
+            "feature_sha256": feature_array_sha256(features),
+            "count": len(features),
+            "dimension": int(features.shape[1]),
+            "dtype": str(features.dtype),
+            "population": ("all fixed-seed generated images in sequential PNG order"),
+            "preprocessing": "clean-fid 0.1.35 clean Inception preprocessing",
+        }
     if include_legacy_fid:
         metrics["legacy_tensorflow_fid_cifar10_train"] = float(
             fid_module.compute_fid(
@@ -798,11 +956,21 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=DEFAULT_GENERATION_SEED)
     parser.add_argument("--kid-seed", type=int, default=DEFAULT_KID_SEED)
     parser.add_argument("--kid-reference-features", type=Path, required=True)
+    parser.add_argument(
+        "--generated-features",
+        type=Path,
+        default=None,
+        help="retained full clean-Inception feature archive; defaults beside --out",
+    )
     parser.add_argument("--include-legacy-fid", action="store_true")
     parser.add_argument("--png-dir", type=Path, default=None)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     assert_unused(args.out)
+    generated_feature_path = args.generated_features or args.out.with_name(
+        f"{args.out.stem}_clean_features.npz"
+    )
+    assert_unused(generated_feature_path)
     if (args.checkpoint is None) == (args.existing_png_dir is None):
         raise ValueError("provide exactly one of --checkpoint or --existing-png-dir")
     validate_standard_protocol(
@@ -857,11 +1025,18 @@ def main() -> int:
     standard = compute_clean_metrics(
         metric_folder,
         kid_reference_path=args.kid_reference_features,
+        generated_feature_path=generated_feature_path,
         device=device,
         batch=args.metric_batch,
         workers=args.metric_workers,
         kid_seed=args.kid_seed,
         include_legacy_fid=args.include_legacy_fid,
+    )
+    standard["generated_features"].update(
+        {
+            "source_png_manifest_sha256": samples["png_manifest_sha256"],
+            "generation_seed": samples.get("seed"),
+        }
     )
     auxiliary = compute_repository_auxiliary_metrics(
         metric_folder,

@@ -15,7 +15,7 @@ import torch
 from ..device import configure, resolve_device
 from ..stage_cap.config import PARAMETER_CEILING, enable_tf32
 from ..stage_cap.data import cifar10_train_pool
-from ..stage_cap.training import train_cap_unit
+from ..stage_cap.training import load_recovery_payload, train_cap_unit
 from .artifacts import (
     assert_unused,
     profile_payload,
@@ -23,9 +23,108 @@ from .artifacts import (
     save_snapshot,
     source_manifest,
     write_json_atomic,
+    write_sha256_sidecar_atomic,
 )
 from .config import screen_profile
+from .durable_mirror import DurableMirror
 from .hardware import hardware_binding
+from .preview import save_fixed_grid
+
+
+def _optimizer_step_summary(optimizer: object) -> dict[str, int]:
+    """Summarize Adam's serialized per-parameter update counters."""
+    if not isinstance(optimizer, dict) or not isinstance(optimizer.get("state"), dict):
+        raise TypeError("recovery optimizer state is malformed")
+    steps: list[int] = []
+    for state in optimizer["state"].values():
+        if not isinstance(state, dict) or "step" not in state:
+            continue
+        value = state["step"]
+        if isinstance(value, torch.Tensor):
+            if value.numel() != 1:
+                raise TypeError("optimizer step tensor is not scalar")
+            value = value.item()
+        step = int(value)
+        if float(value) != step or step < 0:
+            raise ValueError("optimizer step counter is invalid")
+        steps.append(step)
+    if not steps:
+        raise RuntimeError("recovery contains no Adam step counters")
+    return {"count": len(steps), "minimum": min(steps), "maximum": max(steps)}
+
+
+def _hash64(value: object) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    try:
+        int(value, 16)
+    except ValueError:
+        return False
+    return True
+
+
+def resume_rehearsal_consistent(
+    payload: object, *, expected_steps: int | None = None
+) -> bool:
+    """Recompute the benchmark's stop/reload/continue certificate.
+
+    Merely observing a recovery file is insufficient: the old GPU bug appeared
+    only on the first EMA update after loading.  This certificate therefore
+    requires both Adam's serialized per-parameter counters and EMA's update
+    count to advance *after* the on-device reload.
+    """
+    if not isinstance(payload, dict):
+        return False
+    before = payload.get("before_resume")
+    after = payload.get("after_resume")
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return False
+    before_optimizer = before.get("optimizer_steps")
+    after_optimizer = after.get("optimizer_steps")
+    if not isinstance(before_optimizer, dict) or not isinstance(after_optimizer, dict):
+        return False
+    try:
+        split = int(payload["split_step"])
+        final = int(payload["final_step"])
+        resumed = int(payload["resumed_updates"])
+        before_completed = int(before["completed_updates"])
+        after_completed = int(after["completed_updates"])
+        before_updates = int(before["optimizer_updates"])
+        after_updates = int(after["optimizer_updates"])
+        before_ema = int(before["ema_updates"])
+        after_ema = int(after["ema_updates"])
+        before_count = int(before_optimizer["count"])
+        after_count = int(after_optimizer["count"])
+        before_min = int(before_optimizer["minimum"])
+        before_max = int(before_optimizer["maximum"])
+        after_min = int(after_optimizer["minimum"])
+        after_max = int(after_optimizer["maximum"])
+        before_nonfinite = int(before["nonfinite_updates"])
+        after_nonfinite = int(after["nonfinite_updates"])
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return False
+    return (
+        0 < split < final
+        and (expected_steps is None or final == expected_steps)
+        and resumed == final - split
+        and before_completed == before_updates == before_ema == split
+        and after_completed == after_updates == after_ema == final
+        and before_nonfinite == after_nonfinite == 0
+        and before_count == after_count
+        and before_count > 0
+        and before_min == before_max == split
+        and after_min == after_max == final
+        and after_min - before_min == resumed
+        and after_max - before_max == resumed
+        and payload.get("first_device") == payload.get("second_device")
+        and isinstance(payload.get("first_device"), str)
+        and bool(payload["first_device"])
+        and payload.get("resume_message") == f"resumed CAP-EMF-1 from update {split}"
+        and _hash64(payload.get("before_recovery_sha256"))
+        and _hash64(payload.get("after_recovery_sha256"))
+        and payload.get("before_recovery_sha256")
+        != payload.get("after_recovery_sha256")
+    )
 
 
 def project_runtime(
@@ -93,6 +192,8 @@ def main() -> int:
     parser.add_argument("--unit-seed", type=int, default=0)
     parser.add_argument("--nondeterministic", action="store_true")
     parser.add_argument("--hourly-rate", type=float, default=0.75)
+    parser.add_argument("--durable-mirror-dir", type=Path, required=True)
+    parser.add_argument("--i-confirm-durable-mirror", action="store_true")
     parser.add_argument(
         "--expected-gpu-name",
         required=True,
@@ -114,10 +215,15 @@ def main() -> int:
         raise ValueError("unit seed must be nonnegative")
     if args.hourly_rate <= 0:
         raise ValueError("hourly GPU rate must be positive")
+    if not args.i_confirm_durable_mirror:
+        raise RuntimeError(
+            "benchmark requires confirmation that its provisioned mirror is off-instance"
+        )
 
     production_profile = screen_profile(args.arm, args.numerical, updates=50_000)
     production_train = production_profile.train
     frozen = production_profile
+    split_step = args.steps - 1
     effective = production_train.effective_batch
     if effective % args.micro_batch:
         raise ValueError("microbatch must divide the effective batch")
@@ -129,7 +235,9 @@ def main() -> int:
             updates=args.steps,
             micro_batch=args.micro_batch,
             accumulation_steps=effective // args.micro_batch,
-            warmup_updates=min(args.steps, production_train.warmup_updates),
+            # Keep the horizon-neutral identity identical across the rehearsal
+            # while leaving one real optimizer/EMA update after reload.
+            warmup_updates=min(split_step, production_train.warmup_updates),
             log_every=production_train.log_every,
             # One ordinary event at 1k and one checkpoint event at 2k let the
             # benchmark measure both production-sized health paths, then add
@@ -143,6 +251,15 @@ def main() -> int:
         ),
     )
     frozen.validate()
+    first_profile = replace(
+        frozen,
+        train=replace(
+            frozen.train,
+            updates=split_step,
+            checkpoint_updates=(split_step,),
+        ),
+    )
+    first_profile.validate()
     device = resolve_device(args.device)
     hardware = hardware_binding(device, args.expected_gpu_name)
     settings = configure(device, allow_tf32=device.type == "cuda")
@@ -156,6 +273,8 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
+        mirror = DurableMirror(root, args.durable_mirror_dir)
+        mirror_probe = mirror.probe()
         recovery = root / "recovery.pt"
         declared_profile = profile_payload(frozen)
         preflight_sha256 = "b" * 64
@@ -163,6 +282,14 @@ def main() -> int:
         checkpoint_seconds = 0.0
         snapshot_seconds = 0.0
         snapshot_record: dict[str, object] = {}
+        recovery_mirror_records: list[dict[str, object]] = []
+        recovery_identity = {
+            "benchmark": True,
+            "hardware": hardware,
+            "device": settings,
+            "precision": precision,
+            "deterministic_algorithms": deterministic,
+        }
 
         def checkpoint(step, raw, ema):
             nonlocal checkpoint_seconds
@@ -185,6 +312,7 @@ def main() -> int:
                 records[kind] = {
                     "bytes": path.stat().st_size,
                     "sha256": digest,
+                    "durable_mirror": mirror.mirror(path),
                 }
             checkpoint_seconds += time.time() - event_started
             return records
@@ -208,10 +336,51 @@ def main() -> int:
                 "step": int(step),
                 "bytes": path.stat().st_size,
                 "sha256": digest,
+                "durable_mirror": mirror.mirror(path),
             }
             snapshot_seconds += time.time() - event_started
 
-        train_started = time.time()
+        def checkpoint_health_observer(step, raw_components, ema_components):
+            records = {}
+            for kind, components in (("raw", raw_components), ("ema", ema_components)):
+                path = root / f"preview_step{step}_{kind}.png"
+                digest = save_fixed_grid(components["final"], path, rows=8, columns=16)
+                write_sha256_sidecar_atomic(path, digest)
+                records[kind] = {
+                    "sha256": digest,
+                    "durable_mirror": mirror.mirror(path),
+                }
+            return {"step": step, "fixed_uncurated_previews": records}
+
+        def recovery_saved(step, path):
+            recovery_mirror_records.append(
+                mirror.mirror(path, mutable=True, recovery_step=step)
+            )
+
+        first_messages: list[str] = []
+        first_started = time.time()
+        first_outcome = train_cap_unit(
+            pool,
+            first_profile,
+            device,
+            recovery_path=recovery,
+            checkpoint_health_observer=checkpoint_health_observer,
+            recovery_saved=recovery_saved,
+            # The first horizon exists only to force a real serialized reload;
+            # primary benchmark artifacts are emitted at the final horizon.
+            progress=first_messages.append,
+            recovery_identity=recovery_identity,
+            unit_seed=args.unit_seed,
+        )
+        first_train_seconds = time.time() - first_started
+        before_resume, before_recovery_sha = load_recovery_payload(
+            recovery,
+            require_sidecar=True,
+            validate_counters=True,
+        )
+
+        second_messages: list[str] = []
+        second_started = time.time()
         outcome = train_cap_unit(
             pool,
             frozen,
@@ -219,17 +388,72 @@ def main() -> int:
             recovery_path=recovery,
             checkpoint=checkpoint,
             snapshot=snapshot,
-            recovery_identity={
-                "benchmark": True,
-                "hardware": hardware,
-                "device": settings,
-                "precision": precision,
-                "deterministic_algorithms": deterministic,
-            },
+            checkpoint_health_observer=checkpoint_health_observer,
+            recovery_saved=recovery_saved,
+            progress=second_messages.append,
+            recovery_identity=recovery_identity,
             unit_seed=args.unit_seed,
         )
-        train_total = time.time() - train_started
+        second_train_seconds = time.time() - second_started
+        after_resume, after_recovery_sha = load_recovery_payload(
+            recovery,
+            require_sidecar=True,
+            validate_counters=True,
+        )
+        train_total = first_train_seconds + second_train_seconds
         recovery_bytes = recovery.stat().st_size
+
+        resume_message = next(
+            (
+                message
+                for message in second_messages
+                if message.startswith("resumed CAP-EMF-1 from update ")
+            ),
+            "",
+        )
+        resume_rehearsal = {
+            "split_step": split_step,
+            "final_step": args.steps,
+            "resumed_updates": args.steps - split_step,
+            "first_device": str(device),
+            "second_device": str(device),
+            "resume_message": resume_message,
+            "before_recovery_sha256": before_recovery_sha,
+            "after_recovery_sha256": after_recovery_sha,
+            "before_resume": {
+                "completed_updates": int(before_resume["completed_updates"]),
+                "optimizer_updates": int(before_resume["optimizer_updates"]),
+                "ema_updates": int(before_resume["ema"]["updates"]),
+                "nonfinite_updates": int(before_resume["nonfinite_updates"]),
+                "optimizer_steps": _optimizer_step_summary(before_resume["optimizer"]),
+            },
+            "after_resume": {
+                "completed_updates": int(after_resume["completed_updates"]),
+                "optimizer_updates": int(after_resume["optimizer_updates"]),
+                "ema_updates": int(after_resume["ema"]["updates"]),
+                "nonfinite_updates": int(after_resume["nonfinite_updates"]),
+                "optimizer_steps": _optimizer_step_summary(after_resume["optimizer"]),
+            },
+            "first_process_seconds": first_train_seconds,
+            "second_process_seconds": second_train_seconds,
+        }
+
+    recovery_io_total_seconds = (
+        first_outcome.recovery_io_seconds + outcome.recovery_io_seconds
+    )
+    recovery_events_measured = 2
+    ordinary_health_total_seconds = (
+        first_outcome.ordinary_health_seconds + outcome.ordinary_health_seconds
+    )
+    ordinary_health_events_measured = (
+        first_outcome.ordinary_health_events + outcome.ordinary_health_events
+    )
+    checkpoint_health_total_seconds = (
+        first_outcome.checkpoint_health_seconds + outcome.checkpoint_health_seconds
+    )
+    checkpoint_health_events_measured = (
+        first_outcome.checkpoint_health_events + outcome.checkpoint_health_events
+    )
 
     checks = {
         "hardware_bound": hardware["matches"],
@@ -238,15 +462,25 @@ def main() -> int:
         "checkpoint_written": str(args.steps) in outcome.checkpoints,
         "snapshot_written": snapshot_record.get("step") == args.steps,
         "recovery_written": recovery_bytes > 0,
+        "resume_rehearsed": resume_rehearsal_consistent(
+            resume_rehearsal, expected_steps=args.steps
+        ),
+        "durable_mirror_roundtrip": mirror_probe.get("roundtrip_verified") is True,
+        "durable_recoveries_committed": (
+            [int(record["recovery_step"]) for record in recovery_mirror_records]
+            == [split_step, args.steps]
+            and mirror.verify_recovery(recovery, recovery_step=args.steps).get("sha256")
+            == after_recovery_sha
+        ),
         "parameter_ceiling": outcome.parameter_count <= PARAMETER_CEILING,
     }
 
     measured_event_seconds = (
         checkpoint_seconds
         + snapshot_seconds
-        + outcome.recovery_io_seconds
-        + outcome.ordinary_health_seconds
-        + outcome.checkpoint_health_seconds
+        + recovery_io_total_seconds
+        + ordinary_health_total_seconds
+        + checkpoint_health_total_seconds
     )
     # The benchmark deliberately exercises every artifact path once, ordinary
     # logging at production cadence, and both production-sized health paths.
@@ -258,14 +492,14 @@ def main() -> int:
     non_io_seconds = max(0.0, train_total - measured_event_seconds)
     non_io_seconds_per_update = non_io_seconds / args.steps
     raw_upper_seconds_per_update = train_total / args.steps
-    recovery_event_seconds = outcome.recovery_io_seconds
-    if outcome.ordinary_health_events != 1 or outcome.checkpoint_health_events != 1:
+    recovery_event_seconds = recovery_io_total_seconds / recovery_events_measured
+    if ordinary_health_events_measured < 1 or checkpoint_health_events_measured < 1:
         raise RuntimeError("benchmark did not measure both declared health events")
     ordinary_health_event_seconds = (
-        outcome.ordinary_health_seconds / outcome.ordinary_health_events
+        ordinary_health_total_seconds / ordinary_health_events_measured
     )
     checkpoint_health_event_seconds = (
-        outcome.checkpoint_health_seconds / outcome.checkpoint_health_events
+        checkpoint_health_total_seconds / checkpoint_health_events_measured
     )
     projections = {
         str(updates): project_runtime(
@@ -282,8 +516,15 @@ def main() -> int:
             checkpoint_health_event_seconds=checkpoint_health_event_seconds,
             hourly_rate=args.hourly_rate,
         )
-        for updates in (50_000, 150_000, 300_000)
+        for updates in (50_000, 150_000, 300_000, 500_000, 650_000, 750_000)
     }
+    final_checkpoint = outcome.checkpoints.get(str(args.steps), {})
+    checkpoint_artifact_bytes = {
+        kind: int(final_checkpoint.get(kind, {}).get("bytes", 0))
+        for kind in ("raw", "ema")
+    }
+    if min(checkpoint_artifact_bytes.values()) <= 0:
+        raise RuntimeError("benchmark did not retain measured checkpoint sizes")
     result = {
         "status": "cap-emf2-full-loop-benchmark",
         "arm": args.arm,
@@ -309,14 +550,26 @@ def main() -> int:
         "non_io_seconds_per_update": non_io_seconds_per_update,
         "raw_full_loop_seconds_per_update": raw_upper_seconds_per_update,
         "recovery_bytes": recovery_bytes,
-        "recovery_io_seconds": outcome.recovery_io_seconds,
+        "checkpoint_artifact_bytes": checkpoint_artifact_bytes,
+        "recovery_io_seconds": recovery_event_seconds,
+        "recovery_io_total_seconds": recovery_io_total_seconds,
+        "recovery_events_measured": recovery_events_measured,
         "checkpoint_io_seconds": checkpoint_seconds,
         "snapshot_io_seconds": snapshot_seconds,
         "ordinary_health_seconds": ordinary_health_event_seconds,
         "checkpoint_health_seconds": checkpoint_health_event_seconds,
+        "ordinary_health_events_measured": ordinary_health_events_measured,
+        "checkpoint_health_events_measured": checkpoint_health_events_measured,
         "ordinary_health_samples": production_train.health_samples,
         "checkpoint_health_samples": production_train.audit_samples,
         "snapshot": snapshot_record,
+        "resume_rehearsal": resume_rehearsal,
+        "durable_mirror": {
+            "attestation": mirror.attestation,
+            "live_roundtrip_probe": mirror_probe,
+            "recovery_commits": recovery_mirror_records,
+            "synchronous_event_costs_included": True,
+        },
         "objective_sample_evaluations": outcome.model_forwards,
         "objective_forward_calls": outcome.objective_forward_calls,
         "parameter_count": outcome.parameter_count,

@@ -23,18 +23,19 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from itertools import pairwise
 from pathlib import Path
+from typing import Protocol
 
 import torch
 from torch import nn
 
 from ..config import MASTER_SEED, derive_seed
 from . import CAP_PHASE, CAP_UNIT
-from .config import CAPProfile
+from .config import CAPObjectiveConfig, CAPProfile
 from .data import flip_batch
 from .diagnostics import component_health
-from .model import CAPPixelTransformer, one_step_components
+from .model import CAPPixelTransformer, one_step_components, one_step_sample
 from .monitoring import ObjectiveLedger
-from .objective import emf_loss, sample_time_triangle
+from .objective import TriangleSample, emf_loss, sample_time_triangle
 
 
 def cap_seed(role: str, index: int = 0) -> int:
@@ -100,6 +101,11 @@ class TrainOutcome:
     # Python/module forward invocations.  Retained for recovery compatibility.
     model_forwards: int = 0
     objective_forward_calls: int = 0
+    # Structural inference audit, measured with a real module hook after the
+    # final optimizer update.  This is deliberately runtime-only: it proves
+    # the sampler path actually invokes the network once instead of letting a
+    # caller satisfy H8 by passing the literal integer ``1``.
+    inference_forward_calls: int = 0
     # Wall time spent publishing recovery payloads during this process.  It is
     # deliberately a runtime timing (not scientific state) and is used by the
     # CAP2 benchmark to amortize rare recovery I/O at its real cadence.
@@ -117,6 +123,28 @@ class TrainOutcome:
     nonfinite_updates: int = 0
     best_rank_ratio: float = 0.0
     parameter_count: int = 0
+    # Optional source-bound correction records.  The base CAP path leaves this
+    # empty; a continuation extension owns the schema of each record.
+    auxiliary_history: list[dict] = field(default_factory=list)
+
+
+class TrainingExtension(Protocol):
+    """Audited hook for an objective continuation.
+
+    The hook runs after the complete primary gradient has been accumulated and
+    before the foundation's ordinary global clip.  It may add conservative
+    objective gradients, but it may not step the optimizer or touch primary
+    RNG streams.  Its identity and full replay state are persisted in every
+    recovery so a resumed run cannot silently change the correction.
+    """
+
+    def identity(self) -> dict: ...
+
+    def state_dict(self) -> dict: ...
+
+    def load_state_dict(self, payload: dict) -> None: ...
+
+    def apply(self, step: int, model: nn.Module) -> dict | None: ...
 
 
 class EMAState:
@@ -621,6 +649,83 @@ def _health_component_batch(
     return {name: torch.cat(values) for name, values in chunks.items()}
 
 
+def _fixed_exact_inference_corner_summary(
+    model: CAPPixelTransformer,
+    clean: torch.Tensor,
+    noise: torch.Tensor,
+    objective: CAPObjectiveConfig,
+    batch: int,
+) -> dict[str, float | int | dict[str, float]]:
+    """Evaluate the sealed audit rows at the literal one-step condition.
+
+    The training sampler's probability of visiting ``(t, r, h) = (1, 0, 1)``
+    differs by arm, so sampled-row counts cannot be a common performance gate.
+    This diagnostic instead evaluates every arm on the same fixed train-only
+    clean/noise pairs.  It deliberately calls :func:`emf_loss`, rather than a
+    simplified endpoint surrogate, so the live stopped-difference mode,
+    denominator floor, delta and target construction are all exercised.
+
+    The work is chunked, gradient-free and RNG-free.  The caller-visible model
+    mode, parameters, buffers and existing gradients are therefore untouched.
+    """
+    if batch <= 0:
+        raise ValueError("exact-corner diagnostic batch must be positive")
+    if clean.shape != noise.shape or clean.ndim != 4 or not len(clean):
+        raise ValueError("exact-corner clean/noise rows must be nonempty and matched")
+
+    device = next(model.parameters()).device
+    was_training = model.training
+    raw_mse: list[torch.Tensor] = []
+    target_rms: list[torch.Tensor] = []
+    quotient_rms: list[torch.Tensor] = []
+    coefficient: list[torch.Tensor] = []
+    try:
+        model.eval()
+        with torch.no_grad():
+            for start in range(0, len(clean), batch):
+                stop = min(start + batch, len(clean))
+                noise_block = noise[start:stop].to(device=device)
+                clean_block = clean[start:stop].to(
+                    device=device, dtype=noise_block.dtype
+                )
+                rows = stop - start
+                triangle = TriangleSample(
+                    t=torch.ones(rows, device=device, dtype=noise_block.dtype),
+                    r=torch.zeros(rows, device=device, dtype=noise_block.dtype),
+                    diagonal=torch.zeros(rows, device=device, dtype=torch.bool),
+                )
+                result = emf_loss(model, clean_block, noise_block, triangle, objective)
+                raw_mse.append(result.per_sample_raw_mse.float().cpu())
+                target_rms.append(result.per_sample_target_rms.float().cpu())
+                quotient_rms.append(result.per_sample_quotient_rms.float().cpu())
+                coefficient.append(result.coefficient.float().cpu())
+    finally:
+        model.train(was_training)
+
+    raw = torch.cat(raw_mse)
+    target = torch.cat(target_rms)
+    quotient = torch.cat(quotient_rms)
+    coeff = torch.cat(coefficient)
+    finite = (
+        torch.isfinite(raw)
+        & torch.isfinite(target)
+        & torch.isfinite(quotient)
+        & torch.isfinite(coeff)
+    )
+    return {
+        "count": len(raw),
+        "mean_raw_mse": float(raw.mean()),
+        "mean_target_rms": float(target.mean()),
+        "mean_quotient_rms": float(quotient.mean()),
+        "coefficient": {
+            "minimum": float(coeff.min()),
+            "mean": float(coeff.mean()),
+            "maximum": float(coeff.max()),
+        },
+        "nonfinite_rows": int((~finite).sum()),
+    }
+
+
 def _parameter_gradient_norm(
     model: nn.Module,
     per_sample_objective: torch.Tensor,
@@ -700,10 +805,17 @@ def train_cap_unit(
     recovery_path: Path | None = None,
     checkpoint: Callable[[int, dict, dict], None] | None = None,
     snapshot: Callable[[int, dict], None] | None = None,
+    checkpoint_health_observer: (
+        Callable[[int, dict[str, torch.Tensor], dict[str, torch.Tensor]], dict | None]
+        | None
+    ) = None,
+    recovery_saved: Callable[[int, Path], None] | None = None,
     progress: Callable[[str], None] | None = None,
     recovery_identity: dict | None = None,
     recovery_authorization: dict | None = None,
     unit_seed: int = 0,
+    training_extension: TrainingExtension | None = None,
+    stop_after_updates: int | None = None,
 ) -> TrainOutcome:
     profile.validate()
     train = profile.train
@@ -711,6 +823,16 @@ def train_cap_unit(
     announce = progress or (lambda message: None)
 
     identity = _recovery_identity(profile, recovery_identity, unit_seed)
+    execution_stop = (
+        train.updates if stop_after_updates is None else int(stop_after_updates)
+    )
+    if isinstance(stop_after_updates, bool) or not 0 < execution_stop <= train.updates:
+        raise ValueError("stop_after_updates must lie inside the planned horizon")
+    if (
+        execution_stop != train.updates
+        and execution_stop not in train.checkpoint_updates
+    ):
+        raise ValueError("an intermediate execution stop must be a declared checkpoint")
     model = CAPPixelTransformer(
         profile.model, replicated_cap_seed("model-init", unit_seed)
     ).to(device)
@@ -750,9 +872,15 @@ def train_cap_unit(
         profile.model.image_size,
     ) * 2
     health_noise = torch.randn(shape, generator=health_generator).to(device)
-    health_target = pool[
-        torch.randperm(len(pool), generator=health_generator)[: train.audit_samples]
-    ]
+    health_indices = torch.randperm(len(pool), generator=health_generator)
+    if len(health_indices) < train.audit_samples:
+        # Smoke tests use a deliberately tiny pool.  Repeat its one sealed
+        # permutation so checkpoint diagnostics still exercise the declared
+        # sample count; production pools are larger and retain the original
+        # without-replacement behavior exactly.
+        copies = math.ceil(train.audit_samples / len(health_indices))
+        health_indices = health_indices.repeat(copies)
+    health_target = pool[health_indices[: train.audit_samples]]
 
     objective_ledger = ObjectiveLedger()
     start_update = 0
@@ -864,15 +992,35 @@ def train_cap_unit(
             outcome.final_window_updates = int(payload.get("final_window_updates", 0))
         outcome.nonfinite_updates = int(payload["nonfinite_updates"])
         outcome.best_rank_ratio = float(payload["best_rank_ratio"])
+        outcome.auxiliary_history = payload.get("auxiliary_history", [])
+        recorded_extension = payload.get("training_extension")
+        if training_extension is None:
+            if recorded_extension is not None:
+                raise RuntimeError(
+                    "recovery carries a training extension but none was requested"
+                )
+        else:
+            if not isinstance(recorded_extension, dict):
+                raise RuntimeError("extended recovery lacks its replay state")
+            if recorded_extension.get("identity") != training_extension.identity():
+                raise RuntimeError("training extension identity changed on resume")
+            state = recorded_extension.get("state")
+            if not isinstance(state, dict):
+                raise RuntimeError("training extension recovery state is malformed")
+            training_extension.load_state_dict(state)
         objective_ledger.load_state_dict(payload.get("objective_ledger"))
         start_update = completed_updates
+        if start_update > execution_stop:
+            raise RuntimeError(
+                "CAP recovery is newer than the requested execution stop"
+            )
         announce(f"resumed CAP-EMF-1 from update {start_update}")
 
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     started = time.time()
     window_start = planned_window_start
-    for update in range(start_update, train.updates):
+    for update in range(start_update, execution_stop):
         current_lr = learning_rate_at(update, train)
         for group in optimizer.param_groups:
             group["lr"] = current_lr
@@ -918,6 +1066,16 @@ def train_cap_unit(
                     float(result.interior_raw_mse.detach()),
                 )
             )
+        if training_extension is not None:
+            extension_record = training_extension.apply(update + 1, model)
+            if extension_record is not None:
+                try:
+                    json.dumps(extension_record, sort_keys=True, allow_nan=False)
+                except (TypeError, ValueError) as error:
+                    raise TypeError(
+                        "training extension returned a non-finite JSON record"
+                    ) from error
+                outcome.auxiliary_history.append(extension_record)
         norm = torch.nn.utils.clip_grad_norm_(model.parameters(), train.gradient_clip)
         pre_clip = float(norm)
         if not torch.isfinite(norm):
@@ -936,7 +1094,7 @@ def train_cap_unit(
         outcome.examples_seen += train.effective_batch
         step = update + 1
 
-        if step % train.log_every == 0 or step == train.updates:
+        if step % train.log_every == 0 or step == execution_stop:
             mean = [sum(values) / len(values) for values in zip(*losses)]
             outcome.history.append(
                 {
@@ -962,13 +1120,22 @@ def train_cap_unit(
             health_started = time.time()
             checkpoint_health = step in train.checkpoint_updates
             samples = (
-                train.audit_samples
-                if checkpoint_health
-                else (train.health_samples)
+                train.audit_samples if checkpoint_health else (train.health_samples)
             )
             model.eval()
             raw_components = _health_component_batch(
                 model, health_noise[:samples], train.micro_batch * 2
+            )
+            raw_exact_corner = (
+                _fixed_exact_inference_corner_summary(
+                    model,
+                    health_target[:samples],
+                    health_noise[:samples],
+                    profile.objective,
+                    train.micro_batch * 2,
+                )
+                if checkpoint_health
+                else None
             )
             model.train()
             raw_report = component_health(raw_components, health_target[:samples])
@@ -983,10 +1150,47 @@ def train_cap_unit(
                 ema_components = _health_component_batch(
                     ema_model, health_noise[:samples], train.micro_batch * 2
                 )
-                del ema_model
+                ema_exact_corner = _fixed_exact_inference_corner_summary(
+                    ema_model,
+                    health_target[:samples],
+                    health_noise[:samples],
+                    profile.objective,
+                    train.micro_batch * 2,
+                )
                 ema_report = component_health(ema_components, health_target[:samples])
                 record["ema"] = ema_report["final"]
                 record["ema_components"] = ema_report
+                record["fixed_exact_inference_corner"] = {
+                    "condition": {"t": 1.0, "r": 0.0, "h": 1.0},
+                    "sealed_train_only": True,
+                    "sample_count": samples,
+                    "objective_numerics": {
+                        "stopped_evaluation": profile.objective.stopped_evaluation,
+                        "emf_delta": profile.objective.emf_delta,
+                        "emf_denominator_floor": (
+                            profile.objective.emf_denominator_floor
+                        ),
+                    },
+                    "raw": raw_exact_corner,
+                    "ema": ema_exact_corner,
+                }
+                if checkpoint_health_observer is not None:
+                    observation = checkpoint_health_observer(
+                        step, raw_components, ema_components
+                    )
+                    if observation is not None:
+                        if not isinstance(observation, dict):
+                            raise TypeError(
+                                "checkpoint health observer must return a dict or None"
+                            )
+                        try:
+                            json.dumps(observation, sort_keys=True, allow_nan=False)
+                        except (TypeError, ValueError) as error:
+                            raise TypeError(
+                                "checkpoint health observation must be finite JSON"
+                            ) from error
+                        record["checkpoint_health_observation"] = deepcopy(observation)
+                del ema_model
             record["step"] = step
             record["ema_updates"] = ema.updates
             record["ema_initialization_weight"] = ema.initialization_weight()
@@ -1026,7 +1230,7 @@ def train_cap_unit(
             outcome.snapshots.append(step)
 
         if recovery_path is not None and (
-            step % train.recovery_every == 0 or step == train.updates
+            step % train.recovery_every == 0 or step == execution_stop
         ):
             recovery_started = time.time()
             _atomic_save(
@@ -1085,9 +1289,20 @@ def train_cap_unit(
                     "nonfinite_updates": outcome.nonfinite_updates,
                     "best_rank_ratio": outcome.best_rank_ratio,
                     "objective_ledger": objective_ledger.state_dict(),
+                    "auxiliary_history": outcome.auxiliary_history,
+                    "training_extension": (
+                        {
+                            "identity": training_extension.identity(),
+                            "state": training_extension.state_dict(),
+                        }
+                        if training_extension is not None
+                        else None
+                    ),
                 },
                 recovery_path,
             )
+            if recovery_saved is not None:
+                recovery_saved(step, recovery_path)
             outcome.recovery_io_seconds += time.time() - recovery_started
 
     outcome.wall_seconds += time.time() - started
@@ -1100,6 +1315,24 @@ def train_cap_unit(
             outcome.peak_memory_reserved_bytes,
             int(torch.cuda.max_memory_reserved(device)),
         )
+
+    # One final, read-only architectural check.  Keep it outside the recovery
+    # state because it is an audit of the executable inference path rather
+    # than scientific training state.  The sealed health noise makes this
+    # deterministic and avoids consuming any RNG stream.
+    calls = {"count": 0}
+    handle = model.register_forward_pre_hook(
+        lambda module, args: calls.__setitem__("count", calls["count"] + 1)
+    )
+    was_training = model.training
+    try:
+        model.eval()
+        with torch.no_grad():
+            one_step_sample(model, health_noise[:1])
+    finally:
+        handle.remove()
+        model.train(was_training)
+    outcome.inference_forward_calls = calls["count"]
     return outcome
 
 

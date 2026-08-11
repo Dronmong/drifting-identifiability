@@ -298,6 +298,7 @@ def capability_gate(
             "minimum_haar_HL_ratio": gate.minimum_haar_HL_ratio,
             "minimum_haar_HH_ratio": gate.minimum_haar_HH_ratio,
             "maximum_clip_fraction": gate.maximum_clip_fraction,
+            "clip_window_updates": gate.clip_window_updates,
             "maximum_second_moment_ratio": gate.maximum_second_moment_ratio,
             "maximum_centered_variance_ratio": gate.maximum_centered_variance_ratio,
             "maximum_effective_rank_ratio": gate.maximum_effective_rank_ratio,

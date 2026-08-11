@@ -51,6 +51,18 @@ def cifar10_train_pool(root: str | None = None) -> torch.Tensor:
     return _pool(True, root, TRAIN_POOL_SIZE)
 
 
+@lru_cache(maxsize=2)
+def cifar10_train_labels(root: str | None = None) -> torch.Tensor:
+    """Official training labels, exposed only for preregistered stratification."""
+    from torchvision.datasets import CIFAR10
+
+    dataset = CIFAR10(root=root or DEFAULT_ROOT, train=True, download=False)
+    labels = torch.as_tensor(dataset.targets, dtype=torch.int64)
+    if labels.shape != (TRAIN_POOL_SIZE,) or set(labels.tolist()) != set(range(10)):
+        raise RuntimeError("unexpected CIFAR-10 training-label population")
+    return labels
+
+
 def sealed_test_pool(
     root: str | None = None, *, acknowledge_sealed: bool = False
 ) -> torch.Tensor:

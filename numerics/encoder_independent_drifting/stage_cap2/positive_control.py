@@ -31,8 +31,7 @@ STATUS = "cap-emf2-stylegan2ada-positive-control-source"
 UPSTREAM_REPOSITORY = "https://github.com/NVlabs/stylegan2-ada-pytorch"
 UPSTREAM_COMMIT = "d72cc7d041b42ec8e806021a205ed9349f87c6a4"
 NETWORK_URL = (
-    "https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/"
-    "pretrained/cifar10.pkl"
+    "https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/cifar10.pkl"
 )
 NETWORK_SHA256 = "f8952c74e23da2186d147ad871c48780bd59500ee37c301201081ee8e0cb32f1"
 CLASS_COUNT = 10
@@ -155,13 +154,16 @@ def generate_positive_control(
         raise ValueError("positive-control batch must be positive")
     if output.exists():
         raise RuntimeError(f"refusing to overwrite positive-control folder {output}")
-    if provenance_out.exists() or provenance_out.with_suffix(
-        provenance_out.suffix + ".sha256"
-    ).exists():
+    if (
+        provenance_out.exists()
+        or provenance_out.with_suffix(provenance_out.suffix + ".sha256").exists()
+    ):
         raise RuntimeError(f"refusing to overwrite provenance {provenance_out}")
     staging = output.with_name(f".{output.name}.partial")
     if staging.exists():
-        raise RuntimeError(f"stale positive-control staging directory exists: {staging}")
+        raise RuntimeError(
+            f"stale positive-control staging directory exists: {staging}"
+        )
 
     upstream = verify_upstream(repo.resolve(), network.resolve())
     device = torch.device(device_name)

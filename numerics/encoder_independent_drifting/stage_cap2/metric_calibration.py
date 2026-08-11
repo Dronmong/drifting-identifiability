@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -29,13 +30,132 @@ from .standard_metrics import (
     DEFAULT_KID_SEED,
     DEFAULT_METRIC_WORKERS,
     DEFAULT_SAMPLE_COUNT,
+    _require_cleanfid,
     clean_metrics_from_features,
     clean_pair_metrics_from_features,
     evaluation_provenance,
     extract_clean_features,
     feature_array_sha256,
+    load_clean_feature_archive,
     validate_png_folder,
 )
+
+
+def revalidate_metric_calibration_evidence(
+    calibration: dict,
+    *,
+    anchor: Path,
+    expected_count: int = DEFAULT_SAMPLE_COUNT,
+    expected_dimension: int = 2_048,
+) -> dict[str, object]:
+    """Recompute the real/real margin from the retained canonical features."""
+
+    if not isinstance(calibration, dict):
+        raise TypeError("metric calibration evidence must be a dictionary")
+    metrics = calibration.get("metrics", {})
+    reference = metrics.get("kid_reference", {}) if isinstance(metrics, dict) else {}
+    if not isinstance(reference, dict):
+        raise TypeError("metric calibration lacks its KID reference record")
+    reference_path = Path(str(reference.get("path", "")))
+    if not reference_path.is_absolute():
+        reference_path = (anchor / reference_path).resolve()
+    features, actual = load_clean_feature_archive(
+        reference_path,
+        expected_count=expected_count,
+        expected_dimension=expected_dimension,
+    )
+    seed = calibration.get("seed")
+    kid_seed = metrics.get("kid_seed") if isinstance(metrics, dict) else None
+    samples_per_side = calibration.get("samples_per_side")
+    if (
+        isinstance(seed, bool)
+        or not isinstance(seed, int)
+        or isinstance(kid_seed, bool)
+        or not isinstance(kid_seed, int)
+        or isinstance(samples_per_side, bool)
+        or not isinstance(samples_per_side, int)
+        or samples_per_side * 2 != expected_count
+    ):
+        raise RuntimeError("metric calibration seed/count metadata is malformed")
+
+    generator = torch.Generator().manual_seed(seed)
+    indices = torch.randperm(expected_count, generator=generator)
+    left_indices = indices[:samples_per_side]
+    right_indices = indices[samples_per_side:]
+    left = features[left_indices.numpy()]
+    right = features[right_indices.numpy()]
+    fid_module = _require_cleanfid()
+    recomputed = {
+        "direct_disjoint_pair": clean_pair_metrics_from_features(
+            fid_module, left, right, kid_seed=kid_seed
+        ),
+        "matched_published_train_reference": {
+            "left": clean_metrics_from_features(
+                fid_module,
+                left,
+                kid_reference_features=features,
+                kid_seed=kid_seed,
+            ),
+            "right": clean_metrics_from_features(
+                fid_module,
+                right,
+                kid_reference_features=features,
+                kid_seed=kid_seed,
+            ),
+        },
+    }
+
+    def same_metrics(recorded: object, observed: dict[str, float]) -> bool:
+        return (
+            isinstance(recorded, dict)
+            and set(recorded) == set(observed)
+            and all(
+                isinstance(recorded.get(name), (int, float))
+                and not isinstance(recorded.get(name), bool)
+                and math.isfinite(float(recorded[name]))
+                and math.isclose(
+                    float(recorded[name]), value, rel_tol=1e-12, abs_tol=1e-12
+                )
+                for name, value in observed.items()
+            )
+        )
+
+    recorded_matched = metrics.get("matched_published_train_reference", {})
+    checks = {
+        "canonical_feature_archive": all(
+            reference.get(name) == actual.get(name)
+            for name in ("sha256", "feature_sha256", "count", "dimension", "dtype")
+        ),
+        "left_indices_reconstructed": calibration.get("left_indices_sha256")
+        == hashlib.sha256(left_indices.numpy().tobytes()).hexdigest(),
+        "right_indices_reconstructed": calibration.get("right_indices_sha256")
+        == hashlib.sha256(right_indices.numpy().tobytes()).hexdigest(),
+        "direct_pair_recomputed": same_metrics(
+            metrics.get("direct_disjoint_pair"), recomputed["direct_disjoint_pair"]
+        ),
+        "left_reference_scores_recomputed": same_metrics(
+            recorded_matched.get("left")
+            if isinstance(recorded_matched, dict)
+            else None,
+            recomputed["matched_published_train_reference"]["left"],
+        ),
+        "right_reference_scores_recomputed": same_metrics(
+            recorded_matched.get("right")
+            if isinstance(recorded_matched, dict)
+            else None,
+            recomputed["matched_published_train_reference"]["right"],
+        ),
+    }
+    return {
+        "valid": all(checks.values()),
+        "checks": checks,
+        "recomputed": recomputed,
+        "kid_reference_archive": actual,
+        "limit": (
+            "recomputed from the retained canonical clean-Inception features; "
+            "does not re-extract those features from CIFAR-10 PNG bytes"
+        ),
+    }
 
 
 def export_images(images: torch.Tensor, folder: Path) -> dict[str, object]:
@@ -138,9 +258,7 @@ def compute_real_real(
     # The two folders are a random partition, but KID must use one canonical
     # population independent of that partition.  Restore dataset-index order
     # and seal the resulting 50k CleanFID feature matrix as a shared artifact.
-    archive_sha256 = write_npz_atomic(
-        kid_reference_out, features=reference_features
-    )
+    archive_sha256 = write_npz_atomic(kid_reference_out, features=reference_features)
     kid_reference = {
         "path": str(kid_reference_out.resolve()),
         "sha256": archive_sha256,
@@ -222,6 +340,23 @@ def main() -> int:
     right_indices = indices[args.samples_per_side :]
     left = export_images(pool[left_indices], args.left_dir)
     right = export_images(pool[right_indices], args.right_dir)
+    metrics = compute_real_real(
+        args.left_dir,
+        args.right_dir,
+        left_indices=left_indices,
+        right_indices=right_indices,
+        kid_reference_out=args.kid_reference_features_out,
+        device=device,
+        batch=args.metric_batch,
+        workers=args.metric_workers,
+        kid_seed=args.kid_seed,
+    )
+    metrics.update(
+        {
+            "metric_batch": args.metric_batch,
+            "metric_workers": args.metric_workers,
+        }
+    )
     result = {
         "status": "cap-emf2-real-real-calibration",
         "decision": "COMPLETE",
@@ -236,17 +371,7 @@ def main() -> int:
         ).hexdigest(),
         "left": left,
         "right": right,
-        "metrics": compute_real_real(
-            args.left_dir,
-            args.right_dir,
-            left_indices=left_indices,
-            right_indices=right_indices,
-            kid_reference_out=args.kid_reference_features_out,
-            device=device,
-            batch=args.metric_batch,
-            workers=args.metric_workers,
-            kid_seed=args.kid_seed,
-        ),
+        "metrics": metrics,
         "limits": [
             "This is one observed real/real reference point, not an estimate of metric variance or a confidence interval.",
             "The published train reference contains the same population as these subsets; matched-reference scores are sanity checks, not independent holdout scores.",

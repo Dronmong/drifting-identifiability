@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import ast
+from dataclasses import asdict
 from pathlib import Path
 
 import torch
 
-from ...stage_cap.config import FEATURE_LEVELS, CAPModelConfig
+from ...stage_cap.config import FEATURE_LEVELS, CAPGateConfig, CAPModelConfig
 from ...stage_cap.model import CAPPixelTransformer
+from .. import continuation as asfd_continuation
+from .. import feature_bank as asfd_feature_bank
 from ..artifacts import (
     _DEPENDENCIES,
     assert_no_inherited_freeze,
@@ -22,13 +26,24 @@ from ..calibration import (
     taus_from_records,
 )
 from ..config import ARMS, LEVEL_NAMES, asfd_config, smoke_config
+from ..continuation import (
+    _asfd_wall_policy,
+    _require_declared_storage_root,
+    _require_exact_preflight_runtime,
+    _require_launch_authorization,
+    _revalidate_wall_stop,
+)
+from ..feature_bank import (
+    VIEWS_PER_ROLE,
+    dataset_binding,
+    stratified_partitions,
+    verify_dataset_binding,
+)
 from ..features import (
     descriptors,
-    encode,
     freeze_trunk,
     input_jacobian_is_alive,
     noise_images,
-    to_locations,
 )
 from ..field import (
     descriptor_energy,
@@ -44,6 +59,7 @@ from ..gradients import (
     gradient_norm,
     snapshot,
 )
+from ..preflight import _require_foundation_runtime_and_rate, continuation_profile
 from ..qualification import gate_inter_level, linear_cka
 
 
@@ -52,9 +68,16 @@ def _trunk(seed: int = 5, width: int = 64) -> CAPPixelTransformer:
     # trunk would not have them and the audit would test a different
     # architecture from the one that ships.
     config = CAPModelConfig(
-        image_size=32, patch_size=2, width=width, depth=12, heads=4,
-        mlp_ratio=2.0, time_embedding_dim=32, condition_dim=32,
-        refiner_width=8, refiner_depth=1,
+        image_size=32,
+        patch_size=2,
+        width=width,
+        depth=12,
+        heads=4,
+        mlp_ratio=2.0,
+        time_embedding_dim=32,
+        condition_dim=32,
+        refiner_width=8,
+        refiner_depth=1,
     )
     return freeze_trunk(CAPPixelTransformer(config, seed))
 
@@ -118,6 +141,162 @@ def test_levels_come_from_the_frozen_trunk():
     """Declared by the trunk, so the taps are covered by its source hash."""
     assert LEVEL_NAMES == tuple(name for name, _, _ in FEATURE_LEVELS)
     assert len(ARMS) == 3
+
+
+def test_feature_bank_populations_are_balanced_disjoint_and_four_view() -> None:
+    labels = torch.arange(10).repeat_interleave(1_100)
+    excluded = {0, 1, 1_100, 1_101}
+    train, fresh = stratified_partitions(labels, excluded)
+    assert len(train) == len(fresh) == 5_000
+    assert not (set(train.tolist()) & set(fresh.tolist()))
+    assert not (set(train.tolist()) | set(fresh.tolist())) & excluded
+    assert torch.bincount(labels[train], minlength=10).tolist() == [500] * 10
+    assert torch.bincount(labels[fresh], minlength=10).tolist() == [500] * 10
+    assert VIEWS_PER_ROLE == asfd_config().features.views_per_image == 4
+
+
+def test_feature_bank_dataset_binding_rejects_different_raw_population(
+    monkeypatch,
+) -> None:
+    # Meta tensors exercise the exact production schema without allocating a
+    # 600 MiB CIFAR float tensor; hashing is isolated from this identity test.
+    pool = torch.empty((50_000, 3, 32, 32), dtype=torch.float32, device="meta")
+    labels = torch.empty((50_000,), dtype=torch.int64, device="meta")
+    monkeypatch.setattr(
+        asfd_feature_bank,
+        "tensor_content_sha256",
+        lambda value: f"{value.dtype}:{tuple(value.shape)}",
+    )
+    recorded = dataset_binding(pool, labels)
+    assert verify_dataset_binding(recorded, pool, labels) == recorded
+    changed = dict(recorded)
+    changed["train_tensor_sha256"] = "different"
+    try:
+        verify_dataset_binding(changed, pool, labels)
+    except RuntimeError as error:
+        assert "different CIFAR-10 population" in str(error)
+    else:
+        raise AssertionError("changed raw CIFAR content was accepted by a feature bank")
+
+
+def test_continuation_profile_preserves_the_foundation_and_extends_only_horizon():
+    calibration = {
+        "status": "cap-emf2-gate-calibration",
+        "gate": asdict(CAPGateConfig()),
+    }
+    preflight = {
+        "candidate": "local_1000_d0002_fp32",
+        "inputs": {"gate_calibration": calibration},
+    }
+    continuation = continuation_profile(preflight, 800_000)
+    assert continuation.train.updates == 800_000
+    assert continuation.train.checkpoint_updates[-2:] == (750_000, 800_000)
+    assert continuation.train.snapshot_every == 10_000
+    assert continuation.objective.sampler_mode == "ordered_uniform"
+
+
+def test_paid_continuation_requires_all_three_operator_confirmations() -> None:
+    _require_launch_authorization(
+        paid=True, durable_mirror=True, durable_workspace=True
+    )
+    cases = (
+        {"paid": False, "durable_mirror": True, "durable_workspace": True},
+        {"paid": True, "durable_mirror": False, "durable_workspace": True},
+        {"paid": True, "durable_mirror": True, "durable_workspace": False},
+    )
+    for values in cases:
+        try:
+            _require_launch_authorization(**values)
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError(f"ASFD accepted incomplete authorization {values}")
+
+
+def test_continuation_runtime_must_exactly_match_measured_preflight() -> None:
+    runtime = {
+        "device": "cuda",
+        "allow_tf32": False,
+        "torch_version": "2.7.1+cu126",
+        "cuda_version": "12.6",
+        "gpu_name": "NVIDIA A100-SXM4-40GB",
+        "gpu_memory_gib": 39.38,
+        "capability": "sm_80",
+    }
+    assert _require_exact_preflight_runtime({"device": runtime}, runtime) == runtime
+    changed = dict(runtime, gpu_name="NVIDIA L40S")
+    try:
+        _require_exact_preflight_runtime({"device": runtime}, changed)
+    except RuntimeError as error:
+        assert "gpu_name" in str(error)
+    else:
+        raise AssertionError("ASFD accepted a GPU different from its preflight")
+
+
+def test_asfd_preflight_uses_foundation_hardware_and_provider_rate() -> None:
+    foundation_runtime = {
+        "device": "cuda",
+        "allow_tf32": True,
+        "torch_version": "2.7.1+cu126",
+        "cuda_version": "12.6",
+        "gpu_name": "NVIDIA A100-SXM4-40GB",
+        "gpu_memory_gib": 39.38,
+        "capability": "sm_80",
+    }
+    live = dict(foundation_runtime, allow_tf32=False)
+    cap2 = {
+        "inputs": {
+            "benchmark": {
+                "device": foundation_runtime,
+                "hourly_rate": 1.75,
+            }
+        },
+        "budget": {"hourly_rate": 1.75},
+    }
+    binding = _require_foundation_runtime_and_rate(cap2, live)
+    assert binding["hourly_rate"] == 1.75
+    assert binding["foundation_allow_tf32"] is True
+    assert binding["asfd_allow_tf32"] is False
+
+    changed_gpu = dict(live, gpu_name="NVIDIA L40S")
+    try:
+        _require_foundation_runtime_and_rate(cap2, changed_gpu)
+    except RuntimeError as error:
+        assert "gpu_name" in str(error)
+    else:
+        raise AssertionError("ASFD smoke accepted hardware unlike its foundation")
+
+    changed_rate = dict(cap2, budget={"hourly_rate": 2.0})
+    try:
+        _require_foundation_runtime_and_rate(changed_rate, live)
+    except RuntimeError as error:
+        assert "provider rate" in str(error)
+    else:
+        raise AssertionError("ASFD smoke accepted a mismatched provider rate")
+
+
+def test_asfd_wall_policy_is_the_measured_50k_projection_plus_15_percent() -> None:
+    policy = _asfd_wall_policy(
+        {"measured_smoke": {"updates": 500, "wall_seconds": 100.0}},
+        recovery_every=5_000,
+    )
+    assert policy["continuation_updates"] == 50_000
+    assert policy["recovery_interval_updates"] == 5_000
+    assert abs(policy["hard_cumulative_continuation_wall_seconds"] - 11_500.0) < 1e-9
+    assert abs(policy["projected_maximum_detection_overshoot_seconds"] - 1_000.0) < 1e-9
+
+
+def test_asfd_storage_root_must_be_the_preflighted_volume(tmp_path: Path) -> None:
+    root = tmp_path / "volume"
+    other = tmp_path / "other"
+    plan = {"storage_root": str(root.resolve())}
+    assert _require_declared_storage_root(plan, root) == root.resolve()
+    try:
+        _require_declared_storage_root(plan, other)
+    except RuntimeError as error:
+        assert "differs from preflight" in str(error)
+    else:
+        raise AssertionError("ASFD accepted an unmeasured storage volume")
 
 
 # --------------------------------------------------------------------- features
@@ -341,8 +520,9 @@ def test_a_small_cloud_cannot_support_a_local_radius():
     """
     from ..config import FieldConfig
 
-    cramped = FieldConfig(positives=16, probes=8, negatives=8, ess_samples=16,
-                          ess_iterations=8)
+    cramped = FieldConfig(
+        positives=16, probes=8, negatives=8, ess_samples=16, ess_iterations=8
+    )
     try:
         calibrate_level_bandwidths(torch.randn(16, 8), cramped)
     except ValueError as error:
@@ -443,6 +623,20 @@ def test_abort_reasons_are_deduplicated():
     assert len(monitor.reasons) == 2, monitor.reasons
 
 
+def test_abort_monitor_recovery_roundtrip_preserves_windows_and_reasons():
+    config = asfd_config().gradients
+    first = AbortMonitor(config)
+    for _ in range(7):
+        first.observe_cosines({"primary_vs_raw": -0.25})
+    first.observe_rank("raw", 0.5)
+    payload = first.state_dict()
+    resumed = AbortMonitor(config)
+    resumed.load_state_dict(payload)
+    assert resumed.state_dict() == payload
+    resumed.observe_rank("raw", 0.5)
+    assert resumed.should_abort
+
+
 def test_no_source_file_lost_its_encoding():
     """A scripted rewrite once mangled this package's UTF-8."""
     from .. import artifacts as asfd_artifacts
@@ -541,14 +735,14 @@ def test_bandwidth_uses_matched_location_distances():
     record = calibrate_bandwidth(values, 0.5, config)
     assert record["locations"] == 8
     assert record["images"] == 64
-    within = float(torch.cdist(values[:, 0], values[:, 0])[
-        ~torch.eye(64, dtype=torch.bool)
-    ].median())
+    within = float(
+        torch.cdist(values[:, 0], values[:, 0])[
+            ~torch.eye(64, dtype=torch.bool)
+        ].median()
+    )
     # The calibrated scale must track the within-location spread, not the
     # between-location offsets.
-    assert record["distance_median"] < 3.0 * within, (
-        record["distance_median"], within
-    )
+    assert record["distance_median"] < 3.0 * within, (record["distance_median"], within)
 
 
 def test_cka_is_one_for_identical_and_low_for_independent():
@@ -560,9 +754,9 @@ def test_cka_is_one_for_identical_and_low_for_independent():
 def test_inter_level_gate_rejects_duplicate_levels():
     values = torch.randn(32, 66, 8)
     config = asfd_config().qualification
-    name, ok, _, _ = gate_inter_level({"a": values, "b": values.clone()}, config)
+    _name, ok, _, _ = gate_inter_level({"a": values, "b": values.clone()}, config)
     assert not ok, "identical levels must fail G8"
-    name, ok, _, _ = gate_inter_level(
+    _name, ok, _, _ = gate_inter_level(
         {"a": values, "b": torch.randn(32, 66, 8)}, config
     )
     assert ok
@@ -585,7 +779,9 @@ def test_a_new_module_beside_the_stage_does_not_invalidate_the_manifest():
     scratch.write_text("# transient probe\n", encoding="utf-8")
     try:
         assert manifest_difference(manifest) == {
-            "added": [], "removed": [], "changed": []
+            "added": [],
+            "removed": [],
+            "changed": [],
         }
     finally:
         scratch.unlink()
@@ -600,6 +796,215 @@ def test_frozen_trunk_dependencies_are_hashed():
     manifest = source_manifest()
     assert any(name.endswith("stage_cap/model.py") for name in manifest)
     assert any(name.endswith("stage_cap/config.py") for name in manifest)
+
+
+def test_transitive_training_and_final_evaluation_dependencies_are_hashed():
+    manifest = source_manifest()
+    required = (
+        "stage_cap/monitoring.py",
+        "stage_cap2/benchmark.py",
+        "stage_cap2/budget.py",
+        "stage_cap2/early_admission.py",
+        "stage_cap2/gate_calibration.py",
+        "stage_cap2/hardware.py",
+        "stage_cap2/metric_calibration.py",
+        "stage_cap2/numerical_admission.py",
+        "stage_cap2/preflight.py",
+        "stage_cap2/preview.py",
+        "stage_cap2/selection.py",
+        "stage_b2/metrics.py",
+        "appearance.py",
+        "fid.py",
+        "stage_asfd/final_visual_review.py",
+    )
+    for suffix in required:
+        assert any(name.endswith(suffix) for name in manifest), suffix
+
+
+def test_asfd_manifest_closes_over_local_python_imports() -> None:
+    """Every local module imported by source-bound ASFD code is also bound."""
+    package_root = Path(__file__).resolve().parents[2]
+    manifest = {
+        name.split("encoder_independent_drifting/")[-1] for name in source_manifest()
+    }
+    missing: list[str] = []
+    for relative in sorted(manifest):
+        if not relative.endswith(".py"):
+            continue
+        module = package_root / relative
+        current_package = list(Path(relative).parent.parts)
+        tree = ast.parse(module.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ImportFrom) or node.level == 0:
+                continue
+            keep = len(current_package) - (node.level - 1)
+            if keep < 0:
+                continue
+            target_parts = current_package[:keep]
+            if node.module:
+                target_parts.extend(node.module.split("."))
+            candidate = "/".join(target_parts) + ".py"
+            init_candidate = "/".join(target_parts + ["__init__"]) + ".py"
+            if (package_root / candidate).is_file() and candidate not in manifest:
+                missing.append(f"{relative} imports {candidate}")
+            elif (
+                not (package_root / candidate).is_file()
+                and (package_root / init_candidate).is_file()
+                and init_candidate not in manifest
+            ):
+                missing.append(f"{relative} imports {init_candidate}")
+    assert not missing, missing
+
+
+def test_existing_terminal_result_reopens_checkpoints_recovery_and_mirrors(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    calls: list[tuple[str, object]] = []
+    source = {"source.py": "a" * 64}
+    preflight = {"artifact_sha256": "p" * 64}
+    checkpoint_mirrors = {
+        kind: {"relative_path": f"checkpoints/final_{kind}.pt", "sha256": kind}
+        for kind in ("raw", "ema")
+    }
+    recovery_mirror = {
+        "relative_path": "asfd_recovery.pt",
+        "sha256": "r" * 64,
+        "recovery_step": 800_000,
+    }
+    completed = {
+        "decision": "GO",
+        "source_sha256": source,
+        "preflight": {"sha256": preflight["artifact_sha256"]},
+        "final_step": 800_000,
+        "profile": {"name": "profile"},
+        "run_identity_sha256": "i" * 64,
+        "checkpoints": {
+            "800000": {
+                kind: {
+                    "path": f"checkpoints/final_{kind}.pt",
+                    "sha256": kind * 32,
+                    "durable_mirror": checkpoint_mirrors[kind],
+                }
+                for kind in ("raw", "ema")
+            }
+        },
+        "recovery": {
+            "path": "asfd_recovery.pt",
+            "sha256": "r" * 64,
+            "durable_mirror": recovery_mirror,
+        },
+    }
+
+    monkeypatch.setattr(asfd_continuation, "source_manifest", lambda: source)
+
+    def fake_checkpoint(path, **kwargs):
+        calls.append(("checkpoint", kwargs["kind"]))
+        return {"state_dict": {}}
+
+    monkeypatch.setattr(asfd_continuation, "load_checkpoint", fake_checkpoint)
+    monkeypatch.setattr(
+        asfd_continuation,
+        "load_recovery_payload",
+        lambda *args, **kwargs: (
+            {"planned_updates": 800_000, "completed_updates": 800_000},
+            "r" * 64,
+        ),
+    )
+
+    class Mirror:
+        def verify(self, path):
+            kind = "raw" if "raw" in path.name else "ema"
+            calls.append(("mirror", kind))
+            return checkpoint_mirrors[kind]
+
+        def verify_recovery(self, path, *, recovery_step):
+            calls.append(("recovery", recovery_step))
+            return recovery_mirror
+
+    asfd_continuation._revalidate_terminal_result(
+        completed,
+        result_path=tmp_path / "asfd_result.json",
+        preflight=preflight,
+        mirror=Mirror(),
+    )
+    assert calls == [
+        ("checkpoint", "raw"),
+        ("mirror", "raw"),
+        ("checkpoint", "ema"),
+        ("mirror", "ema"),
+        ("recovery", 800_000),
+    ]
+
+
+def test_wall_stop_is_bound_to_a_durable_recovery_and_cannot_disappear(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    stop_path = tmp_path / "asfd_wall_stop.json"
+    recovery_path = tmp_path / "asfd_recovery.pt"
+    recovery_mirror = {
+        "relative_path": "asfd_recovery.pt",
+        "sha256": "r" * 64,
+        "recovery_step": 790_000,
+    }
+    stopped = {
+        "decision": "HALT",
+        "reason": "measured-continuation-wall-exhausted",
+        "recovery_step": 790_000,
+        "preflight_sha256": "p" * 64,
+        "source_sha256": {"source.py": "s" * 64},
+        "recovery": {
+            "path": recovery_path.name,
+            "sha256": "r" * 64,
+            "durable_mirror": recovery_mirror,
+        },
+    }
+    monkeypatch.setattr(
+        asfd_continuation, "source_manifest", lambda: {"source.py": "s" * 64}
+    )
+    monkeypatch.setattr(
+        asfd_continuation,
+        "load_recovery_payload",
+        lambda *args, **kwargs: (
+            {"planned_updates": 800_000, "completed_updates": 790_000},
+            "r" * 64,
+        ),
+    )
+    calls = []
+
+    class Mirror:
+        def verify_recovery(self, path, *, recovery_step):
+            calls.append(("recovery", path, recovery_step))
+            return recovery_mirror
+
+        def mirror(self, path):
+            calls.append(("stop", path))
+            return {"relative_path": path.name}
+
+    _revalidate_wall_stop(
+        stopped,
+        stop_path=stop_path,
+        preflight={"artifact_sha256": "p" * 64},
+        mirror=Mirror(),
+    )
+    assert calls == [
+        ("recovery", recovery_path, 790_000),
+        ("stop", stop_path),
+    ]
+
+    changed = dict(stopped, recovery_step=790_001)
+    try:
+        _revalidate_wall_stop(
+            changed,
+            stop_path=stop_path,
+            preflight={"artifact_sha256": "p" * 64},
+            mirror=Mirror(),
+        )
+    except RuntimeError as error:
+        assert "recovery changed" in str(error)
+    else:
+        raise AssertionError("ASFD accepted a wall stop detached from its recovery")
 
 
 def _run_all() -> int:

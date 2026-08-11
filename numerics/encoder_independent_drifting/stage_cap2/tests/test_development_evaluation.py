@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -12,15 +14,25 @@ import torch
 from PIL import Image
 
 from ...diagnostics import write_json
-from .. import development_evaluation, standard_metrics
-from ..artifacts import save_checkpoint, source_manifest, write_json_atomic
+from .. import development_evaluation, metric_calibration, standard_metrics
+from ..artifacts import (
+    save_checkpoint,
+    source_manifest,
+    write_json_atomic,
+    write_npz_atomic,
+)
 from ..development_evaluation import (
     DEVELOPMENT_SAMPLES,
     GENERATION_SEED,
+    portable_reference,
     verify_final_ema,
     write_uncurated_grid,
 )
-from ..metric_calibration import assemble_reference_features
+from ..metric_calibration import (
+    assemble_reference_features,
+    revalidate_metric_calibration_evidence,
+)
+from ..promotion import _grid_integrity
 from ..standard_metrics import (
     REPOSITORY_AUXILIARY_PROTOCOL,
     REPOSITORY_FEATURE_SAMPLES,
@@ -30,12 +42,29 @@ from ..standard_metrics import (
     clean_metrics_from_features,
     compute_repository_auxiliary_metrics,
     existing_png_folder,
+    feature_array_sha256,
     fixed_reference_indices,
     generate_png_folder,
+    load_clean_feature_archive,
+    revalidate_clean_evaluation_evidence,
     unique_png_files,
     validate_png_folder,
     validate_standard_protocol,
 )
+
+
+class _TinyCleanFID:
+    @staticmethod
+    def get_reference_statistics(*_args, **_kwargs):
+        return np.zeros(2), np.eye(2)
+
+    @staticmethod
+    def frechet_distance(mean_a, _cov_a, mean_b, _cov_b):
+        return float(np.square(mean_a - mean_b).sum())
+
+    @staticmethod
+    def kernel_distance(left, right, **_kwargs):
+        return float(np.square(left.mean(axis=0) - right.mean(axis=0)).sum())
 
 
 def _assert_raises(error_type, function, *args, **kwargs) -> Exception:
@@ -126,6 +155,62 @@ def test_verified_unit_selects_only_declared_final_ema():
     assert verified.unit["artifact_sha256"]
 
 
+def test_verified_unit_accepts_only_an_explicit_recorded_intermediate_ema():
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        profile = {
+            "name": "cap2-ordered_uniform-local_1000_d0002_fp32",
+            "model": {"image_size": 32},
+            "train": {
+                "updates": 750_000,
+                "checkpoint_updates": [50_000, 650_000, 750_000],
+            },
+        }
+        realized_profile = {
+            **profile,
+            "train": {**profile["train"]},
+            "realized_device": "cpu",
+        }
+        records = {}
+        for step in (650_000, 750_000):
+            path = root / f"step{step}_ema.pt"
+            digest = save_checkpoint(
+                path,
+                {"weight": torch.full((1,), float(step))},
+                step=step,
+                kind="ema",
+                arm="ordered_uniform",
+                declared_profile=profile,
+                realized_profile=realized_profile,
+                preflight_sha256="a" * 64,
+                run_identity_sha256="b" * 64,
+                unit_seed=0,
+            )
+            records[str(step)] = {
+                "ema": {"path": str(path.resolve()), "sha256": digest}
+            }
+        unit_path = root / "result.json"
+        write_json(
+            unit_path,
+            {
+                "status": "cap-emf2-screen-unit",
+                "development_only": True,
+                "arm": "ordered_uniform",
+                "preflight_sha256": "a" * 64,
+                "run_identity_sha256": "b" * 64,
+                "unit_seed": 0,
+                "declared_profile": profile,
+                "realized_profile": realized_profile,
+                "training": {"optimizer_updates": 750_000},
+                "checkpoints": records,
+            },
+        )
+        verified = verify_final_ema(unit_path, step=650_000)
+        assert verified.step == 650_000
+        error = _assert_raises(RuntimeError, verify_final_ema, unit_path, step=700_000)
+        assert "declared checkpoint" in str(error)
+
+
 def test_verified_unit_rejects_raw_checkpoint_under_ema_label():
     with TemporaryDirectory() as directory:
         unit_path = _screen_fixture(Path(directory), checkpoint_kind="raw")
@@ -137,7 +222,7 @@ def test_verified_unit_rejects_intermediate_or_unrecorded_final():
     with TemporaryDirectory() as directory:
         unit_path = _screen_fixture(Path(directory), recorded_step=100_000)
         error = _assert_raises(RuntimeError, verify_final_ema, unit_path)
-    assert "final checkpoint" in str(error)
+    assert "requested checkpoint" in str(error)
 
 
 def test_verified_unit_rejects_checkpoint_hash_mismatch():
@@ -268,9 +353,170 @@ def test_uncurated_grid_uses_fixed_prefix():
         assert "no curation" in record["selection"]
 
 
+def test_uncurated_grid_reference_survives_artifact_tree_relocation():
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        original = root / "windows_evaluator"
+        folder = original / "pngs"
+        folder.mkdir(parents=True)
+        for index in range(8 * 16):
+            _write_rgb(folder / f"{index:06d}.png", index % 256)
+        record = write_uncurated_grid(
+            folder,
+            original / "grid.png",
+            reference_anchor=original,
+        )
+        assert record["path"] == "grid.png"
+        assert _grid_integrity({"uncurated_grid": record}, anchor=original)
+
+        relocated = root / "linux_training_host"
+        shutil.move(str(original), relocated)
+        assert _grid_integrity({"uncurated_grid": record}, anchor=relocated)
+
+
+def test_all_evaluation_leaf_references_can_be_relocated():
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        original = root / "original"
+        original.mkdir()
+        leaves = {
+            name: original / relative
+            for name, relative in {
+                "unit": "result.json",
+                "checkpoint": "checkpoints/final.pt",
+                "samples": "pngs",
+                "generated_features": "features/generated.npz",
+                "kid_reference": "features/reference.npz",
+            }.items()
+        }
+        for name, path in leaves.items():
+            if name == "samples":
+                path.mkdir(parents=True)
+            else:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(name.encode())
+        references = {
+            name: portable_reference(path, original) for name, path in leaves.items()
+        }
+
+        relocated = root / "relocated"
+        shutil.move(str(original), relocated)
+        for name, reference in references.items():
+            assert (relocated / reference).resolve().exists(), name
+
+
 def test_development_protocol_fixes_count_and_seed():
     assert DEVELOPMENT_SAMPLES == 50_000
     assert GENERATION_SEED == 20_260_804
+
+
+def test_clean_feature_archive_is_content_bound_and_shape_checked():
+    with TemporaryDirectory() as directory:
+        path = Path(directory) / "features.npz"
+        expected = np.arange(12, dtype=np.float32).reshape(3, 4)
+        digest = write_npz_atomic(path, features=expected)
+        loaded, metadata = load_clean_feature_archive(
+            path, expected_count=3, expected_dimension=4
+        )
+        assert np.array_equal(loaded, expected)
+        assert metadata["sha256"] == digest
+        assert metadata["count"] == 3
+        assert metadata["dimension"] == 4
+        _assert_raises(
+            RuntimeError,
+            load_clean_feature_archive,
+            path,
+            expected_count=4,
+            expected_dimension=4,
+        )
+
+
+def test_clean_evaluation_leaf_population_and_metrics_are_recomputed(monkeypatch):
+    class FakeCleanFID:
+        @staticmethod
+        def get_reference_statistics(*_args, **_kwargs):
+            return np.zeros(4), np.eye(4)
+
+        @staticmethod
+        def frechet_distance(*_args, **_kwargs):
+            return 1.25
+
+        @staticmethod
+        def kernel_distance(*_args, **_kwargs):
+            return 0.0125
+
+    monkeypatch.setattr(standard_metrics, "_require_cleanfid", FakeCleanFID)
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        pngs = root / "pngs"
+        pngs.mkdir()
+        for index in range(3):
+            _write_rgb(pngs / f"{index:06d}.png", 30 * index)
+        png_record = validate_png_folder(
+            pngs, expected_count=3, require_sequential_names=True
+        )
+        generated_path = root / "generated.npz"
+        reference_path = root / "reference.npz"
+        write_npz_atomic(
+            generated_path,
+            features=np.arange(12, dtype=np.float32).reshape(3, 4),
+        )
+        write_npz_atomic(
+            reference_path,
+            features=np.arange(12, 24, dtype=np.float32).reshape(3, 4),
+        )
+        _generated, generated_record = load_clean_feature_archive(
+            generated_path, expected_count=3, expected_dimension=4
+        )
+        _reference, reference_record = load_clean_feature_archive(
+            reference_path, expected_count=3, expected_dimension=4
+        )
+        generated_record.update(
+            {
+                "path": generated_path.name,
+                "population": (
+                    "all fixed-seed generated images in sequential PNG order"
+                ),
+                "preprocessing": ("clean-fid 0.1.35 clean Inception preprocessing"),
+                "source_png_manifest_sha256": png_record["png_manifest_sha256"],
+                "generation_seed": 17,
+            }
+        )
+        reference_record.update(
+            {
+                "path": reference_path.name,
+                "population": (
+                    "all 50,000 CIFAR-10 train images in dataset-index order"
+                ),
+                "preprocessing": ("clean-fid 0.1.35 clean Inception preprocessing"),
+            }
+        )
+        evaluation = {
+            "samples": {
+                **png_record,
+                "directory": pngs.name,
+                "seed": 17,
+            },
+            "standard_train_reference_metrics": {
+                "kid_seed": 19,
+                "clean_fid_cifar10_train": 1.25,
+                "clean_kid_cifar10_train": 0.0125,
+                "generated_features": generated_record,
+                "kid_reference": reference_record,
+            },
+        }
+        verified = revalidate_clean_evaluation_evidence(
+            evaluation, anchor=root, expected_count=3, expected_dimension=4
+        )
+        assert verified["valid"] is True
+        assert all(verified["checks"].values())
+
+        evaluation["standard_train_reference_metrics"]["clean_fid_cifar10_train"] = 9.0
+        rejected = revalidate_clean_evaluation_evidence(
+            evaluation, anchor=root, expected_count=3, expected_dimension=4
+        )
+        assert rejected["valid"] is False
+        assert rejected["checks"]["clean_fid_recomputed"] is False
 
 
 def test_cap1_and_cap2_share_one_fixed_auxiliary_implementation():
@@ -416,6 +662,69 @@ def test_kid_reference_rejects_duplicate_or_missing_dataset_indices():
         expected_count=4,
     )
     assert "exact partition" in str(error)
+
+
+def test_real_real_margin_is_recomputed_from_canonical_archive(monkeypatch, tmp_path):
+    count, dimension, seed, kid_seed = 8, 2, 17, 23
+    features = np.arange(count * dimension, dtype=np.float64).reshape(count, dimension)
+    archive = tmp_path / "reference.npz"
+    archive_sha = write_npz_atomic(archive, features=features)
+    generator = torch.Generator().manual_seed(seed)
+    indices = torch.randperm(count, generator=generator)
+    left_indices, right_indices = indices[: count // 2], indices[count // 2 :]
+    left, right = features[left_indices.numpy()], features[right_indices.numpy()]
+    direct = standard_metrics.clean_pair_metrics_from_features(
+        _TinyCleanFID, left, right, kid_seed=kid_seed
+    )
+    matched = {
+        side: standard_metrics.clean_metrics_from_features(
+            _TinyCleanFID,
+            values,
+            kid_reference_features=features,
+            kid_seed=kid_seed,
+        )
+        for side, values in (("left", left), ("right", right))
+    }
+    calibration = {
+        "seed": seed,
+        "samples_per_side": count // 2,
+        "left_indices_sha256": hashlib.sha256(
+            left_indices.numpy().tobytes()
+        ).hexdigest(),
+        "right_indices_sha256": hashlib.sha256(
+            right_indices.numpy().tobytes()
+        ).hexdigest(),
+        "metrics": {
+            "kid_seed": kid_seed,
+            "kid_reference": {
+                "path": str(archive),
+                "sha256": archive_sha,
+                "feature_sha256": feature_array_sha256(features),
+                "count": count,
+                "dimension": dimension,
+                "dtype": str(features.dtype),
+            },
+            "direct_disjoint_pair": direct,
+            "matched_published_train_reference": matched,
+        },
+    }
+    monkeypatch.setattr(metric_calibration, "_require_cleanfid", lambda: _TinyCleanFID)
+    verified = revalidate_metric_calibration_evidence(
+        calibration,
+        anchor=tmp_path,
+        expected_count=count,
+        expected_dimension=dimension,
+    )
+    assert verified["valid"] is True
+
+    calibration["metrics"]["direct_disjoint_pair"]["clean_fid"] += 1.0
+    rejected = revalidate_metric_calibration_evidence(
+        calibration,
+        anchor=tmp_path,
+        expected_count=count,
+        expected_dimension=dimension,
+    )
+    assert rejected["checks"]["direct_pair_recomputed"] is False
 
 
 def _run_all() -> int:

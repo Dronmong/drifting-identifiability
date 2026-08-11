@@ -1,0 +1,12 @@
+# Frozen CAP2/ASFD production and evaluation environment.
+# Use CPython 3.11.15. The CUDA build is explicit so a provider cannot silently
+# install CPU-only torch from PyPI.
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch==2.7.1+cu126
+torchvision==0.22.1+cu126
+numpy==1.26.4
+pillow==12.2.0
+clean-fid==0.1.35
+setuptools==83.0.0
+ninja==1.13.0
+pyspng==0.1.4
