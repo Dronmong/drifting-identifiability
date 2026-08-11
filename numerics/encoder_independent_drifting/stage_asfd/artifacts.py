@@ -68,6 +68,8 @@ _DEPENDENCIES: tuple[str, ...] = (
     "stage_cap2/preflight.py",
     "stage_cap2/preview.py",
     "stage_cap2/promotion.py",
+    "stage_cap2/runpod_bootstrap.sh",
+    "stage_cap2/runpod_pipeline.sh",
     "stage_cap2/run_screen.py",
     "stage_cap2/selection.py",
     "stage_cap2/standard_metrics.py",

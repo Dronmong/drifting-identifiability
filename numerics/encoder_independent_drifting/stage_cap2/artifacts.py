@@ -14,7 +14,7 @@ from ..diagnostics import ROOT
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
-PROTOCOL = ROOT / "numerics" / "EncoderIndependentCAPEMF2ASFDProtocol.md"
+PROTOCOL = ROOT / "numerics" / "EncoderIndependentCAPEMF2ASFDRunPodProtocol.md"
 DEFAULT_PREFLIGHT = HERE / "cap2_preflight.json"
 
 _DEPENDENCIES = (
@@ -50,6 +50,8 @@ _DEPENDENCIES = (
     "stage_cap2/requirements-eval.txt",
     "stage_cap2/requirements-positive-control.txt",
     "stage_cap2/requirements-production-cu126.txt",
+    "stage_cap2/runpod_bootstrap.sh",
+    "stage_cap2/runpod_pipeline.sh",
     "stage_cap2/run_screen.py",
     "stage_cap2/sampler_audit.py",
     "stage_cap2/selection.py",
