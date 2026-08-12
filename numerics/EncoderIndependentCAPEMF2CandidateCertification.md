@@ -888,6 +888,92 @@ foundation. The sealed foundation still requires an admission `GO`, and the
 `large_coefficient` question above has to be settled on its merits before that
 can honestly be claimed.
 
+## 17. The gate changes, audited
+
+Four changes were made to the admission path. They are different kinds of act
+and should not be summarized as one.
+
+**A relaxation.** Relative-RMS and assembled-cosine thresholds moved from
+0.15 / 0.10 / 0.995 to 0.20 / 0.20 / 0.98, adopted after seeing the data and on
+explicit authorization. The audit asked the only question that matters: does it
+erase the finding that started the investigation? Recomputing the historical
+`local_1000_d0002_fp32` record under the new thresholds:
+
+| configuration | rows | `interior_high` | verdict |
+| --- | --- | --- | --- |
+| `legacy_1000_d01` (ten-radian control) | 2/63 | — | rejected |
+| `local_1000_d0002_fp32` (the original `NO_GO`) | 55/63 | **1/9** | **still rejected** |
+| repaired `smooth_100` | 63/63 | 9/9 | admitted |
+
+It does not. The original failure survives with margin: its quotient cosine is
+0.9337 against a threshold of **0.98 that was not touched**, and its quotient
+RMS is 0.3634 against the new 0.20. The discriminating work is done by a
+threshold left alone, and there is roughly a tenfold separation between what is
+admitted and what is rejected. The relaxation admits exactly one new thing.
+
+**A consistency repair.** The three gradient thresholds contradicted each
+other: `relative_l2 = sqrt(1 + r^2 - 2*r*c)` exactly, so a 0.20 cap made
+`cosine >= 0.95` and `norm_ratio in [0.85, 1.15]` unreachable. The one failing
+row matched that identity to three decimals. The cap now sits inside the only
+coherent band, `[0.31623, 0.37081)`, pinned by a test.
+
+**A provenance fix.** Audit checkpoints carry
+`stage = cap-emf-2-candidate-audit` rather than borrowing the screen's label.
+`early_admission` and `final_verdict` still require `cap-emf-2-screen`, so an
+audit checkpoint can be an admission subject and can never stand in for a screen
+unit.
+
+**A preflight amendment.** The protocol was unsatisfiable for an off-scale
+candidate: `run_admission` refuses a scale mismatch, and preflight demanded
+`cap-emf-1`/`ema`/650000 unconditionally, so the candidate its own registry
+described as needing "a short trained-model audit" was admissible nowhere. The
+fixed provenance is replaced by the property it stood in for — the audited
+weights must carry the candidate's scale — and the baseline-scale path is
+untouched.
+
+### A false guardrail, caught
+
+The intended safeguard was a unit test asserting the relaxed gate still rejects
+the ten-radian control. It passed the control. A freshly built network is the
+zero function through the trunk, because AdaLN-Zero zeroes every modulation, so
+its difference quotient and its exact JVP agree trivially and a ten-radian phase
+step looks harmless. The test would have been reassurance with no content. The
+check is empirical, runs on trained weights, and is the first row of the table
+above.
+
+### The remaining caveat on the FID claim
+
+The A/B is one seed per arm. The repository's own screening history records an
+FID seed standard deviation of 26.7 at 15,000 steps in an earlier stage, so a
+42.6-point difference from n = 1 is suggestive rather than established. The
+configuration change does not rest on it: the clip fraction moving from 100% to
+4.1% is a mechanical consequence of the intervention, not a seed effect, and H7
+is satisfied on a measurement for the first time. The FID magnitude wants
+replication.
+
+## 18. Why the sealed ASFD path was not forced
+
+`preflight` binds three artifacts to one checkpoint: the numerical admission
+subject, the baseline standard evaluation
+(`baseline_checkpoint_matches_admission`), and checkpoint forensics
+(`forensics_complete`, which additionally pins `kind = ema` and
+`step = 650000`). The protocol assumes throughout that the admission subject
+*is* the preserved CAP-EMF-1 baseline model.
+
+An off-scale candidate cannot satisfy that, and making it do so would mean
+rewriting the provenance chain in three more places — including letting the
+campaign's "baseline" become our own 50k model. Those bindings exist to stop
+numbers being attributed to models that did not produce them. Amending one
+demonstrably mis-calibrated threshold is a defect repair; dismantling the
+provenance chain would make the resulting `GO` self-referential.
+
+The campaign therefore proceeds on the non-promoting audit track: a 650,000
+update capability run at the repaired configuration, matching CAP-EMF-1's
+horizon exactly, delivering the mechanism-versus-base comparison without a gated
+foundation. The ASFD continuation needs the foundation gate and is deferred
+until the protocol is re-preregistered for an off-scale candidate rather than
+patched mid-flight.
+
 ## 8b. What this does not establish
 
 Conditioning is not quality. A flatter function is easier to differentiate
