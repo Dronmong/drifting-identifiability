@@ -472,6 +472,14 @@ def main() -> None:
                 )
                 torch.save(
                     {
+                        # The stage names this path distinctly rather than
+                        # borrowing the screen's label: numerical_admission
+                        # recognizes it as the short trained-model audit the
+                        # candidate registry prescribes, and nothing downstream
+                        # can mistake it for a screen unit.
+                        "stage": "cap-emf-2-candidate-audit",
+                        "kind": "raw",
+                        "parameter_count": model.parameter_count(),
                         "state_dict": states[step],
                         "profile": {
                             "model": asdict(prof.model),

@@ -411,7 +411,16 @@ def _checkpoint_identity(payload: dict, model: CAPPixelTransformer) -> dict:
     else:
         count_semantics = "invalid"
     checks = {
-        "recognized_stage": payload.get("stage") in {"cap-emf-1", "cap-emf-2-screen"},
+        # ``cap-emf-2-candidate-audit`` is the short trained-model audit the
+        # candidate registry itself prescribes: a candidate whose embedding
+        # scale differs from every existing checkpoint cannot be admitted from
+        # one, and training it through a screen would require the preflight that
+        # this admission is a precondition for.  The stage is named distinctly
+        # rather than borrowed from the screen so provenance stays legible --
+        # these checkpoints are produced by the non-promoting audit path and
+        # must never be mistaken for a screen unit.
+        "recognized_stage": payload.get("stage")
+        in {"cap-emf-1", "cap-emf-2-screen", "cap-emf-2-candidate-audit"},
         "recognized_kind": payload.get("kind") in {"raw", "ema"},
         "nonnegative_step": isinstance(payload.get("step"), int)
         and payload["step"] >= 0,
