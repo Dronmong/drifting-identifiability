@@ -585,6 +585,44 @@ def test_admission_coefficient_uses_the_resolved_floor(t_value, r_value, stratum
     assert row["coefficient"] != pytest.approx(inherited, rel=1e-6)
 
 
+def test_loss_weight_floor_is_separate_and_defaults_to_cap1():
+    """The third role of the shared constant, split out without changing it.
+
+    Unset, the 1/t^2 weight must still clamp at 0.02 so every existing arm and
+    the CAP-EMF-1 control reproduce exactly. Set, it must move *only* the loss
+    weight -- not the Euler divisor and not the coefficient denominator.
+    """
+    default = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
+    assert default.objective.loss_weight_floor is None
+    assert default.objective.resolved_loss_weight_floor == 0.02
+    assert default.objective.resolved_loss_weight_floor == (
+        default.objective.emf_denominator_floor
+    )
+
+    raised = replace(default.objective, loss_weight_floor=0.20)
+    assert raised.resolved_loss_weight_floor == 0.20
+    assert raised.emf_denominator_floor == 0.02
+    assert raised.resolved_coefficient_floor == 0.10
+
+
+def test_raising_the_loss_weight_floor_compresses_the_weight_range():
+    """The whole point: bound how far one row can outweigh another.
+
+    At the 0.02 floor a row at t=0.01 carries 2500x the weight of a row at t=1,
+    and the measured objective gradients on those rows run 10^3-10^5 against a
+    clip of 10.0. The floor is the only knob that bounds that ratio.
+    """
+    times = torch.tensor([0.01, 0.03, 0.10, 0.50, 1.0])
+    inherited = times.clamp_min(0.02).pow(-2)
+    raised = times.clamp_min(0.20).pow(-2)
+    assert float(inherited.max() / inherited.min()) == pytest.approx(2500.0, rel=1e-6)
+    assert float(raised.max() / raised.min()) == pytest.approx(25.0, rel=1e-6)
+    # The bulk of the triangle is untouched: clamping at 0.20 changes nothing
+    # for rows above it, so this is not a global reweighting.
+    assert float(inherited[-1]) == float(raised[-1])
+    assert float(inherited[-2]) == float(raised[-2])
+
+
 def test_production_arm_coefficient_tail_is_gated_and_passes():
     """ordered_uniform is the production arm; its tail must be enforced.
 

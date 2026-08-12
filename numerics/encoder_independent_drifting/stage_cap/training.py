@@ -119,6 +119,11 @@ class TrainOutcome:
     checkpoint_health_events: int = 0
     clipped_updates: int = 0
     clipped_updates_final_window: int = 0
+    # Pre-clip global gradient norms, one per optimizer update.  Runtime-only
+    # instrumentation, deliberately excluded from recovery state: it exists so
+    # the clip threshold can be set from the observed distribution rather than
+    # assumed, and so H7 can be evaluated on a measurement.
+    gradient_norms: list[float] = field(default_factory=list)
     final_window_updates: int = 0
     nonfinite_updates: int = 0
     best_rank_ratio: float = 0.0
@@ -1084,6 +1089,15 @@ def train_cap_unit(
         else:
             optimizer.step()
             ema.update(model)
+        # The pre-clip norm was computed and thrown away, leaving only a
+        # boolean.  That is the data H7 needs: CAP-EMF-1's recovery file lacked
+        # the windowed clip counters, ``finalize.py`` substituted 0.0, and
+        # "0.0 < 0.05" passed a gate whose real value was 15.3%.  Retaining the
+        # norms makes the clip threshold a measurable quantity instead of an
+        # assumed one.  Runtime-only: not scientific state, not persisted to
+        # recovery, so a resumed run simply restarts the sample.
+        if math.isfinite(pre_clip):
+            outcome.gradient_norms.append(pre_clip)
         if pre_clip > train.gradient_clip:
             outcome.clipped_updates += 1
             if update >= window_start:

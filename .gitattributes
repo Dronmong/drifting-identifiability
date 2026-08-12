@@ -3,7 +3,7 @@
 # source manifests and SHA sidecars remain portable.
 /.gitattributes text eol=lf
 numerics/encoder_independent_drifting/**/*.py text eol=lf
-numerics/cap2_candidate_diagnostic.py text eol=lf
+numerics/cap2_*.py text eol=lf
 # runpod_bootstrap.sh and runpod_pipeline.sh are both declared CAP2 source
 # dependencies, so they are hashed into every source manifest exactly like the
 # Python modules.  Without this they follow core.autocrlf and a Windows working

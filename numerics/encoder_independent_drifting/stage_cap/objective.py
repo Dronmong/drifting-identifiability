@@ -290,7 +290,7 @@ def emf_loss(
     residual = current - target.detach()
     # Applied outside the stopped adaptive denominator so it stays an actual
     # time weight rather than being cancelled by the normalizer.
-    time_weight = t.clamp_min(config.emf_denominator_floor).pow(-2)
+    time_weight = t.clamp_min(config.resolved_loss_weight_floor).pow(-2)
     loss, adaptive_weight, weighted_loss, output_gradient_norm = _adaptive_terms(
         residual, config, numerator=time_weight
     )

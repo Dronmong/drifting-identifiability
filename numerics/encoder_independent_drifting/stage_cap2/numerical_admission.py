@@ -493,7 +493,7 @@ def _adaptive_loss(
 ) -> torch.Tensor:
     residual = current - target.detach()
     sums = residual.square().flatten(1).sum(1)
-    numerator = t.clamp_min(config.emf_denominator_floor).pow(-2)
+    numerator = t.clamp_min(config.resolved_loss_weight_floor).pow(-2)
     weight = numerator / (
         (sums + config.adaptive_epsilon).pow(config.adaptive_power).detach()
     )

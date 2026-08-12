@@ -149,6 +149,26 @@ class CAPObjectiveConfig:
     # the singularity of Equation 18, so the two cannot be separated in the
     # time law; they separate here instead.
     coefficient_denominator_floor: float | None = None
+    # Separate floor for the *loss weight* only, i.e. the t in 1/t^2.  ``None``
+    # resolves to ``emf_denominator_floor``, preserving CAP-EMF-1 exactly.
+    #
+    # The third role of the shared constant, and the one that makes the
+    # objective untrainable as configured.  With ``adaptive_power = 1`` the
+    # adaptive denominator is detached, so a row's parameter gradient scales as
+    # (1/t^2) * sqrt(s)/(s+eps) * d(residual)/d(theta); the middle factor is
+    # bounded by 1/(2*sqrt(eps)) = 5, so 1/t^2 dominates outright.  At the 0.02
+    # floor a row at t = 0.01 is weighted 2500x a row at t = 1, and measured
+    # objective gradient norms on the low-t strata run 10^3 to 10^5 against a
+    # global gradient clip of 10.0 -- on both numerical candidates.
+    #
+    # Under the ordered-uniform density 2t the weight has mean
+    # 2*ln(1/floor) = 7.8 and standard deviation ~50, so the *typical* batch
+    # gradient already sits at the clip: CAP-EMF-1 clipped 15.3% of updates and
+    # the scale-100 candidate clipped 100%.  H7 declares that at most 5% of
+    # updates may clip, so the shipped configuration contradicts its own gate.
+    # Raising this floor compresses the weight's dynamic range, which is what
+    # stops a handful of rows from setting the direction of every update.
+    loss_weight_floor: float | None = None
     # Historical CAP-EMF-1 default.  Successor arms use one of the two ordered
     # iid modes below.  Keeping the legacy value as the default preserves the
     # original run's exact scientific configuration as a matched control.
@@ -175,6 +195,13 @@ class CAPObjectiveConfig:
         if self.coefficient_denominator_floor is None:
             return self.emf_denominator_floor
         return self.coefficient_denominator_floor
+
+    @property
+    def resolved_loss_weight_floor(self) -> float:
+        """The t-clamp actually applied in the 1/t^2 regression weight."""
+        if self.loss_weight_floor is None:
+            return self.emf_denominator_floor
+        return self.loss_weight_floor
 
     def validate(self) -> None:
         if self.logit_std <= 0:

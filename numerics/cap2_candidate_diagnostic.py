@@ -84,6 +84,31 @@ from numerics.encoder_independent_drifting.stage_cap2.numerical_admission import
 DIAGNOSTIC_SEED_BASE = 20_260_901
 
 
+def _percentiles(values: list[float]) -> dict:
+    """Summarize the pre-clip gradient norm distribution.
+
+    The p95 is the operative number: H7 permits at most 5% of updates to clip,
+    so a clip threshold below p95 contradicts the gate by construction.
+    """
+    if not values:
+        return {}
+    ordered = sorted(values)
+    def at(q: float) -> float:
+        index = min(len(ordered) - 1, max(0, int(round(q * (len(ordered) - 1)))))
+        return ordered[index]
+    return {
+        "n": len(ordered),
+        "min": ordered[0],
+        "p05": at(0.05),
+        "p50": at(0.50),
+        "p90": at(0.90),
+        "p95": at(0.95),
+        "p99": at(0.99),
+        "max": ordered[-1],
+        "mean": sum(ordered) / len(ordered),
+    }
+
+
 def checkpoint_ladder(updates: int, count: int = 4) -> tuple[int, ...]:
     """Evenly spaced measurement points ending at the full horizon.
 
@@ -101,7 +126,9 @@ def checkpoint_ladder(updates: int, count: int = 4) -> tuple[int, ...]:
 
 
 def diagnostic_profile(arm: str, candidate_name: str, updates: int,
-                       checkpoints: tuple[int, ...]):
+                       checkpoints: tuple[int, ...],
+                       loss_weight_floor: float | None = None,
+                       gradient_clip: float | None = None):
     """The production architecture at one candidate's scale, on a short horizon.
 
     ``screen_profile`` pins ``updates`` to the production ladder (50k .. 750k),
@@ -129,9 +156,13 @@ def diagnostic_profile(arm: str, candidate_name: str, updates: int,
             diagonal_sampling="fixed_count_first_draw",
             emf_delta=candidate.delta,
             stopped_evaluation=candidate.stopped_evaluation,
+            loss_weight_floor=loss_weight_floor,
         ),
         train=replace(
             base.train,
+            gradient_clip=(
+                base.train.gradient_clip if gradient_clip is None else gradient_clip
+            ),
             updates=updates,
             checkpoint_updates=checkpoints,
             # A 5,000-update warmup over a 3,000-update diagnostic would never
@@ -270,6 +301,21 @@ def main() -> None:
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--micro-batch", type=int, default=None)
     parser.add_argument("--unit-seed", type=int, default=901)
+    parser.add_argument(
+        "--loss-weight-floor",
+        type=float,
+        default=None,
+        help=(
+            "t-clamp for the 1/t^2 regression weight; omit to inherit "
+            "emf_denominator_floor (0.02), which is the CAP-EMF-1 behaviour"
+        ),
+    )
+    parser.add_argument(
+        "--gradient-clip",
+        type=float,
+        default=None,
+        help="override the global gradient clip (default 10.0)",
+    )
     # Without gradient metrics every strict check that mentions the gradient is
     # False, so every verdict would read FAIL for a reason unrelated to the
     # candidate.  Gradients are therefore on by default here.
@@ -303,7 +349,9 @@ def main() -> None:
     results = {}
     for candidate_name in args.candidates:
         candidate, prof = diagnostic_profile(
-            args.arm, candidate_name, args.updates, ladder
+            args.arm, candidate_name, args.updates, ladder,
+            loss_weight_floor=args.loss_weight_floor,
+            gradient_clip=args.gradient_clip,
         )
         if args.micro_batch is not None:
             prof = replace(
@@ -369,6 +417,12 @@ def main() -> None:
                 "h7_clip_fraction_max": 0.05,
                 "optimizer_updates": outcome.optimizer_updates,
                 "nonfinite_updates": outcome.nonfinite_updates,
+                # The observed pre-clip gradient norm distribution.  A clip
+                # threshold is only meaningful relative to this: H7 asks for at
+                # most 5% clipping, so a correctly scaled clip sits at about the
+                # 95th percentile.
+                "gradient_norm_percentiles": _percentiles(outcome.gradient_norms),
+                "gradient_clip": prof.train.gradient_clip,
                 "best_rank_ratio": outcome.best_rank_ratio,
                 "best_second_moment": best_moment,
                 "final_second_moment": final_moment,
@@ -468,6 +522,8 @@ def main() -> None:
             "record carries no hardware binding and no sealed source manifest"
         ),
         "arm": args.arm,
+        "loss_weight_floor": args.loss_weight_floor,
+        "gradient_clip_override": args.gradient_clip,
         "updates": 0 if args.no_train else args.updates,
         "checkpoint_ladder": list(ladder),
         "trained": not args.no_train,
