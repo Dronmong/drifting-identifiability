@@ -733,6 +733,30 @@ on 30k→50k, 0.68 on 10k→50k). Extrapolated to 650k that lands far below
 CAP-EMF-1's 83.65, though a 13× extrapolation is not something to spend on
 directly.
 
+### Post-hoc EMA, and a second convergence signal
+
+Averaging the trailing raw snapshots (uniform boxcar, float64 accumulation):
+
+| window | snapshots | clean FID | clean KID |
+| --- | --- | --- | --- |
+| 2 | 40k + 50k | **104.36** | 0.0840 |
+| 3 | 30k + 40k + 50k | 123.59 | 0.1044 |
+| 5 | 10k … 50k | 300.15 | 0.3200 |
+
+The short window gains 9% over raw; wider windows degrade badly. That is not a
+failure of the method but of applying it to a run whose snapshots span a 3×
+quality range — CAP-EMF-1's 83.65 came from 30 snapshots at 25k spacing on a
+converged 650k run, where consecutive snapshots were nearly identical.
+
+The collapse of wide-window averaging is therefore a second, independent
+indication that this run is far from converged, agreeing with the FID slope.
+
+**At 50,000 updates the configuration beats CAP-EMF-1's 650,000-update raw
+result on both measures: 114.90 raw and 104.36 post-hoc EMA against 112.94.**
+The 83.65 comparison remains out of reach at this horizon and should not be
+claimed until a run of comparable length with comparable snapshot density
+exists.
+
 The shape is the point: **the degenerate optimization is not preventing
 learning, and the run has not stalled.** Whatever 100% clipping is costing, it
 is not stopping this configuration from reaching CAP-EMF-1's quality thirteen
