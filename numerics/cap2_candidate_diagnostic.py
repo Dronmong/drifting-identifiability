@@ -175,12 +175,15 @@ def diagnostic_profile(arm: str, candidate_name: str, updates: int,
             # record how non-trivial the function had become when its
             # conditioning was measured.
             health_every=max(1, checkpoints[0]),
-            recovery_every=max(1, updates),
+            # Keep the production 5,000-update cadence when the horizon is long
+            # enough to warrant it.  A multi-day run with recovery only at the
+            # end would lose everything to a single interruption.
+            recovery_every=max(1, min(base.train.recovery_every, updates)),
         ),
     )
 
 
-def train_short(prof, pool, device, unit_seed, announce):
+def train_short(prof, pool, device, unit_seed, announce, recovery_path=None):
     """Train the diagnostic horizon, returning the raw state at each checkpoint.
 
     ``TrainOutcome`` does not carry the model, so states are taken through the
@@ -203,7 +206,7 @@ def train_short(prof, pool, device, unit_seed, announce):
 
     outcome = train_cap_unit(
         pool, prof, device, checkpoint=_capture, unit_seed=unit_seed,
-        progress=announce,
+        progress=announce, recovery_path=recovery_path,
     )
     if not captured:
         raise RuntimeError("diagnostic training produced no checkpoint state")
@@ -338,6 +341,17 @@ def main() -> None:
             "the real gate on it, on the production GPU, unmodified."
         ),
     )
+    parser.add_argument(
+        "--recovery-path",
+        type=Path,
+        default=None,
+        help=(
+            "persist optimizer/EMA/RNG state so an interrupted long run resumes "
+            "instead of restarting. Uses the audited train_cap_unit recovery "
+            "path; identity is derived from the profile and seed, so a resume "
+            "with different settings is refused rather than silently accepted."
+        ),
+    )
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
@@ -382,6 +396,7 @@ def main() -> None:
                 device,
                 args.unit_seed,
                 lambda line: print(f"  {line}", flush=True),
+                recovery_path=args.recovery_path,
             )
             train_seconds = time.time() - train_started
             # A candidate that passes the numerical gate and then diverges is
