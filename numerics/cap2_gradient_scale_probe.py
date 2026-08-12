@@ -46,6 +46,9 @@ from numerics.encoder_independent_drifting.stage_cap.objective import (  # noqa:
     emf_loss,
     sample_time_triangle,
 )
+from numerics.encoder_independent_drifting.stage_cap2.config import (  # noqa: E402
+    SAMPLER_ARMS,
+)
 
 def load_model(path: Path, device: torch.device):
     payload = torch.load(path, map_location="cpu", weights_only=True)
@@ -114,6 +117,15 @@ def main() -> None:
         default=[0.02, 0.05, 0.10, 0.20, 0.30, 0.50],
         help="loss_weight_floor values to probe; 0.02 is the shipped control",
     )
+    parser.add_argument(
+        "--arm",
+        default=None,
+        help=(
+            "override the sampler arm (legacy / ordered_logitnormal / "
+            "ordered_uniform). The weights are unchanged, so this isolates what "
+            "the (t, r) draw alone contributes to the gradient scale."
+        ),
+    )
     parser.add_argument("--updates", type=int, default=200)
     parser.add_argument("--micro-batch", type=int, default=16)
     parser.add_argument("--accumulation", type=int, default=4)
@@ -129,6 +141,17 @@ def main() -> None:
     model, base_objective = load_model(args.checkpoint, device)
     print(f"checkpoint objective floor={base_objective.resolved_loss_weight_floor} "
           f"scale={base_objective.emf_delta}", flush=True)
+
+    if args.arm is not None:
+        mode, r_floor, coefficient_floor = SAMPLER_ARMS[args.arm]
+        base_objective = replace(
+            base_objective,
+            sampler_mode=mode,
+            sampled_r_floor=r_floor,
+            coefficient_denominator_floor=coefficient_floor,
+            diagonal_sampling="fixed_count_first_draw",
+        )
+        print(f"sampler overridden to {args.arm} ({mode})", flush=True)
 
     results = {}
     for floor in args.floors:
