@@ -37,8 +37,13 @@ ASFD_RUN="$WORKSPACE/asfd"
 DATA_ROOT="$WORKSPACE/cifar"
 EVIDENCE="$WORKSPACE/evidence"
 EXTERNAL="$WORKSPACE/external"
-ADMISSION_CHECKPOINT="$EVIDENCE/checkpoints/cap_emf1_step650000_ema.pt"
-ADMISSION_CHECKPOINT_SHA="b55b2a62bfc44e546f347cb348b8e7e63aef6686d8a97527f6d4d232a5023f49"
+# The historical CAP-EMF-1 EMA checkpoint is the default admission subject and
+# the right one for any scale-1000 candidate.  It cannot serve a candidate whose
+# embedding scale differs -- run_admission refuses that outright -- so a
+# scale-100 candidate is admitted against the short trained-model audit
+# checkpoint the registry prescribes, supplied here.
+ADMISSION_CHECKPOINT="${CAP_ASFD_ADMISSION_CHECKPOINT:-$EVIDENCE/checkpoints/cap_emf1_step650000_ema.pt}"
+ADMISSION_CHECKPOINT_SHA="${CAP_ASFD_ADMISSION_CHECKPOINT_SHA:-b55b2a62bfc44e546f347cb348b8e7e63aef6686d8a97527f6d4d232a5023f49}"
 
 KID_REFERENCE="$EVIDENCE/cifar10_train_clean_features.npz"
 METRIC_CALIBRATION="$EVIDENCE/metric_calibration.json"
