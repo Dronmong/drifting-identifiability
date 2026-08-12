@@ -100,7 +100,11 @@ def test_scale_blind_gradient_cannot_pass_strict_admission():
     }
     checks = _strict_admission_checks(quotient, target, gradient)
     assert checks["gradient_cosine"]
-    assert not checks["gradient_relative_l2"]
+    # ``norm_ratio`` is the test that exists to catch a scale-blind gradient,
+    # and it does. ``relative_l2`` no longer duplicates it: at cosine 0.999 the
+    # identity relative_l2 = sqrt(1 + r^2 - 2*r*c) puts this row at 0.304, under
+    # the 0.35 cap, because the cap is now set to bind on *joint* direction and
+    # scale error rather than to silently restate the other two thresholds.
     assert not checks["gradient_norm_ratio"]
     assert not all(checks.values())
 

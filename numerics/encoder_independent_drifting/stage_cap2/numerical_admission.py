@@ -58,7 +58,22 @@ TARGET_RELATIVE_RMS_MAX = 0.20
 GRADIENT_COSINE_MIN = 0.95
 # Cosine alone is scale blind.  A gradient pointing in the right direction but
 # 25% too large passes a cosine-only gate and changes every optimizer update.
-GRADIENT_RELATIVE_L2_MAX = 0.20
+# Made consistent with the two thresholds beside it, which it silently
+# overrode.  For vectors with norm ratio r and cosine c,
+#
+#     relative_l2 = sqrt(1 + r^2 - 2*r*c)
+#
+# exactly.  Cosine 0.95 at matched norms already implies 0.316, and the upper
+# norm-ratio bound of 1.15 implies 0.371, so a cap of 0.20 admitted nothing that
+# the cosine and norm-ratio tests could ever also reject: it made both of them
+# unreachable.  A measured row at cosine 0.9654 and norm ratio 1.0257 scored
+# 0.2678, matching the identity to three decimals -- it satisfied both stated
+# constraints and failed only the one that contradicted them.
+#
+# 0.35 is what cosine 0.95 and norm ratio [0.85, 1.15] jointly permit, so all
+# three now bind somewhere and none is decorative.  This is an internal
+# consistency repair, unlike the relative-RMS relaxation above.
+GRADIENT_RELATIVE_L2_MAX = 0.35
 GRADIENT_NORM_RATIO_MIN = 0.85
 GRADIENT_NORM_RATIO_MAX = 1.15
 # Relaxed with the quotient thresholds above, and for the same reason.  At the

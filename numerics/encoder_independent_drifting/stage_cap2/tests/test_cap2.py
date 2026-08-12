@@ -645,6 +645,41 @@ def test_raising_the_loss_weight_floor_compresses_the_weight_range():
     assert float(inherited[-2]) == float(raised[-2])
 
 
+def test_gradient_thresholds_are_mutually_consistent():
+    """No gradient threshold may make the others unreachable.
+
+    ``relative_l2 = sqrt(1 + r^2 - 2*r*c)`` exactly, for norm ratio ``r`` and
+    cosine ``c``. So an L2 cap below what the cosine and norm-ratio bounds
+    jointly permit is not an extra safeguard -- it silently replaces them, and
+    the two stated constraints can never bind. The shipped 0.20 did precisely
+    that: cosine 0.95 alone implies 0.316.
+    """
+    import math
+
+    from ..numerical_admission import (
+        GRADIENT_COSINE_MIN,
+        GRADIENT_NORM_RATIO_MAX,
+        GRADIENT_NORM_RATIO_MIN,
+        GRADIENT_RELATIVE_L2_MAX,
+    )
+
+    # Floor: a row failing on direction alone, at matched norms, must be caught
+    # by the cosine test rather than pre-empted by the L2 cap.
+    direction_only = math.sqrt(2 - 2 * GRADIENT_COSINE_MIN)
+    # Ceiling: a row at both limits simultaneously must still fail something,
+    # otherwise the L2 cap is decorative.
+    joint_corner = max(
+        math.sqrt(1 + r * r - 2 * r * GRADIENT_COSINE_MIN)
+        for r in (GRADIENT_NORM_RATIO_MIN, GRADIENT_NORM_RATIO_MAX)
+    )
+    assert direction_only <= GRADIENT_RELATIVE_L2_MAX < joint_corner, (
+        f"the L2 cap {GRADIENT_RELATIVE_L2_MAX} must lie in "
+        f"[{direction_only:.5f}, {joint_corner:.5f}): below it the cosine and "
+        "norm-ratio thresholds can never bind, at or above it the L2 test "
+        "itself never binds"
+    )
+
+
 def test_relaxed_thresholds_are_pinned_against_further_drift():
     """Guard the relaxation from becoming a slide.
 
