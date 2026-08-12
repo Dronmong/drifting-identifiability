@@ -707,14 +707,27 @@ may simply be a very inefficient way to do it.
 
 Level is not trend. Evaluating the saved checkpoints gives:
 
-| step | clean FID | clean KID |
-| --- | --- | --- |
-| 10,000 | 345.97 | 0.3938 |
-| 20,000 | 267.26 | — |
-| 30,000 | 158.94 | — |
-| 50,000 | 114.90 | 0.0989 |
+| step | clean FID | clean KID | precision | recall |
+| --- | --- | --- | --- | --- |
+| 10,000 | 345.97 | 0.3938 | 0.024 | 0.000 |
+| 20,000 | 267.26 | 0.2723 | 0.708 | 0.000 |
+| 30,000 | 158.94 | 0.1455 | 0.789 | 0.005 |
+| 40,000 | 132.81 | 0.1124 | 0.689 | 0.023 |
+| 50,000 | 114.90 | 0.0989 | 0.737 | 0.076 |
 
 Still falling steeply at the end — 28% between 30k and 50k — with no plateau.
+
+Precision and recall show the structure FID alone hides. Precision saturates by
+20,000 updates at roughly 0.7–0.79 and then stops moving; recall is *zero* until
+30,000 and only reaches 0.076 by 50,000. The model learned to produce
+individually plausible images very early and is only beginning to cover the
+distribution.
+
+That is the same defect the Haar-HH deficit reports (0.225 against a 0.50
+floor): over-smoothed samples that look acceptable one at a time and collapse
+toward a narrow mode collectively. Recall is the metric to watch, because
+mode coverage — not per-sample fidelity — is what will stall FID if anything
+does.
 The log-log slope is stable at b ≈ 0.65 across the whole range (0.63 measured
 on 30k→50k, 0.68 on 10k→50k). Extrapolated to 650k that lands far below
 CAP-EMF-1's 83.65, though a 13× extrapolation is not something to spend on
