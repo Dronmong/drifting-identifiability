@@ -353,6 +353,21 @@ def main() -> None:
             # a rank ratio near 1 and penalizes any drop.
             stability = {
                 "clipped_updates": outcome.clipped_updates,
+                "clipped_fraction": (
+                    outcome.clipped_updates / max(1, outcome.optimizer_updates)
+                ),
+                # H7 thresholds a *windowed* clip fraction, not the cumulative
+                # one: clipping is worst early, so a cumulative figure over a
+                # long run dilutes a broken tail and a short run exaggerates a
+                # normal warmup.  This is the number the gate actually applies.
+                "clipped_updates_final_window": outcome.clipped_updates_final_window,
+                "final_window_updates": outcome.final_window_updates,
+                "clipped_fraction_final_window": (
+                    outcome.clipped_updates_final_window
+                    / max(1, outcome.final_window_updates)
+                ),
+                "h7_clip_fraction_max": 0.05,
+                "optimizer_updates": outcome.optimizer_updates,
                 "nonfinite_updates": outcome.nonfinite_updates,
                 "best_rank_ratio": outcome.best_rank_ratio,
                 "best_second_moment": best_moment,

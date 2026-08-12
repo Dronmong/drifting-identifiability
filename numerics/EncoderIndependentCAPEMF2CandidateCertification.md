@@ -447,6 +447,164 @@ now, because the $2.60 certification is affordable either way and is the correct
 next spend. But it should be made with real numbers before the foundation
 starts, not discovered at 600k updates.
 
+## 9. The paid 50k certification, and what it found instead
+
+Run on the production GPU (RTX 4090), 50,000 updates at embedding scale 100,
+`--updates 50000` giving the **production 5,000-update warmup**, health and
+conditioning measured every 10,000 updates. 4.55 h wall, ~$3.4.
+
+Steady-state pace measured cleanly over the 10k→20k interval: **0.3339 s per
+update**. That revises the foundation projection from the planned ~45 h / $33 to
+**~69.6 h / ~$51.5**, which the preflight benchmark will need to confirm before
+any 750k run is authorized.
+
+### The numerics: the candidate did its job
+
+| rung | 10k | 20k | 30k | 40k | 50k |
+| --- | --- | --- | --- | --- | --- |
+| strata passing | 7/7 | 7/7 | 7/7 | 7/7 | 6/7 |
+
+Thirty-four of thirty-five stratum-rungs at 9/9, the sole exception being
+`near_inference` at 5/9 on the final rung. `interior_high` — the stratum that
+produced the original `NO_GO` — passed 9/9 at **every** rung, with worst-row
+quotient RMS between 0.027 and 0.049 against a 0.15 limit.
+
+`smooth_100_d001_fp32` decisively solves the problem it was selected to solve.
+
+### The training: 100% of updates were clipped
+
+```
+"clipped_updates": 50000,
+"nonfinite_updates": 0,
+```
+
+Every one of the 50,000 updates hit the `gradient_clip = 10.0` ceiling. The
+protocol's H7 check allows a maximum clip fraction of **0.05**. This is twenty
+times that limit, with zero non-finite updates — the run is numerically clean
+and optimizationally broken at the same time.
+
+That explains the capability health, which oscillates rather than converges:
+
+| metric | 10k | 20k | 30k | 40k | 50k | band |
+| --- | --- | --- | --- | --- | --- | --- |
+| second moment | 1.048 | 0.561 | 0.917 | 1.533 | 0.709 | [0.80, 1.25] |
+| centered variance | 0.850 | 0.470 | 0.760 | 1.476 | 0.658 | [0.80, 1.25] |
+| rank ratio | 17.57 | 2.379 | 1.251 | 0.472 | 0.830 | [0.80, 1.50] |
+| Haar HH | 1.343 | 0.253 | 0.266 | 0.328 | 0.225 | [0.50, 1.75] |
+
+Repeated ~2× swings in second moment between consecutive measurements is what
+100% clipping produces: the optimizer takes fixed-norm steps regardless of the
+true gradient, so the learning-rate schedule is decorative and the endpoint of a
+750k run is not predictable from its trajectory. Haar HH sits at roughly half
+its floor from 20k onward — a persistent over-smoothing, the mirror image of
+CAP-EMF-1's HH 6.37 against a 1.75 ceiling.
+
+### This is not new, and CAP-EMF-1 hid it
+
+CAP-EMF-1's own results record the same violation and why nobody saw it:
+
+> **H7 passed on a fabricated value.** The recovery file does not carry the
+> windowed clip counters, so `finalize.py` substitutes `0.0`, and `0.0 < 0.05`
+> is trivially true. **The real run-wide clip rate is 15.3%** — three times the
+> threshold H7 exists to enforce.
+
+So the objective was already clipping three times over its limit at scale 1000
+across 650k updates, and the gate reported a fabricated zero.
+
+**One confound must be resolved before attributing 100% to the candidate.**
+Clipping is worst early in training, and 99,595 clipped updates out of 650,000
+is arithmetically consistent with a near-100% first 50k followed by a quiet
+tail. Comparing this 50k run against CAP-EMF-1's 650k *average* is not
+like-for-like. A matched short run of both candidates settles it.
+
+### An instrumentation gap of my own
+
+H7 thresholds a *windowed* clip fraction (`clip_window_updates = 20000`), and
+`TrainOutcome` exposes `clipped_updates_final_window` alongside the cumulative
+count. The diagnostic recorded only the cumulative figure, so the H7-relevant
+number is not recoverable from this run without retraining.
+
+## 10. The formal gate, and the root cause
+
+The sealed, hardware-bound gate on the 50k scale-100 checkpoint returned
+**`NO_GO`** — but on 61 of 63 rows passing:
+
+| stratum | rows |
+| --- | --- |
+| `interior_high` | 9/9 |
+| `exact_inference` | 9/9 |
+| `large_coefficient` | 9/9 |
+| `interior_mid` | 9/9 |
+| `low_t_weighted` | 9/9 |
+| `below_floor_weighted` | 9/9 |
+| `near_inference` | **7/9** |
+
+Two rows at one stratum, failing `assembled_target_relative_rms` (×2) and
+`assembled_target_cosine` (×1). Set against `local_1000`, which failed
+`interior_high` 0/9 across three independent input sources, this is a marginal
+near-threshold miss rather than a systematic defect — and it was measured on a
+model whose training is broken, so it may be an artifact of the degenerate
+model rather than of the candidate.
+
+### Why every update clipped
+
+Objective parameter-gradient norms from the two admission records, against the
+training clip threshold of **10.0**:
+
+| stratum | `local_1000` median | `smooth_100` median |
+| --- | --- | --- |
+| `below_floor_weighted` (t=0.01) | 3,949 (max 81,436) | 13,098 (max 652,616) |
+| `low_t_weighted` (t=0.03) | 4,324 (max 20,920) | 5,992 (max 72,885) |
+| `interior_mid` | 5.3 | 6.8 (max 32.1) |
+| `interior_high` | 1.7 | 3.7 |
+| `exact_inference` | 0.026 | 1.07 |
+
+The low-`t` rows carry gradients three to five orders of magnitude above the
+clip, **on both candidates**. The mechanism is structural: the loss weight is
+`t.clamp_min(0.02).pow(-2)`, so a row at t = 0.01 is weighted 1/0.02² = **2500
+times** a row at t = 1. A handful of such rows dominates any batch containing
+them.
+
+This settles a question CAP-EMF-1's retrospective explicitly left open:
+
+> The 15.3% clipping rate is evidence of global optimization stress, **not
+> proof that these particular rows caused it.**
+
+It is now proof. The arithmetic also reconciles the two clip rates:
+`local_1000`'s typical gradient is 1.34, *below* the clip, so it clips only when
+a low-`t` row lands in a batch — CAP-EMF-1's 15.3%. `smooth_100`'s typical
+gradient is 3.16, roughly 2.4× larger, which lifts the *bulk* over the threshold
+and produces 100%.
+
+One confound: the two checkpoints differ in horizon (650k versus 50k), so the
+2.4× bulk difference is partly attributable to convergence rather than to the
+embedding scale. The low-`t` structural result carries no such confound — it
+appears identically in both.
+
+## 11. Where the campaign actually stands
+
+Both predeclared candidates return `NO_GO`, so the campaign cannot proceed as
+designed, and the registry's limits forbid tuning δ on these rows.
+
+What the money bought is a diagnosis rather than a foundation, and the diagnosis
+is more useful than the foundation would have been:
+
+1. **The finite-difference problem is real and solved.** Reducing the embedding
+   scale from 1000 to 100 moved `interior_high` from 0/9 to 9/9 at every rung of
+   a 50k production-warmup run, and took the full gate from a systematic
+   whole-stratum failure to two marginal rows.
+2. **It was never the binding constraint.** The `1/t²` weight at small `t`
+   produces gradients 10³–10⁵ times the global clip of 10.0, so training runs as
+   normalized-gradient descent with a decorative learning-rate schedule.
+3. **CAP-EMF-1 could not have revealed this**, because its H7 clip check was
+   satisfied by a fabricated `0.0` rather than a measurement.
+
+Spending ~$51 on a 750k foundation in this regime would buy another
+CAP-EMF-1-class result. The next step is a design change — rebalancing the
+low-`t` loss weight, or raising the clip, or both — which lies outside the
+predeclared protocol and needs its own preregistration rather than an
+in-flight edit.
+
 ## 8b. What this does not establish
 
 Conditioning is not quality. A flatter function is easier to differentiate
