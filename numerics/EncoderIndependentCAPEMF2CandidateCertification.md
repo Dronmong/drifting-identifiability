@@ -605,6 +605,74 @@ low-`t` loss weight, or raising the clip, or both — which lies outside the
 predeclared protocol and needs its own preregistration rather than an
 in-flight edit.
 
+## 12. The sampler, not the clip: a 434× effect on identical weights
+
+The clip was the obvious suspect and it is innocent. Probing the *historical
+CAP-EMF-1 checkpoint* with a reproduction of a real production optimizer update
+— real sampler, `micro_batch` × `accumulation_steps`, scaled and accumulated —
+gives, at the shipped floor:
+
+| weights | sampler | p50 | p95 | clipped @ 10.0 |
+| --- | --- | --- | --- | --- |
+| CAP-EMF-1 650k | `legacy` (its own) | 2.46 | 5.59 | 1.2% |
+| CAP-EMF-1 650k | `ordered_uniform` | **1,066.78** | 3,056.66 | **100%** |
+
+Same weights. Same embedding scale. Only the `(t, r)` draw differs, and the
+gradient scale moves by **434×**.
+
+So the clip of 10.0 was correctly scaled for CAP-EMF-1: it sat just above that
+run's p95, exactly where H7's 5% allowance implies a clip belongs. Nothing was
+mis-tuned. What happened is that CAP-EMF-2 replaced a logit-normal sampler
+concentrated near `t = 1` with `ordered_uniform`, whose density is `2t` and
+which therefore draws far more low-`t` rows — and the `1/t²` weight converts
+that into a 434× larger gradient. The sampler change was made for a good reason
+(covering the inference corner) and the loss weight was never rescaled to match.
+
+CAP-EMF-1 could not have caught this: its own sampler avoided the region, and
+its H7 check was fabricated.
+
+**Raising the clip is not the repair.** With clip 10 and lr 1e-4 the step is
+~1e-3; letting gradients of 5,000 through unclipped would give steps of ~0.5 and
+diverge immediately. Clipping is currently the only thing keeping the run
+bounded.
+
+### How far the loss-weight floor gets, and where it stops
+
+On CAP-EMF-1 weights under `ordered_uniform`:
+
+| floor | p50 | p95 | clipped @ 10.0 |
+| --- | --- | --- | --- |
+| 0.02 (shipped) | 1,066.78 | 3,056.66 | 100% |
+| 0.20 | 30.00 | 52.70 | 93.8% |
+| 0.30 | 13.56 | 23.50 | 67.5% |
+| **0.50** | **5.09** | **8.61** | **2.5%** |
+| 0.70 | 2.69 | 4.49 | 0.0% |
+| 1.00 | 1.38 | 2.25 | 0.0% |
+
+`0.50` is the smallest floor satisfying H7, and it lands the clip just above p95
+— the configuration the gate is written to expect.
+
+But the scale-100 model runs hotter than CAP-EMF-1's, and the same floors do not
+rescue it:
+
+| floor | smooth_100 @10k | smooth_100 @50k |
+| --- | --- | --- |
+| 0.50 | 100% clipped | 83.8% |
+| 0.70 | 92.5% | 45.0% |
+| 1.00 (no time weight at all) | 36.2% | 13.8% |
+
+Even deleting the `1/t²` weight entirely leaves 14–36% clipping, against H7's
+5%. So there are two compounding contributions — the sampler (434×, measured on
+identical weights) and the model itself (3–6× at matched floor, scale-100 raw
+versus scale-1000 EMA) — and **the loss-weight floor alone cannot fix the
+second**. A real repair has to co-design the weight, the clip and the learning
+rate together, which is a design change deserving its own preregistration.
+
+Note the gradient scale is ~5,000–10,000 at *every* scale-100 checkpoint,
+including 10k where the capability statistics were healthy (moment 1.048,
+HH 1.343). It does not track model quality, which rules out "the model is bad,
+so its gradients are large" as the explanation.
+
 ## 8b. What this does not establish
 
 Conditioning is not quality. A flatter function is easier to differentiate
