@@ -808,6 +808,86 @@ Read it as follows:
 Any of those is worth far more than a 70-hour, ~$52 run of a configuration
 whose optimization is known to be broken.
 
+## 15. The A/B: the repair works
+
+Matched control — same candidate, arm, horizon (50k), seed (901), ladder and
+production warmup. Two knobs changed: `loss_weight_floor` 0.02 → 1.0 and
+`gradient_clip` 10 → 15.
+
+| | updates | raw FID | best post-hoc EMA | KID | precision | recall |
+| --- | --- | --- | --- | --- | --- | --- |
+| CAP-EMF-1 (base) | 650,000 | 112.94 | 83.65 | — | — | — |
+| smooth_100 baseline | 50,000 | 114.90 | 104.36 | 0.0989 | 0.737 | 0.076 |
+| **smooth_100 + repair** | **50,000** | **72.30** | **68.36** | **0.0522** | 0.729 | **0.250** |
+
+**37% better FID than its matched control, and 18% better than the base model's
+fully trained 650k result — at one thirteenth of the training.**
+
+The gain landed exactly where the diagnosis predicted. Precision is unchanged
+(0.737 → 0.729) while **recall more than tripled** (0.076 → 0.250). The deficit
+was mode coverage, the cause was a handful of low-`t` rows setting the direction
+of every update, and removing that dominance recovered the coverage.
+
+### H7 passes on a measurement, for the first time
+
+```
+clipped cumulative  : 15.4%
+clipped final window:  4.1%   <- the quantity H7 thresholds, limit 5%
+nonfinite           :  0
+gradient p50/p95/max: 7.15 / 23.82 / 98.41   (clip 15.0)
+```
+
+The windowed fraction is what H7 actually bounds, and 4.1% clears it. The
+cumulative 15.4% is dominated by warmup, which is precisely why the protocol
+windows the statistic. This is the first CAP run whose H7 is a real measurement
+rather than the fabricated `0.0` CAP-EMF-1 recorded.
+
+Wide-window post-hoc EMA also stopped hurting: window 3 gives 69.12 here versus
+123.59 on the baseline, because consecutive checkpoints now resemble one
+another. That is independent evidence the repair stabilized training.
+
+### Admission is still NO_GO, and the reason is a small denominator
+
+The baseline's failing stratum is fixed — `near_inference` went 7/9 → 9/9 — but
+`large_coefficient` fell to 1/9, leaving 54/63 rows against the baseline's
+61/63. The relative metrics look worse; the underlying approximation does not:
+
+| | quotient relative RMS | `reference_rms` (exact JVP magnitude) | implied **absolute** error |
+| --- | --- | --- | --- |
+| baseline | 0.0699 | 0.8328 | 0.0582 |
+| repair | 0.1829 | 0.2578 | **0.0472** |
+
+The repaired model is 3.2× flatter at (t = 0.98, r = 0.02), so the same finite
+difference yields a larger *relative* error while its *absolute* error is
+smaller. The gate thresholds relative RMS, which is ill-conditioned exactly when
+the derivative being approximated is small.
+
+So `large_coefficient` is not reporting a worse approximation. It is reporting a
+smaller denominator. That is a genuine limitation of the gate's construction and
+it should be resolved deliberately — by adding an absolute-error floor to the
+relative tests, or by recalibrating the thresholds against a converged model —
+rather than by waiving the stratum.
+
+### What is still unexplained
+
+The second moment continues to oscillate (0.929 → 0.554 → 1.225 → 0.657), so
+the 434× sampler interaction accounts for the clipping and for the rank chaos —
+rank is now a well-behaved 0.49–0.78 against the baseline's 17.57 → 0.47 — but
+not for all of the instability. Something else drives the moment swings, and it
+has not been identified.
+
+## 16. The 650k run
+
+Launched at the repaired configuration, matching CAP-EMF-1's horizon exactly so
+the comparison is like-for-like: 650,000 updates, checkpoints every 50,000,
+recovery every 5,000 so an interruption costs minutes rather than days.
+Approximately 60 hours and ~$45 at the measured 0.334 s/update.
+
+This is a capability run on the non-promoting audit track, not a gated
+foundation. The sealed foundation still requires an admission `GO`, and the
+`large_coefficient` question above has to be settled on its merits before that
+can honestly be claimed.
+
 ## 8b. What this does not establish
 
 Conditioning is not quality. A flatter function is easier to differentiate
