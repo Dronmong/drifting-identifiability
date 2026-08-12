@@ -703,12 +703,73 @@ genuinely fail, yet the configuration reaches CAP-EMF-1's quality thirteen times
 faster. The degenerate optimization is evidently not preventing learning — it
 may simply be a very inefficient way to do it.
 
-### The number that actually decides the foundation
+### The trend, which is what actually decides the foundation
 
-Level is not trend. If FID is still falling at 50k, a longer run is justified;
-if it plateaued by 30k, the remaining ~$50 buys nothing. The saved 10k/20k/30k/
-40k checkpoints answer this directly and cheaply, which is a far better use of
-GPU time than another gradient probe.
+Level is not trend. Evaluating the saved checkpoints gives:
+
+| step | clean FID | clean KID |
+| --- | --- | --- |
+| 10,000 | 345.97 | 0.3938 |
+| 20,000 | 267.26 | — |
+| 30,000 | 158.94 | — |
+| 50,000 | 114.90 | 0.0989 |
+
+Still falling steeply at the end — 28% between 30k and 50k — with no plateau.
+The log-log slope is stable at b ≈ 0.65 across the whole range (0.63 measured
+on 30k→50k, 0.68 on 10k→50k). Extrapolated to 650k that lands far below
+CAP-EMF-1's 83.65, though a 13× extrapolation is not something to spend on
+directly.
+
+The shape is the point: **the degenerate optimization is not preventing
+learning, and the run has not stalled.** Whatever 100% clipping is costing, it
+is not stopping this configuration from reaching CAP-EMF-1's quality thirteen
+times faster and continuing to improve.
+
+## 14. Why the foundation was not started, and what was started instead
+
+The instruction was to run the foundation "if everything checks out". It does
+not, on one specific and non-negotiable point: **the sealed gate returned
+`NO_GO`**, and `foundation_phase_a` requires a preflight that requires an
+admission `GO`. Bypassing that would mean overriding a gate in the same session
+that found CAP-EMF-1's H7 was satisfied by a fabricated `0.0`. The value of
+these gates is precisely that they are not waved through when the result is
+inconvenient, so the `NO_GO` stands.
+
+That is a narrow blocker, not a verdict on the science. The failure is 2 rows
+of 63, at one stratum, measured on a model whose optimization is degenerate.
+The most likely way to clear it honestly is to fix the optimization and re-run
+the audit.
+
+So the queued overnight work is the experiment that unblocks the decision
+rather than the decision itself:
+
+**A/B at matched candidate, arm, horizon (50k), seed (901) and ladder. Two
+knobs change, both implicated by measurement:**
+
+- `loss_weight_floor = 1.0` — uniform time weighting. The `1/t²` weight was
+  inherited from the paper under a logit-normal sampler concentrated near
+  `t = 1`; under `ordered_uniform`'s `2t` density it multiplies the gradient by
+  434×. 1.0 is the only floor that brings this model near H7 compliance.
+- `gradient_clip = 15` — the measured p95 at that floor (12.94 at 50k, 14.60 at
+  10k), which is where H7's 5% allowance says a clip belongs.
+
+It then runs the same sealed admission gate and the same FID evaluation, so all
+three outcomes are directly comparable with the 114.90 / `NO_GO` baseline.
+
+Read it as follows:
+
+- **Clip fraction falls under 5%, health converges, admission returns `GO`, FID
+  at 50k at or below 114.90** — the fix is validated, the foundation is properly
+  authorized, and it can be launched through the sealed pipeline.
+- **Admission still `NO_GO` but FID improves** — the numerics and the
+  optimization are independent problems; the near-inference rows need their own
+  work.
+- **FID degrades** — the `1/t²` weight is load-bearing for quality despite what
+  it does to the gradient scale, and the repair has to preserve it, which points
+  at a per-row weight cap or gradient normalization instead.
+
+Any of those is worth far more than a 70-hour, ~$52 run of a configuration
+whose optimization is known to be broken.
 
 ## 8b. What this does not establish
 
