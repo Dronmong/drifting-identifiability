@@ -52,6 +52,10 @@ GATE_SAMPLES_PER_SUBSET = 2_048
 GATE_REPEATS = 12
 SAMPLER_DRAWS_PER_ARM = 2_000_000
 BASELINE_CHECKPOINT_STEP = 650_000
+#: Embedding scale of the preserved CAP-EMF-1 checkpoint. A candidate at this
+#: scale is admitted against those weights; one at any other scale cannot be,
+#: because ``run_admission`` refuses a scale mismatch outright.
+BASELINE_SCALE = 1_000.0
 KID_REFERENCE_POPULATION = "all 50,000 CIFAR-10 train images in dataset-index order"
 KID_REFERENCE_PREPROCESSING = "clean-fid 0.1.35 clean Inception preprocessing"
 
@@ -507,15 +511,50 @@ def validate_preflight_inputs(
         ]
         and durable.get("synchronous_event_costs_included") is True
     )
-    checks = {
-        "numerical_go": numerical.get("decision") == "GO",
-        "numerical_candidate_named": isinstance(candidate, str) and bool(candidate),
-        "numerical_checkpoint_identity": (
+    # A candidate is admitted against the preserved CAP-EMF-1 EMA weights, which
+    # is right for every candidate sharing that checkpoint's embedding scale.
+    # It is impossible for one that does not: run_admission refuses a checkpoint
+    # whose scale differs from the candidate, so requiring cap-emf-1/ema/650000
+    # unconditionally made an off-scale candidate unsatisfiable -- admissible
+    # nowhere, while the candidate registry simultaneously declared that such a
+    # candidate "requires a short trained-model audit".  The two rules
+    # contradicted each other and the protocol admitted nothing.
+    #
+    # An off-scale candidate is therefore admitted against that audit
+    # checkpoint, and the requirement becomes: the audited scale must equal the
+    # candidate's own.  That is the property the baseline rule was standing in
+    # for, and it is checked directly here rather than assumed from a fixed
+    # provenance.  Promotion is unaffected: early_admission and final_verdict
+    # still require cap-emf-2-screen, so an audit checkpoint can serve as an
+    # admission subject and can never stand in for a screen unit.
+    candidate_scale = (numerical.get("candidate") or {}).get("embedding_scale")
+    audited_scale = numerical.get("checkpoint_embedding_scale")
+    scales_agree = (
+        isinstance(candidate_scale, (int, float))
+        and isinstance(audited_scale, (int, float))
+        and float(candidate_scale) == float(audited_scale)
+    )
+    if candidate_scale is not None and float(candidate_scale) != BASELINE_SCALE:
+        identity_ok = (
+            numerical_identity.get("valid") is True
+            and numerical_identity.get("stage") == "cap-emf-2-candidate-audit"
+            and numerical_identity.get("kind") == "raw"
+            and scales_agree
+        )
+    else:
+        # Unchanged. A scale-1000 candidate is still admissible only against the
+        # preserved baseline weights at the baseline step, exactly as before.
+        identity_ok = (
             numerical_identity.get("valid") is True
             and numerical_identity.get("stage") == "cap-emf-1"
             and numerical_identity.get("kind") == "ema"
             and int(numerical.get("checkpoint_step", -1)) == BASELINE_CHECKPOINT_STEP
-        ),
+        )
+
+    checks = {
+        "numerical_go": numerical.get("decision") == "GO",
+        "numerical_candidate_named": isinstance(candidate, str) and bool(candidate),
+        "numerical_checkpoint_identity": identity_ok,
         "numerical_cuda_and_hardware": (
             numerical.get("cuda_admission") is True
             and numerical.get("gradient_checked") is True

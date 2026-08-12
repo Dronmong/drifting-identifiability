@@ -592,6 +592,74 @@ def test_complete_schema_can_pass() -> None:
     assert decision == "GO", [name for name, passed in checks.items() if not passed]
 
 
+def _as_off_scale(fixture: dict, *, audited_scale: float = 100.0) -> dict:
+    """Point the fixture at a scale-100 candidate audited on its own checkpoint."""
+    numerical = fixture["numerical"]
+    numerical["candidate"] = dict(numerical["candidate"], embedding_scale=100.0)
+    numerical["checkpoint_embedding_scale"] = audited_scale
+    numerical["checkpoint_step"] = 50_000
+    numerical["checkpoint_identity"] = {
+        "valid": True,
+        "stage": "cap-emf-2-candidate-audit",
+        "kind": "raw",
+    }
+    return fixture
+
+
+def test_off_scale_candidate_is_admissible_against_its_own_audit() -> None:
+    """The baseline weights cannot audit a candidate at another scale.
+
+    ``run_admission`` refuses a scale mismatch, so demanding cap-emf-1/ema/650000
+    unconditionally left an off-scale candidate admissible nowhere while the
+    candidate registry simultaneously required a short trained-model audit for
+    exactly that case.
+    """
+    # Scoped to the identity rule. The fixture's strata are generated for the
+    # original candidate, so rewriting the candidate's scale in place leaves the
+    # full-matrix check inconsistent; regenerating the whole matrix would test
+    # the fixture builder rather than this rule.
+    _decision, checks = _validate(_as_off_scale(_fixture()))
+    assert checks["numerical_checkpoint_identity"] is True
+
+
+def test_off_scale_candidate_must_be_audited_at_its_own_scale() -> None:
+    """The replacement requirement has to actually bind.
+
+    Dropping the fixed provenance is only safe because the property it stood in
+    for -- that the audited weights carry the candidate's embedding scale -- is
+    checked directly. An audit at the wrong scale must still be refused.
+    """
+    decision, checks = _validate(_as_off_scale(_fixture(), audited_scale=1_000.0))
+    assert checks["numerical_checkpoint_identity"] is False
+    assert decision == "NO_GO"
+
+
+def test_off_scale_candidate_cannot_present_a_screen_checkpoint() -> None:
+    """A screen unit is not a substitute for the prescribed audit."""
+    fixture = _as_off_scale(_fixture())
+    fixture["numerical"]["checkpoint_identity"]["stage"] = "cap-emf-2-screen"
+    decision, checks = _validate(fixture)
+    assert checks["numerical_checkpoint_identity"] is False
+    assert decision == "NO_GO"
+
+
+def test_baseline_scale_candidate_still_requires_the_preserved_checkpoint() -> None:
+    """The amendment must not loosen the ordinary path.
+
+    A scale-1000 candidate is still admissible only against cap-emf-1 EMA
+    weights at the baseline step.
+    """
+    fixture = _fixture()
+    fixture["numerical"]["checkpoint_identity"] = {
+        "valid": True,
+        "stage": "cap-emf-2-candidate-audit",
+        "kind": "raw",
+    }
+    decision, checks = _validate(fixture)
+    assert checks["numerical_checkpoint_identity"] is False
+    assert decision == "NO_GO"
+
+
 def test_anonymous_positive_control_is_rejected() -> None:
     fixture = _fixture()
     del fixture["positive_control"]["samples"]["source_citation"]
