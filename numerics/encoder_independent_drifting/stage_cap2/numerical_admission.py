@@ -680,7 +680,9 @@ def audit_stratum(
         )
 
     coefficient = (
-        (t - r - delta).clamp_min(0) * t / r.clamp_min(config.emf_denominator_floor)
+        (t - r - delta).clamp_min(0)
+        * t
+        / r.clamp_min(config.resolved_coefficient_floor)
     )
     exact_target = clean + coefficient[:, None, None, None] * exact
     candidate_target = clean + coefficient[:, None, None, None] * quotient.detach()
@@ -800,7 +802,9 @@ def audit_mixed_batch(
             evaluation_mode,
         )
     coefficient = (
-        (t - r - delta).clamp_min(0) * t / r.clamp_min(config.emf_denominator_floor)
+        (t - r - delta).clamp_min(0)
+        * t
+        / r.clamp_min(config.resolved_coefficient_floor)
     )
     exact_target = clean + coefficient[:, None, None, None] * exact
     candidate_target = clean + coefficient[:, None, None, None] * quotient.detach()

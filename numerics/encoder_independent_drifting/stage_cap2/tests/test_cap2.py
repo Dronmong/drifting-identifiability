@@ -546,6 +546,45 @@ def test_ordered_arms_raise_only_the_coefficient_floor():
     assert ordered.objective.sampled_r_floor == 0.0
 
 
+@pytest.mark.parametrize(
+    "t_value,r_value,stratum",
+    [(1.0, 0.0, "exact_inference"), (0.98, 0.02, "large_coefficient")],
+)
+def test_admission_coefficient_uses_the_resolved_floor(t_value, r_value, stratum):
+    """The audit must assemble the target the paid run actually trains on.
+
+    Splitting the floor left ``numerical_admission`` clamping the coefficient's
+    ``r`` with ``emf_denominator_floor`` (0.02) while training clamped it with
+    ``resolved_coefficient_floor`` (0.10).  Wherever ``r`` falls below 0.10 that
+    inflates the coefficient fivefold, so the assembled-target rows were graded
+    five times harsher than production -- an audit of a objective nobody runs.
+
+    Strata with ``r >= 0.10`` are unaffected, which is why ``interior_high``
+    (t=0.85, r=0.10) measured the same under both and its failure is real.
+    """
+    prof = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
+    model = CAPPixelTransformer(prof.model, 1).eval()
+    row = audit_stratum(
+        model,
+        prof.objective,
+        t_value=t_value,
+        r_value=r_value,
+        batch=2,
+        seed=11,
+        delta=prof.objective.emf_delta,
+        evaluation_mode=prof.objective.stopped_evaluation,
+        device=torch.device("cpu"),
+        include_gradient=False,
+        source="synthetic_gaussian",
+        stratum_name=stratum,
+    )
+    delta = prof.objective.emf_delta
+    resolved = (t_value - r_value - delta) * t_value / max(r_value, 0.10)
+    inherited = (t_value - r_value - delta) * t_value / max(r_value, 0.02)
+    assert row["coefficient"] == pytest.approx(resolved, rel=1e-6)
+    assert row["coefficient"] != pytest.approx(inherited, rel=1e-6)
+
+
 def test_production_arm_coefficient_tail_is_gated_and_passes():
     """ordered_uniform is the production arm; its tail must be enforced.
 

@@ -42,6 +42,11 @@ _DEPENDENCIES = (
     "stage_cap2/hardware.py",
     "stage_cap2/metric_calibration.py",
     "stage_cap2/numerical_admission.py",
+    # Invoked by the sealed pipeline's ``posthoc-ema`` phase, so it must be
+    # bound like any other result-producing module.  Left unsealed, the module
+    # that synthesizes the reported EMA could be edited after the foundation's
+    # numbers were known without changing a single recorded hash.
+    "stage_cap2/posthoc_ema.py",
     "stage_cap2/preflight.py",
     "stage_cap2/positive_control.py",
     "stage_cap2/preview.py",

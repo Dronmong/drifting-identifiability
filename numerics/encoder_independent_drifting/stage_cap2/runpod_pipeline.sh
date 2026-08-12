@@ -53,6 +53,12 @@ FOUNDATION_GATE="$GATES/foundation_gate.json"
 ASFD_QUALIFICATION="$GATES/asfd_qualification.json"
 ASFD_PREFLIGHT="$GATES/asfd_preflight.json"
 
+# One declaration for the whole campaign. It was previously written out at
+# three call sites with a Python-side default behind a fourth, so switching
+# candidates meant changing some of them and silently auditing one candidate
+# while training another.
+CANDIDATE="${CAP_ASFD_CANDIDATE:-local_1000_d0002_fp32}"
+
 EXPECTED_GPU="${RUNPOD_EXPECTED_GPU:-RTX 4090}"
 MICRO_BATCH="${CAP_ASFD_MICRO_BATCH:-16}"
 MAX_TOTAL_COST="${CAP_ASFD_MAX_TOTAL_COST:-75}"
@@ -351,7 +357,7 @@ admission() {
   hourly="$(all_in_hourly_rate)"
   "$PYTHON" -m numerics.encoder_independent_drifting.stage_cap2.production_readiness \
     --checkpoint "$ADMISSION_CHECKPOINT" \
-    --checkpoint-sha256 "$ADMISSION_CHECKPOINT_SHA" \
+    --checkpoint-sha256 "$ADMISSION_CHECKPOINT_SHA" --candidate "$CANDIDATE" \
     --expected-gpu-name "$EXPECTED_GPU" --hourly-rate "$hourly" \
     --micro-batch "$MICRO_BATCH" --data-root "$DATA_ROOT" \
     --output-dir "$GATES/production" --sampler-audit "$SAMPLER_AUDIT" \
@@ -388,7 +394,7 @@ foundation_admit_50k() {
   require_file "$raw50"
   require_file "$result50"
   "$PYTHON" -m numerics.encoder_independent_drifting.stage_cap2.numerical_admission \
-    --checkpoint "$raw50" --candidate local_1000_d0002_fp32 --device cuda \
+    --checkpoint "$raw50" --candidate "$CANDIDATE" --device cuda \
     --batch 4 --repeats 3 --data-root "$DATA_ROOT" \
     --expected-gpu-name "$EXPECTED_GPU" --include-gradient \
     --out "$FOUNDATION_READMISSION"
@@ -450,7 +456,7 @@ foundation_evaluate() {
     --generated-features "$EVIDENCE/foundation_750k_features.npz" \
     --out "$EVIDENCE/foundation_750k_eval.json"
   "$PYTHON" -m numerics.encoder_independent_drifting.stage_cap2.numerical_admission \
-    --checkpoint "$raw750" --candidate local_1000_d0002_fp32 --device cuda \
+    --checkpoint "$raw750" --candidate "$CANDIDATE" --device cuda \
     --expected-gpu-name "$EXPECTED_GPU" --data-root "$DATA_ROOT" \
     --batch 4 --repeats 3 --include-gradient \
     --out "$GATES/raw_750k_readmission.json"
