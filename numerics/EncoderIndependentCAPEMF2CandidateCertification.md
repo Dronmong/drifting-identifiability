@@ -673,6 +673,43 @@ including 10k where the capability statistics were healthy (moment 1.048,
 HH 1.343). It does not track model quality, which rules out "the model is bad,
 so its gradients are large" as the explanation.
 
+## 13. FID, which nothing else here measures
+
+Health gates and gradient norms are proxies. CAP-EMF-1 already demonstrated that
+passing health checks is compatible with FID 112.94, so the campaign's real
+question was never answered by any of the above. The 50k scale-100 checkpoint
+was therefore evaluated with the sealed `standard_metrics` path — clean-fid
+0.1.35, 50,000 fixed-seed samples, one model call per batch, CIFAR-10 train
+reference, test split never opened:
+
+| | updates | clean FID | clean KID |
+| --- | --- | --- | --- |
+| CAP-EMF-1 (scale 1000, legacy sampler) | 650,000 | 112.94 raw / 83.65 post-hoc EMA | — |
+| **smooth_100 (scale 100, ordered_uniform)** | **50,000** | **114.90 raw** | 0.0989 |
+
+Essentially CAP-EMF-1's raw quality at **one thirteenth of the training**, and
+this is the raw checkpoint — the comparison against 83.65 is not like-for-like,
+because no post-hoc EMA has been applied to it.
+
+Supporting numbers: precision 0.737, recall 0.076 — samples that look
+individually plausible but cover the distribution poorly, exactly what the
+persistent Haar-HH deficit (0.225 against a 0.50 floor) predicts. The
+memorization audit is clean: no exact pixel copies, no duplicate generations,
+nearest train-or-flip median 14.74 against a typical real-pair distance of
+37.49.
+
+This reframes the whole picture. The 100% clipping is real and the health gates
+genuinely fail, yet the configuration reaches CAP-EMF-1's quality thirteen times
+faster. The degenerate optimization is evidently not preventing learning — it
+may simply be a very inefficient way to do it.
+
+### The number that actually decides the foundation
+
+Level is not trend. If FID is still falling at 50k, a longer run is justified;
+if it plateaued by 30k, the remaining ~$50 buys nothing. The saved 10k/20k/30k/
+40k checkpoints answer this directly and cheaply, which is a far better use of
+GPU time than another gradient probe.
+
 ## 8b. What this does not establish
 
 Conditioning is not quality. A flatter function is easier to differentiate
