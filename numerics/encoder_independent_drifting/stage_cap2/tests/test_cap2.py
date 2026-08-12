@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 import torch
 
+from ...stage_cap.config import CAPObjectiveConfig
 from ...stage_cap.diagnostics import capability_gate
 from ...stage_cap.model import CAPPixelTransformer
 from ...stage_cap.monitoring import ObjectiveLedger
@@ -114,19 +115,42 @@ def test_historical_numerical_control_is_explicitly_nonlocal():
 
 
 def test_all_sampler_arms_preserve_the_scientific_configuration():
-    profiles = [
-        screen_profile(arm, "local_1000_d0002_fp32", smoke=True) for arm in SAMPLER_ARMS
-    ]
-    reference = profiles[0]
-    for frozen in profiles[1:]:
+    """Arms share everything except the sampler and the repair it forces.
+
+    The arms were originally identical apart from the ``(t, r)`` draw, which
+    made an arm-to-arm comparison clean. That is no longer true and the change
+    is deliberate: the legacy sampler's gradient scale is 2.46 while
+    ordered_uniform's is 1066.78 on identical weights, so a single clip cannot
+    be correctly scaled for both. ``legacy`` keeps CAP-EMF-1's 10.0 because its
+    purpose is byte-for-byte reproduction; the ordered arms take the measured
+    repair.
+
+    The cost is that a legacy-versus-ordered comparison now confounds the
+    sampler with the clip and the loss weight, and may not be read as an
+    isolated sampler effect. Ordered-versus-ordered comparisons remain clean.
+    """
+    profiles = {
+        arm: screen_profile(arm, "local_1000_d0002_fp32", smoke=True)
+        for arm in SAMPLER_ARMS
+    }
+    reference = profiles["ordered_uniform"]
+    for arm, frozen in profiles.items():
         assert frozen.model == reference.model
-        assert frozen.train == reference.train
         assert frozen.gate == reference.gate
         assert frozen.objective.emf_delta == reference.objective.emf_delta
         assert (
             frozen.objective.stopped_evaluation
             == reference.objective.stopped_evaluation
         )
+        # Everything in the training schedule except the clip stays matched.
+        assert replace(frozen.train, gradient_clip=0.0) == replace(
+            reference.train, gradient_clip=0.0
+        )
+
+    ordered = [p for arm, p in profiles.items() if arm != "legacy"]
+    for frozen in ordered[1:]:
+        assert frozen.train == ordered[0].train
+        assert frozen.objective.loss_weight_floor == ordered[0].objective.loss_weight_floor
 
 
 def test_promoted_horizons_keep_one_recovery_identity():
@@ -592,17 +616,15 @@ def test_loss_weight_floor_is_separate_and_defaults_to_cap1():
     the CAP-EMF-1 control reproduce exactly. Set, it must move *only* the loss
     weight -- not the Euler divisor and not the coefficient denominator.
     """
-    default = screen_profile("ordered_uniform", "local_1000_d0002_fp32", smoke=True)
-    assert default.objective.loss_weight_floor is None
-    assert default.objective.resolved_loss_weight_floor == 0.02
-    assert default.objective.resolved_loss_weight_floor == (
-        default.objective.emf_denominator_floor
-    )
+    # Unset on the dataclass itself, the floor must still resolve to CAP-EMF-1's
+    # shared constant; the production default is applied by the arm, not here.
+    bare = CAPObjectiveConfig()
+    assert bare.loss_weight_floor is None
+    assert bare.resolved_loss_weight_floor == bare.emf_denominator_floor == 0.02
 
-    raised = replace(default.objective, loss_weight_floor=0.20)
+    raised = replace(bare, loss_weight_floor=0.20)
     assert raised.resolved_loss_weight_floor == 0.20
     assert raised.emf_denominator_floor == 0.02
-    assert raised.resolved_coefficient_floor == 0.10
 
 
 def test_raising_the_loss_weight_floor_compresses_the_weight_range():
@@ -621,6 +643,54 @@ def test_raising_the_loss_weight_floor_compresses_the_weight_range():
     # for rows above it, so this is not a global reweighting.
     assert float(inherited[-1]) == float(raised[-1])
     assert float(inherited[-2]) == float(raised[-2])
+
+
+def test_relaxed_thresholds_are_pinned_against_further_drift():
+    """Guard the relaxation from becoming a slide.
+
+    The thresholds were loosened once, deliberately and with the reasoning
+    recorded in ``numerical_admission``. Pinning the exact values here means any
+    further loosening has to be a visible, argued edit rather than a quiet one.
+
+    This cannot be a behavioural guardrail. Verifying that the relaxed gate
+    still rejects ``legacy_1000_d01`` needs a *trained* model: a freshly built
+    network is the zero function through the trunk, because AdaLN-Zero zeroes
+    every modulation, so its finite difference and its exact JVP agree
+    trivially and a ten-radian phase step looks harmless. That check belongs on
+    the production checkpoint and is recorded in the campaign write-up.
+    """
+    from ..numerical_admission import (
+        ASSEMBLED_TARGET_COSINE_MIN,
+        ASSEMBLED_TARGET_RELATIVE_RMS_MAX,
+        TARGET_COSINE_MIN,
+        TARGET_RELATIVE_RMS_MAX,
+    )
+
+    assert TARGET_COSINE_MIN == 0.98
+    assert TARGET_RELATIVE_RMS_MAX == 0.20
+    assert ASSEMBLED_TARGET_COSINE_MIN == 0.98
+    assert ASSEMBLED_TARGET_RELATIVE_RMS_MAX == 0.20
+
+
+def test_ordered_arms_carry_the_measured_loss_weight_repair():
+    """The repair is bound to the ordered arms only.
+
+    The legacy control's own sampler never enters the low-t region, so applying
+    the repair there would be a change without a cause and would break its
+    byte-for-byte reproduction of CAP-EMF-1.
+    """
+    legacy = screen_profile("legacy", "local_1000_d0002_fp32", smoke=True)
+    assert legacy.objective.loss_weight_floor is None
+    assert legacy.objective.resolved_loss_weight_floor == 0.02
+    assert legacy.train.gradient_clip == 10.0
+
+    for arm in ("ordered_uniform", "ordered_logitnormal"):
+        ordered = screen_profile(arm, "local_1000_d0002_fp32", smoke=True)
+        assert ordered.objective.resolved_loss_weight_floor == 1.0
+        assert ordered.train.gradient_clip == 15.0
+        # The other two roles of the shared constant must not have moved.
+        assert ordered.objective.emf_denominator_floor == 0.02
+        assert ordered.objective.resolved_coefficient_floor == 0.10
 
 
 def test_production_arm_coefficient_tail_is_gated_and_passes():

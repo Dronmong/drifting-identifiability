@@ -83,11 +83,39 @@ NUMERICAL_CANDIDATES: dict[str, NumericalCandidate] = {
 #: train and the singularity of Equation 18.  Raising the floor decouples them,
 #: cutting the worst coefficient from 49.96 to 9.99 and P(>7) from 4.05% to
 #: 1.51%, while leaving the corner mass P(t>0.95, h>0.90) unchanged at 0.00374.
+#: ``arm -> (sampler_mode, sampled_r_floor, coefficient_floor, loss_weight_floor)``
+#:
+#: ``loss_weight_floor`` is the measured repair to the sampler/weight
+#: interaction.  Probing the preserved CAP-EMF-1 checkpoint with a reproduction
+#: of a production optimizer update, changing *only* the ``(t, r)`` draw, moved
+#: the median gradient norm from 2.46 to 1066.78 -- a 434x swing on identical
+#: weights.  ``ordered_uniform``'s ``2t`` density draws far more low-``t`` rows
+#: than the legacy logit-normal concentrated near ``t = 1``, and the ``1/t^2``
+#: weight converts that into gradients three to five orders of magnitude above
+#: the clip.  Every update then clips, the learning-rate schedule becomes
+#: decorative, and H7's 5% allowance is violated twentyfold.
+#:
+#: A matched 50k A/B (same candidate, seed, horizon, ladder and production
+#: warmup) with ``loss_weight_floor = 1.0`` and ``gradient_clip = 15``:
+#: clean FID 114.90 -> 72.30 raw and 104.36 -> 68.36 post-hoc EMA, recall
+#: 0.076 -> 0.250, windowed clip fraction 4.1% against the 5% limit.  The
+#: repaired 50k model beats CAP-EMF-1's fully trained 650k result (83.65).
+#:
+#: ``legacy`` keeps ``None`` so the CAP-EMF-1 control still reproduces exactly:
+#: its own sampler never enters the region, so the repair would be a change
+#: without a cause there.
 SAMPLER_ARMS = {
-    "legacy": ("cap_conditional_logitnormal", 0.01, None),
-    "ordered_logitnormal": ("ordered_logitnormal", 0.0, 0.10),
-    "ordered_uniform": ("ordered_uniform", 0.0, 0.10),
+    "legacy": ("cap_conditional_logitnormal", 0.01, None, None),
+    "ordered_logitnormal": ("ordered_logitnormal", 0.0, 0.10, 1.0),
+    "ordered_uniform": ("ordered_uniform", 0.0, 0.10, 1.0),
 }
+
+#: Global clip for the ordered arms, set to the measured p95 of the pre-clip
+#: gradient norm at ``loss_weight_floor = 1.0`` (12.94 at 50k, 14.60 at 10k).
+#: H7 permits 5% of updates to clip, so the threshold belongs at about the 95th
+#: percentile; the inherited 10.0 sat two to three orders of magnitude below the
+#: distribution it was supposed to bound.
+ORDERED_ARM_GRADIENT_CLIP = 15.0
 
 
 def numerical_candidate(name: str) -> NumericalCandidate:
@@ -111,7 +139,7 @@ def screen_profile(
         raise ValueError(f"unknown CAP2 sampler arm {arm!r}")
     candidate = numerical_candidate(numerical)
     base = cap1_profile("smoke" if smoke else "capability")
-    sampler_mode, sampled_r_floor, coefficient_floor = SAMPLER_ARMS[arm]
+    sampler_mode, sampled_r_floor, coefficient_floor, loss_floor = SAMPLER_ARMS[arm]
 
     if smoke:
         updates = 4
@@ -154,9 +182,17 @@ def screen_profile(
             diagonal_sampling="fixed_count_first_draw",
             emf_delta=candidate.delta,
             stopped_evaluation=candidate.stopped_evaluation,
+            loss_weight_floor=loss_floor,
         ),
         train=replace(
             base.train,
+            # The clip only moves where the weight moved; the legacy control
+            # keeps CAP-EMF-1's 10.0 so it still reproduces byte for byte.
+            gradient_clip=(
+                base.train.gradient_clip
+                if loss_floor is None
+                else ORDERED_ARM_GRADIENT_CLIP
+            ),
             updates=updates,
             checkpoint_updates=checkpoints,
             snapshot_every=2 if smoke else 25_000,

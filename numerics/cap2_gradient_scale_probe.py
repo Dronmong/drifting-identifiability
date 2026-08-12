@@ -143,7 +143,7 @@ def main() -> None:
           f"scale={base_objective.emf_delta}", flush=True)
 
     if args.arm is not None:
-        mode, r_floor, coefficient_floor = SAMPLER_ARMS[args.arm]
+        mode, r_floor, coefficient_floor, _loss_floor = SAMPLER_ARMS[args.arm]
         base_objective = replace(
             base_objective,
             sampler_mode=mode,

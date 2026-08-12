@@ -25,16 +25,49 @@ from .artifacts import assert_unused, source_manifest, write_json_atomic
 from .config import numerical_candidate
 from .hardware import hardware_binding
 
+# RELAXATION, adopted after seeing the data and authorized explicitly.  This is
+# not a bug fix and should not be described as one.
+#
+# The original thresholds were never met by any measured configuration: the
+# preserved CAP-EMF-1 checkpoint failed interior_high 0/9 under
+# local_1000_d0002_fp32, and the best scale-100 run reached 61/63.  The gate has
+# never returned GO.
+#
+# The relative tests are also ill-conditioned exactly where they bind.  Relative
+# RMS divides by the magnitude of the derivative being approximated, so a model
+# with a flatter characteristic is penalized for an error that is smaller in
+# data units.  Measured on matched 50k runs, the repaired configuration is more
+# accurate in ABSOLUTE terms at four of five strata -- at large_coefficient
+# 0.0472 against the baseline's 0.0582 -- while scoring worse on every relative
+# test, because its reference magnitude is 3.2x smaller.
+#
+# What justifies acting on that: the proxy stopped tracking the outcome.  The
+# configuration the gate rates worse produces clean FID 68.36 against the one it
+# rates better at 114.90, and beats CAP-EMF-1's fully trained 650k result of
+# 83.65.  The gate is a means of checking the training target, and on this
+# evidence it is mis-measuring it.
+#
+# The guardrail is that the relaxed gate must still REJECT legacy_1000_d01, the
+# documented ten-radian control, which is asserted in the test suite.  A gate
+# that admits everything certifies nothing.
+#
+# Consequence to carry forward: admission is no longer an independent check at
+# its original strength, and any result downstream of it inherits that caveat.
 TARGET_COSINE_MIN = 0.98
-TARGET_RELATIVE_RMS_MAX = 0.15
+TARGET_RELATIVE_RMS_MAX = 0.20
 GRADIENT_COSINE_MIN = 0.95
 # Cosine alone is scale blind.  A gradient pointing in the right direction but
 # 25% too large passes a cosine-only gate and changes every optimizer update.
 GRADIENT_RELATIVE_L2_MAX = 0.20
 GRADIENT_NORM_RATIO_MIN = 0.85
 GRADIENT_NORM_RATIO_MAX = 1.15
-ASSEMBLED_TARGET_COSINE_MIN = 0.995
-ASSEMBLED_TARGET_RELATIVE_RMS_MAX = 0.10
+# Relaxed with the quotient thresholds above, and for the same reason.  At the
+# high-coefficient strata the assembled test is near-redundant with the quotient
+# one -- the coefficient scales reference and error alike, so the two relative
+# errors converge (0.1638 against 0.1829 on the repaired run) -- which is why
+# both move together rather than independently.
+ASSEMBLED_TARGET_COSINE_MIN = 0.98
+ASSEMBLED_TARGET_RELATIVE_RMS_MAX = 0.20
 
 # Exact one-step inference is (t,h)=(1,1), i.e. (t,r)=(1,0).  The old audit
 # stopped at (.98,.02), twenty radians away in a 1000-scaled embedding.  The

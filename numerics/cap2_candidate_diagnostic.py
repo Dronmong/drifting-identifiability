@@ -139,7 +139,13 @@ def diagnostic_profile(arm: str, candidate_name: str, updates: int,
     """
     candidate = numerical_candidate(candidate_name)
     base = cap1_profile("capability")
-    sampler_mode, sampled_r_floor, coefficient_floor = SAMPLER_ARMS[arm]
+    sampler_mode, sampled_r_floor, coefficient_floor, arm_loss_floor = (
+        SAMPLER_ARMS[arm]
+    )
+    # An explicit --loss-weight-floor still wins, so the sweep that established
+    # the repair can be re-run against the arm's new default.
+    if loss_weight_floor is None:
+        loss_weight_floor = arm_loss_floor
     return candidate, replace(
         base,
         name=f"cap2-diagnostic-{arm}-{candidate.name}",
