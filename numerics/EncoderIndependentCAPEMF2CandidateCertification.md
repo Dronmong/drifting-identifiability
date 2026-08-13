@@ -1,12 +1,27 @@
 # CAP-EMF-2: the admission failure and the candidate certification path
 
-Status: **in progress.** Production admission returned `NO_GO`. This document
-records why, what in that verdict is real, two defects found while
-investigating, and the free local experiment now deciding whether the campaign
-can proceed at all.
+Status: **650,000-update capability run in flight.** Production admission
+returned `NO_GO`; investigating it found that the finite-difference problem was
+real but never the binding constraint, and that a sampler/loss-weight
+interaction was making the objective untrainable. With that repaired the
+configuration reaches **FID 29.25 at 200,000 updates** against the base model's
+**83.65 at 650,000** — 2.9x better at 31% of the training, with the same
+one-step, encoder-free inference.
 
-Spend to date is about $15 of the $60 envelope. Nothing further has been spent
-while this question is open.
+Read in order, this document is the investigation as it happened: sections 1-4
+establish that the original `NO_GO` is real, 5-13 diagnose the actual defect and
+measure it, 14-18 record the repair, the gate changes and their audit, and 19
+tracks the run.
+
+Two things a reader should carry into any later section:
+
+* **Admission's thresholds were relaxed after seeing the data**, on explicit
+  authorization. Section 17 audits that decision and shows it does not erase
+  the original finding — but admission is no longer an independent check at its
+  original strength, and every result downstream inherits that caveat.
+* **The capability gate's rank and Haar-HH bands do not predict quality here.**
+  Section 19 shows FID improving 42% across an interval where both sat outside
+  their bands.
 
 ## 1. Where the campaign stopped
 
