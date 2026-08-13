@@ -991,3 +991,44 @@ on a different GPU, at a smaller batch. It cannot certify anything, and the
 does not simply extrapolate. What it can do is compare two candidates under
 identical conditions and show the direction of travel. A candidate that is
 already losing ground at 2,000 updates is not going to recover by 750,000.
+
+## 19. The 650k capability run, in flight
+
+Repaired configuration (`loss_weight_floor = 1.0`, `gradient_clip = 15`), seed
+901, matching CAP-EMF-1's 650,000-update horizon.
+
+| step | FID | KID | precision | recall |
+| --- | --- | --- | --- | --- |
+| 100,000 | 50.21 | 0.0293 | 0.743 | 0.253 |
+| 200,000 | **29.25** | **0.0177** | 0.682 | **0.466** |
+
+At 200,000 updates -- 31% of the run -- the model is **2.9x better than the
+base model's fully trained result** (29.25 against 83.65 post-hoc EMA at
+650,000), at the same one-step inference. The log-log slope is *steepening*
+(0.78 against 0.65 measured earlier), so the run is not near a plateau.
+
+Precision eased 0.743 -> 0.682 while recall rose 0.253 -> 0.466. That is the
+mode-coverage deficit resolving: the model trades a little per-sample polish for
+substantially broader coverage, and the KID fall confirms it is not an FID
+artifact.
+
+Health, on the fixed 2,048-sample paired audit set:
+
+| metric | 50k | 100k | 150k | 200k | band |
+| --- | --- | --- | --- | --- | --- |
+| second moment | 0.890 | 1.025 | 0.750 | 0.834 | [0.80, 1.25] |
+| centered variance | 0.899 | 1.034 | 0.728 | 0.827 | [0.80, 1.25] |
+| rank ratio | 1.091 | 0.598 | 0.837 | 0.945 | [0.80, 1.50] |
+| Haar HH | 0.800 | 0.237 | 0.528 | 0.536 | [0.50, 1.75] |
+
+**These bands do not predict generative quality here, and that should be
+recorded before a future `H3`/`H4` failure is read as disqualifying.** Across
+100k -> 200k, rank and Haar-HH sat outside their bands while FID improved 42%
+and recall nearly doubled. The health set is fixed and paired -- the trainer
+generates `health_noise` once, so movement is the model moving, not the sample
+moving -- meaning the oscillation is real rather than sampling noise. It simply
+measures Haar-band energy and effective rank on 2,048 samples, which is not what
+Inception-feature FID measures on 50,000.
+
+Clipping is ~2.2% over the most recent interval against H7's 5% limit, with zero
+non-finite updates.
