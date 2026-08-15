@@ -1,17 +1,16 @@
 # CAP-EMF-2: the admission failure and the candidate certification path
 
-Status: **650,000-update capability run in flight.** Production admission
-returned `NO_GO`; investigating it found that the finite-difference problem was
-real but never the binding constraint, and that a sampler/loss-weight
-interaction was making the objective untrainable. With that repaired the
-configuration reaches **FID 29.25 at 200,000 updates** against the base model's
-**83.65 at 650,000** — 2.9x better at 31% of the training, with the same
-one-step, encoder-free inference.
+Status: **complete.** Production admission returned `NO_GO`; investigating it
+found that the finite-difference problem was real but never the binding
+constraint, and that a sampler/loss-weight interaction was making the objective
+untrainable. With that repaired, the configuration reaches **FID 18.92** against
+the base model's **83.65** at the same 650,000-update horizon — **4.4× better**,
+with the same one-step, encoder-free inference.
 
 Read in order, this document is the investigation as it happened: sections 1-4
 establish that the original `NO_GO` is real, 5-13 diagnose the actual defect and
-measure it, 14-18 record the repair, the gate changes and their audit, and 19
-tracks the run.
+measure it, 14-18 record the repair, the gate changes and their audit, and
+19-20 the run and its result.
 
 Two things a reader should carry into any later section:
 
