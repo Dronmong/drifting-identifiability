@@ -1,0 +1,16 @@
+{
+  "label": "base drifting model, CAP-EMF-1 650k EMA",
+  "checkpoint": "/workspace/cap_asfd_workspace/evidence/checkpoints/cap_emf1_step650000_ema.pt",
+  "step": 650000,
+  "kind": "ema",
+  "grid": "/workspace/cap_asfd_workspace/grids/base_cap_emf1.png",
+  "grid_sha256": "ed2cd748e6b512037cefdcf350bdf78c3591c96c511381ac66a0af12e494743e",
+  "rows": 8,
+  "columns": 16,
+  "samples": 128,
+  "seed": 20260804,
+  "model_calls": 1,
+  "one_call_per_batch": true,
+  "selection": "none; the first rows*columns draws in generation order",
+  "embedding_scale": 1000.0
+}

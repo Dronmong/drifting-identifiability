@@ -1,0 +1,16 @@
+{
+  "label": "repaired CAP-EMF-2, 650k, post-hoc EMA w5",
+  "checkpoint": "/workspace/cap_asfd_workspace/candidate_audit/long_650k_floor1_clip15/posthoc/posthoc_ema_w5.pt",
+  "step": null,
+  "kind": null,
+  "grid": "/workspace/cap_asfd_workspace/grids/ours_ema_w5.png",
+  "grid_sha256": "f8013f112e086085cacfb1aa444f967182879aa94af206c34c3a20319065074c",
+  "rows": 8,
+  "columns": 16,
+  "samples": 128,
+  "seed": 20260804,
+  "model_calls": 1,
+  "one_call_per_batch": true,
+  "selection": "none; the first rows*columns draws in generation order",
+  "embedding_scale": 100.0
+}

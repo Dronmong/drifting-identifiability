@@ -1047,3 +1047,56 @@ Inception-feature FID measures on 50,000.
 
 Clipping is ~2.2% over the most recent interval against H7's 5% limit, with zero
 non-finite updates.
+
+## 20. Final result
+
+650,000 updates complete. Both arms evaluated through the same sealed metric
+path, same seed, same 50,000-sample protocol, CIFAR-10 train reference, test
+split never opened.
+
+| model | updates | FID | KID | precision | recall |
+| --- | --- | --- | --- | --- | --- |
+| base CAP-EMF-1, raw | 650,000 | 112.94 | — | — | — |
+| base CAP-EMF-1, post-hoc EMA | 650,000 | 83.65 | — | — | — |
+| repaired, raw | 650,000 | 25.14 | 0.01592 | 0.717 | 0.528 |
+| repaired, EMA window 2 | 650,000 | 20.46 | 0.01333 | 0.726 | 0.527 |
+| repaired, EMA window 3 | 650,000 | 20.66 | 0.01342 | 0.728 | 0.517 |
+| **repaired, EMA window 5** | 650,000 | **18.92** | **0.01193** | 0.729 | 0.552 |
+
+**4.4x the base model's best result, 6.0x its raw**, at the same horizon,
+architecture and one-step encoder-free inference.
+
+Post-hoc averaging gained 25% here (25.14 -> 18.92) against 9% on the stable
+50k A/B, which is what a wider window buys on an oscillating trajectory. The
+winning window is the preregistered trailing one, so no post-hoc window
+selection was required; all three are reported regardless, since choosing the
+best of three is still a choice.
+
+Raw trajectory: 50.21 (100k) -> 29.25 -> 40.43 -> 31.86 -> 27.06 -> 25.14,
+with recall climbing 0.253 -> 0.552 throughout. FID oscillated rather than
+descending cleanly.
+
+Verified in the artifacts rather than asserted:
+
+* **one-step** — forward count asserted by a module hook, 100 calls for 50,000
+  images, both models;
+* **no encoder** — raw-pixel transformer throughout; Inception and StyleGAN2-ADA
+  appear only inside metrics and as an evaluation control, never in training or
+  sampling;
+* **no memorization** — zero exact pixel copies, nearest train-or-flip median
+  15.91 against a typical real-pair distance of 37.49;
+* **uncurated samples** — first draws in generation order, fixed seed, no
+  selection, sorting or retries.
+
+The visual gap exceeds the FID ratio and was predicted by a statistic measured
+long beforehand: the base emits 6.4x real CIFAR-10's high-frequency energy,
+which is what chromatic speckle looks like; the repaired model sits at 0.50x.
+
+Not state of the art. Strong multi-step CIFAR-10 diffusion reaches FID 3-10 and
+StyleGAN2-ADA about 2.9. The claim is narrower: a one-step, encoder-free model
+beating its own fully trained predecessor by 4.4x, after a repair derived from
+measuring a 434x sampler/loss-weight interaction the original protocol could not
+see because its H7 check reported a fabricated zero.
+
+Report: `numerics/encoder_independent_drifting/results_report.html`.
+Grids: `numerics/encoder_independent_drifting/results_grids/`.
