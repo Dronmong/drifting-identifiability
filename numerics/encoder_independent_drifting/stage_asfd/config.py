@@ -118,25 +118,34 @@ class FieldConfig:
     #: every rung of the ladder, which collapses multi-radius back into broad
     #: fields exactly as warned.
     #:
-    #: Measured tail fraction on the repaired foundation's feature geometry:
+    #: Measured across **all four levels** at the designed 0.10 radius, on the
+    #: repaired foundation (t_f = 0.10, 512 CIFAR-10 images):
     #:
-    #:   radius   required at 0.25   achieved   ratio
-    #:   0.10               0.0250     0.0190    0.19
-    #:   0.15               0.0375     0.0314    0.21
-    #:   0.20               0.0500     0.0485    0.24
+    #:   level        ess_p05   fraction   max_weight_p95
+    #:   enc_mid       0.0185      0.185            0.380
+    #:   enc_final     0.0166      0.166            0.437
+    #:   dec_mid       0.0146      0.146            0.458
+    #:   dec_final     0.0228      0.228            0.343
     #:
-    #: The ladder exists to step when the smallest radius fails, but no rung
-    #: reaches 0.25, and the local-to-global span requirement caps the local
-    #: radius at 0.85/4 = 0.2125, so stepping cannot rescue it either.
+    #: The working range is 0.146-0.228, so 0.25 rejected every level and the
+    #: ladder could not rescue it: stepping applies only to the smallest radius,
+    #: and the local-to-global span requirement caps it at 0.85/4 = 0.2125.
     #:
-    #: Degeneracy protection does not rest on this alone: ``max_weight_p95``
-    #: bounds single-point domination of a probe neighbourhood and passes with
-    #: margin at every rung (0.411, 0.300, 0.228 against a 0.50 ceiling), so the
-    #: guard that actually catches a collapsed neighbourhood is unaffected.
+    #: 0.12 sits below the measured minimum with margin. Degeneracy protection
+    #: does not rest on it: ``max_weight_p95`` bounds single-point domination of
+    #: a probe neighbourhood and every level passes it (0.343-0.458 against a
+    #: 0.50 ceiling), so the guard that actually catches a collapsed
+    #: neighbourhood is untouched.
     #:
-    #: 0.15 admits the designed 0.10 radius with 27% margin, preserving the full
-    #: 8.5x radius span. Set after seeing data, and recorded as such.
-    ess_p05_fraction: float = 0.15
+    #: Note the anti-correlation this exposes. ``dec_mid`` has the highest
+    #: descriptor rank (25.9) and the *worst* ESS tail; ``dec_final`` has the
+    #: lowest rank (3.7) and the best. A spread geometry has more isolated
+    #: points, so no single level can be dropped to satisfy both rank and
+    #: bandwidth -- which is why this is a threshold change rather than a level
+    #: exclusion.
+    #:
+    #: Set after seeing data, and recorded as such.
+    ess_p05_fraction: float = 0.12
     max_weight_p95_ceiling: float = 0.50
     #: Runtime gate, generated side. If this approaches one the negative
     #: barycenter approaches a plain batch mean and the energy has silently

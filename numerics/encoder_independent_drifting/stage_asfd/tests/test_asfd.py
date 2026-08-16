@@ -699,9 +699,13 @@ def test_ess_floor_admits_the_designed_local_radius():
 
     field = asfd_config().field_config
     smallest = min(field.radii)
-    assert field.ess_p05_fraction * smallest <= 0.019, (
-        "the ESS tail floor rejects the designed local radius, collapsing the "
-        "multi-radius field into a single broad regime"
+    # Worst measured level (dec_mid) at the designed radius. The floor must
+    # admit every level, not just the easiest one -- calibrating against a
+    # single level is what produced an under-informed first attempt.
+    worst_measured_ess_p05 = 0.0146
+    assert field.ess_p05_fraction * smallest <= worst_measured_ess_p05, (
+        "the ESS tail floor rejects the designed local radius on at least one "
+        "level, collapsing the multi-radius field into a single broad regime"
     )
     # The companion guard must remain meaningful, not be widened alongside it.
     assert field.max_weight_p95_ceiling <= 0.50
