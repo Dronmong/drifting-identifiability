@@ -52,7 +52,7 @@ from numerics.encoder_independent_drifting.stage_asfd.correction import (  # noq
 from numerics.encoder_independent_drifting.stage_asfd.config import (  # noqa: E402
     asfd_config,
 )
-from numerics.encoder_independent_drifting.stage_asfd.artifacts import (  # noqa: E402
+from numerics.encoder_independent_drifting.stage_cap2.artifacts import (  # noqa: E402
     verify_json,
 )
 from numerics.encoder_independent_drifting.spectral_anchor import (  # noqa: E402
