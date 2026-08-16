@@ -686,6 +686,39 @@ def test_inverse_haar_actually_inverts():
     assert float((recovered - x).abs().max()) < 1e-5
 
 
+def test_inverse_haar_handles_colour_images():
+    """G7 perturbs real three-channel images, not single planes.
+
+    Both round-trip tests used C = 1, where flattening a sample and flattening
+    a plane coincide. On CIFAR they do not: the synthesis matrix is
+    [size*size, size*size] and a sample carries C planes, so the multiply is a
+    shape error. G7 is the gate that decides whether this arm proceeds at all
+    and it had never been run on a colour image.
+    """
+    from ...stage_cap.diagnostics import haar_transform
+    from ..qualification import _inverse_haar
+
+    x = torch.randn(4, 3, 8, 8)
+    recovered = _inverse_haar(haar_transform(x))
+    assert recovered.shape == x.shape
+    assert float((recovered - x).abs().max()) < 1e-5
+
+
+def test_inverse_haar_does_not_mix_channels():
+    """Each colour plane must synthesise from its own coefficients."""
+    from ...stage_cap.diagnostics import haar_transform
+    from ..qualification import _inverse_haar
+
+    x = torch.randn(2, 3, 8, 8)
+    coefficients = haar_transform(x)
+    isolated = torch.zeros_like(coefficients)
+    isolated[:, 1] = coefficients[:, 1]
+    synthesised = _inverse_haar(isolated)
+    assert float(synthesised[:, 0].abs().max()) == 0.0
+    assert float(synthesised[:, 2].abs().max()) == 0.0
+    assert float((synthesised[:, 1] - x[:, 1]).abs().max()) < 1e-5
+
+
 def test_band_probes_stay_inside_their_band():
     """G7 is worthless if its perturbations are not band-limited.
 
@@ -697,14 +730,21 @@ def test_band_probes_stay_inside_their_band():
     from ..qualification import BANDS, _band_mask, _inverse_haar
 
     size = 8
-    for band in BANDS:
-        mask = _band_mask(size, band, torch.device("cpu"))
-        coefficients = haar_transform(torch.randn(4, 1, size, size)) * mask
-        back = haar_transform(_inverse_haar(coefficients))
-        inside = float((back * mask).square().sum())
-        outside = float((back * (1 - mask)).square().sum())
-        leak = outside / max(inside + outside, 1e-30)
-        assert leak < 0.01, f"{band} leaked {leak:.1%} outside its band"
+    # Both channel counts: G7 runs on colour images, and band-limiting has to
+    # hold there rather than only on the single planes the test used to build.
+    for channels in (1, 3):
+        for band in BANDS:
+            mask = _band_mask(size, band, torch.device("cpu"))
+            coefficients = (
+                haar_transform(torch.randn(4, channels, size, size)) * mask
+            )
+            back = haar_transform(_inverse_haar(coefficients))
+            inside = float((back * mask).square().sum())
+            outside = float((back * (1 - mask)).square().sum())
+            leak = outside / max(inside + outside, 1e-30)
+            assert leak < 0.01, (
+                f"{band} leaked {leak:.1%} outside its band at C={channels}"
+            )
 
 
 def test_normalization_does_not_allocate_a_quadratic_tensor():

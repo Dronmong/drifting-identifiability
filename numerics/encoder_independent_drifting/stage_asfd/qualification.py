@@ -56,7 +56,14 @@ def _inverse_haar(coefficients: torch.Tensor) -> torch.Tensor:
         size * size, 1, size, size
     )
     analysis = haar_transform(basis).reshape(size * size, size * size)
-    flat = coefficients.reshape(len(coefficients), -1)
+    # Flatten to one plane per row, not one *sample* per row. The transform is
+    # two-dimensional and per-channel, so a colour image contributes three
+    # independent planes; collapsing them into a single row multiplies a
+    # [N, C*size*size] tensor by a [size*size, size*size] matrix, which is a
+    # shape error for C > 1 and would silently mix channels if the dimensions
+    # ever happened to line up. Every existing caller passed C = 1, so this
+    # only surfaced on real three-channel images.
+    flat = coefficients.reshape(-1, size * size)
     return (flat @ analysis.T).reshape(coefficients.shape)
 
 
