@@ -181,6 +181,7 @@ def _coefficient_calibration(
     accumulation: int,
     device: torch.device,
     events: int,
+    step_base: int | None = None,
 ) -> tuple[dict[str, float], list[dict]]:
     generators = {
         name: torch.Generator().manual_seed(PREFLIGHT_SEED + index)
@@ -204,8 +205,17 @@ def _coefficient_calibration(
             generators=generators,
         )
         primary_norm = gradient_norm(primary)
+        # The step is not cosmetic: ``compute_components`` derives the
+        # coarse-to-fine band progress from ``(step - continuation_start) /
+        # continuation_updates``, clamped to [0, 1]. Calibration must sit at the
+        # *start* of that schedule, where training will actually begin. A
+        # literal 750_010 does that only when the foundation is at 750k; against
+        # any other horizon it lands past the end, clamps to full band width,
+        # and calibrates the anchor coefficient against a bank the early run
+        # never sees.
+        base = 750_010 if step_base is None else int(step_base) + 10
         components, stats = correction.compute_components(
-            750_010 + 10 * event, model, include_health=False
+            base + 10 * event, model, include_health=False
         )
         norms = {name: gradient_norm(values) for name, values in components.items()}
         if primary_norm <= 0 or any(value <= 0 for value in norms.values()):

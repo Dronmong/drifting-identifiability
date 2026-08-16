@@ -55,6 +55,11 @@ from numerics.encoder_independent_drifting.stage_asfd.config import (  # noqa: E
 from numerics.encoder_independent_drifting.spectral_anchor import (  # noqa: E402
     projected_scale,
 )
+from numerics.encoder_independent_drifting.config import AnchorConfig  # noqa: E402
+
+#: One seed for the whole comparison. Every arm shares it, so the arms differ
+#: only in their caps.
+ARMS_SEED = 20_260_921
 
 #: Arms and how each one weights the three correction components. ``None``
 #: means no correction at all -- the control that isolates the correction from
@@ -132,8 +137,13 @@ def extract_teacher(recovery: Path, out: Path) -> int:
 
 
 def calibrate(correction: ASFDCorrection, model, pool, objective, *, device,
-              micro_batch, accumulation, events):
-    """Coefficients that put each component at its cap, as preflight does."""
+              micro_batch, accumulation, events, step_base):
+    """Coefficients that put each component at its cap, as preflight does.
+
+    ``step_base`` must be this foundation's step. The band schedule reads
+    progress from the step, so calibrating anywhere but the start of the
+    schedule measures the anchor against a bank the early run never sees.
+    """
     from numerics.encoder_independent_drifting.stage_asfd.preflight import (
         _coefficient_calibration,
     )
@@ -141,7 +151,7 @@ def calibrate(correction: ASFDCorrection, model, pool, objective, *, device,
     return _coefficient_calibration(
         model, correction, pool, objective,
         micro_batch=micro_batch, accumulation=accumulation,
-        device=device, events=events,
+        device=device, events=events, step_base=step_base,
     )
 
 
@@ -203,13 +213,29 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     print(f"continuing {start} -> {start + args.updates}, arms={args.arms}")
 
-    qualification = json.loads(args.qualification.read_text())
+    needs_correction = any(ARM_CAPS[a] is not None for a in args.arms)
+    if needs_correction and (args.qualification is None or args.feature_bank is None):
+        raise SystemExit(
+            "--qualification and --feature-bank are required for the raw and "
+            "asfd arms; only the control arm runs without them"
+        )
+    qualification = (
+        json.loads(args.qualification.read_text()) if needs_correction else {}
+    )
     coefficients = None
     spectral_scale = None
-    if any(ARM_CAPS[a] is not None for a in args.arms):
-        target = pool[: asfd_config().anchor.projected_scale_probes * 8].to(device)
+    if needs_correction:
+        # AnchorConfig is not a field of ASFDConfig -- ASFDCorrection builds its
+        # own instance -- so it must be constructed here too, and the sampling
+        # mirrors the gated preflight: a random 256-image subset, not a prefix.
+        anchor_config = AnchorConfig()
+        scale_indices = torch.randperm(
+            len(pool), generator=torch.Generator().manual_seed(ARMS_SEED)
+        )[:256]
         spectral_scale = projected_scale(
-            target, asfd_config().anchor, torch.Generator().manual_seed(4242)
+            pool[scale_indices].flatten(1).to(device),
+            anchor_config,
+            torch.Generator().manual_seed(ARMS_SEED + 1),
         )
         print(f"spectral scale (target-only): {spectral_scale:.6f}")
         probe_model = CAPPixelTransformer(prof.model, seed=1).to(device)
@@ -229,7 +255,7 @@ def main() -> None:
             probe, probe_model, pool, prof.objective, device=device,
             micro_batch=prof.train.micro_batch,
             accumulation=prof.train.accumulation_steps,
-            events=args.calibration_events,
+            events=args.calibration_events, step_base=start,
         )
         print("calibrated coefficients:", coefficients)
         (args.out_dir / "calibration.json").write_text(
@@ -241,7 +267,7 @@ def main() -> None:
         torch.cuda.empty_cache()
 
     summary = {}
-    for index, arm in enumerate(args.arms):
+    for arm in args.arms:
         arm_dir = args.out_dir / arm
         arm_dir.mkdir(parents=True, exist_ok=True)
         recovery = arm_dir / "recovery.pt"
@@ -258,12 +284,18 @@ def main() -> None:
         caps = ARM_CAPS[arm]
         extension = None
         if caps is not None:
+            # Every arm uses the SAME stream seed. stream_seed_offset seeds the
+            # spectral bank and every correction RNG stream, so varying it per
+            # arm would make raw and asfd differ in their random draws as well
+            # as their caps -- and any difference between them could no longer
+            # be attributed to the self-feature branch, which is the only thing
+            # the pair exists to measure.
             extension = build_correction(
                 teacher=args.teacher, bank=args.feature_bank,
                 qualification=qualification, caps=caps,
                 coefficients=coefficients, spectral_scale=spectral_scale,
                 device=device, data_root=args.data_root, start=start,
-                updates=args.updates, seed_offset=index,
+                updates=args.updates, seed_offset=0,
             )
         print(f"\n=== arm {arm}: caps={caps} ===", flush=True)
         captured: dict[int, dict] = {}
