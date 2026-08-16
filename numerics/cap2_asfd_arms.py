@@ -52,6 +52,9 @@ from numerics.encoder_independent_drifting.stage_asfd.correction import (  # noq
 from numerics.encoder_independent_drifting.stage_asfd.config import (  # noqa: E402
     asfd_config,
 )
+from numerics.encoder_independent_drifting.stage_asfd.artifacts import (  # noqa: E402
+    verify_json,
+)
 from numerics.encoder_independent_drifting.spectral_anchor import (  # noqa: E402
     projected_scale,
 )
@@ -219,8 +222,15 @@ def main() -> None:
             "--qualification and --feature-bank are required for the raw and "
             "asfd arms; only the control arm runs without them"
         )
+    # verify_json, not json.loads: it checks the file against its .sha256
+    # sidecar and attaches ``artifact_sha256``, which ASFDCorrection compares
+    # against the bank's recorded binding. Reading the JSON directly skips both
+    # the verification and the field, and the binding check then fails on a
+    # None it was never given.
     qualification = (
-        json.loads(args.qualification.read_text()) if needs_correction else {}
+        verify_json(args.qualification, "asfd-target-only-qualification")
+        if needs_correction
+        else {}
     )
     coefficients = None
     spectral_scale = None
