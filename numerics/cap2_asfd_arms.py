@@ -55,6 +55,12 @@ from numerics.encoder_independent_drifting.stage_asfd.config import (  # noqa: E
 from numerics.encoder_independent_drifting.stage_cap2.artifacts import (  # noqa: E402
     verify_json,
 )
+from numerics.encoder_independent_drifting.stage_asfd.recovery import (  # noqa: E402
+    fork_foundation_recovery,
+)
+from numerics.encoder_independent_drifting.stage_asfd.artifacts import (  # noqa: E402
+    file_sha256,
+)
 from numerics.encoder_independent_drifting.spectral_anchor import (  # noqa: E402
     projected_scale,
 )
@@ -284,16 +290,6 @@ def main() -> None:
         arm_dir = args.out_dir / arm
         arm_dir.mkdir(parents=True, exist_ok=True)
         recovery = arm_dir / "recovery.pt"
-        if not recovery.exists():
-            # Each arm gets its own copy of the shared starting state, so the
-            # arms diverge only through their corrections.
-            shutil.copy2(args.foundation_recovery, recovery)
-            sidecar = args.foundation_recovery.with_suffix(
-                args.foundation_recovery.suffix + ".sha256"
-            )
-            if sidecar.exists():
-                shutil.copy2(sidecar, recovery.with_suffix(recovery.suffix + ".sha256"))
-
         caps = ARM_CAPS[arm]
         extension = None
         if caps is not None:
@@ -310,6 +306,36 @@ def main() -> None:
                 device=device, data_root=args.data_root, start=start,
                 updates=args.updates, seed_offset=0,
             )
+
+        if not recovery.exists():
+            if extension is None:
+                # No extension: a plain copy is right, and a fork would inject a
+                # replay state that train_cap_unit then refuses as unrequested.
+                shutil.copy2(args.foundation_recovery, recovery)
+                sidecar = args.foundation_recovery.with_suffix(
+                    args.foundation_recovery.suffix + ".sha256"
+                )
+                if sidecar.exists():
+                    shutil.copy2(
+                        sidecar, recovery.with_suffix(recovery.suffix + ".sha256")
+                    )
+            else:
+                # Attaching a correction at a resume boundary needs the
+                # extension's replay state already in the recovery -- a plain
+                # copy fails with "extended recovery lacks its replay state".
+                # fork_foundation_recovery is the audited way to do it: all
+                # scientific state is retained and only the continuation
+                # identity and the freshly declared extension state change.
+                fork_foundation_recovery(
+                    args.foundation_recovery,
+                    recovery,
+                    profile=prof,
+                    external_identity=None,
+                    extension=extension,
+                    expected_sha256=file_sha256(args.foundation_recovery),
+                    unit_seed=901,
+                    foundation_step=start,
+                )
         print(f"\n=== arm {arm}: caps={caps} ===", flush=True)
         captured: dict[int, dict] = {}
         started = time.time()

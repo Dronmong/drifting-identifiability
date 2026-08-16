@@ -44,6 +44,7 @@ def fork_foundation_recovery(
     extension: TrainingExtension,
     expected_sha256: str,
     unit_seed: int = 0,
+    foundation_step: int = 750_000,
 ) -> str:
     """Copy all scientific state while changing only continuation identity.
 
@@ -61,11 +62,20 @@ def fork_foundation_recovery(
     if digest != expected_sha256:
         raise RuntimeError("foundation recovery hash differs from its gate")
     validate_recovery_counters(payload, strict=True)
+    # The foundation must be *complete* -- planned and completed agree -- which
+    # is the property that matters. The step itself was written as a literal
+    # 750_000, which pinned the fork to one horizon and made forking any other
+    # finished foundation impossible.
     if (
-        int(payload.get("planned_updates", -1)) != 750_000
-        or int(payload.get("completed_updates", -1)) != 750_000
+        int(payload.get("planned_updates", -1)) != int(foundation_step)
+        or int(payload.get("completed_updates", -1)) != int(foundation_step)
     ):
-        raise RuntimeError("ASFD may fork only the completed 750k foundation")
+        raise RuntimeError(
+            f"ASFD may fork only a foundation completed at step "
+            f"{int(foundation_step)}; this recovery reports planned="
+            f"{payload.get('planned_updates')} completed="
+            f"{payload.get('completed_updates')}"
+        )
     result = deepcopy(payload)
     result["profile_name"] = profile.name
     result["recovery_identity"] = _recovery_identity(
