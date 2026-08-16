@@ -278,6 +278,25 @@ class ASFDCorrection:
         raw_probes = raw_probes + fields.probe_noise_std * raw_noise
         return feature_probes, feature_positives, raw_probes, raw_positives
 
+    def _negative_ess_ceiling(self, label: str) -> float:
+        """The ceiling cannot sit below the radius it is gating.
+
+        A radius is an ESS fraction and the bandwidth is calibrated to hit it,
+        so a broad radius reaches a high ESS by construction rather than by
+        degenerating. Taking the max with the absolute ceiling leaves every
+        radius below it untouched.
+        """
+        field = self.config.field_config
+        try:
+            radius = float(label.rsplit("_", 1)[1])
+        except (IndexError, ValueError):
+            return field.negative_ess_ceiling
+        relative = radius * (1.0 + field.negative_ess_excess)
+        return min(
+            field.negative_ess_absolute_cap,
+            max(field.negative_ess_ceiling, relative),
+        )
+
     def _record_ess(self, label: str, value: float) -> None:
         window = self.ess_windows.setdefault(label, deque(maxlen=20))
         window.append(float(value))
@@ -285,7 +304,7 @@ class ASFDCorrection:
             self.monitor.observe_negative_ess(
                 label,
                 sum(window) / len(window),
-                self.config.field_config.negative_ess_ceiling,
+                self._negative_ess_ceiling(label),
             )
 
     def _generated_ranks(

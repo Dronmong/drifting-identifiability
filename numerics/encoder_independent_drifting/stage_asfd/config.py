@@ -163,6 +163,25 @@ class FieldConfig:
     #: degenerated to first-moment matching. B2 logged this statistic and never
     #: gated it; it ran 0.666 -> 0.702 with nothing watching.
     negative_ess_ceiling: float = 0.90
+    #: A radius *is* an ESS fraction, and bandwidths are calibrated so the
+    #: achieved ESS hits it. So the 0.85 radius targets an ESS of 0.85 by
+    #: construction, and an absolute 0.90 ceiling sits 0.05 above the thing it
+    #: gates: the broadest declared radius aborts the run for doing exactly what
+    #: it was declared to do. Measured: self/dec_mid/radius_0.85 reached 0.907
+    #: and aborted.
+    #:
+    #: The effective ceiling becomes ``max(negative_ess_ceiling, radius * (1 +
+    #: excess))``, capped below 1. Only radii at or above the absolute ceiling
+    #: are affected -- 0.10 and 0.35 keep the 0.90 ceiling unchanged, so no new
+    #: abort risk is introduced where there is no measurement to justify it.
+    #:
+    #: Noted but deliberately not fixed here: the absolute ceiling is also very
+    #: weak at the local end, where an ESS of 0.5 against a 0.10 target would be
+    #: a fivefold degeneration and pass 0.90 untouched. Tightening that needs
+    #: measured negative-side ESS at the small radii, which this run will
+    #: produce.
+    negative_ess_excess: float = 0.15
+    negative_ess_absolute_cap: float = 0.98
 
     def validate(self) -> None:
         if len(self.radii) < 2:

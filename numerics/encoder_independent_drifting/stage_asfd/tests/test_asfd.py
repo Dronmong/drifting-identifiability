@@ -686,6 +686,34 @@ def test_inverse_haar_actually_inverts():
     assert float((recovered - x).abs().max()) < 1e-5
 
 
+def test_negative_ess_ceiling_sits_above_the_radius_it_gates():
+    """A radius targeting ESS r cannot be aborted for achieving about r.
+
+    Radii are ESS fractions and bandwidths are calibrated to hit them, so the
+    0.85 radius reaches ~0.85 by construction. An absolute 0.90 ceiling sat
+    0.05 above it and aborted the run at a measured 0.907. Radii below the
+    absolute ceiling must keep it unchanged, so no new abort risk appears where
+    nothing was measured.
+    """
+    from ..config import asfd_config
+
+    field = asfd_config().field_config
+
+    def ceiling(radius: float) -> float:
+        return min(
+            field.negative_ess_absolute_cap,
+            max(field.negative_ess_ceiling, radius * (1.0 + field.negative_ess_excess)),
+        )
+
+    broadest = max(field.radii)
+    assert ceiling(broadest) > broadest, "the ceiling gates the radius itself"
+    assert ceiling(broadest) >= 0.907, "the measured broad-radius value still aborts"
+    assert ceiling(broadest) < 1.0
+    for radius in field.radii:
+        if radius * (1.0 + field.negative_ess_excess) <= field.negative_ess_ceiling:
+            assert ceiling(radius) == field.negative_ess_ceiling
+
+
 def test_ess_floor_admits_the_designed_local_radius():
     """A tail floor no rung can clear silently deletes the local regime.
 
