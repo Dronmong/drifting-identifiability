@@ -232,8 +232,11 @@ def main() -> None:
         scale_indices = torch.randperm(
             len(pool), generator=torch.Generator().manual_seed(ARMS_SEED)
         )[:256]
+        # Left on CPU: sample_directions draws from a CPU generator, so the
+        # probe directions are CPU tensors and a CUDA target would mismatch in
+        # the projection matmul. The gated preflight passes CPU here too.
         spectral_scale = projected_scale(
-            pool[scale_indices].flatten(1).to(device),
+            pool[scale_indices].flatten(1),
             anchor_config,
             torch.Generator().manual_seed(ARMS_SEED + 1),
         )
