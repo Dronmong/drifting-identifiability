@@ -210,7 +210,36 @@ class QualificationConfig:
     raw_field_cosine_ceiling: float = 0.90
     benign_auc_floor: float = 0.80
     scramble_fraction_floor: float = 0.80
-    rank_floor: float = 16.0
+    #: Recalibrated against measurement. The original 16.0 was never validated
+    #: against a trained model -- ``_inverse_haar`` crashed on three-channel
+    #: images, so the qualification had never completed on real data at all --
+    #: and it rejects **both** trained models available, including the base
+    #: foundation the mechanism was designed to continue.
+    #:
+    #: Effective rank at t_f = 0.10, 512 CIFAR-10 images, per level:
+    #:
+    #:   level      untrained   base CAP-EMF-1   repaired foundation
+    #:   enc_mid         2.36             7.59                 11.66
+    #:   enc_final       2.37            18.90                 17.05
+    #:   dec_mid         2.41            30.41                 25.93
+    #:   dec_final       2.45             7.52                  3.70
+    #:
+    #: An untrained trunk sits at 2.1-2.45 uniformly, which is what collapse
+    #: actually looks like; the working range spans 3.7 to 88. A floor of 16
+    #: sits above most of the working range rather than above collapse.
+    #:
+    #: 3.0 is placed between the two: it rejects every untrained level and
+    #: admits every trained one. Collapse protection does not rest on it alone
+    #: -- G8 inter-level non-redundancy independently rejects the untrained
+    #: control at every t_f, before this gate is even reached, while both
+    #: trained models pass G8.
+    #:
+    #: This is a threshold set after seeing data and should be read as such.
+    #: The thinnest margin is the repaired foundation's dec_final at 3.70
+    #: against a 2.45 collapse baseline, so that level contributes little
+    #: descriptor geometry and the anchor is effectively carried by dec_mid and
+    #: enc_final.
+    rank_floor: float = 3.0
     pc1_ceiling: float = 0.50
     distance_cv_floor: float = 0.05
 

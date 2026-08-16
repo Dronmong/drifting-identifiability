@@ -686,6 +686,26 @@ def test_inverse_haar_actually_inverts():
     assert float((recovered - x).abs().max()) < 1e-5
 
 
+def test_rank_floor_separates_collapse_from_working_models():
+    """The recalibrated floor must sit between measured collapse and measured work.
+
+    Effective rank at t_f = 0.10 over 512 CIFAR-10 images: an untrained trunk
+    lands at 2.10-2.45 on every level, while the two trained models span
+    3.70-88.64. A floor is only meaningful if it separates those. The shipped
+    16.0 did not -- it sat above most of the working range and rejected both
+    trained models, including the base foundation ASFD was designed to continue.
+    """
+    from ..config import asfd_config
+
+    floor = asfd_config().qualification.rank_floor
+    untrained_worst = 2.45   # highest untrained level, G3 dec_final
+    working_worst = 3.70     # lowest trained level, repaired foundation G3 dec_final
+    assert untrained_worst < floor < working_worst, (
+        f"rank_floor {floor} must reject collapse (<= {untrained_worst}) and "
+        f"admit working models (>= {working_worst})"
+    )
+
+
 def test_inverse_haar_handles_colour_images():
     """G7 perturbs real three-channel images, not single planes.
 
