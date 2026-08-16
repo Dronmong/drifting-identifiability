@@ -244,7 +244,16 @@ def _candidate(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--foundation-gate", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--foundation-gate", type=Path)
+    # Ungated alternative: qualify against a teacher that no foundation gate
+    # vouches for.  The computation is identical -- the same nine target-only
+    # gates over the same t_f grid -- and only the provenance differs, which is
+    # why the emitted record says so in ``teacher_provenance`` rather than
+    # leaving a reader to infer it from a missing field.  A qualification
+    # produced this way is evidence for an exploratory branch, not a gated
+    # artifact, and nothing downstream should treat it as one.
+    source.add_argument("--teacher-checkpoint", type=Path)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--data-root", default=None)
     parser.add_argument("--batch", type=int, default=32)
@@ -252,15 +261,31 @@ def main() -> int:
     args = parser.parse_args()
     assert_result_path_unused(args.out)
     assert_no_inherited_freeze()
-    foundation = verify_cap2_json(args.foundation_gate, "cap-emf2-750k-foundation-gate")
-    if foundation.get("decision") != "GO":
-        raise RuntimeError("ASFD qualification requires a GO foundation gate")
-    checkpoint = _resolve(
-        foundation.get("foundation", {}).get("ema_checkpoint"),
-        args.foundation_gate.parent,
-    )
-    if file_sha256(checkpoint) != foundation["foundation"].get("ema_checkpoint_sha256"):
-        raise RuntimeError("foundation teacher checkpoint changed")
+    if args.foundation_gate is not None:
+        foundation = verify_cap2_json(
+            args.foundation_gate, "cap-emf2-750k-foundation-gate"
+        )
+        if foundation.get("decision") != "GO":
+            raise RuntimeError("ASFD qualification requires a GO foundation gate")
+        checkpoint = _resolve(
+            foundation.get("foundation", {}).get("ema_checkpoint"),
+            args.foundation_gate.parent,
+        )
+        if file_sha256(checkpoint) != foundation["foundation"].get(
+            "ema_checkpoint_sha256"
+        ):
+            raise RuntimeError("foundation teacher checkpoint changed")
+        gate_record = {
+            "path": _portable(args.foundation_gate, args.out.parent),
+            "sha256": foundation["artifact_sha256"],
+        }
+        provenance = "gated 750k foundation"
+    else:
+        checkpoint = args.teacher_checkpoint
+        if not checkpoint.is_file():
+            raise RuntimeError(f"teacher checkpoint {checkpoint} does not exist")
+        gate_record = None
+        provenance = "ungated teacher supplied directly; no foundation gate"
     device = resolve_device(args.device)
     settings = configure(device, allow_tf32=False)
     torch.use_deterministic_algorithms(True)
@@ -298,10 +323,8 @@ def main() -> int:
     result = {
         "status": STATUS,
         "decision": decision,
-        "foundation_gate": {
-            "path": _portable(args.foundation_gate, args.out.parent),
-            "sha256": foundation["artifact_sha256"],
-        },
+        "foundation_gate": gate_record,
+        "teacher_provenance": provenance,
         "teacher_checkpoint": {
             "path": _portable(checkpoint, args.out.parent),
             "sha256": file_sha256(checkpoint),

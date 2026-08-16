@@ -111,8 +111,19 @@ class ASFDCorrection:
             cifar10_train_labels(data_root),
         )
         payload, teacher, _ = _load_model(teacher_checkpoint, self.device)
-        if payload.get("kind") != "ema" or int(payload.get("step", -1)) != 750_000:
-            raise RuntimeError("ASFD teacher must be the exact 750k foundation EMA")
+        # The teacher must be the EMA of the exact foundation this correction
+        # continues -- ``continuation_start`` is that foundation's step, so the
+        # two cannot drift apart. The step was previously written as a literal
+        # 750_000, which silently assumed one horizon and made the parameter
+        # decorative.
+        if payload.get("kind") != "ema" or int(payload.get("step", -1)) != int(
+            continuation_start
+        ):
+            raise RuntimeError(
+                f"ASFD teacher must be the EMA at step {int(continuation_start)}, "
+                f"the foundation this correction continues; got kind="
+                f"{payload.get('kind')!r} step={payload.get('step')!r}"
+            )
         self.teacher = freeze_trunk(teacher)
         self.teacher_checkpoint_sha256 = file_sha256(teacher_checkpoint)
         self.bank_metadata_sha256 = file_sha256(bank_metadata)
