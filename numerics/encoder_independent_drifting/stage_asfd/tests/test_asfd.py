@@ -686,6 +686,28 @@ def test_inverse_haar_actually_inverts():
     assert float((recovered - x).abs().max()) < 1e-5
 
 
+def test_ess_floor_admits_the_designed_local_radius():
+    """A tail floor no rung can clear silently deletes the local regime.
+
+    Measured tail fractions on real feature geometry were 0.19 / 0.21 / 0.24
+    across the ladder, and the local-to-global span requirement caps the local
+    radius at max(radii)/4, so no rung could reach 0.25 and multi-radius would
+    have degenerated into broad fields -- the exact failure the config comment
+    describes fixing once already.
+    """
+    from ..config import asfd_config
+
+    field = asfd_config().field_config
+    smallest = min(field.radii)
+    assert field.ess_p05_fraction * smallest <= 0.019, (
+        "the ESS tail floor rejects the designed local radius, collapsing the "
+        "multi-radius field into a single broad regime"
+    )
+    # The companion guard must remain meaningful, not be widened alongside it.
+    assert field.max_weight_p95_ceiling <= 0.50
+    assert max(field.radii) / min(field.radii) >= 4.0
+
+
 def test_rank_floor_separates_collapse_from_working_models():
     """The recalibrated floor must sit between measured collapse and measured work.
 
