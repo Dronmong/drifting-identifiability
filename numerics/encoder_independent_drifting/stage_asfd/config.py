@@ -131,11 +131,22 @@ class FieldConfig:
     #: ladder could not rescue it: stepping applies only to the smallest radius,
     #: and the local-to-global span requirement caps it at 0.85/4 = 0.2125.
     #:
-    #: 0.12 sits below the measured minimum with margin. Degeneracy protection
-    #: does not rest on it: ``max_weight_p95`` bounds single-point domination of
-    #: a probe neighbourhood and every level passes it (0.343-0.458 against a
-    #: 0.50 ceiling), so the guard that actually catches a collapsed
-    #: neighbourhood is untouched.
+    #: The **raw-pixel** field is calibrated by the same call and has a heavier
+    #: tail than any standardized feature level, which two earlier attempts at
+    #: this constant missed by measuring only features:
+    #:
+    #:   radius   raw ess_p05   fraction   raw max_weight_p95
+    #:   0.10         0.00946      0.095                0.614
+    #:   0.15         0.01466      0.098                0.478
+    #:   0.20         0.02278      0.114                0.378
+    #:
+    #: 0.10 admits the raw field at radius 0.20 and every feature level at the
+    #: designed 0.10. Degeneracy protection does not rest on this floor:
+    #: ``max_weight_p95`` bounds single-point domination of a probe
+    #: neighbourhood, and it is what correctly rejects the raw field at radius
+    #: 0.10 (0.614 against a 0.50 ceiling), forcing the ladder to step up rather
+    #: than admitting a neighbourhood one point owns 61% of. Every feature level
+    #: passes it outright (0.343-0.458).
     #:
     #: Note the anti-correlation this exposes. ``dec_mid`` has the highest
     #: descriptor rank (25.9) and the *worst* ESS tail; ``dec_final`` has the
@@ -145,7 +156,7 @@ class FieldConfig:
     #: exclusion.
     #:
     #: Set after seeing data, and recorded as such.
-    ess_p05_fraction: float = 0.12
+    ess_p05_fraction: float = 0.10
     max_weight_p95_ceiling: float = 0.50
     #: Runtime gate, generated side. If this approaches one the negative
     #: barycenter approaches a plain batch mean and the energy has silently

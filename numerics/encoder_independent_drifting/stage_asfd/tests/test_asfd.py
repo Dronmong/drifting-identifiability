@@ -702,6 +702,8 @@ def test_ess_floor_admits_the_designed_local_radius():
     # Worst measured level (dec_mid) at the designed radius. The floor must
     # admit every level, not just the easiest one -- calibrating against a
     # single level is what produced an under-informed first attempt.
+    # Raw pixels are the binding case, not any feature level: their tail
+    # fraction is 0.095-0.114 against 0.146-0.228 for standardized features.
     worst_measured_ess_p05 = 0.0146
     assert field.ess_p05_fraction * smallest <= worst_measured_ess_p05, (
         "the ESS tail floor rejects the designed local radius on at least one "
