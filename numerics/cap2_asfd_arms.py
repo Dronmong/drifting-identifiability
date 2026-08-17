@@ -84,6 +84,15 @@ ARM_CAPS: dict[str, dict[str, float] | None] = {
     "control": None,
     "raw": {"b1": 0.15, "raw": 0.10, "self": 1e-6},
     "asfd": {"b1": 0.15, "raw": 0.10, "self": 0.10},
+    # Completes the factorial, and was added because the first two arms
+    # measured the raw branch to be the harmful one. Both aborted at step
+    # 685,000 on the raw field's energy falling below the real-versus-real
+    # floor -- 0.0088 with self disabled, 0.0099 with it active, against a
+    # floor of 0.0104. Undershooting that floor means the generated cloud is
+    # *less* variable than real data, which is the collapse the correction was
+    # supposed to repair. Self-features softened it and could not rescue it, so
+    # this arm suppresses raw instead and isolates the self-feature field.
+    "self": {"b1": 0.15, "raw": 1e-6, "self": 0.10},
 }
 
 
